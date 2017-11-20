@@ -1,0 +1,261 @@
+<div class="modal fade in " id="new_user" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="display: none;">
+  <div class="modal-dialog" style="width:700px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">新建</h4>
+      </div>
+      <div class="modal-body">
+        <!--row-->
+        <form class="form-horizontal" action="{{url_for('portal.user_create')}}" method="POST" id="create_user_form">
+          <div class="row newVM" id="rootwizard-1">
+            <div class="col-sm-3 no-margin no-padding">
+              <ul class="nav nav-tabs nav-pills _tab_ul" style="height: 640px;">
+                <li class="active"><a name="#one" data-toggle="tab">
+                  <label class="label m-r-10">1</label>
+                  基本信息</a></li>
+                <li><a name="#two" data-toggle="tab">
+                  <label class="label m-r-10">2</label>
+                  配额</a></li>
+                <li><a name="#three" data-toggle="tab">
+                  <label class="label m-r-10">3</label>
+                  角色</a></li>
+              </ul>
+            </div>
+            <!--col-sm-3-->
+            <div class="col-sm-9">
+              <!-- Tab panes -->
+              <div class="tab-content">
+                <div class="tab-pane active" id="one">
+                  <h4>第一步 基本信息</h4>
+                  <div class="newVMContent">
+                  <br>
+                    <div class="form-group">
+                      <label for="" class="col-sm-3 control-label"><span class="text-danger"></span>区 域</label>
+                      <div class="col-sm-9">
+                        <input type="text" name="region" class="form-control"
+                               autocomplete="off" readonly value="{{ user.region }}">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>名 称</label>
+                      <div class="col-sm-9">
+                        <input type="text" name="username" class="form-control" autocomplete="off">
+                      </div>
+                    </div>
+                    <!--form-group-->
+                      <div class="form-group">
+                      <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>密 码</label>
+                      <div class="col-sm-9">
+                        <input type="password" name="password" class="form-control" autocomplete="off">
+                      </div>
+                    </div>
+                    <!--form-group-->
+                      <div class="form-group">
+                      <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>邮 箱</label>
+                      <div class="col-sm-9">
+                        <input type="text" name="email"  class="form-control">
+                      </div>
+                    </div>
+                    <!--form-group-->
+                      <div class="form-group">
+                      <label for="" class="col-sm-3 control-label">电 话</label>
+                      <div class="col-sm-9">
+                        <input type="text" name="phone" class="form-control">
+                      </div>
+                    </div>
+                    <!--form-group-->
+                    <!--
+                    <div class="form-group">
+                      <label for="" class="col-sm-3 control-label">状 态</label>
+                      <div class="col-sm-9">
+                        <div class="slide-primary m-t-10">
+                            <input type="checkbox" name="active_temp" class="ios-form-3" checked="checked"/>
+                        </div>
+                         <input type="checkbox" name="active" style="display:none;" />
+                      </div>
+                    </div>
+                    -->
+                    <!--form-group-->
+
+                   </div>
+                  <!--newVMContent-->
+                  <ul class=" wizard wizard-actions text-right pull-left" style="margin-top:120px;">
+                    <li > <button  type="button" class="previous_tab btn">&nbsp;&nbsp;上一步&nbsp;&nbsp;</button></li>
+                    <li ><button type="button" class="btn btn-primary next_tab" id="wizard_next">&nbsp;&nbsp;下一步&nbsp;&nbsp;</button></li>
+                  </ul>
+                </div>
+                <div class="tab-pane" id="two">
+                  <h4>第二步 配额</h4>
+                  <div class="newVMContent"> <br>
+                   <div class="form-group">
+                      <label for="" class="col-sm-4 control-label"><span class="text-danger">*</span>虚拟机个数</label>
+                      <div class="col-sm-7">
+                        <input type="text" name="instances" class="form-control" value="{% with default_value='instances'|quota_default_value(quotas) %}{% if default_value %}{{ default_value }}{% endif %}{% endwith %}"/>
+                      </div>
+                      <span class="pull-left p-l-10 p-t-10">个</span>
+                   </div>
+                   <div class="form-group">
+                      <label for="" class="col-sm-4 control-label"><span class="text-danger">*</span>VCPU</label>
+                      <div class="col-sm-7">
+                        <input type="text" name="cores" class="form-control" value="{% with default_value='cores'|quota_default_value(quotas) %}{% if default_value %}{{ default_value }}{% endif %}{% endwith %}"/>
+                      </div>
+                      <span class="pull-left p-l-10 p-t-10">核</span>
+                    </div>
+                    <!--form-group-->
+                     <div class="form-group">
+                      <label for="" class="col-sm-4 control-label"><span class="text-danger">*</span>内存</label>
+                      <div class="col-sm-7">
+                        <input type="text" name="ram" class="form-control" value="{% with default_value='ram'|quota_default_value(quotas) %}{% if default_value %}{{ default_value }}{% endif %}{% endwith %}"/>
+                      </div>
+                      <span class="pull-left p-l-10 p-t-10">M</span>
+                    </div>
+                    <!--form-group-->
+                     <div class="form-group">
+                      <label for="" class="col-sm-4 control-label"><span class="text-danger">*</span>数据卷</label>
+                      <div class="col-sm-7">
+                        <input type="text" name="volumes" class="form-control" value="{% with default_value='volumes'|quota_default_value(quotas) %}{% if default_value %}{{ default_value }}{% endif %}{% endwith %}"/>
+                      </div>
+                      <span class="pull-left p-l-10 p-t-10">G</span>
+                    </div>
+                    <!--form-group-->
+                    <div class="form-group">
+                      <label for="" class="col-sm-4 control-label"><span class="text-danger">*</span>私有镜像</label>
+                      <div class="col-sm-7">
+                        <input type="text" name="images" class="form-control" value="{% with default_value='images'|quota_default_value(quotas) %}{% if default_value %}{{ default_value }}{% endif %}{% endwith %}"/>
+                      </div>
+                      <span class="pull-left p-l-10 p-t-10">个</span>
+                    </div>
+                    <!--form-group-->
+                    <div class="form-group">
+                      <label for="" class="col-sm-4 control-label"><span class="text-danger">*</span>虚拟机路由器</label>
+                      <div class="col-sm-7">
+                        <input type="text" name="virtual_routers" class="form-control" value="{% with default_value='virtual_routers'|quota_default_value(quotas) %}{% if default_value %}{{ default_value }}{% endif %}{% endwith %}"/>
+                      </div>
+                      <span class="pull-left p-l-10 p-t-10">个</span>
+                    </div>
+                    <!--form-group-->
+                    <div class="form-group">
+                      <label for="" class="col-sm-4 control-label"><span class="text-danger">*</span>私有网络</label>
+                      <div class="col-sm-7">
+                        <input type="text" name="private_networks" class="form-control" value="{% with default_value='private_networks'|quota_default_value(quotas) %}{% if default_value %}{{ default_value }}{% endif %}{% endwith %}"/>
+                      </div>
+                      <span class="pull-left p-l-10 p-t-10">个</span>
+                    </div>
+                    <div class="form-group">
+                      <label for="" class="col-sm-4 control-label"><span class="text-danger">*</span>带宽上行</label>
+                      <div class="col-sm-7">
+                        <input type="text" name="bandwidth_tx" class="form-control" value="{% with default_value='bandwidth_tx'|quota_default_value(quotas) %}{% if default_value %}{{ default_value }}{% endif %}{% endwith %}"/>
+                      </div>
+                      <span class="pull-left p-l-10 p-t-10">MB</span>
+                    </div>
+                    <div class="form-group">
+                      <label for="" class="col-sm-4 control-label"><span class="text-danger">*</span>带宽下行</label>
+                      <div class="col-sm-7">
+                        <input type="text" name="bandwidth_rx" class="form-control" value="{% with default_value='bandwidth_rx'|quota_default_value(quotas) %}{% if default_value %}{{ default_value }}{% endif %}{% endwith %}"/>
+                      </div>
+                      <span class="pull-left p-l-10 p-t-10">MB</span>
+                    </div>
+                    <div class="form-group">
+                      <label for="" class="col-sm-4 control-label"><span class="text-danger">*</span>虚拟防火墙</label>
+                      <div class="col-sm-7">
+                        <input type="text" name="firewalls" class="form-control" value="{% with default_value='firewalls'|quota_default_value(quotas) %}{% if default_value %}{{ default_value }}{% endif %}{% endwith %}"/>
+                      </div>
+                      <span class="pull-left p-l-10 p-t-10">个</span>
+                    </div>
+                  </div>
+                  <!--newVMContent-->
+                  <ul class=" wizard wizard-actions newVMPage text-right pull-left" style="margin-top:110px;">
+                   <li > <button type="button" class="btn previous_tab">&nbsp;&nbsp;上一步&nbsp;&nbsp;</button></li>
+                    <li ><button type="button" class="btn btn-primary next_tab" id="wizard_next">&nbsp;&nbsp;下一步&nbsp;&nbsp;</button></li>
+                  </ul>
+                </div>
+                <div class="tab-pane" id="three">
+                  <h4>第三步 角色</h4>
+                  <div class="newVMContent"> <br>
+                    <div class="form-group">
+                      <label for="" class="col-sm-2 control-label">角色</label>
+                      <div class="col-sm-9">
+                        <select multiple="multiple" id="multi-select11" style="position: absolute; left: -9999px;" name="roles">
+                            {% for item in roles %}
+                            <option value="{{ item.id }}" >{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <!--form-group-->
+                  </div>
+                  <!--newVMContent-->
+                  <ul class=" wizard wizard-actions newVMPage pull-left" style="margin-top:120px;">
+                    <li> <button type="button" class="btn previous_tab">&nbsp;&nbsp;上一步&nbsp;&nbsp;</button></li>
+                    <li><button  class="btn btn-primary last_tab" type="submit">&nbsp;&nbsp;完成&nbsp;&nbsp;</button></li>
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+            <!--col-sm-3-->
+          </div>
+          <!--row-->
+        </form>
+      </div>
+      <!--modal-body-->
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<script>
+// var Switch = require('ios7-switch');
+// var checkbox3 = document.querySelector('.ios-form-3')
+// var mySwitchID3 = new Switch(checkbox3);
+// mySwitchID3.toggle();
+// mySwitchID3.el.addEventListener('click', function(e){
+//   e.preventDefault();
+//   mySwitchID3.toggle();
+//   if($(this).hasClass("off")){
+// 	  $("input[name=active]").val("false");
+//   }else{
+// 	  $("input[name=active]").val("true");
+//   }
+
+// }, false);
+
+$(function(){
+    $(".select2").select2();
+    $('#multi-select11').multiSelect({
+        selectableHeader: "<div class='custom-header'>未分配角色</div>",
+        selectionHeader: "<div class='custom-header'>已分配角色</div>",
+        afterSelect: function(values){
+            $("#multi-select11").find('option').each(function(){
+                if($(this).val() == values[0]){
+                    $(this).attr("selected", true);
+                }
+            });
+        },
+        afterDeselect: function(values){
+            $("#multi-select11").find('option').each(function(){
+                if($(this).val() == values[0]){
+                    $(this).attr("selected", false);
+                }
+            });
+        }
+    });
+    $('#rootwizard').bootstrapWizard({
+        'onNext': function(tab, navigation, index) {
+            if($(".nav-tabs li:eq(-2)").hasClass("active")){
+                $('#wizard_next').attr('style','display:none');
+                $('#wizard_last').removeAttr('style');
+                }
+        },
+        'onPrevious': function(tab, navigation, index) {
+             if($(".nav-pills li:eq(-1)").hasClass("active")){
+                $('#wizard_next').removeAttr('style');
+                $('#wizard_last').attr('style','display:none');
+                }
+        }
+     });
+     createTabEvent();
+});
+</script>

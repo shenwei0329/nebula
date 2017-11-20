@@ -1,0 +1,136 @@
+<!-- Modal -->
+<div class="modal fade" id="inVM" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="myModalLabel">接入虚拟机-<span class="text-success">{{ network.name }}</span></h4>
+        </div>
+        <div class="modal-body">
+          <form id="form_traditional_validation" action="{{ url_for('portal.ports_create') }}"
+                class="form-horizontal" method="POST">
+            <input type="hidden" name="id">
+            <input type="hidden" name="network_id" value="{{ network.id }}">
+            <div class="row">
+            <div class="col-sm-12">
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>选择子网</label>
+              <div class="col-sm-7" id="select_subnet_div">
+                <select name="subnet_id" id="subnet_id" class="select2 form-control">
+                  <option value="">选择子网</option>
+                  {% for subnet in subnets %}
+                    <option value="{{ subnet.id }}">{{ subnet.cidr }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>接入虚拟机</label>
+              <div class="col-sm-7 input-validation right" id="select_instance_div">
+                <select name="instance_id" id="instance_id" class="select2 form-control"  >
+                  <option value="">选择接入虚拟机</option>
+                  {% for instance in instances %}
+                    <option value="{{ instance.id }}" class="form-option"
+                            instance_system_attr="{{ instance.image.name }}*
+                              {{ instance.vm_state }}*
+                              {{ instance.hard_limit - instance.usable_ports }}*
+                              {{ instance.usable_ports }}"
+                            subnet_ids="{% for p in instance.ports %}{{ p.subnet.id }}-{% endfor %}">
+                        {{ instance.display_name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="form-group form-info">
+             <label for="" class="col-sm-3 control-label">&nbsp;</label>
+              <div class="col-sm-9">
+               <h5>该虚拟机的配额信息</h5>
+               <table class="table no-border">
+                   <thead>
+                    <tr>
+                      <td>操作系统</td>
+                      <td>状态</td>
+                      <td>已接入网络数</td>
+                      <td>可接入网络数</td>
+                    </tr>
+                   </thead>
+                   <tbody>
+                    <tr>
+                      <td class="text-success" id="opteration_system_name"></td>
+                      <td class="text-info" id="instance_status"></td>
+                      <td class="text-success" id="attach_port_number"></td>
+                      <td class="text-success" id="attach_hard_limit"></td>
+                    </tr>
+                    </tbody>
+                </table>
+              </div>
+            </div>
+           </div>
+          </div>
+            <div class="form-actions">
+              <div class="pull-right">
+                <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保存</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+<!--modal-->
+<script type="text/javascript">
+$(function(){
+	var subnet_select_html=$("#subnet_id").html();
+	var instance_select_html=$("#instance_id").html();
+    var $subnet_select=$("#subnet_id");
+    var $instance_select=$("#instance_id");
+    
+	$subnet_select.on("change",function(){
+		//重设虚拟机列表
+		$instance_select.html(instance_select_html);
+		$("#select_instance_div span.select2-chosen").text( $instance_select.find("option[value='']").text() );
+        $subnet_select.closest(".modal-dialog").find("tbody tr td").html("");
+		var curr_subnet = $.trim(this.value) ; 
+		if( curr_subnet.length == 0 ) {
+			return ;
+		}
+		var patt = new RegExp("^"+curr_subnet +"-" + "|-" + curr_subnet + "-");
+		$instance_select.find("option").each(function(){
+			var curr_subnet_ids = $.trim( $(this).attr("subnet_ids") ) ;
+			if( curr_subnet_ids.length == 0 ){
+				return ;
+			} 
+			if( patt.test( curr_subnet_ids ) ){
+				$(this).remove();
+			}
+		});
+	});
+
+
+    $instance_select.on("change",function(){
+        var attr_set=$(this).children('option:selected').attr("instance_system_attr");
+        attr_set=attr_set.split("*");
+
+
+        // replace operation system
+        $("#opteration_system_name").html(attr_set[0]);
+
+        // replace instance status
+        $("#instance_status").html(attr_set[1]);
+
+        // replace number of attached volume
+        $("#attach_port_number").html(attr_set[2]);
+
+        // replace attach limit
+        $("#attach_hard_limit").html(attr_set[3]);
+    })
+
+
+});
+</script>
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

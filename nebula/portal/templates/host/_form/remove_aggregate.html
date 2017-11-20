@@ -1,0 +1,25 @@
+<!-- 提示Modal -->
+<!-- remove aggregate -->
+<!-- Modal -->
+<div class="modal fade" id="removeAggregate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-body">
+      <!--提示-->
+      <form action="{{ url_for('portal.remove_aggregate',id=host.id) }}" method="POST">
+      <div class="alert alert-block alert-info fade in">
+      <h4 class="alert-heading">提示！</h4>
+        <p>确定将主机 <font style="font-size: 14px;font-weight: bold;" color="#000"> {{ host.hostname }} </font>移除集群？</p>
+        <div class="button-set text-right">
+          <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">取消</button>
+          <button class="btn btn-success btn-cons" type=submit >确定</button>
+        </div>
+      </div>
+      </form>
+      <!--提示-->
+    </div>
+  </div>
+</div>
+</div>
+<!--modal-->
+<!-- 提示Modal --> 

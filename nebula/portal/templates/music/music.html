@@ -1,0 +1,51 @@
+{% extends 'layout/base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %}音乐分类器{% endblock %}
+{% block style %}
+<link href="/static/plugins/dropzone/css/dropzone.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block resource_type %}Music{% endblock %}
+
+{% block container %}
+
+<div class="page-container row-fluid">
+    <!-- BEGIN PAGE CONTAINER-->
+    <div class="page-content">
+        <!-- 页面内容从此处开始-->
+        <div class="content">
+            <div class="page-title">
+                <div class="page-title">
+                    <h3><span class=" fa fa-music title-question">&nbsp;&nbsp;音乐分类器<i class="fa fa-question-circle text-info"></i></span></h3>
+
+                    <p class="title-content">本应用利用机器学习做音乐分类，目前支持wav、flac等音乐文件。</p>
+                </div>
+            </div>
+            <!--tab切换-->
+            <div class="bs-example bs-example-tabs">
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="home" style="min-height:250px;">
+                        <div class="grid no-padding ">
+                            <form method="post" enctype='multipart/form-data'>
+                                {{ wtf.quick_form(form) }}
+                            </form>
+                        </div>
+                        <div class="grid no-padding ">
+                            {% if result %}
+                                <div class="file-box">
+                                    <h5><span class=" fa fa-music text-info">&nbsp;&nbsp;文件［{{ file_name }}］属于 {{ music_type }} 类型。</span></h5>
+                                    <img src="../static/png/{{ image_file }}" height=400 width="500">
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+        <!--content-->
+        <!-- 页面内容到此结束-->
+        </div>
+    <!--page-content-->
+    </div>
+</div>>
+
+{% endblock %}

@@ -1,0 +1,9 @@
+prune code
+prune fabfile
+prune config
+prune template
+
+graft doc/source
+graft etc
+graft tasks
+graft tests

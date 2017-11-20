@@ -1,0 +1,34 @@
+<!-- Modal -->
+<div class="modal fade" id="deletePrivateNetwork" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          <!--提示-->
+           <form action="{{ url_for('portal.private_network_delete', ids=network.id) }}" method="DELETE">
+              <div class="alert alert-block alert-info fade in">
+              <h4 class="alert-heading">提示！</h4>
+                {% if network.subnets %}
+                  <p>"{{ network.name }}"&nbsp;存在未删除的子网，不能删除</p>
+                {% elif network.virtualrouter %}
+                  <p>"{{ network.name }}"&nbsp;已经绑定到路由器，不能删除</p>
+                {% elif not network.external_net %}
+                  <p>确定删除私有网络"{{ network.name }}"&nbsp;?</p>
+                {% else %}
+                  <p>确定删除外部网络"{{ network.name }}"&nbsp;?</p>
+                {% endif %}
+                <div class="button-set text-right">
+                  <input type="hidden" name="id">
+                  <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">取消</button>
+                  <button class="btn btn-success btn-cons
+                  {% if network.subnets or network.virtualrouter %} disabled{% endif %}"
+                          type="submit" >确定</button>
+                </div>
+              </div>
+          </form>
+          <!--提示-->
+        </div>
+      </div>
+    </div>
+</div>
+<!--modal-->

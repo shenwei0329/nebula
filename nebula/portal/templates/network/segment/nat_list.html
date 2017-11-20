@@ -1,0 +1,51 @@
+{% from 'layout/sublist_pagination.html' import render_sub_pagination with context %}
+{% macro build_virtualrouter_nat_list(pagination, resource_id) %}
+<table class="table">
+    <thead>
+    <tr>
+        <th>浮动IP</th>
+        <th>私网IP</th>
+        <th>协议</th>
+        <th>外网端口</th>
+        <th>私网端口</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {%- for nat in pagination.items %}
+        <tr>
+            <td>{{ nat.floatingip.floating_ip_address }}</td>
+            <td>{{ nat.dest_ip }}</td>
+            <td>{{ nat.proto }}</td>
+            <td>{% if nat.src_port %}{{ nat.src_port }}{% endif %}</td>
+            <td>{% if nat.dest_port %}{{ nat.dest_port }}{% endif %}</td>
+            <td>
+                <a name="delete_nat" href="{{ url_for('portal.nat_delete_form', id=nat.id) }}">
+                <i class="fa fa-trash-o"></i>&nbsp;删除</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<!--分页-->
+{% if pagination.items %}
+    {{ render_sub_pagination(pagination, 'portal.nat_list', resource_id) }}
+{% else %}
+    <p class=""><em>该列表中暂时没有数据。</em></p>
+{% endif %}
+<!--分页-->
+{% endmacro %}
+
+{% if pagination %}
+  {{ build_virtualrouter_nat_list(pagination, resource_id) }}
+{% endif %}
+
+<script>
+$(function(){
+		$("a[name=delete_nat]").click(function(evt){
+			evt.preventDefault();
+			var $this=$(this);
+			createDynamicDivAjax($this.attr("href"),{},0,{});
+		});
+	});
+</script>

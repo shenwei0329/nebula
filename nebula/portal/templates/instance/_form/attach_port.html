@@ -1,0 +1,148 @@
+<div class="modal fade" id="addNIC" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">挂载网卡-<span class="text-success">{{ instance.display_name }}</span></h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info"> 注意：如果你需要在Linux系统加载网卡，通常需要配置相关的配置文件使网卡获得IP（如/etc/sysconfig/network-scripts/目录下的配置文件）
+        </div>
+        <p class="p-b-10"><span class="m-r-10">总共可绑定&nbsp;<span class="text-success">{{ attach_port_list }}</span>&nbsp;张网卡；还可以绑定&nbsp;<span class="text-success">{{ available_port }}</span>&nbsp;张网卡</span></p>
+        <form id="form_traditional_validation" action="{{ url_for('portal.ports_attach_submit') }}" class="form-horizontal row" method="post">
+          <h5  class=" m-l-20">虚拟机信息</h5>
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>子网</label>
+            <div class="col-sm-7">
+              <select name="subnet_id" id="subnet_id" class="select2 form-control subnet"  >
+              {% for net in networks %}
+                <optgroup label="{{ net.name }}">
+                 {% if net.subnet_list %}
+                     {% for subnet in net.subnet_list %}
+                       <option value="{{subnet.id}}" name="opt" networkid="{{ net.id }}" data-firstip="{{subnet.cidr | first_ip }}" data-lastip="{{subnet.cidr | last_ip }}">{{subnet.name}} ( {{ subnet.cidr }} )</option>
+                     {% endfor %}
+                {# {% else %} #}
+                {#    {% for subnet in net.subnets %} #}
+                {#       <option value="{{subnet.id}}" name="opt" networkid="{{ net.id }}" data-firstip="{{subnet.cidr | first_ip }}" data-lastip="{{subnet.cidr | last_ip }}">{{subnet.name}} ( {{ subnet.cidr }} )</option> #}
+                {#     {% endfor %}#}
+                 {% endif %}
+              {% endfor %}
+              </select>
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>网卡</label>
+            <div class="col-sm-7">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="radio radio-primary">
+                    <input id="no" type="radio" name="mac_id" value=0  checked="checked">
+                    <label for="no">自动获取</label>
+                  </div>
+                </div>
+                <!--col-sm-6-->
+                <div class="col-sm-6">
+                  <div class="radio radio-primary">
+                    <input id="yes" type="radio" name="mac_id" value=1 >
+                    <label for="yes">自定义</label>
+                  </div>
+                </div>
+                <!--col-sm-6-->
+
+              </div>
+              <!--row-->
+            </div>
+            <!--col-sm-6-->
+          </div>
+          <!--form-group-->
+          <div class="form-group radio-info dispaly-none">
+            <label for="" class="col-sm-3 control-label">IP地址</label>
+            <div class="col-sm-7">
+              <input type="text" name="ip" id="" value="" class="form-control">
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-group radio-info dispaly-none">
+            <label for="" class="col-sm-3 control-label">MAC地址</label>
+            <div class="col-sm-7">
+              <input type="text" name="mac_addr" id="" value="" class="form-control">
+            </div>
+          </div>
+          <!--form-group-->
+          <h5 class=" m-l-20">高级<a class="m-l-10 advanceSetting-2" href="#"><i class="fa fa-caret-right "></i></a></h5>
+          <div class="advanceSettingInfo-2 dispaly-none">
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">虚拟防火墙</label>
+              <div class="col-sm-7">
+                <select name="sgroup_id" id="sgroup_id" class="select2 form-control"  >
+                  <option value="">选择虚拟防火墙</option>
+                  {% for sgroup in sgroups %}
+                  	<option value="{{sgroup.id}}"> {{ sgroup.name }} </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <!--form-group-->
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">上行限速</label>
+              <div class="col-sm-5">
+                <input type="text" name="upper_limit" id="upper_limit" class="form-control" value="100000">
+              </div>
+              <span class="pull-left p-l-10 p-t-10">Kbit/s</span> </div>
+            <!--form-group-->
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">下行限速</label>
+              <div class="col-sm-5">
+                <input type="text" name="floor_limit" id="floor_limit" class="form-control" value="100000">
+              </div>
+              <span class="pull-left p-l-10 p-t-10">Kbit/s</span> </div>
+            <!--form-group-->
+          </div>
+          <!--advanceSettingInfo -->
+          <div class="form-actions">
+            <div class="pull-right">
+              <input type="hidden" name="network_id" id="network_id" value="" >
+          	  <input type="hidden" name="instance_id" value="{{ instance.id }}" >
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保 存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--挂载网卡Modal-->
+<script type="text/javascript">
+$(function(){
+	$(".advanceSetting-2").click(function(){
+        $(".advanceSettingInfo-2").fadeToggle();
+    });
+	$("#yes").click(function(){
+		$("div.radio-info").show();
+	});
+	$("#no").click(function(){
+		$("div.radio-info").hide();
+	});
+
+	var subnet_select=$("#subnet_id");
+	var network_id=$("option[name=opt]:selected").attr("networkid");
+	$("#network_id").val(network_id);
+	subnet_select.change(function(){
+        var network_id=$("option[name=opt]:selected").attr("networkid");
+    	$("#network_id").val(network_id);
+	});
+
+    var availabeFlag = {{ available_port }} ;
+    if(availabeFlag == 0 ){
+        $("#addNIC button[type=submit]").attr("disabled",true);
+    }
+
+});
+
+</script>
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

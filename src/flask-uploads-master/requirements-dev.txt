@@ -1,0 +1,4 @@
+-e git://github.com/kvesteri/flask-storage.git#egg=Flask-Storage
+flexmock==0.9.6
+py==1.4.9
+pytest==2.2.4

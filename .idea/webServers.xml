@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="0274239f-da94-4673-be01-fa1c3a8a4e11" name="nebula" url="http://47.93.192.232">
+        <fileTransfer host="47.93.192.232" port="22" rootFolder="/home/shenwei/nebula" accessType="SFTP" password="dfd9dfdddf9cdf9edf9edf9bdf93" username="shenwei">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

@@ -1,0 +1,57 @@
+<div class="modal fade" id="updateSetting" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      {% if not instance.task_state and instance.vm_state == 'active' %}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">更改配置-<span class="text-success">{{ instance.display_name }}</span></h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info"> 更改虚机的属性；注意：此操作可能会使虚机重启</div>
+        <form id="form_traditional_validation" data-rule="memRangeRule" action="{{ url_for('portal.instance_change', id=instance.id)}}" class="form-horizontal"  method="POST">
+          <input type="hidden" name="resource_id" value="{{instance.id}}">
+          <input type="hidden" name="instance_uuid" value="{{instance.instance_uuid}}">
+          <input type="hidden" name="root_gb" value="{{instance.root_gb}}">
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>CPU </label>
+            <!--输入框-->
+            <input name="vcpus" type="text" class="form-control inline pull-left m-l-10" id="sliderValue-1" 
+            	placeholder="" value="{{ instance.vcpus }}" max="64" min="1"
+            	style="width:180px; padding-right: 3px !important;margin-left:35px;margin-right:5px;"  />
+            <!--输入框--> 
+            <span class="pull-left p-l-10 p-t-10">核</span> </div>
+          <!--form-group-->
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>内存 </label>
+            <!--输入框-->
+            <input type="text" name="ram" class="form-control inline pull-left m-l-10" 
+                   id="sliderValue-2" placeholder=""  value="{{ (instance.memory_mb/1024)|int }}"  max="512" min="1"
+                   style="width:180px; padding-right: 3px !important;margin-left:35px;margin-right:5px;"	/>
+            <!--输入框--> 
+            <span class="pull-left p-l-10 p-t-10">GB</span> </div>
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保 存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      {% else %}
+      <form></form>
+    	<div class="modal-body">
+    		<div class="alert alert-block alert-error fade in">
+                <h4 class="alert-heading">提示</h4>
+                <p>当前虚拟机任务状态： “{{ instance.task_state }}” 虚机状态：“{{ instance.vm_state }}”不符合更改配置要求</p>
+                <div class="button-set text-right">
+                    <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">关闭</button>
+                </div>
+             </div>
+    	</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+

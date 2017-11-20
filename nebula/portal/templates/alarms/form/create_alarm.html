@@ -1,0 +1,269 @@
+<!-- 新建监控告警Modal -->
+<div class="modal fade" id="newCluster" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">新建监控告警</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" action="/alarms/create" method="POST">
+          <div class="row newVM"  id="rootwizard">
+            <div class="col-sm-3 no-margin no-padding">
+              <ul class="nav nav-tabs">
+                <li class="active">
+                	<a href="#one" data-toggle="tab"><label class="label m-r-10">1</label>参数设置</a></li>
+                <li><a href="#two" data-toggle="tab"><label class="label m-r-10">2</label>告警规则</a></li>
+                <li><a href="#three" data-toggle="tab"><label class="label m-r-10">3</label>告警行为</a></li>
+              </ul>
+            </div>
+            <!--col-sm-3-->
+            <div class="col-sm-9"> 
+              <!-- Tab panes -->
+              <div class="tab-content">
+                <div class="tab-pane active" id="one">
+                  <h4>第一步 参数设置</h4>
+                  <div class="newVMContent"> <br>
+                     <div class="alert alert-info">只有类型匹配的规则才能应用于该类型的资源上 </div>
+                    <div class="form-group">
+                      <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>名 称</label>
+                      <div class="col-sm-9">
+                        <input type="text" name="alarm_name" id="" class="form-control">
+                      </div>
+                    </div>
+                    <!--form-group-->
+                    <div class="form-group">
+                      <label for="" class="col-sm-3 control-label">资源类型</label>
+                      <div class="col-sm-9">
+                       <select name="alarm_type" id="alarm_type" class="select2 form-control"  >
+                       
+                        {% if user.is_super %}
+                	        <option value="1">物理主机</option>
+				        {% endif %}
+                        <option value="2">虚拟机</option>
+                      </select>
+                      </div>
+                    </div>
+                    <!--form-group-->
+                     <div class="form-group">
+                      <label for="" class="col-sm-3 control-label">监控周期</label>
+                      <div class="col-sm-9">
+                       <select name="alarm_period" id="alarm_period" class="select2 form-control">
+                        <option value="1">1分钟</option>
+                        <option value="5">5分钟</option>
+                        <option value="10">10分钟</option>
+                      </select>
+                      </div>
+                    </div>
+                    <!--form-group-->                    
+                  </div>
+                  <!--newVMContent-->
+                  <ul class=" wizard wizard-actions newVMPage pull-left">
+                  	<li class="previous first" style="display:none;"> <button  type="button" class="previous_tab btn">上一步</button></li>
+       				<li class="next"><button type="button" class="btn btn-primary next_tab" >下一步</button></li>
+                  </ul>
+                </div>
+                <div class="tab-pane" id="two">
+                  <h4>第二步 告警规则</h4>
+                  <div class="newVMContent" style="overflow-y:auto ;overflow-x:hidden; "> <br/>
+                  	<div class="alert alert-info">提示：任何一条规则满足条件都会触发告警。 </div>
+                  	
+                    <div class="form-group">
+                     <div class="pull-left p-l-10" style="width:150px;">
+                        <select name="meter_type" class="meter_type select2 form-control">
+                        	{% for meter in meters %}
+	                        <option data-type="{{ meter.type }}" value="{{ meter.meter_value }}" data-default="80" data-muted="{{ meter.unit }}">{{ meter.meter_name }}</option>
+	                        {% endfor %}
+	                      </select>
+                      </div>
+                      <div class="pull-left p-l-10" style="width:80px;">
+                         <select name="comparison_operator" class="operator select2 form-control"  >
+                            <option value="gt">></option>
+                            <option value="lt">< </option>
+                     	 </select>
+                      </div>
+                      
+                      <div class="pull-left  p-l-10" style="width:60px;">
+                        <input type="text" name="threshold" class="form-control" value=80 />
+                      </div>
+                      
+                      <span class="pull-left p-l-10 p-t-10 text-muted">%</span>
+                      <span class="pull-right p-l-10 p-t-10"><a class="delete" href="#"><i class="fa fa-times"></i></a></span>
+                     </div>
+                    
+                    <div><a id="add_rule_btn" href="javascript:;" class="btn btn-success">添加规则</a></div>
+                    <div class=" clearfix"> 
+                    	<input type="hidden" name="meter_rules" id="total_meter" />
+                    </div>
+                  </div>
+                  <!--newVMContent-->
+                  <ul class=" wizard wizard-actions newVMPage pull-left">
+                  	<li class="previous"> <button  type="button" class="previous_tab btn">上一步</button></li>
+       				<li class="next"><button type="button" class="btn btn-primary next_tab">下一步</button></li>
+                  </ul>
+                </div>
+                <div class="tab-pane" id="three">
+                  <h4>第三步 告警行为</h4>
+                  <div class="newVMContent"> <br/>
+                     <div class="form-group" hidden>
+                      <label for="" class="col-sm-3 control-label">发送通知</label>
+                      <div class="col-sm-9">
+                      	<div class="radio radio-success">
+                                <input id="send_alarm_yes" type="radio" name="send_alarm" value="yes" checked="checked">
+                                <label for="send_alarm_yes">是</label>
+                                <input id="send_alarm_no" type="radio" name="send_alarm" value="no" >
+                                <label for="send_alarm_no">否</label>
+                      	</div>
+                      </div>
+                    </div>
+                    <!--form-group-->  
+                    <div class="form-group">
+                      <label for="" class="col-sm-3 control-label">触发条件</label>
+                      <div class="col-sm-8">
+                          <div class="checkbox check-info">
+                              <input name="alarm_action" id="trigger_rule1" type="checkbox" checked />
+                              <label for="trigger_rule1">资源变为告警时</label>  
+                              <span class="  formNameInfo inline" data-toggle="tooltip" data-placement="top" title="告警规则任意一条满足时，资源进入告警状态">
+                              <span class="fa fa-question-circle text-info"></span></span>                             
+                          </div>   
+                                                                                                 
+                      </div>
+                    
+                      <div class="col-sm-9 col-md-offset-3">
+                          <div class="checkbox check-info">
+                              <input name="ok_action" id="trigger_rule2" type="checkbox"  />
+                              <label for="trigger_rule2">资源恢复正常时</label>
+                               <span class=" text-info formNameInfo inline" data-toggle="tooltip" data-placement="top" title="所有告警规则都未达到阈值时，资源恢复正常状态">
+                               	<span class="fa fa-question-circle"></span></span> 
+                          </div>
+                      </div>
+                      <div class="col-sm-9 col-md-offset-3">
+                          <div class="checkbox check-info">
+                              <input name="insufficient_data_action" id="trigger_rule3" type="checkbox"  />
+                              <label for="trigger_rule3">没采集到数据时</label>
+                               <span class=" text-info formNameInfo inline" data-toggle="tooltip" data-placement="top" title="监控周期内所有告警规则都未能采集到数据时">
+                               	<span class="fa fa-question-circle"></span></span>
+                            </div>
+                            <label for="alarm_action" class="error"></label>
+                      </div>
+                    </div>
+                    <!--form-group-->    
+                  </div>
+                  <!--newVMContent-->
+                  <ul class=" wizard wizard-actions newVMPage pull-left">
+                  	<li class="previous"><button  type="button" class="previous_tab btn">上一步</button></li>
+       				<li class="next last"><button type="submit" class="btn btn-primary">&nbsp;&nbsp;完成&nbsp;&nbsp;</button></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!--col-sm-3--> 
+          </div>
+          <!--row-->
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--监控告警--> 
+
+<script>
+$(function(){
+    createTabEvent();
+    
+    
+    var $contentDiv = $("#two").find("div.newVMContent");
+    var $rule_model = $contentDiv.find("div.form-group:first");
+    
+    //整个一行的对象移入内存并设置默认事件
+    $rule_model.detach();
+    
+    var $option_model = $rule_model.find("select[name=meter_type]");
+    $option_model.detach();
+    
+    
+    var $init_rules = $option_model.clone(true,true);
+    //隐藏非默认选择的类型的rules
+    $init_rules.find("option[data-type!="+$("#alarm_type").val()+"]").remove();
+    $rule_model.children("div:first").append( $init_rules );
+    
+    $("#alarm_type").on("change",function(){
+    	$contentDiv.find("div.form-group").remove();
+    	var $init_rules = $option_model.clone(true,true);
+    	$init_rules.find("option[data-type!="+ this.value +"]").remove();
+    	$rule_model.find("select[name=meter_type]").remove();
+    	$rule_model.children("div:first").append( $init_rules );
+    	initRule();
+    	var msg = "告警规则已被重置为 " + this.options[this.selectedIndex].text + " 初始项" ;
+    	$contentDiv.find(".alertMsg").remove();
+    	//showMessage(  $contentDiv, msg ,null ,"warning");
+    });
+    
+    $rule_model.find("a.delete").on("click",function(){
+    	$(this).closest(".form-group").remove();
+    });
+    
+    $rule_model.on("change","select[name=meter_type]",function(){
+    	var $current_option = $(this).children("option[selected]") ;
+    	var $current_item = $(this).closest(".form-group")
+    	$current_item.find("input[name=threshold]").val($current_option.attr("data-default"));
+    	$current_item.find("span.text-muted").text($current_option.attr("data-muted"));
+    });
+    
+    
+    //新增按钮的规则
+    $("#add_rule_btn").on("click",function(){
+    	addRule();
+    });
+    
+    $("#two").find(".next_tab").click(function(){
+    	var a = rule_to_Json();
+    	$("#total_meter").val(a);
+    });
+    
+    $("a[href=#three]").on("click",function(){
+    	$("#total_meter").val( rule_to_Json() );
+    });
+    
+    initRule();
+    
+    
+	//初始化3条规则数据
+	function initRule(resourceType){
+		var $rule_pane = $("#two").find("div.newVMContent");
+		$contentDiv.find("div.alert-info").after($rule_model.clone(true,true));
+		$contentDiv.find("div.alert-info").after($rule_model.clone(true,true));
+		$("input:hidden[name=meter_rules]").removeAttr("value");
+		//$contentDiv.find("div.alert-info").after($rule_model.clone(true,true));
+	}
+	
+	function addRule(){
+		if ( $contentDiv.find("div.form-group").length >=6 ){
+			return ;
+		} 
+		var obj = $rule_model.clone(true,true);
+		if($contentDiv.find("div.form-group").length > 0){
+			$contentDiv.find("div.form-group:last").after(obj);
+		}else{
+			$contentDiv.find("div.alert-info").after(obj);
+		}
+		
+		var div = $contentDiv[0];
+		div.scrollTop = div.scrollHeight;
+	}
+	
+	//将规则数据转换为json格式，作为一个表单项进行提交
+	function rule_to_Json(){
+		var json= new Array();
+		var $groups = $contentDiv.find("div.form-group");
+		$.each($groups,function(){
+			json.push($(this).toJson());
+		});
+		return JSON.stringify(json) ;
+	}
+	
+	//弹出框的问号说明信息
+	$(".formNameInfo").tooltip('toggle');
+	$(".formNameInfo").tooltip('hide');
+});
+</script>

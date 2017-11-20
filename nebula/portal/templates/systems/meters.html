@@ -1,0 +1,163 @@
+{% extends "layout/base.html" %}
+{% from 'layout/pagination.html' import render_pagination with context %}
+
+{% block title %}告警规则管理{% endblock %}
+
+{% block style%}
+<link href="/static/plugins/ios-switch/ios7-switch.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="/static/plugins/form-multiselect/css/multi-select.css" rel="stylesheet" type="text/css" media="screen"/>
+{% endblock %}
+
+{% block extend_js %}
+<script src="/static/plugins/ios-switch/ios7-switch.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block container %}
+<!-- BEGIN PAGE -->
+  <div class="page-content"> 
+    <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+    <div class="content"> 
+      <!--title-->
+      <div class="page-title">
+        <h3>监项控管理</h3>
+      </div>
+      <!--title-->
+      <div class="row nouse-up">
+        <div class="col-md-12">
+          <div class="grid simple ">
+            <!--  div class="grid-title no-border">
+              <button type="button" class="btn btn-white btn-cons" data-toggle="modal" data-target="#newUser"><i class="fa fa-plus"></i>&nbsp;&nbsp;新建</button>
+            </div-->
+            <div class="grid-body no-border">
+             <form action="{{ url_for('portal.update_alarm_meter') }}" method="POST">
+              <table class="table table-striped table-flip-scroll cf">
+                <thead>
+                  <tr>
+                    <th>类型</th>
+                    <th>名称</th>
+                    <th>监控项</th>
+                    <th>单位</th>
+                    <th>描述</th>
+                    <th>状态</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for meter in pagination.items %}
+                  <tr class="userManager">
+                    <td class="text-success">
+                    {% if meter.type　== "1" %}
+                    主机
+                    {% else %}
+                    虚拟机
+                    {% endif %}
+                    </td>
+                    <td>{{ meter.meter_name }}</td>
+                    <td>{{ meter.meter_value }}</td>
+                    <td>{{ meter.unit }}</td>
+                    <td>{{ meter.description }}</td>
+                    <td><div class="slide-primary">
+                        <input type="checkbox" name="switch" class="ios-1" {% if meter.state == 1 %}checked{% endif %}/>
+                      </div>
+                      	<input class="for_switch" type="hidden" value="{{ meter.id }}"  />
+                      </td>
+                  </tr>       
+                  {% endfor %}
+                </tbody>                              
+              </table>
+              <!--分页-->
+              {% if pagination.items %}
+              {{ render_pagination(pagination, 'portal.meters_list', '') }}
+              {% else %}
+              <p class=""><em>该列表中暂时没有数据。</em></p>
+              {% endif %}
+              <!--分页-->
+              </form>
+            </div>
+          </div>
+        </div>
+        <!--col-md-12--> 
+      </div>
+      <!--row--> 
+    </div>
+    <!--content--> 
+  </div>
+  <!--page-content--> 
+<script>
+$(function(){
+    showAjaxModal();
+		
+	$(".slide-primary :checkbox").each(function(){
+			 	
+        var Switch = require('ios7-switch');
+        //var checkbox = document.querySelector("." + class_name);
+        var mySwitch = new Switch(this);
+
+        mySwitch.el.addEventListener('click', function(e){
+            e.preventDefault();
+            var url=$(this).parents("form").attr("action");
+           	var meter_id = $(this).closest("td").find(".for_switch").val();
+           	console.log(meter_id);
+           	var stat ;
+            if($(this).hasClass("on")){
+                stat = "0";
+            }else{
+                stat = "1";
+            }
+            var _data={"id":meter_id,"stat":stat};
+            var $this=$(this);
+            $.ajax({
+                url : url,
+                type : "POST",
+                dataType : "json",
+                data : JSON.stringify(_data),
+                contentType : "application/json",
+                success : function(result) {
+                        if($this.hasClass("off")){
+                            $this.removeClass("off").addClass("on");
+                        }else{
+                            $this.removeClass("on").addClass("off");
+                        }
+                },
+                error : function(jqXHR, textStatus, errorThrown) {
+                    showErrorMessage("访问出错!");
+                }
+            });
+
+
+        }, false);
+        if($(this).attr("checked")=="checked"){
+            $(this).prev(".ios-switch").removeClass("off").addClass("on");
+        }else{
+            $(this).prev(".ios-switch").removeClass("on").addClass("off");
+           }
+    });
+     
+});
+    
+</script>
+  <!-- END PAGE --> 
+{% endblock %}
+{% block modal %}
+<div class="modal fade" id="delete-role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-body">
+      <!--提示-->
+       <form action="" method="DELETE">
+      <div class="alert alert-block alert-info fade in">
+      <h4 class="alert-heading">提示！</h4>
+        <p>确定删除&nbsp;&nbsp;!</p>
+        <div class="button-set text-right">
+            <input type="hidden" name="id" value="">
+            <input type="hidden" name="#delete-role_actionurl" value="">
+          <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">取消</button>
+          <button class="btn btn-success btn-cons" type="submit" data-dismiss="modal">确定</button>
+        </div>
+      </div>
+      </form>
+      <!--提示-->
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

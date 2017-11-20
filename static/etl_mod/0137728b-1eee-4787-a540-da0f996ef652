@@ -1,0 +1,229 @@
+#!/usr/local/bin/python2.7
+# -*- coding: utf-8 -*-
+#
+# XLSX 文件解析器
+# ===============
+# 2017年10月10日@成都
+#
+# 功能：通过解析xlsx文件，把记录数据导入数据库(MySQL)中，导入方式包括：更新/创建、追加。
+#
+#
+#
+
+import sysv_ipc as ipc
+import os,MySQLdb,sys
+
+"""表字典
+"""
+TableDic = {
+    'MEMBER': 'member_t',
+    'DATAELEMENT':'data_element_t',
+    'PROJECT':'project_t',
+    'PRODUCT':'product_t',
+    'TASK':'task_t',
+    'ENGINERRING':'enginerring_t',
+    'DELIVERY':'delivery_t',
+    'REQUIRMENT':'requirment_t',
+}
+
+"""设置字符集
+"""
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+import xlrd,time
+from datetime import datetime
+
+"""获取message_q，它是针对外部的接口，文件路径是通过它传入的
+"""
+try:
+    q = ipc.MessageQueue(19640419001,ipc.IPC_CREAT | ipc.IPC_EXCL)
+except:
+    q = ipc.MessageQueue(19640419001)
+
+"""获取xlsx记录单元的数据
+   参数：
+   table：表
+   col：列号
+   row：行号
+"""
+def getData(table,row,col):
+    try:
+        return table.row_values(row)[col]
+    except:
+        return None
+
+"""获取xlsx文件头信息
+   包括：
+   类型、操作、数据元个数、数据集类型【列表、记录】、关键字
+"""
+def getXlsxHead(table):
+
+    _type = getData(table,0,0)
+    _op = getData(table,0,1)
+    _nrec = getData(table,0,2)
+    if _nrec is not None:
+        _nrec = int(_nrec)
+    else:
+        _nrec = 0
+    _rec = getData(table,0,3)
+    _key = getData(table,0,4)
+
+    #print _type,_op,_nrec,_rec,_key
+    return _type,_op,_nrec,_rec,_key
+
+def getXlsxColName(table,nCol):
+
+    _col = []
+    for i in range(nCol):
+        _colv = table.row_values(1)[i]
+        _col.append(_colv)
+        #print(">>>Col[%s]" % _colv)
+    return _col
+
+def getXlsxRow(table,i,nCol,lastRow):
+
+    print("%s- getXlsxRow[%d,%d]" % (time.ctime(),i,nCol))
+
+    """ctype : 0 empty,1 string, 2 number, 3 date, 4 boolean, 5 error
+    """
+    _row = []
+    for _i in range(nCol):
+        __row = table.row_values(i)[_i]
+        __ctype = table.cell(i, _i).ctype
+        #print __row,__ctype
+        if __ctype == 3:
+            _date = datetime(*xlrd.xldate_as_tuple(__row,0))
+            __row = _date.strftime('%Y/%m/%d')
+            __row = __row.split('/')
+            __row = u"%d年%d月%d日" % (int(__row[0]),int(__row[1]),int(__row[2]))
+        elif __ctype == 2:
+            __row = int(__row)
+        elif __ctype == 5:
+            __row = ''
+        _row.append(__row)
+
+    #print _row
+
+    row = []
+    _i = 0
+    for _r in _row:
+
+        #print(">>>[%s]" % _r)
+
+        if _r is None or len(str(_r)) == 0:
+            if lastRow is not None:
+                _r = lastRow[_i]
+        #print _r
+        row.append(_r)
+        _i = _i + 1
+    return row
+
+def doSQL(_sql):
+
+    db = MySQLdb.connect(host="localhost",user="root",passwd="mysqlroot",db="nebula",charset='utf8')
+    cursor = db.cursor()
+    try:
+        cursor.execute(_sql)
+        db.commit()
+    except:
+        db.rollback()
+
+    db.close()
+
+def main():
+    try:
+        m = q.receive(block=False)
+        if m:
+            try:
+                print("...1")
+                data = xlrd.open_workbook(m[0])
+                table = data.sheets()[0]
+                nrows = table.nrows
+                #print(">>>nrows: %d" % nrows)
+                
+                print("...2")
+                _type,_op,_ncol,_rectype,_key = getXlsxHead(table)
+                if _ncol==0:
+                    return True
+
+                if _type is None:
+                    print("%s- Type invalid![None]" % time.ctime())
+                    return True
+
+                _type = str(_type).upper()
+                if not TableDic.has_key(_type):
+                    print("%s- Type invalid![%s]" % (time.ctime(),_type))
+                else:
+                    print("...3")
+                    if (_rectype is not None) and ('RECORD' in _rectype):
+                        print("%s- Type not be LIST" % time.ctime())
+                    else:
+                        print("...4")
+
+                        _rows = []
+                        for i in range(2,nrows):
+                            if i>2:
+                                _row = getXlsxRow(table,i,_ncol,_rows[i-3])
+                            else:
+                                _row = getXlsxRow(table, i, _ncol, None)
+
+                            _rows.append(_row)
+
+                        if 'REQUIRMENT' in _type:
+                            _col = ['PD_BH','PD_BBH','title','role','requirment','effect','const']
+                            _pd_bh = getData(table, 0, 5)
+                            _pd_bbh = getData(table,0, 6)
+                            print(">>>PD[%s,%s]" % (_pd_bh,_pd_bbh))
+                            __r = []
+                            for _r in _rows:
+                                _s = []
+                                _s.append(_pd_bh)
+                                _s.append(_pd_bbh)
+                                if len(_r)==5:
+                                    _r.append(' ')
+                                __r.append(_s + _r[1:])
+                            _rows = __r
+                        else:
+                            _col = getXlsxColName(table,_ncol)
+
+                        print("...5")
+
+                        if len(_rows)>0:
+
+                            for _row in _rows:
+                                _sql = 'INSERT INTO '+ TableDic[_type] + '('
+                                for _c in _col:
+                                    _sql = _sql + _c + ','
+                                _sql = _sql + "created_at,updated_at) VALUES("
+
+                                print("...6[%s]" % _sql)
+                                for _r in _row:
+                                    _s =  "'%s'" % _r
+                                    _s = _s.replace(' ','')
+                                    _s = _s.replace('\n',' ')
+                                    _s = _s.replace('\r',' ')
+                                    if len(_s)>2048:
+                                        _s = _s[:2048]
+                                    print("...7[%s]" % _s)
+                                    _sql = _sql + _s[:2048] + ','
+                                _sql = _sql + "now(),now())"
+                                print(">>>SQL:[%s]" % _sql)
+                                doSQL(_sql)
+                        print("%s- Done" % time.ctime())
+            except:
+                print("%s- Xlsx file open Error!" % time.ctime())
+            os.remove(m[0])
+            return True
+    except:
+        print("%s- Done[Nothing to do]" % time.ctime())
+        return False
+
+
+if __name__ == '__main__':
+    while True:
+        if not main():
+            break
+
+#
+# Eof

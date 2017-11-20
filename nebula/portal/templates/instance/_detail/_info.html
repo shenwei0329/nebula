@@ -1,0 +1,255 @@
+<!--基本信息-->
+<div class="row">
+<div class="col-md-4" id="basic-info">
+    <div class="grid simple">
+        {% include 'instance/_detail/_info_basic.html' %}
+        {% include 'instance/_detail/_info_ports.html' %}
+
+        <!-- volumes -->
+        {% if instance.volumes %}
+            <!--grid-body-->
+            <div class="grid-title no-border">
+                <h4>数据卷</h4>
+            </div>
+            <!--grid-title-->
+            <div class="grid-body no-border">
+                <table class="table table-info table-hover">
+                    <tbody>
+                        {% for volume in instance.volumes %}
+                        <tr>
+                            <td><a href="{{ url_for('portal.data_volume_detail', id=volume.id) }}">{{ volume.name }}</a></td>
+                            <td>{{ volume.size }}G</td>
+                            <td>
+                                <a name="#detachvolume-modal-{{ volume.id }}" class="volume-modals" data-toggle="modal">
+                                    <i class="fa fa-times"></i>&nbsp;卸载
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!--grid-body-->
+
+            {% for volume in instance.volumes %}
+            <!-- detach port modal -->
+            <div class="modal fade" id="detachvolume-modal-{{ volume.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <!--提示-->
+                            <form action="{{ url_for('portal.volume_detach', id=instance.id) }}" method="POST">
+                                <input type="hidden" name="instance_id" value="{{instance.id}}">
+                                <input type="hidden" name="volume_id" value="{{ volume.id }}"/>
+                                <div class="alert alert-block alert-info fade in">
+                                    <h4 class="alert-heading">提示！</h4>
+                                    <p>确定卸载数据卷 {{ volume.name }} ?</p>
+                                    <div class="button-set text-right">
+                                        <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">取消</button>
+                                        <button class="btn btn-success btn-cons" type=submit >确定</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <!--提示-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- detach port modal end -->
+            {% endfor %}
+        {% endif %}
+
+        <!-- opeator log being -->
+         <div class="others-info">
+            <div class="listleft" data-url="/sub/jobs/?resource_type=Instance&resource_id={{ instance.id }}"></div>
+        </div>
+        <!-- opeator log end -->
+    </div>
+    <!--grid-->
+</div>
+
+
+<!--col-md-4-->
+<div class="col-md-8">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#home" data-toggle="tab">资源监控</a></li>
+        <li><a href="#profile" data-toggle="tab">备份</a></li>
+        <li class="pull-right">
+            <div class="m-t-10 m-r-10">
+                <a class="fullscreen"><i class="fa fa-expand fullscreen-on"></i></a><a class="fullscreen" style="display:none;"><i class="fa fa-compress fullscreen-off"></i></a>
+            </div>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+
+        <!-- 监控 start -->
+        <div class="tab-pane active" id="home">
+            <div class="row ">
+                <div class="col-md-12">
+                    <h4>实时数据
+                        <a href="javascript:;" class="reload inline pull-right" style=" font-size:12px;"><i class="fa fa-refresh"></i></a>
+                    </h4>
+                </div>
+                <div class="col-md-4 text-center p-b-20">
+                    <h6>CPU使用率</h6>
+                    <div id="g1"></div>
+                </div>
+                <!--col-md-6-->
+                <div class="col-md-4 text-center p-b-20">
+                    <h6>内存使用率</h6>
+                    <div id="g2"></div>
+                </div>
+                <!--col-md-6-->
+                <div class="col-md-4 text-center p-b-20">
+                    <h6>磁盘使用率（系统盘）</h6>
+                    <div id="g3"></div>
+                </div>
+                <!--col-md-6-->
+                 <div class="col-md-6 m-b-20">
+                    <h4>磁盘读速率
+                     <div class="m-l-30 text-success bold m-r-20 inline" >
+                        <span id="r-disk_read_bytes_rate" >0</span>
+                     </div>
+                     <span class="text-muted font-size-12">B/s</span>
+                    </h4>
+                 </div>
+                <!--col-md-6-->
+                  <div class="col-md-6 m-b-20">
+                     <h4>磁盘写速率
+                     <div class="m-l-30 text-success bold m-r-20 inline"  >
+                        <span id="r-disk_write_bytes_rate">0</span>
+                     </div>
+                     <span class="text-muted font-size-12">B/s</span>
+                    </h4>
+                  </div>
+                <!--col-md-6-->
+                  <div class="col-md-6 m-b-40">
+                     <h4>网卡上速率
+                     <div class="m-l-30 text-success bold m-r-20 inline"  >
+                        <span id="r-network_outgoing_bytes_rate">0</span>
+                     </div>
+                     <span class="text-muted font-size-12">B/s</span>
+                    </h4>
+                  </div>
+                <!--col-md-6-->
+                  <div class="col-md-6 m-b-40">
+                     <h4>网卡下速率
+                     <div class="m-l-30 text-success bold m-r-20 inline"  >
+                        <span id="r-network_incoming_bytes_rate">0</span>
+                     </div>
+                     <span class="text-muted font-size-12">B/s</span>
+                    </h4>
+                  </div>
+
+                <!--col-md-12-->
+                <div class="col-md-12">
+                  <h4 id="m_cpu" name="m_cpu">CPU使用率</h4>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="0" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="0" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="0" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="0" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-0"> </div>
+                </div>
+                <!--col-md-12-->
+                <div class="col-md-12">
+                  <h4 id="m_mem" name="m_mem">内存使用量</h4>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="1" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="1" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="1" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="1" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-1"> </div>
+                </div>
+                <!--col-md-12-->
+                <div class="col-md-12">
+                  <h4 id="m_r_disk" name="m_disk">磁盘读速率</h4>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="2" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="2" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="2" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="2" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-2"> </div>
+                </div>
+                <!--col-md-12-->
+                <div class="col-md-12">
+                <h4 id="m_w_disk" name="m_disk">磁盘写速率</h4>
+                  <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="3" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="3" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="3" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="3" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-3"> </div>
+                </div>
+                <!--col-md-12-->
+                <div class="col-md-12">
+                  <h4 id = "nics-omom"  name="nics-mom">网卡上行流量</h4>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="4" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="4" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="4" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="4" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-4"> </div>
+                </div>
+                <!--col-md-12-->
+                <div class="col-md-12">
+                  <h4 id = "nics-mom"  name="nics-mom">网卡下行流量</h4>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="5" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="5" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="5" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="5" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-5"> </div>
+                </div>
+                <!--col-md-12-->
+            </div>
+        </div>
+        <!-- 监控 end -->
+
+        <!-- 备份 start -->
+        <div class="tab-pane" id="profile">
+            <button type="button" class="btn btn-success btn-cons btn-small" data-url="/form/instance/backup/create/{{ instance.id }}">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;新建备份
+            </button>
+
+
+            <table class="table table-bordered table-hover no-more-tables">
+                <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>状态</th>
+                    <th>大小(M)</th>
+                    <th>所属虚拟机</th>
+                    <th>创建于</th>
+                </tr>
+                </thead>
+                <tbody>
+                {%- for instance_backup in instance.backups %}
+                <tr class="show-others">
+                    <td class="text-info">{{ instance_backup.name }}</td>
+                    <td><span class=" text-success"><div class=""></div>{{ instance_backup.status }}</span>
+                    </td>
+                    <td>{{ instance_backup.size/1024/1024 }}</td>
+                    <td><a href="{% if instance_backup.instance %}{{ url_for('portal.instance_detail', id=instance_backup.instance.id)}}{% else %}#{% endif %}">{{ instance_backup.instance.display_name }}</a></td>
+                    <td>{{ instance_backup.created_at | timesince }}</td>
+                </tr>
+                {%- endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- 备份 end -->
+    </div>
+    <!-- Tab panes -->
+</div>
+<!--col-md-8-->
+</div>
+<!--基本信息-->
+

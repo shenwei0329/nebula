@@ -1,0 +1,42 @@
+<!--修改路由器 begin-->
+<div class="modal fade" id="updateRouter" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="myModalLabel">修改路由器-<span class="text-success">{{ virtualrouter.name }}</span></h4>
+        </div>
+        <div class="modal-body">
+          <form id="form_traditional_validation" data-rule="updateRouterRule" method="POST" action="{{ url_for('portal.virtualrouter_update', id=virtualrouter.id) }}" class="form-horizontal">
+            <input type="hidden" name="id" value="{{ virtualrouter.id }}">
+
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">名称</label>
+              <div class="col-sm-7">
+{#                <input type="text" name="name" id="" class="form-control">#}
+                  {{ form.name(class="form-control") }}
+              </div>
+            </div>
+
+            <!--form-group-->
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">描述</label>
+              <div class="col-sm-7">
+{#                <textarea class="form-control" name="description" rows="3"></textarea>#}
+                  {{ form.description(class="form-control", rows="3") }}
+              </div>
+            </div>
+            <!--form-group-->
+
+            <div class="form-actions">
+              <div class="pull-right">
+                <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保存</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+<!--修改路由器 end-->

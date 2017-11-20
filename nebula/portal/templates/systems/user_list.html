@@ -1,0 +1,131 @@
+{% extends "layout/base.html" %}
+
+{% block title %}用户管理{% endblock %}
+
+{% block style %}
+<link href="/static/plugins/ios-switch/ios7-switch.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="/static/plugins/form-multiselect/css/multi-select.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="/static/plugins/bootstrap-select2/select2.css" rel="stylesheet" type="text/css" media="screen"/>
+{% endblock %}
+
+{% block container %}
+<div class="page-content">
+<div class="content">
+      <!--title-->
+      <div class="page-title">
+        <h3>用户管理</h3>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-info">
+            <button class="close" data-dismiss="alert"></button>
+            {%- for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor -%}
+        </div>
+        {% endif %}
+        {% endwith %}
+      </div>
+      <!--title-->
+      <div class="row nouse-up">
+        <div class="col-md-12">
+          <div class="grid simple ">
+            <div class="grid-title no-border">
+              <button type="button" class="btn btn-white btn-cons" name="#new_user" data-url="{{url_for('portal.user_create')}}" data-rule="newUserRule"><i class="fa fa-plus"></i>&nbsp;&nbsp;新建</button>
+            </div>
+            <div class="grid-body no-border">
+             {% from 'layout/pagination.html' import render_pagination with context %}
+              <table class="table">
+                <thead>
+                    <th>名称</th>
+                    <th>状态</th>
+                    <th>邮箱</th>
+                    <th>电话</th>
+                    <th>上次登录时间</th>
+                    <th>创建时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for user in pagination.items %}
+                  <tr class="userManager">
+                    <td><a href="{{ url_for('portal.user_detail',id=user.id) }}">{{ user.username }}</a></td>
+                    {%if user.id|user_status == True %}
+                    <td class="text-success"><i class="fa fa-dot-circle-o m-r-10"></i>在线</td>
+                    {% else %}
+                    <td class="text-mute"><i class="fa fa-dot-circle-o m-r-10"></i>离线</td>
+                    {% endif %}
+                    <td><i class="fa fa-envelope m-r-10"></i>{% if user.email %}{{ user.email|truncate(10,True) }}{% else %}无{% endif %}</td>
+                    <td><i class="fa fa-phone m-r-10"></i>{{ user.phone }}</td>
+                    <td class="text-info"><i class="fa fa-clock-o m-r-10"></i>{% if user.last_login %}{{ user.last_login}}{% endif %}</td>
+                    <td><i class="fa fa-clock-o m-r-10"></i>{{ user.created_at | datetime }}</td>
+                    <td>
+                        {% if user.is_super %}
+                        <i class="fa fa-check-circle text-success"></i>
+                        {% else %}
+                        <form action="{{ url_for('portal.user_update_status', id=user.id) }}" method="POST">
+                        <input type="hidden" name="user_id" value="{{ user.id }}"/>
+                        <div class="slide-primary">
+                            <input type="checkbox" name="switch" class="ios-{{ loop.index }}" {% if user.active == True %}checked="checked" {% endif %}/>
+                        </div>
+                        </form>
+                        {% endif %}
+                    </td>
+                    <td>{% if user.is_super %}<i class="fa fa-ban"></i>{% else %}
+                    	<a href="#" data-url="{{ url_for('portal.user_detail', id=user.id)}}" class="delete_user" name="deleteUser"><i class="fa fa-trash-o"></i></a>
+                    {% endif %}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <!--分页-->
+              {% if pagination.items %}
+              {{ render_pagination(pagination, 'portal.user_list', '') }}
+              {% else %}
+              <p class=""><em>该列表中暂时没有数据。</em></p>
+              {% endif %}
+              <!--分页-->
+            </div>
+          </div>
+        </div>
+        <!--col-md-12-->
+      </div>
+      <!--row-->
+    </div>
+</div>
+{% endblock %}
+{% block modal %}
+<div id="_new">
+
+</div>
+<div class="modal fade" id="deleteUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-body">
+      <!--提示-->
+       <form action="" method="DELETE">
+      <div class="alert alert-block alert-info fade in">
+      <h4 class="alert-heading">提示！</h4>
+        <p>确定删除&nbsp;<span class="resource-name"></span> ?</p>
+        <div class="button-set text-right">
+            <input type="hidden" name="id" value="">
+            <input type="hidden" name="#deleteUser_actionurl" value="">
+          <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">取消</button>
+          <button class="btn btn-success btn-cons" type="submit" data-dismiss="modal">确定</button>
+        </div>
+      </div>
+      </form>
+      <!--提示-->
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
+{% block extend_js %}
+<script src="/static/plugins/ios-switch/ios7-switch.js" type="text/javascript"></script>
+<script src="/static/plugins/bootstrap-select2/select2.min.js" type="text/javascript"></script>
+<script src="/static/plugins/form-multiselect/js/jquery.multi-select.min.js" type="text/javascript"></script>
+<script src="/static/plugins/bootstrap-form-wizard/js/jquery.bootstrap.wizard.min.js" type="text/javascript"></script>
+<script src="/static/js/list.js" type="text/javascript"></script>
+<script src="/static/js/systems/user_list.js" type="text/javascript"></script>
+{% endblock %}

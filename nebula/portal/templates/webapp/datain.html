@@ -1,0 +1,80 @@
+<!--
+  2015.7.11 by shenwei @Chengdu
+
+  用 iframe 方式 嵌入 CDH 5 管理页面
+
+  TODO
+    需要利用配置文件来定义 CDH 5 的URL
+
+-->
+{% extends 'layout/base.html' %}
+
+{% block title %}webapp{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block container %}
+
+    <script type="application/javascript">
+
+        /* 注意：任何AJAX操作后，都应该调用 GetStatus 函数 确保当前URL为 /etltools/change */
+        function ajaxForm(value) {
+            $.ajax({
+                type: 'POST',
+                contentType: 'application/json',
+                url: '/cdh/datainchange',
+                dataType: 'json',
+                data: JSON.stringify({ value: value }),
+                    error: function() {alert('Error');},
+                    success: function (msg) {
+                        $("#add-rec").html(msg['body']);
+                        $('#InputModal').modal('show');
+                    }
+            });
+            return false;
+        }
+
+        function ItemOnclick(value){
+            ajaxForm(value);
+        }
+    </script>
+
+    <!--div class="page-content"-->
+    <div class="page-content" xmlns="http://www.w3.org/1999/html">
+        <!-- 页面内容从此处开始-->
+        <div class="content">
+            <div id="datain">
+                <div><h4 class="{{ icon }}">{{ title }}</h4></div>
+                <div>
+                    <h5>请选择上传文件：【目前已支持「xlsx」文件方式录入数据集】</h5>
+                    <button type="button" class="small button"  onclick="ItemOnclick(1)" >
+                      <i class="icon-plus"></i>&nbsp;选择&nbsp;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--content-->
+    <!-- 页面内容到此结束-->
+<!--/div-->
+{% endblock %}
+
+{% block modal %}
+
+<!--右键出现的菜单开始-->
+
+    <div class="modal hide fade" id="InputModal" style="width: auto">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3>上传文件</h3>
+		</div>
+		<div class="modal-body" id="add-rec">
+            {% import 'bootstrap/wtf.html' as wtf %}
+            {{ wtf.quick_form(form) }}
+		</div>
+	</div>
+
+<!--右键出现的菜单结束-->
+
+{% endblock %}

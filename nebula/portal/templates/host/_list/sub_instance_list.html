@@ -1,0 +1,70 @@
+{% from 'layout/sublist_pagination.html' import render_sub_pagination with context %}
+{% from 'instance/_macros.html' import build_status_col_data %}
+{% macro build_instance_sublist(pagination) %}
+<table class="table no-more-tables">
+    <thead>
+      <tr>
+        <th>名称</th>
+        <th>状态</th>
+        <th>IP地址</th>
+        <th>属于者</th>
+        <th>创建于</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for vm in pagination.items %}
+      <tr>
+        <td ><a href="{{ url_for('portal.instance_detail', id=vm.id) }}" title="{{ vm.display_name }}">{{ vm.display_name | truncate(9, True)  }}</a></td>
+        <td>{{ build_status_col_data(vm.status) }}</td>
+        <td >
+          {%- if vm.ports|length == 0  -%}
+             <span class="table-popover-list text-success" data-container="body" data-toggle="popover" data-placement="right" data-trigger="hover" data-title="IP地址">获取中..</span>
+          {%- elif vm.ports|length == 1  -%}
+             <span class="table-popover-list text-success" data-container="body" data-toggle="popover" data-placement="right" data-trigger="hover" data-title="IP地址">{{ vm.ports[0].fixed_ips[0].ip_address }}</span>
+          {% else %}
+             <span class="table-popover-list text-success" data-container="body" data-toggle="popover" data-placement="right" data-trigger="hover" data-title="IP地址">IP:{{ vm.ports|length }}</span>
+             <div class="popover-content" style="display:none;">
+                <ul class='table-list'>
+                    {%- for port in vm.ports -%}
+                        <li>{{ port.fixed_ips[0].ip_address }}</li>
+                    {%- endfor -%}
+                </ul>
+             </div>
+          {%- endif -%}
+        </td>
+        <td class="text-info">{{ vm.creator.username }}</td>
+        <td >{{ vm.created_at|timesince }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<!--分页-->
+{% if pagination.items %}
+    {{ render_sub_pagination(pagination, 'portal.host_instance_list') }}
+{% else %}
+    <p class=""><em>该列表中暂时没有数据。</em></p>
+{% endif %}
+<!--分页-->
+{% endmacro %}
+
+<div class="grid simple">
+    <div class="grid-title no-border">
+      <h4>虚拟机</h4>
+      <div class="tools"> <a href="javascript:;" class="reload"></a></div>
+    </div>
+    <div class="grid-body no-border" style="overflow: hidden; display: block;">
+      {% if pagination %}
+        {{ build_instance_sublist(pagination) }}
+      {% endif %}
+    </div>
+    <!--grid-body-->
+</div>
+<script>
+	$(function(){
+		$("a[name=break]").click(function(evt){
+			evt.preventDefault();
+			var $this=$(this);
+			createDynamicDivAjax($this.attr("href"),{},0,{});
+		});
+	});
+</script>

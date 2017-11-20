@@ -1,0 +1,171 @@
+{% extends "layout/base.html" %}
+
+{% block title %}用户详情{% endblock %}
+
+{% block style %}
+<link href="/static/plugins/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="/static/plugins/ios-switch/ios7-switch.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="/static/plugins/form-multiselect/css/multi-select.css" rel="stylesheet" type="text/css" media="screen"/>
+{% endblock %}
+
+
+{% block extend_js %}
+<script src="/static/plugins/ios-switch/ios7-switch.js" type="text/javascript"></script>
+<script src="/static/plugins/form-multiselect/js/jquery.multi-select.min.js" type="text/javascript"></script>
+<script src="/static/plugins/bootstrap3-editable/js/bootstrap-editable.min.js" type="text/javascript"></script>
+<script src="/static/plugins/breakpoints.js" type="text/javascript"></script>
+<script src="/static/js/systems/user_detail.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block container %}
+<div class="page-content">
+    <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+    <div class="content">
+      <!--title-->
+      <div class="page-title">
+        <h3>用户详情</h3>
+      </div>
+      <!--title-->
+      <div class="row nouse-up">
+        <div class="col-md-5">
+        <div class="grid simple ">
+          <div class="grid-body no-border">
+
+             <h4>基本信息</h4>
+              <table class="table table-info">
+                <tbody>
+                  <tr>
+                    <td width="30%">区域</td>
+                    <td>{{ user_model.region }}</td>
+                  </tr>
+                  <tr>
+                    <td width="30%">名称<i class="fa fa-pencil m-l-10"></i></td>
+                    <td class="editInput editable editable-click" style="display: table-cell;" id="td_username">{{ user_model.username }}</td>
+                  </tr>
+                  <tr>
+                    <td>密码</td>
+                    <td >*******<button type="button" id="resetpwd" class="btn btn-primary btn-cons pull-right m-l-10 btn-small" style="margin:0px; margin-top:-5px; margin-bottom:-5px;" name="#reset_password">重置</button></td>
+                 </tr>
+                  <tr>
+                    <td>邮箱<i class="fa fa-pencil m-l-10"></i></td>
+                    <td class="editInput editable editable-click" style="display: table-cell;" id="td_email">{{ user_model.email }}</td>
+                  </tr>
+                  <tr>
+                    <td>电话<i class="fa fa-pencil m-l-10"></i></td>
+                    <td class="editInput editable editable-click" style="display: table-cell;" id="td_phone">{{ user_model.phone if user_model.phone != None }}</td>
+                  </tr>
+                  <tr>
+                    <td>状态</td>
+                    <td>
+                        {% if user_model.is_super %}
+                        <i class="fa fa-check-circle text-success"></i>
+                        {% else %}
+                        <div class="slide-primary">
+                            <input type="checkbox" name="switch" class="ios" {% if user_model.active==True %}checked="checked"{% endif %} style="display:none;">
+                        </div>
+                        {% endif %}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+             <h4 class="p-t-10">配额</h4>
+             <table class="table table-info">
+                <tbody>
+                  {% for item in quotas %}
+                  <tr>
+                    <td width="50%">{{ item.resource | translate }}<i class="fa fa-pencil m-l-10"></i></td>
+                    <td class="editInput editable editable-click" id="td_{{ item.resource }}">{{item.hard_limit}}</td>
+                    <td></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            <form action="{{ url_for('portal.user_update', id=user_model.id )}}" method="POST" id="update_user_form">
+                <input type="hidden" name="user_id" value="{{ user_model.id }}" />
+                <input type="hidden" name="username" value="{{user_model.username }}" id="form_username" />
+                <input type="hidden" name="email" value="{{user_model.email }}"  id="form_email" />
+                <input type="hidden" name="phone" value="{{user_model.phone }}"  id="form_phone" />
+                <input type="hidden" name="status" value="{{user_model.active }}"/>
+                {% for item in quotas %}
+                <input type="hidden" name="{{ item.resource }}" value="{{ item.hard_limit }}" id="form_{{item.resource}}"/>
+                {% endfor %}
+                <button name="saveall" class="btn btn-primary btn-cons pull-right">保存</button>
+             <div class="clearfix"></div>
+             </form>
+          </div>
+
+        </div>
+          </div>
+            <!--col-md-12-->
+             <div class="col-md-7">
+        <div class="grid simple ">
+          <div class="grid-body no-border">
+             <h4 class="p-t-10">角色</h4>
+             {% if user_model.is_super %}
+             管理用户无需分配角色。
+             {% else %}
+             <form action="{{ url_for('portal.user_set_roles',id=user_model.id) }}" id="role_form" method="POST">
+              <input  type="hidden" value="{{ user_model.id }}" name="user_id"/>
+              <select multiple="multiple" id="multi-select2" style="position: absolute; left: -9999px;" name="roles">
+                  {% for role in roles %}
+                  <option value="{{ role.id }}" {% if role.select == True %}selected="selected"{% endif %}>{{ role.name }}</option>
+                  {% endfor %}
+              </select>
+              <p class="m-t-10">
+                <button name="saverole" class="btn btn-primary btn-cons pull-right">保存</button>
+			  </p>
+
+             <div class="clearfix"></div>
+             </form>
+             {% endif %}
+          </div>
+
+        </div>
+          </div>
+            <!--col-md-12-->
+      </div>
+      <!--row-->
+    </div>
+    <!--content-->
+  </div>
+{% endblock %}
+
+{% block modal %}
+<div class="modal fade" id="reset_password" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="myModalLabel">重置密码</h4>
+        </div>
+        <div class="modal-body">
+          <form id="resetpwd_form" action="{{ url_for('portal.user_reset_password', id=user_model.id)}}"
+                data-rule="resetPwdRule" class="form-horizontal row" method="POST">
+            <input name="user_id" type="hidden" value="{{ user_model.id }}">
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">填写密码</label>
+              <div class="col-sm-7 input-validation right">
+               <input type="password" id="password" name="password" class="form-control">
+              </div>
+            </div>
+            <!--form-group-->
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">确认密码</label>
+              <div class="col-sm-7 input-validation right">
+               <input type="password" name="confirm_password" class="form-control">
+              </div>
+            </div>
+            <!--form-group-->
+
+            <div class="form-actions">
+              <div class="pull-right">
+                <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+                <button name="save" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保存</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}

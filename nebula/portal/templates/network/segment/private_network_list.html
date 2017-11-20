@@ -1,0 +1,71 @@
+{% from 'layout/pagination.html' import render_pagination with context%}
+{% from 'layout/sublist_pagination.html' import render_sub_pagination with context %}
+{% macro build_private_network(pagination) %}
+<table class="table table-bordered table-hover no-more-tables">
+  <thead>
+    <tr>
+      <th style="width:1%">
+{#        <div class="checkbox check-default">#}
+{#          <input id="checkbox0" type="checkbox" value="0" class="checkall">#}
+{#          <label for="checkbox0"></label>#}
+{#        </div>#}
+      </th>
+      <th>名称</th>
+      <th>外部网络</th>
+      <th>任务状态</th>
+      <th>网络类型</th>
+      <th>子网个数</th>
+      <th>属于者</th>
+      <th>创建于</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for network in pagination.items %}
+    <tr class="show-others">
+      <td class="v-align-middle"><div class="checkbox check-default">
+          <input id="checkbox{{ loop.index }}" type="checkbox" value="{{ network.id }}"
+                  data-resource-uuid="{{ network.network_uuid | default('', True) }}">
+          <label for="checkbox{{ loop.index }}"></label>
+        </div></td>
+      <td><a href="{{ url_for('portal.private_network_detail', id=network.id) }}">{{ network.name }}</a></td>
+      <td>{{network.external_net}}</td>
+      <td name="task_status" class="{{ network.job.state | job_state_class }}">{{ network.job.state | job_state_humanize }}</td>
+      <td>{% if network.network_type == 'vlan' %}
+            VLAN - ID: {{ network.segmentation_id }}
+          {% elif network.network_type == 'flat' %}
+            FLAT
+          {% elif network.network_type == 'vxlan' %}
+            VXLAN
+          {% else %}
+            未知类型
+          {% endif %}
+      </td>
+      <td ><span class="table-popover-list" data-container="body"
+                 data-toggle="popover" data-placement="right"
+                 data-trigger="hover" data-title="子网"
+                 data-content="
+                 <ul class='table-list'>
+                   {% for sb in network.subnets %}
+                   <li>{{ sb.cidr }}</li>
+                   {% endfor %}
+                 </ul>">子网
+          （<span class="text-success" >{{ network.subnets|length }}</span>）个</span></td>
+      <td class="text-info">{{ network.owner.username }}</td>
+      <td>{{ network.created_at | timesince  }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<!--分页-->
+{% if pagination.items %}
+    {{ render_pagination(pagination, 'portal.private_network_list', '点击每行显示操作日志和虚拟机列表') }}
+{% else %}
+    <p class=""><em>该列表中暂时没有数据。</em></p>
+{% endif %}
+<!--分页-->
+
+{% endmacro %}
+
+{% if pagination %}
+    {{ build_private_network(pagination) }}
+{% endif %}

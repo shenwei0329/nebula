@@ -1,0 +1,129 @@
+{% extends "layout/base.html" %}
+
+{% block title %}我的资料{% endblock %}
+
+{% block container %}
+<div class="page-content">
+    <div class="content">
+      <!--title-->
+      <div class="page-title">
+        <h3>我的资料</h3>
+      </div>
+      <!--title-->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="grid simple ">
+            <div class="grid-body no-border"> <br/>
+              <h4>基本信息</h4>
+              <form class="form-horizontal validate-form" data-rule="newUserRule"  action="{{ url_for('portal.user_profile') }}" method="POST">
+                <div class="form-group">
+                  <label for="" class="col-sm-2 control-label">区域</label>
+                  <label for="" class="col-sm-6 control-label text-left">{{ profile.region }}</label>
+                </div>
+                <div class="form-group">
+                  <label for="" class="col-sm-2 control-label">账号</label>
+                  <label for="" class="col-sm-6 control-label text-left">{{ profile.username }}</label>
+                </div>
+                <div class="form-group">
+                  <label for="" class="col-sm-2 control-label">密码</label>
+                  <label for="" class="col-sm-6 control-label text-left">
+                    <button type="button" class="btn btn-primary btn-cons btn-small _new_static" style="margin:0px; margin-top:-5px; margin-bottom:-5px;" name="#resetPassword">修改密码</button>
+                  </label>
+                </div>
+
+                <div class="form-group {%- if form.errors['email'] %}input-validation right error-control{%- endif %}">
+                  <label for="" class="col-sm-2 control-label">邮箱</label>
+                	<div class="col-sm-3">
+                  		<input type="text" class="form-control" id="email" name="email" placeholder="" value="{{ profile.email }}" >
+                  		{%- if form.errors['email'] %}
+                      <span class="error">
+                          <label for="email" class="error">{{ form.errors['email'][0] | decode }}</label>
+                      </span>
+                  {%- endif %}
+					</div>
+                </div>
+                <div class="form-group">
+                  <label for="" class="col-sm-2 control-label">电话</label>
+				<div class="col-sm-3">
+                      <input type="text" class="form-control" id="phone" name="phone" placeholder="未填写" value="{{ profile.phone  if profile.phone != None }}" >
+               			 {%- if form.errors['phone'] %}
+                      <span class="error">
+                          <label for="phone" class="error">{{ form.errors['phone'][0] | decode }}</label>
+                      </span>
+                  {%- endif %}
+                </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="col-sm-offset-2 col-sm-9">
+                  <!--
+                  <button type="button" class="btn btn-white btn-cons">重置</button>
+                  -->
+                  <button type="submit" class="btn btn-primary btn-cons m-l-10">保存</button>
+                  </div>
+                </div>
+                {% if quotas %}
+                <h4>配额信息</h4>
+                {% for item in quotas %}
+                <div class="form-group">
+                  <label for="" class="col-sm-2 control-label">{{ item.resource| translate }}</label>
+                  <label for="" class="col-sm-2 control-label text-left">{{ item.hard_limit }}</label>
+                </div>
+                {% endfor %}
+                <br/>
+                <br/>
+                {% endif %}
+              </form>
+            </div>
+          </div>
+        </div>
+        <!--col-md-12-->
+      </div>
+      <!--row-->
+    </div>
+</div>
+{% endblock %}
+
+{% block modal %}
+<div class="modal fade" id="resetPassword" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">修改密码</h4>
+      </div>
+      <div class="modal-body">
+        <form  data-rule="changePwdRule" action="{{ url_for('portal.user_profile_change_password') }}"  class="form-horizontal" method="POST">
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">原密码</label>
+            <div class="col-sm-7 input-validation right">
+              <input type="password"  id="password" class="form-control" name="password">
+            </div>
+          </div>
+          <!--form-group-->
+            <div class="form-group">
+            <label for="" class="col-sm-3 control-label">新密码</label>
+            <div class="col-sm-7 input-validation right">
+              <input type="password"  id="new_password" class="form-control" name="new_password">
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">确认密码</label>
+            <div class="col-sm-7 input-validation right">
+              <input type="password"  id="confirm_password" class="form-control" name="confirm_password">
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

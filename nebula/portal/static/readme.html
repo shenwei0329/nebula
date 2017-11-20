@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>华云基础设施管理平台帮助文档</title>
+<link href="/static/plugins/bootstrapv3/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="/static/plugins/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+<link rel="stylesheet" type="text/css" href="/static/css/readme.css">
+</head>
+
+<body id="top">
+<div id="primary-menu">
+  <ul class="menu" id="main-menu">
+    <li><a href="#sectionDashboard">总体</a></li>
+    <li><a href="#sectionTable">页面内容</a></li>
+    <li><a href="#sectionFQ">FAQ</a></li>
+	<li><a href="/" class="text-success">返回主控台</a></li>
+  </ul>
+</div>
+<div id="container">
+  <div id="sectionDashboard">
+    <h2>总体</h2>
+    <br>
+	<img src="/static/img/sep01.png" class="img-responsive">
+  </div>
+  <div id="sectionTable"> <br>
+    <br>
+    <br>
+    <h2>页面内容</h2>
+    <br>
+	<img src="/static/img/sep02.png" class="img-responsive">
+  </div>
+  <div id="sectionFQ"> <br>
+    <br>
+    <br>
+    <h2>FAQ</h2>
+
+    <!---->
+    <div class="panel-group" id="accordion">
+      <div class="panel panel-default">
+        <div class="panel-heading collapsed">
+          <h4 class="panel-title"> <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour"><i class="fa fa-question-circle m-r-10"></i>虚拟路由器绑定外部IP地址后，虚拟机就能上公网了吗？ </a> </h4>
+        </div>
+        <div id="collapseFour" class=" collapse">
+          <div class="panel-body">
+            <p>不一定。外部IP地址相对于私有网络而言，并不一定是公网IP。此外，虚拟机使用外部IP能否上网还跟网络规划有关。</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title"> <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"><i class="fa fa-question-circle m-r-10"></i>虚拟机绑定了外部IP之后，为什么我无法通过 IP SSH 登录，也不能 ping 通该 IP ？ </a> </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse">
+          <div class="panel-body">
+          <p>首先，您需要配置虚拟机的防火墙规则，如果是同一子网的不同虚拟机，您需要两台都配置防火墙规则；其次，您需要配置将虚拟机网络加入虚拟防火墙，并给虚拟路由器绑定外部IP;最后，您需要为虚拟路由器添加路由规则。</p>
+           </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading collapsed">
+          <h4 class="panel-title"> <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><i class="fa fa-question-circle m-r-10"></i>防火墙配置了IP规则后，还需要配置TCP，UDP或ICMP规则吗？ </a> </h4>
+        </div>
+        <div id="collapseTwo" class=" collapse">
+          <div class="panel-body">
+           <p>不需要。TCP，UDP，ICMP都是封装在IP协议之上，配置IP规则后则无需再配置上述协议。</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading collapsed">
+          <h4 class="panel-title"> <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree"><i class="fa fa-question-circle m-r-10"></i>网络映射配置了IP规则后，还需要配置TCP，UDP或ICMP规则吗？ </a> </h4>
+        </div>
+        <div id="collapseThree" class=" collapse">
+          <div class="panel-body">
+           <p>不需要。TCP，UDP，ICMP都是封装在IP协议之上，配置IP规则后则无需再配置上述协议。</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading collapsed">
+          <h4 class="panel-title"> <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSix"><i class="fa fa-question-circle m-r-10"></i>虚拟机密码忘了，怎么办？ </a> </h4>
+        </div>
+        <div id="collapseSix" class=" collapse">
+          <div class="panel-body">
+           <p>您可以将虚拟机关闭，并通过管理系统功能直接修改虚拟机密码。（注：windows的虚拟机使用的镜像必须由管理员设置过。）</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading collapsed">
+          <h4 class="panel-title"> <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFive"><i class="fa fa-question-circle m-r-10"></i>为什么我的 windows 主机远程桌面连接不上？ </a> </h4>
+        </div>
+        <div id="collapseFive" class=" collapse">
+          <div class="panel-body">
+            <p>首先， 在 Windows 主机里打开RDP服务：<br />
+                <ol>
+                 <li>使用“虚拟终端”登陆 Windows 主机，“虚拟终端”就是主机 ID 旁边的 显示器形状的小图标，点击即可以弹出 Windows 桌面;</li>
+                 <li>右键点击“我的电脑” -> “属性” -> “远程” -> 选择”启用这台机器上的远程桌面”。</li>
+                </ol>
+              然后您需要手动为主机的防火墙添加一条 接受 tcp 3389 端口 的下行规则， 点击 更新规则 使其应用到主机。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading collapsed">
+          <h4 class="panel-title"> <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseVol"><i class="fa fa-question-circle m-r-10"></i>给虚拟机挂载数据卷后，如何使用？ </a> </h4>
+        </div>
+        <div id="collapseVol" class=" collapse">
+          <div class="panel-body">
+            <ol>
+               <li> 如何分区格式化？</li>
+                  <p>硬盘有 disk size 和 partition size 两个概念。<br />
+                     如果你的硬盘是第一次加载的硬盘，就需要进行分区、格式化，和 mount 操作。 如果是老硬盘，且没有扩容，就不用再分区、格式化了，直接 mount 就行。<br />
+                  </p>
+               <li> 如何进行自动挂载？</li>
+                  <p>
+                     如果你需要在系统启动时自动挂载，不要在 /etc/fstab 直接指定 /dev/vdc1 这样的写法， 因为在本系统中设备的顺序编码在关机、开机过程中可能发生改变，推荐使用 UUID 或者 LABEL 的方式来指定:<br />
+                    如果使用 UUID，则先通过 “blkid /dev/sdc1” 命令，得到磁盘的 UUID
+                  </p>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!----> 
+  </div>
+</div>
+<a href="#" id="back-top">Top</a>
+<script src="/static/plugins/jquery-1.8.3.min.js" type="text/javascript"></script>
+<script src="/static/plugins/jquery-ui/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
+<script src="/static/plugins/bootstrapv3/js/bootstrap.js" type="text/javascript"></script>
+</body>
+</html>

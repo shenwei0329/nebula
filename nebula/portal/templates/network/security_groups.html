@@ -1,0 +1,138 @@
+{% from 'network/segment/security_group_list.html' import build_security_group with context%}
+{% extends 'layout/base.html' %}
+{% block title %}虚拟防火墙-{% endblock %}
+{% block resource_type %}SecurityGroup{% endblock %}
+{% block container %}
+<div class="page-content">
+    <!-- 页面内容从此处开始-->
+    <div class="content">
+      <div class="page-title">
+        <h3>虚拟防火墙 <span class="title-question"><i class="fa fa-question-circle text-info"></i></span></h3>
+        <p class="title-content">虚拟防火墙是指定义资源和对象权限的访问控制列表 (ACL) 中的集合；同时针对云主机的虚拟网卡的安全策略，也用于将多个虚拟网卡归类为个组。</p>
+      </div>
+      <!--列表-->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="grid simple ">
+            <div class="grid-title no-border">
+              <a href="#" id="openmodal" data-toggle="modal" data-target="#newRule" style="display: none"></a>
+              <button type="button" class="btn btn-white btn-cons reload" data-url="/network/security-groups/?segment=true"><i class="fa fa-refresh"></i></button>
+              <button type="button" class="btn btn-white btn-cons _new_static _new"
+                      name="#newGroup"
+                      data-url="{{ url_for('portal.security_group_create_form') }}"
+                      data-rule="newSecurityRule">
+                  <i class="fa fa-plus"></i>&nbsp;&nbsp;新建</button>
+              <div class="btn-group"> <a class="btn btn-white dropdown-toggle btn-demo-space"
+                                         data-toggle="dropdown" href="#"> 更多操作
+                  <span class="caret"></span> </a>
+                <ul class="dropdown-menu" id="security_group_menu">
+                  <li><a href="#" name="#myModal-newRule"
+                         data-url="/forms/security-groups/{id}/security-group-rules/create/"
+                         data-rule="newSecurityGroupRulesRule"><i class="fa fa-plus"></i>&nbsp;新建规则</a></li>
+			      <li><a href="#"  name="#myModal-toVM"
+                         data-url="/forms/security-groups/{id}/effect/"
+                         data-rule="toVMGroupRule"><i class="fa fa-desktop"></i>&nbsp;应用到虚拟机</a></li>
+			      <li><a href="#"  name="#myModal-update"
+                         data-url="/forms/security-groups/{id}/update/"
+                         data-rule="updateSecurityGroupRule"><i class="fa fa-pencil"></i>&nbsp;修改</a></li>
+			      <li><a href="#" name="#deleteSecurityGroup"
+                         data-url="/forms/security-groups/{id}/delete/"
+                         data-rule="deleteGroupRule"><i class="fa fa-trash-o"></i>&nbsp;删除</a></li>
+                </ul>
+              </div>
+              <div class=" input-prepend inside search-form no-boarder">
+
+                  <form action="{{ url_for('portal.security_group_list') }}" method="get" class="">
+                    <span class="add-on">
+                      <span class="iconset top-search"></span>
+                    </span>
+                    <input name="search" type="text" class="no-boarder"
+                       placeholder="{% if search %}{{ search }}{% else %}搜索{% endif %}"
+                       style="width:200px;" value="{{ search }}">
+                  </form>
+
+              </div>
+            </div>
+            <div class="grid-body no-border" name="listtable">
+              {{ build_security_group(pagination) }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--列表-->
+      <!--others-info-->
+      <div class="row  others-info dispaly-none">
+       	<div class="col-md-4  listleft" data-url="/sub/jobs/?resource_type=SecurityGroup&resource_id="></div>
+        <div class="col-md-8  listright" data-url="/forms/security-groups/instances/?resource_id="></div>
+      </div>
+      <!--row-->
+      <!--others-info-->
+    </div>
+    <!--content-->
+    <!-- 页面内容到此结束-->
+  </div>
+{% endblock %}
+{% block modal %}
+
+<!-- Modal -->
+<div id="_new">
+<div class="modal fade" id="myModal-update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">修改虚拟防火墙-<span class="text-success">虚拟防火墙名称</span></h4>
+      </div>
+      <div class="modal-body">
+        <form class=" form-horizontal">
+        <input type="hidden" name="id">
+          <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right"><span class="text-danger">*</span>名 称：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right">描 述：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group"> </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        <button type="button" class="btn btn-primary">保 存</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- /.modal -->
+
+<!--右键出现的菜单-->
+{#<div class="rightMenu">#}
+{#  <ul>#}
+{#      <li><a href="#" name="#myModal-newRule"#}
+{#             data-url="/forms/security-groups/{id}/security-group-rules/create/"#}
+{#             data-rule="newSecurityGroupRulesRule"><i class="fa fa-plus"></i>&nbsp;新建规则</a></li>#}
+{#      <li><a href="#"  name="#myModal-toVM"#}
+{#             data-url="/forms/security-groups/{id}/effect/"#}
+{#             data-rule="toVMGroupRule"><i class="fa fa-desktop"></i>&nbsp;应用到虚拟机</a></li>#}
+{#      <li><a href="#"  name="#myModal-update"#}
+{#             data-url="/forms/security-groups/{id}/update/"#}
+{#             data-rule="updateSecurityGroupRule"><i class="fa fa-pencil"></i>&nbsp;修改</a></li>#}
+{#      <li><a href="#" name="#deleteSecurityGroup"#}
+{#             data-url="/forms/security-groups/{id}/delete/"#}
+{#             data-rule="deleteGroupRule"><i class="fa fa-trash-o"></i>&nbsp;删除</a></li>#}
+{#  </ul>#}
+{#</div>#}
+<!--右键出现的菜单-->
+{% endblock %}
+{% block extend_js %}
+<!-- BEGIN PAGE LEVEL JS -->
+<script src="/static/js/list.js" type="text/javascript"></script>
+<script src="/static/js/network/security_groups.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+{% endblock %}

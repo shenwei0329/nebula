@@ -1,0 +1,46 @@
+<div id="{{ etl_href }}" class="tab-pane active">
+    {% import 'bootstrap/wtf.html' as wtf %}
+
+    <ul>
+            <ul class="nav nav-header">
+                <li style="float: left">{{ pagination.info }}</li>
+            </ul>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <a class="list-group-item active">
+                        <tr>
+                            <th width="180pix">项目编号</th>
+                            <th width="180pix">名称</th>
+                            <th>特性</th>
+                            <th width="100pix">负责人</th>
+                            <th width="120pix">立项时间</th>
+                            <th width="220pix">计划时间</th>
+                            <th width="100pix">状态</th>
+                            <th width="200pix">工程信息</th>
+                        </tr>
+                    </a>
+                    </thead>
+                    <tbody>
+                    {% for dir in dirs %}
+                        <tr>
+                            <td><a href="#">{{ dir.PJ_XMBH}}</a></td>
+                            <td>{{ dir.PJ_XMMC }}</td>
+                            <td>{{ dir.PJ_XMJJ }}</td>
+                            <td>{{ dir.PJ_XMFZR }}</td>
+                            <td>{{ dir.PJ_LXSJ }}</td>
+                            <td>{{ dir.BgEdDate }}</td>
+                            <td>{{ dir.PJ_XMZT }}</td>
+                            <td>
+                                <button id='product_func' value={{ dir.PJ_XMBH }} type='button' class="small button" onclick="ShowProjectInfo('{{ dir.PJ_XMBH }}')"><i class="icon-file" style="color: #f00000;"></i></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <ul class="pagination">
+                    {{ pagination.links }}
+                </ul>
+            </div>
+    </ul>
+</div>

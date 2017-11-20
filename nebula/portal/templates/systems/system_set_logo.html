@@ -1,0 +1,105 @@
+{% extends "layout/base.html" %}
+
+{% block title %}系统设置{% endblock %}
+
+{% block container %}
+<div class="page-content">
+<div class="content">
+      <!--title-->
+      <div class="page-title">
+        <h3>系统配置</h3>
+      </div>
+      <!--title-->
+      <div class="row">
+        <div class="col-md-12">
+            <ul class="nav nav-pills" id="tab-setting">
+                <li ><a href="{{ url_for('portal.system_settings') }}">基本信息配置</a></li>
+                <li class="active"><a href="{{ url_for('portal.system_set_logo') }}">logo配置</a></li>
+                <li><a href="{{ url_for('portal.resource_settings') }}">性能配置</a></li>
+            </ul>
+          <div class="grid simple ">
+            <div class="grid-body no-border">
+            <br/>
+              <form id="settingsForm" class="form-horizontal validate-form"
+              	 data-rule="settingsRule" method="POST" action="{{ url_for('portal.system_set_logo') }}">
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">标准logo（250*50）</label>
+                    <!--输入框-->
+                   <div class="col-sm-5">
+                   <h2><img width="250" height="49" src="{{ settings.system_logo|default('/static/img/logo.png',True) }}"></h2>
+                   <input type="hidden"  id="system_logo" value="/static/img/logo.png"  name="system_logo">
+                   </div>
+                    <br />
+                    <div class="col-sm-offset-3 col-sm-5">
+                    <button type="button" class="btn btn-success"
+                           data-url="{{ url_for('portal.system_set_logo') }}?type=default"
+                           data-rule="uploadLogoRule" > <i class="glyphicon glyphicon-upload"></i>&nbsp;&nbsp;点击修改</button>
+                    </div>
+
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text">
+                      <p>
+                          说明：在登录位置和主菜单上方显示的logo图片,图片大小不要超过(width="240" height="49")，支持png,jpg,gif;
+                          推荐使用png格式，并将图片背景设置成透明。
+                      </p>
+                  </div>
+                </div>
+                <!--form-group-->
+                <div class="form-group">
+                  <label  class="col-sm-3 control-label">小logo(50*60)</label>
+                  <!--输入框-->
+                    <div class="col-sm-4">
+                         <h2><img width="50" height="60" src="{{ settings.system_logo_mini|default('/static/img/logosmall.png',True) }}"></h2>
+                        <input type="hidden"  id="system_logo_mini" value="/static/img/logosmall.png"  name="system_logo_mini">
+                    </div>
+                    <br />
+                    <div class="col-sm-offset-3 col-sm-5">
+                    <button type="button" class="btn btn-success"
+                           data-url="{{ url_for('portal.system_set_logo') }}?type=mini"
+                           data-rule="uploadLogoRule" > <i class="glyphicon glyphicon-upload"></i>&nbsp;&nbsp;点击修改</button>
+                    </div>
+                   <!--输入框-->
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：菜单栏切换在小图标时显示的logo。大小（width="50" height="60"）</p></div>
+                </div>
+
+                <!--form-group-->
+                <div class="form-group">
+                  <label  class="col-sm-3 control-label">favicon图标（16*16）</label>
+                  <!--输入框-->
+                    <div class="col-sm-4">
+                         <h2><img width="16" height="16" src="{{ settings.system_logo_ico|default('/static/img/favicon.ico',True) }}"></h2>
+                        <input type="hidden"  id="system_logo_ico" value="/static/img/favicon.ico"  name="system_logo_ico">
+                    </div>
+                    <div class="col-sm-offset-3 col-sm-5">
+                    <button type="button" class="btn btn-success"
+                           data-url="{{ url_for('portal.system_set_logo') }}?type=ico"
+                           data-rule="uploadLogoRule" > <i class="glyphicon glyphicon-upload"></i>&nbsp;&nbsp;点击修改</button>
+                    </div>
+                   <!--输入框-->
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：浏览器favicon图标，必须是.ico格式的否则浏览器不能正确识别。大小（width="16" height="16"）</p></div>
+                </div>
+
+                <br/>
+                <div class="form-group">
+                  <div class="col-sm-offset-1 col-sm-9">
+                    <button type="submit" class="btn btn-primary btn-cons m-l-10">&nbsp;还原成默认值&nbsp; </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!--grid-->
+
+        </div>
+        <!--col-md-12-->
+      </div>
+      <!--row-->
+    </div>
+    <!--content-->
+</div>
+
+{% endblock %}
+{% block extend_js %}
+<!-- BEGIN PAGE LEVEL JS -->
+<script src="/static/js/list.js" type="text/javascript"></script>
+<script src="/static/plugins/dropzone/dropzone.min.js" type="text/javascript"></script>
+{% endblock %}

@@ -1,0 +1,42 @@
+<div id="{{ etl_href }}" class="tab-pane active">
+    {% import 'bootstrap/wtf.html' as wtf %}
+
+    <ul>
+            <ul class="nav nav-header">
+                <li style="float: left">{{ pagination.info }}</li>
+            </ul>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <a class="list-group-item active">
+                        <tr>
+                            <th width="80pix">代号</th>
+                            <th width="80pix">版本</th>
+                            <th width="220pix">名称</th>
+                            <th width="180pix">类型</th>
+                            <th width="140pix">发布日期</th>
+                            <th width="200pix">功能定义</th>
+                        </tr>
+                    </a>
+                    </thead>
+                    <tbody>
+                    {% for dir in dirs %}
+                        <tr>
+                            <td><a href="#">{{ dir.PD_DH}}</a></td>
+                            <td>{{ dir.PD_BBH }}</td>
+                            <td>{{ dir.PD_MC }}</td>
+                            <td>{{ dir.PD_LX }}</td>
+                            <td>{{ dir.PD_FBSJ }}</td>
+                            <td>
+                                <button id='product_func' value={{ dir.PD_DH }} type='button' class="small button" onclick="ShowProductInfo('{{ dir.PD_DH+':'+dir.PD_BBH }}')"><i class="icon-file" style="color: #f00000;"></i></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <ul class="pagination">
+                    {{ pagination.links }}
+                </ul>
+            </div>
+    </ul>
+</div>

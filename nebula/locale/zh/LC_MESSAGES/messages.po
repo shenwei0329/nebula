@@ -1,0 +1,4647 @@
+# Chinese translations for PROJECT.
+# Copyright (C) 2014 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2014-12-23 15:56+0800\n"
+"PO-Revision-Date: 2014-08-25 05:43+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+
+#: nebula/chameleon/agent.py:35
+#, python-format
+msgid "Polling pollster %s"
+msgstr ""
+
+#: nebula/chameleon/agent.py:39
+#, python-format
+msgid "Continue after error from %(name)s: %(error)s"
+msgstr ""
+
+#: nebula/chameleon/agent.py:60
+#, python-format
+msgid "Failed to import extension %(extension_name)s: %(error)s"
+msgstr ""
+
+#: nebula/chameleon/agent.py:65
+#, python-format
+msgid "Loaded plugin %s"
+msgstr ""
+
+#: nebula/chameleon/agent.py:96
+msgid "No pollsters found in this agent"
+msgstr ""
+
+#: nebula/chameleon/notification.py:27
+msgid ""
+"Failed to load any notification handlers in "
+"CONF.chameleon.notification_handlers"
+msgstr ""
+
+#: nebula/chameleon/notification.py:36
+#, python-format
+msgid "Event types from %(name)s: %(type)s (ack_on_error=%(error)s)"
+msgstr ""
+
+#: nebula/chameleon/notification.py:71
+#, python-format
+msgid "Failed to import handler %(handler_name)s: %(err)s"
+msgstr ""
+
+#: nebula/chameleon/notification.py:76
+#, python-format
+msgid "Loaded notification handler %s"
+msgstr ""
+
+#: nebula/chameleon/plugin.py:74
+#, python-format
+msgid "Event %(event_type)s not in set %(event_types)s, Skip"
+msgstr ""
+
+#: nebula/chameleon/plugin.py:81
+#, python-format
+msgid "Processing notification, event_type=%s"
+msgstr ""
+
+#: nebula/chameleon/plugin.py:86
+msgid "Error occurred while processing notification"
+msgstr ""
+
+#: nebula/chameleon/service.py:32
+#, python-format
+msgid "%(worker_name)s value of %(workers)s is invalid, must be greater than 0"
+msgstr ""
+
+#: nebula/core/quota.py:944
+#, python-format
+msgid "Failed to commit reservations %s"
+msgstr ""
+
+#: nebula/core/quota.py:963
+#, python-format
+msgid "Failed to roll back reservations %s"
+msgstr ""
+
+#: nebula/core/common/openstack/common.py:91
+#, python-format
+msgid ""
+"status is UNKNOWN from vm_state=%(vm_state)s task_state=%(task_state)s. "
+"Bad upgrade or db corrupted?"
+msgstr ""
+
+#: nebula/core/common/openstack/vm_states.py:75
+msgid "start"
+msgstr "启动"
+
+#: nebula/core/common/openstack/vm_states.py:76
+msgid "change"
+msgstr ""
+
+#: nebula/core/common/openstack/vm_states.py:77
+msgid "modify"
+msgstr ""
+
+#: nebula/core/common/openstack/vm_states.py:78
+msgid "pause"
+msgstr ""
+
+#: nebula/core/common/openstack/vm_states.py:79
+msgid "reboot"
+msgstr ""
+
+#: nebula/core/common/openstack/vm_states.py:80
+msgid "resume"
+msgstr ""
+
+#: nebula/core/common/openstack/vm_states.py:81
+msgid "shutdown"
+msgstr ""
+
+#: nebula/core/common/openstack/vm_states.py:82
+msgid "suspend"
+msgstr ""
+
+#: nebula/core/common/openstack/vm_states.py:83
+msgid "unsuspend"
+msgstr ""
+
+#: nebula/core/common/openstack/vm_states.py:84
+msgid "unpause"
+msgstr ""
+
+#: nebula/core/common/openstack/vm_states.py:85
+msgid "backup"
+msgstr ""
+
+#: nebula/core/common/openstack/vm_states.py:86
+msgid "change_admin_password"
+msgstr ""
+
+#: nebula/core/common/openstack/vm_states.py:87
+msgid "change_iops"
+msgstr ""
+
+#: nebula/core/db/exception.py:46
+msgid "Invalid Parameter: Unicode is not supported by the current database."
+msgstr ""
+
+#: nebula/core/db/session.py:195
+msgid "DB exception wrapped."
+msgstr ""
+
+#: nebula/core/db/session.py:243
+#, python-format
+msgid "Database server has gone away: %s"
+msgstr ""
+
+#: nebula/core/db/session.py:296
+msgid "Unable to detect effective SQL mode"
+msgstr ""
+
+#: nebula/core/db/session.py:304
+#, python-format
+msgid "MySQL SQL mode is '%s', consider enabling TRADITIONAL or STRICT_ALL_TABLES"
+msgstr ""
+
+#: nebula/core/db/session.py:429
+#, python-format
+msgid "SQL connection failed. %s attempts left."
+msgstr ""
+
+#: nebula/core/forms/validators.py:27
+msgid "instance's job still running"
+msgstr ""
+
+#: nebula/core/forms/validators.py:36
+#, python-format
+msgid "Can't %s vm when vm is %s state"
+msgstr ""
+
+#: nebula/core/forms/validators.py:45
+#, python-format
+msgid "%s quota has exceeded"
+msgstr ""
+
+#: nebula/core/forms/validators.py:63
+#, python-format
+msgid "%s has used %s, cannot reset to %s"
+msgstr "%s配额已使用%s, 不能设置为%s(需大于或等于已使用配额)"
+
+#: nebula/core/forms/validators.py:83
+#, python-format
+msgid "ip address[%s] has exists"
+msgstr "IP地址[%s]已存在"
+
+#: nebula/core/managers/base.py:42
+#, python-format
+msgid "Database registration exception: %s"
+msgstr ""
+
+#: nebula/core/managers/base.py:43
+#, python-format
+msgid "Statement: %s"
+msgstr ""
+
+#: nebula/core/managers/base.py:54
+msgid "Database exception"
+msgstr ""
+
+#: nebula/core/mission/helpers.py:42
+#, python-format
+msgid "Looking for %(backend_name)r backend driver in %(namespace)r"
+msgstr ""
+
+#: nebula/core/mission/task.py:61
+#, python-format
+msgid ""
+"Current atom/task execution failed: %(exception_str)s\n"
+"Context: args=%(args)s, kwargs=%(kwargs)s\n"
+"traceback: %(traceback_str)s"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/add_host.py:31
+msgid "开始增加主机到集群"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/add_host.py:36
+msgid "开始向底层发起请求"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/add_host.py:41
+msgid "结束向底层发起请求"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/add_host.py:43
+msgid "增加主机到集群成功"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/add_host.py:63
+#: nebula/core/mission/flows/aggregate/create_aggregate.py:53
+#: nebula/core/mission/flows/hosts/create_host.py:56
+#: nebula/core/mission/flows/networks/create_virtualrouter.py:61
+msgid "存入数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/add_host.py:69
+#: nebula/core/mission/flows/aggregate/create_aggregate.py:58
+#: nebula/core/mission/flows/networks/create_virtualrouter.py:69
+#: nebula/core/mission/flows/networks/update_security_group.py:47
+msgid "存入数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/add_host.py:70
+msgid "主机加入集群成功"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/add_host.py:75
+msgid "主机加入集群失败"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/create_aggregate.py:23
+msgid "开始创建集群"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/create_aggregate.py:26
+msgid "申请集群资源"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/create_aggregate.py:31
+msgid "集群资源申请成功"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/create_aggregate.py:38
+msgid "集群资源申请失败"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/create_aggregate.py:59
+msgid "创建集群成功"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/create_aggregate.py:64
+msgid "创建集群失败"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/delete_aggregate.py:24
+msgid "开始删除集群"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/delete_aggregate.py:27
+msgid "开始删除资源"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/delete_aggregate.py:32
+#: nebula/core/mission/flows/aggregate/delete_aggregate.py:55
+msgid "删除集群成功"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/delete_aggregate.py:50
+msgid "删除资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/delete_aggregate.py:52
+#: nebula/core/mission/flows/aggregate/remove_host.py:44
+#: nebula/core/mission/flows/networks/delete_nat.py:42
+#: nebula/core/mission/flows/networks/delete_virtualrouter.py:46
+msgid "开始删除数据库记录"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/delete_aggregate.py:58
+msgid "删除集群失败"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/remove_host.py:24
+msgid "开始从集群移除主机"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/remove_host.py:28
+#: nebula/core/mission/flows/networks/delete_nat.py:25
+#: nebula/core/mission/flows/networks/unbinding_publicip_to_virtualruoter.py:26
+msgid "开始删除底层资源"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/remove_host.py:38
+#: nebula/core/mission/flows/networks/delete_nat.py:28
+#: nebula/core/mission/flows/networks/unbinding_publicip_to_virtualruoter.py:30
+msgid "删除底层资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/remove_host.py:41
+msgid "删除底层资源异常"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/remove_host.py:50
+msgid "从集群移除主机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/remove_host.py:53
+msgid "从集群移除主机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/update_aggregate.py:24
+msgid "开始更新集群"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/update_aggregate.py:27
+msgid "申请更新集群资源"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/update_aggregate.py:43
+msgid "更新集群资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/update_aggregate.py:46
+msgid "更新集群成功"
+msgstr ""
+
+#: nebula/core/mission/flows/aggregate/update_aggregate.py:51
+msgid "更新集群失败"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/create_alarm.py:25
+msgid "开始创建告警"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/create_alarm.py:26
+#: nebula/core/mission/flows/alarms/create_alarm.py:55
+msgid "创建告警成功"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/create_alarm.py:30
+#: nebula/core/mission/flows/alarms/create_alarm.py:65
+msgid "创建告警失败"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/create_alarm.py:37
+#: nebula/core/mission/flows/alarms/modify_alarm.py:32
+msgid "开始保存告警到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/create_alarm_binding_instance.py:28
+msgid "开始绑定告警"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/create_alarm_binding_instance.py:77
+#: nebula/core/mission/flows/alarms/create_alarm_binding_instance.py:106
+msgid "绑定告警成功"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/create_alarm_binding_instance.py:83
+#: nebula/core/mission/flows/alarms/create_alarm_binding_instance.py:114
+msgid "绑定告警失败"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/create_alarm_binding_instance.py:89
+msgid "开始保存告警绑定到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/delete_alarm.py:24
+msgid "开始删除告警"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/delete_alarm.py:25
+#: nebula/core/mission/flows/alarms/delete_alarm.py:42
+msgid "删除告警成功"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/delete_alarm.py:28
+#: nebula/core/mission/flows/alarms/delete_alarm.py:46
+msgid "删除告警失败"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/delete_alarm.py:34
+msgid "开始从数据库删除告警"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/delete_alarm_binding_instance.py:25
+msgid "开始解绑告警"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/delete_alarm_binding_instance.py:32
+#: nebula/core/mission/flows/alarms/delete_alarm_binding_instance.py:48
+msgid "解绑告警成功"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/delete_alarm_binding_instance.py:37
+#: nebula/core/mission/flows/alarms/delete_alarm_binding_instance.py:52
+msgid "解绑告警失败"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/delete_alarm_binding_instance.py:43
+msgid "开始从数据库解绑告警"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/modify_alarm.py:21
+msgid "开始修改告警"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/modify_alarm.py:22
+#: nebula/core/mission/flows/alarms/modify_alarm.py:37
+msgid "修改告警成功"
+msgstr ""
+
+#: nebula/core/mission/flows/alarms/modify_alarm.py:26
+#: nebula/core/mission/flows/alarms/modify_alarm.py:41
+msgid "修改告警失败"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/create_host.py:25
+#: nebula/core/mission/flows/hosts/host_addaggregate.py:31
+#: nebula/core/mission/flows/hosts/host_removeaggregate.py:23
+msgid "验证主机资源"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/create_host.py:32
+msgid "更新主机状态"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/create_host.py:44
+#: nebula/core/mission/flows/hosts/create_host.py:73
+msgid "添加主机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/create_host.py:69
+msgid "添加主机成功,检查集群操作"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/create_host.py:89
+msgid "正在加入集群"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/create_host.py:102
+msgid "正在保存数据"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/create_host.py:107
+msgid "添加主机并加入集群成功"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/create_host.py:109
+msgid "要操作的集群不存在，请重新添加集群"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/create_host.py:111
+msgid "无集群操作，添加主机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/create_host.py:115
+msgid "加入集群失败，请重新加入集群"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_active.py:23
+#: nebula/core/mission/flows/hosts/host_delete.py:32
+#: nebula/core/mission/flows/hosts/host_maintain.py:23
+msgid "更新主机状态中"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_active.py:33
+#: nebula/core/mission/flows/hosts/host_active.py:49
+msgid "恢复主机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_active.py:41
+#: nebula/core/mission/flows/hosts/host_addaggregate.py:57
+#: nebula/core/mission/flows/hosts/host_maintain.py:41
+#: nebula/core/mission/flows/hosts/host_removeaggregate.py:33
+msgid "更新数据库记录"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_active.py:45
+msgid "恢复主机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_addaggregate.py:36
+msgid "资源申请中"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_addaggregate.py:49
+#: nebula/core/mission/flows/hosts/host_addaggregate.py:66
+msgid "加入集群失败"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_addaggregate.py:62
+msgid "加入集群成功"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_delete.py:41
+msgid "移除主机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_delete.py:45
+msgid "移除主机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_delete.py:88
+msgid "清理主机告警失败"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_maintain.py:33
+#: nebula/core/mission/flows/hosts/host_maintain.py:52
+msgid "主机置维护失败"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_maintain.py:48
+msgid "主机置维护成功"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_removeaggregate.py:28
+msgid "主机资源删除中"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_removeaggregate.py:38
+msgid "主机从集群移除成功"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_removeaggregate.py:50
+msgid "移除集群失败"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_sync.py:43
+msgid "获取计算主机列表"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_sync.py:48
+#: nebula/core/mission/flows/hosts/host_sync.py:58
+msgid "获取计算主机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_sync.py:88
+#: nebula/core/mission/flows/hosts/host_sync.py:116
+#: nebula/core/mission/flows/hosts/host_sync.py:136
+msgid "同步计算主机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_sync.py:97
+msgid "更新已存在的数据"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_sync.py:125
+msgid "处理新增的数据"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_sync.py:130
+msgid "同步计算主机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_update.py:25
+msgid "资源更新中"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_update.py:39
+msgid "修改主机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/hosts/host_update.py:43
+msgid "修改主机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/images/delete_image.py:50
+#: nebula/core/mission/flows/images/delete_user_image.py:44
+msgid "开始删除镜像"
+msgstr ""
+
+#: nebula/core/mission/flows/images/delete_image.py:71
+#: nebula/core/mission/flows/images/delete_user_image.py:78
+msgid "删除镜像成功"
+msgstr ""
+
+#: nebula/core/mission/flows/images/delete_user_image.py:51
+msgid "删除镜像失败"
+msgstr ""
+
+#: nebula/core/mission/flows/images/delete_user_image.py:59
+msgid "开始删除数据库镜像"
+msgstr ""
+
+#: nebula/core/mission/flows/images/modify_image.py:25
+msgid "开始更新镜像"
+msgstr ""
+
+#: nebula/core/mission/flows/images/modify_image.py:30
+msgid "更新镜像失败"
+msgstr ""
+
+#: nebula/core/mission/flows/images/modify_image.py:44
+msgid "更新镜像成功"
+msgstr ""
+
+#: nebula/core/mission/flows/images/upload_image.py:30
+msgid "开始上传镜像"
+msgstr ""
+
+#: nebula/core/mission/flows/images/upload_image.py:80
+#: nebula/core/mission/flows/instance_backup/convertimage_instance_backup.py:156
+msgid "底层出错"
+msgstr ""
+
+#: nebula/core/mission/flows/images/upload_image.py:105
+#: nebula/core/mission/flows/instance_backup/convertimage_instance_backup.py:104
+msgid "上传镜像成功"
+msgstr ""
+
+#: nebula/core/mission/flows/images/upload_image.py:109
+msgid "上传镜像失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/convertimage_instance_backup.py:28
+msgid "开始查询指定虚机备份"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/convertimage_instance_backup.py:30
+msgid "查询指定虚机备份成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/convertimage_instance_backup.py:40
+msgid "查询指定虚机备份失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/convertimage_instance_backup.py:56
+msgid "开始验证虚机备份转换镜像"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/convertimage_instance_backup.py:115
+msgid "后台虚机备份转换成镜像开始"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/convertimage_instance_backup.py:138
+msgid "虚机备份转换成镜像成功,并开始上传镜像"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/delete_instance_backup.py:27
+msgid "开始删除虚拟机备份"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/delete_instance_backup.py:34
+msgid "该虚拟机备份底层不存在"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/delete_instance_backup.py:39
+msgid "虚拟机有备份任务正在执行"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/delete_instance_backup.py:60
+msgid "删除虚机备份失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/delete_instance_backup.py:87
+msgid "删除备份成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/modify_instance_backup.py:24
+msgid "开始更新后台备份"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/modify_instance_backup.py:48
+msgid "更新备份成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/restore_instance_backup.py:29
+msgid "开始查询指定虚拟机备份"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/restore_instance_backup.py:31
+msgid "查询指定虚拟机备份成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/restore_instance_backup.py:63
+#: nebula/core/mission/flows/instance_backup/restore_instance_backup.py:104
+msgid "虚拟机恢复成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instance_backup/restore_instance_backup.py:68
+msgid "开始虚拟机恢复"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/attach_volume_instance.py:28
+#: nebula/core/mission/flows/instances/create_instance.py:75
+#: nebula/core/mission/flows/volumes/attach_volume.py:28
+msgid "开始挂载数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/attach_volume_instance.py:38
+msgid "申请挂载数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/attach_volume_instance.py:39
+#: nebula/core/mission/flows/instances/create_instance.py:83
+msgid "申请挂载数据卷成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/attach_volume_instance.py:44
+#: nebula/core/mission/flows/instances/attach_volume_instance.py:68
+#: nebula/core/mission/flows/instances/create_instance.py:97
+#: nebula/core/mission/flows/volumes/attach_volume.py:48
+#: nebula/core/mission/flows/volumes/attach_volume.py:108
+msgid "挂载数据卷失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/attach_volume_instance.py:55
+msgid "存入数据卷挂载到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/attach_volume_instance.py:63
+msgid "存入数据卷挂载到数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/attach_volume_instance.py:64
+#: nebula/core/mission/flows/volumes/attach_volume.py:98
+msgid "挂载数据卷成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/backup_instance.py:33
+msgid "开始创建虚拟机备份"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/backup_instance.py:38
+msgid "虚拟机正在执行其他任务，不能创建备份"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/backup_instance.py:56
+#: nebula/core/mission/flows/instances/backup_instance.py:121
+msgid "配额不足，不能创建虚拟机备份"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/backup_instance.py:82
+#: nebula/core/mission/flows/instances/backup_instance.py:85
+#: nebula/core/mission/flows/instances/backup_instance.py:113
+#: nebula/core/mission/flows/instances/backup_instance.py:123
+#: nebula/core/mission/flows/instances/backup_instance.py:125
+#: nebula/core/mission/flows/instances/backup_instance.py:148
+#: nebula/core/mission/flows/instances/backup_instance.py:176
+msgid "创建虚拟机备份失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/backup_instance.py:94
+msgid "创建虚拟机备份成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/backup_instance.py:137
+msgid "开始读取备份信息"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/backup_instance.py:146
+msgid "读取备份信息失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/backup_instance.py:157
+#: nebula/core/mission/flows/instances/change_iops_instance.py:41
+msgid "开始同步数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/backup_instance.py:169
+msgid "创建虚机备份成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/backup_instance.py:174
+msgid "获取虚机信息失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:42
+#: nebula/core/mission/flows/instances/create_instance.py:45
+msgid "开始获取规格"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:48
+#: nebula/core/mission/flows/instances/create_instance.py:51
+msgid "获取规格成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:60
+#: nebula/core/mission/flows/instances/create_instance.py:60
+msgid "获取镜像失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:71
+#: nebula/core/mission/flows/instances/create_instance.py:106
+msgid "开始获取子网"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:81
+#: nebula/core/mission/flows/instances/create_instance.py:116
+msgid "获取子网失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:91
+#: nebula/core/mission/flows/instances/create_instance.py:126
+msgid "开始获取网络"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:99
+#: nebula/core/mission/flows/instances/create_instance.py:134
+msgid "获取网络失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:115
+#: nebula/core/mission/flows/instances/create_instance.py:272
+msgid "开始创建虚拟机"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:155
+#: nebula/core/mission/flows/instances/create_instance.py:334
+msgid "创建虚拟机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:165
+#: nebula/core/mission/flows/instances/create_instance.py:341
+msgid "创建虚拟机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:178
+#: nebula/core/mission/flows/instances/create_instance.py:148
+#: nebula/core/mission/flows/networks/attach_port.py:70
+#: nebula/core/mission/flows/networks/create_port.py:27
+msgid "开始创建网卡"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:215
+#: nebula/core/mission/flows/instances/create_instance.py:185
+#, python-format
+msgid "Deleting port, port_id=%s"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:219
+#: nebula/core/mission/flows/instances/create_instance.py:189
+#: nebula/core/mission/flows/networks/create_port.py:49
+msgid "创建网卡失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:231
+#: nebula/core/mission/flows/instances/create_instance.py:201
+msgid "开始保存网卡信息"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:259
+#: nebula/core/mission/flows/instances/create_instance.py:229
+msgid "保存网卡信息失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:271
+#: nebula/core/mission/flows/instances/create_instance.py:241
+msgid "应用安全组到网卡"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:282
+#: nebula/core/mission/flows/instances/create_instance.py:252
+msgid "应用安全组成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/batches_create_instances.py:287
+#: nebula/core/mission/flows/instances/create_instance.py:257
+msgid "应用安全组失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/change_instance.py:32
+msgid "正在更新虚拟机规格"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/change_instance.py:37
+msgid "目标主机资源不满足修改配置要求"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/change_instance.py:38
+msgid "Error:compute node resource is overflow"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/change_instance.py:57
+msgid "修改虚拟机配置成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/change_instance.py:63
+msgid "修改虚拟机配置失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/change_iops_instance.py:17
+msgid "开始更新虚拟机IOPS"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/change_iops_instance.py:19
+#: nebula/core/mission/flows/instances/change_iops_instance.py:47
+msgid "更新虚拟机IOPS成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/change_iops_instance.py:35
+#: nebula/core/mission/flows/instances/change_iops_instance.py:50
+msgid "更新虚拟机IOPS失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/change_passwd_instance.py:19
+msgid "开始更新虚拟机密码"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/change_passwd_instance.py:40
+msgid "修改虚拟机密码成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/change_passwd_instance.py:45
+msgid "修改虚拟机密码失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/delete_instance.py:46
+msgid "正在删除虚拟机"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/delete_instance.py:58
+msgid "删除虚拟机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/delete_instance.py:63
+msgid "删除虚拟机记录"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/delete_instance.py:113
+msgid "删除虚拟机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/delete_instance.py:117
+msgid "删除虚拟机记录失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/delete_instance.py:158
+msgid "清理虚拟机告警失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/migrate_instance.py:29
+msgid "开始验证计算节点资源情况"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/migrate_instance.py:34
+msgid "虚拟机不存在"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/migrate_instance.py:41
+msgid "虚拟机flavor不存在"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/migrate_instance.py:48
+msgid "迁移目标主机不存在"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/migrate_instance.py:55
+msgid "迁移目标主机内存配额满足要求"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/migrate_instance.py:57
+msgid "迁移目标主机内存配额不满足要求"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/migrate_instance.py:84
+msgid "虚拟机迁移成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/migrate_instance.py:104
+msgid "虚拟机开始迁移"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/modify_instance.py:24
+msgid "正在更新虚拟机"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/modify_instance.py:34
+#: nebula/core/mission/flows/instances/modify_instance.py:51
+msgid "更新虚拟机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/modify_instance.py:47
+msgid "更新虚拟机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/pause_instance.py:21
+msgid "开始暂停虚拟机"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/pause_instance.py:40
+msgid "暂停虚拟机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/pause_instance.py:44
+msgid "暂停虚拟机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/reboot_instance.py:21
+msgid "开始重启虚拟机"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/reboot_instance.py:40
+msgid "重启虚拟机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/reboot_instance.py:44
+msgid "重启虚拟机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/resume_instance.py:21
+#: nebula/core/mission/flows/instances/unsuspend_instance.py:21
+msgid "开始恢复挂起的虚拟机"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/resume_instance.py:40
+#: nebula/core/mission/flows/instances/unsuspend_instance.py:40
+msgid "恢复挂起的虚拟机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/resume_instance.py:44
+#: nebula/core/mission/flows/instances/unsuspend_instance.py:44
+msgid "恢复挂起的虚拟机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/shutdown_instance.py:21
+msgid "开始停止虚拟机"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/shutdown_instance.py:40
+msgid "停止虚拟机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/shutdown_instance.py:44
+msgid "停止虚拟机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/start_instance.py:21
+msgid "开始启动虚拟机"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/start_instance.py:40
+msgid "启动虚拟机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/start_instance.py:44
+msgid "启动虚拟机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/suspend_instance.py:21
+msgid "开始挂起虚拟机"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/suspend_instance.py:40
+msgid "挂起虚拟机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/suspend_instance.py:44
+msgid "挂起虚拟机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/unpause_instance.py:21
+msgid "开始恢复暂停的虚拟机"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/unpause_instance.py:40
+msgid "恢复暂停的虚拟机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/instances/unpause_instance.py:44
+msgid "恢复暂停的虚拟机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:28
+#: nebula/core/mission/flows/networks/detach_port.py:25
+msgid "开始卸载网卡"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:39
+msgid "虚拟防火墙已经被删除，可以忽略！"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:43
+msgid "卸载网卡资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:46
+msgid "卸载网卡资源失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:53
+msgid "开始删除数据库网卡"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:55
+msgid "从数据库删除网卡成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:59
+msgid "从数据库删除网卡失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:73
+msgid "申请网卡资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:89
+msgid "网卡资源申请成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:94
+#: nebula/core/mission/flows/networks/attach_port.py:120
+msgid "挂载网卡失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:109
+#: nebula/core/mission/flows/networks/create_port.py:60
+msgid "开始挂载网卡"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:110
+#: nebula/core/mission/flows/networks/create_port.py:61
+msgid "申请挂载网卡"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:116
+#: nebula/core/mission/flows/networks/attach_port.py:178
+#: nebula/core/mission/flows/networks/create_port.py:67
+msgid "挂载网卡成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:133
+msgid "开始应用虚拟防火墙"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:134
+msgid "申请应用虚拟防火墙"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:149
+#: nebula/core/mission/flows/networks/update_port.py:60
+msgid "应用虚拟防火墙成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:154
+#: nebula/core/mission/flows/networks/update_port.py:64
+msgid "应用虚拟防火墙失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:176
+#: nebula/core/mission/flows/networks/update_port.py:54
+msgid "应用虚拟防火墙开始存入数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/attach_port.py:182
+msgid "应用虚拟防火墙入库失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/binding_private_network_to_virtualrouter.py:27
+msgid "开始绑定私有子网到虚拟路由器"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/binding_private_network_to_virtualrouter.py:30
+msgid "申请绑定私有子网到虚拟路由器"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/binding_private_network_to_virtualrouter.py:35
+msgid "绑定私有子网到虚拟路由器成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/binding_private_network_to_virtualrouter.py:56
+msgid "私有子网绑定到虚拟路由器成功存入数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/binding_private_network_to_virtualrouter.py:65
+msgid "私有子网绑定到虚拟路由器成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/binding_private_network_to_virtualrouter.py:69
+msgid "私有子网绑定到虚拟路由器失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/binding_publicip_to_virtualrouter.py:23
+msgid "开始设置虚拟路由器网关"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/binding_publicip_to_virtualrouter.py:25
+msgid "申请设置虚拟路由器网关"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/binding_publicip_to_virtualrouter.py:29
+#: nebula/core/mission/flows/networks/binding_publicip_to_virtualrouter.py:59
+msgid "设置虚拟路由器网关成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/binding_publicip_to_virtualrouter.py:50
+msgid "虚拟路由器网关成功存入数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/binding_publicip_to_virtualrouter.py:63
+msgid "设置虚拟路由器网关失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/break_private_network.py:26
+msgid "开始删除私有子网"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/break_private_network.py:27
+#: nebula/core/mission/flows/networks/delete_subnet.py:32
+msgid "申请删除子网资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/break_private_network.py:33
+#: nebula/core/mission/flows/networks/break_private_network.py:44
+#: nebula/core/mission/flows/networks/delete_subnet.py:43
+msgid "删除子网资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/break_private_network.py:36
+#: nebula/core/mission/flows/networks/break_private_network.py:48
+#: nebula/core/mission/flows/networks/delete_subnet.py:46
+msgid "删除子网资源失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/break_private_network.py:42
+#: nebula/core/mission/flows/networks/create_publicip.py:42
+msgid "开始从数据库删除子网绑定路由器"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_floatingip.py:27
+msgid "开始分配浮动IP"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_floatingip.py:28
+msgid "申请分配浮动IP"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_floatingip.py:34
+#: nebula/core/mission/flows/networks/create_floatingip.py:56
+msgid "分配浮动IP成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_floatingip.py:42
+#: nebula/core/mission/flows/networks/create_floatingip.py:63
+msgid "分配浮动IP失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_floatingip.py:47
+msgid "开始保存浮动IP到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_nat.py:26
+msgid "开始创建网络映射"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_nat.py:39
+msgid "申请网络映射资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_nat.py:44
+msgid "申请网络映射资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_nat.py:63
+msgid "写入数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_nat.py:88
+msgid "写入数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_nat.py:89
+msgid "创建网络映射成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_nat.py:93
+msgid "创建网络映射失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_port.py:30
+msgid "申请创建网卡"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_port.py:39
+msgid "创建网卡成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_port.py:71
+msgid "申请挂载网卡失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_port.py:82
+msgid "开始存入数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_port.py:89
+msgid "接入虚拟机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_port.py:93
+msgid "接入虚拟机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_private_network.py:26
+msgid "开始创建网络"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_private_network.py:29
+msgid "申请网络资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_private_network.py:52
+msgid "申请网络资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_private_network.py:63
+#: nebula/core/mission/flows/networks/create_private_network.py:85
+msgid "网络创建失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_private_network.py:74
+msgid "网络开始存入数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_private_network.py:80
+msgid "网络存入数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_private_network.py:81
+msgid "网络创建成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_publicip.py:26
+msgid "开始断开私有子网"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_publicip.py:27
+msgid "申请断开子网资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_publicip.py:33
+msgid "断开子网资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_publicip.py:36
+msgid "断开子网资源失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_publicip.py:44
+msgid "断开路由器成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_publicip.py:48
+msgid "断开路由器失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group.py:26
+msgid "开始创建虚拟防火墙"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group.py:29
+msgid "申请虚拟防火墙资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group.py:35
+msgid "申请虚拟防火墙资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group.py:54
+#: nebula/core/mission/flows/networks/create_security_group.py:142
+msgid "存入虚拟防火墙到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group.py:59
+#: nebula/core/mission/flows/networks/create_security_group.py:149
+msgid "存入虚拟防火墙到数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group.py:60
+#: nebula/core/mission/flows/networks/create_security_group.py:150
+msgid "创建虚拟防火墙成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group.py:64
+#: nebula/core/mission/flows/networks/create_security_group.py:154
+msgid "创建虚拟防火墙失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group.py:109
+msgid "开始更新网卡防火墙"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group.py:122
+msgid "申请更新网卡防火墙"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group.py:128
+msgid "更新网卡防火墙成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group.py:131
+msgid "更新网卡防火墙失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group_rule.py:26
+msgid "开始创建规则"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group_rule.py:54
+#: nebula/core/mission/flows/networks/create_security_group_rule.py:91
+msgid "创建规则成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group_rule.py:63
+#: nebula/core/mission/flows/networks/create_security_group_rule.py:95
+msgid "创建规则失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group_rule.py:75
+msgid "规则存入数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_security_group_rule.py:90
+msgid "规则存入数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_subnet.py:28
+msgid "开始创建私子网"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_subnet.py:63
+msgid "申请子网资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_subnet.py:69
+msgid "申请子网资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_subnet.py:75
+msgid "申请子网资源失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_subnet.py:89
+msgid "子网创建成功存入数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_subnet.py:105
+msgid "子网存入数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_subnet.py:106
+msgid "创建子网成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_subnet.py:110
+msgid "创建子网失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_virtualrouter.py:26
+msgid "开始创建路由器"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_virtualrouter.py:30
+msgid "申请虚拟路由器资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_virtualrouter.py:41
+msgid "申请虚拟路由器资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_virtualrouter.py:70
+msgid "创建虚拟路由器成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/create_virtualrouter.py:75
+msgid "创建虚拟路由器失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_floatingip.py:26
+#: nebula/core/mission/flows/networks/delete_floatingip.py:44
+msgid "开始删除浮动IP"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_floatingip.py:27
+msgid "申请删除浮动IP"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_floatingip.py:31
+msgid "浮动IP已经绑定了虚机"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_floatingip.py:36
+#: nebula/core/mission/flows/networks/delete_floatingip.py:46
+msgid "删除浮动IP成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_floatingip.py:39
+msgid "删除浮动IP失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_floatingip.py:50
+msgid "删除失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_nat.py:24
+msgid "开始删除网络映射"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_nat.py:32
+msgid "删除网络映射失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_nat.py:51
+msgid "删除数据库记录成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_nat.py:52
+msgid "删除网络映射成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_nat.py:56
+msgid "删除数据库记录失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_private_network.py:27
+msgid "开始删除私有网络"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_private_network.py:39
+msgid "申请删除网络资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_private_network.py:47
+msgid "私有网络已经不存在"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_private_network.py:52
+msgid "不存在网络资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_private_network.py:53
+msgid "删除网络资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_private_network.py:56
+msgid "删除网络资源失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_private_network.py:62
+msgid "开始从数据库删除网络资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_private_network.py:72
+msgid "数据库删除私有网络失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_private_network.py:78
+msgid "删除私有网络成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_private_network.py:82
+msgid "从数据库删除网络资源失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:27
+msgid "开始删除虚拟防火墙"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:29
+msgid "申请删除虚拟防火墙资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:35
+msgid "虚拟防火墙资源已不存在！"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:40
+msgid "删除虚拟防火墙资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:43
+msgid "删除虚拟防火墙资源失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:49
+msgid "开始从数据库删除虚拟防火墙规则"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:53
+#: nebula/core/mission/flows/networks/delete_security_group.py:167
+msgid "删除虚拟防火墙规则成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:57
+#: nebula/core/mission/flows/networks/delete_security_group.py:158
+msgid "从数据库删除虚拟防火墙对应虚拟防火墙规则失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:63
+#: nebula/core/mission/flows/networks/delete_security_group.py:165
+msgid "开始从数据库删除虚拟防火墙"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:72
+msgid "数据库删除虚拟防火墙失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:78
+msgid "删除虚拟防火墙成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:82
+#: nebula/core/mission/flows/networks/delete_security_group.py:171
+msgid "从数据库删除虚拟防火墙失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:122
+#: nebula/core/mission/flows/networks/delete_security_group.py:205
+msgid "开始卸载虚拟防火墙"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:128
+msgid "申请卸载虚拟防火墙资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:141
+msgid "卸载虚拟防火墙资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:144
+msgid "卸载虚拟防火墙资源失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:151
+msgid "开始从数据库删除虚拟防火墙对应虚拟防火墙规则"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:154
+msgid "从数据库删除虚拟防火墙对应虚拟防火墙规则成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:211
+msgid "申请卸载虚拟防火墙"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:225
+msgid "卸载虚拟防火墙成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group.py:228
+msgid "卸载虚拟防火墙失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group_rule.py:25
+msgid "开始删除规则"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group_rule.py:33
+msgid "规则资源已经被删除，可以忽略！"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group_rule.py:37
+msgid "删除规则资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group_rule.py:40
+msgid "删除规则资源失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group_rule.py:46
+msgid "开始删除数据库规则"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group_rule.py:48
+msgid "删除规则成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_security_group_rule.py:52
+msgid "删除规则失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_subnet.py:25
+msgid "开始删除子网"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_subnet.py:53
+msgid "开始从数据库删除子网"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_subnet.py:55
+msgid "删除子网成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_subnet.py:59
+msgid "删除子网失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_virtualrouter.py:27
+msgid "开始删除虚拟路由器"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_virtualrouter.py:30
+msgid "开始删除虚拟路由器资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_virtualrouter.py:45
+msgid "删除虚拟路由器资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_virtualrouter.py:59
+msgid "数据库删除虚拟路由器失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_virtualrouter.py:69
+msgid "删除虚拟路由器成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/delete_virtualrouter.py:72
+msgid "删除虚拟路由器失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/detach_port.py:36
+msgid "网卡已经被卸载"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/detach_port.py:40
+msgid "卸载网卡成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/detach_port.py:43
+msgid "卸载网卡失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/detach_port.py:50
+msgid "开始删除网卡"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/detach_port.py:52
+msgid "网卡断开虚拟机成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/detach_port.py:56
+msgid "网卡断开虚拟机失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/set_virtualrouter.py:29
+msgid "开始设置路由器"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/set_virtualrouter.py:30
+msgid "申请设置路由器资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/set_virtualrouter.py:40
+msgid "申请更新路由器资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/set_virtualrouter.py:54
+#: nebula/core/mission/flows/networks/set_virtualrouter.py:81
+msgid "设置路由器失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/set_virtualrouter.py:67
+msgid "开始更虚拟路由器"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/set_virtualrouter.py:69
+msgid "设置虚拟路由器带宽成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/unbinding_publicip_to_virtualruoter.py:24
+msgid "开始清除虚拟路由器网关"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/unbinding_publicip_to_virtualruoter.py:36
+msgid "清除虚拟路由器网关失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/unbinding_publicip_to_virtualruoter.py:48
+msgid "开始更新数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/unbinding_publicip_to_virtualruoter.py:51
+msgid "更新数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/unbinding_publicip_to_virtualruoter.py:52
+msgid "清除虚拟路由器网关成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_floatingip.py:26
+#: nebula/core/mission/flows/networks/update_floatingip.py:38
+msgid "开始更新浮动IP"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_floatingip.py:27
+msgid "申请更新浮动IP"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_floatingip.py:29
+msgid "浮动IP更新成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_floatingip.py:33
+msgid "浮动IP更新失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_floatingip.py:57
+msgid "更新浮动IP成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_floatingip.py:61
+msgid "更新浮动IP失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_port.py:24
+#: nebula/core/mission/flows/networks/update_port.py:110
+msgid "开始更新网卡"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_port.py:35
+#: nebula/core/mission/flows/networks/update_port.py:115
+msgid "申请更新网卡"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_port.py:40
+msgid "网卡更新成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_port.py:43
+msgid "网卡更新失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_port.py:59
+msgid "应用虚拟防火墙存入数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_port.py:120
+msgid "更新网卡成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_port.py:123
+msgid "更新网卡失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_private_network.py:24
+msgid "开始更新私有网络"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_private_network.py:27
+msgid "申请更新网络资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_private_network.py:32
+msgid "更新网络成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_private_network.py:35
+msgid "更新网络失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_security_group.py:24
+msgid "开始更新虚拟防火墙"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_security_group.py:25
+msgid "申请更新虚拟防火墙资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_security_group.py:33
+#: nebula/core/mission/flows/networks/update_security_group.py:54
+msgid "更新虚拟防火墙成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_security_group.py:36
+#: nebula/core/mission/flows/networks/update_security_group.py:58
+msgid "更新虚拟防火墙失败"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_virtualrouter.py:24
+msgid "开始更新路由器"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_virtualrouter.py:27
+msgid "申请更新路由器资源"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_virtualrouter.py:39
+msgid "更新路由器资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_virtualrouter.py:43
+msgid "更新路由器成功"
+msgstr ""
+
+#: nebula/core/mission/flows/networks/update_virtualrouter.py:48
+msgid "更新路由器失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/attach_volume.py:38
+msgid "申请数据卷挂载"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/attach_volume.py:39
+msgid "申请数据卷挂载成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/attach_volume.py:72
+msgid "更新数据卷挂载信息到数据库，等待消息通知"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/attach_volume.py:82
+msgid "数据卷挂载中"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/attach_volume.py:87
+msgid "数据卷挂载失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/attach_volume.py:90
+msgid "数据卷挂载保存到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/attach_volume.py:97
+msgid "数据卷挂载保存到数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/clone_volume.py:29
+msgid "开始克隆数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/clone_volume.py:30
+msgid "申请克隆数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/clone_volume.py:37
+msgid "申请数据卷克隆成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/clone_volume.py:68
+msgid "存入克隆数据卷到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/clone_volume.py:71
+msgid "数据卷克隆中"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/clone_volume.py:80
+msgid "存入克隆数据卷到数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/clone_volume.py:81
+msgid "克隆数据卷成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/clone_volume.py:86
+msgid "克隆数据卷失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume.py:28
+msgid "开始创建数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume.py:33
+msgid "申请创建数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume.py:38
+msgid "申请数据卷资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume.py:47
+#: nebula/core/mission/flows/volumes/create_volume.py:89
+#: nebula/core/mission/flows/volumes/extend_volume.py:92
+msgid "创建数据卷失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume.py:75
+msgid "存入数据卷到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume.py:80
+msgid "正在创建数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume.py:84
+msgid "存入数据卷到数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume.py:85
+msgid "创建数据卷成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume_backup.py:26
+msgid "开始创建数据卷备份"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume_backup.py:27
+msgid "申请创建数据卷备份"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume_backup.py:32
+msgid "申请数据卷资源备份成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume_backup.py:65
+msgid "存入数据卷备份到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume_backup.py:73
+msgid "数据卷备份中"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume_backup.py:77
+msgid "存入数据卷备份到数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume_backup.py:78
+msgid "创建数据卷备份成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/create_volume_backup.py:82
+msgid "创建数据卷备份失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume.py:42
+msgid "开始删除数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume.py:48
+msgid "正在删除数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume.py:58
+msgid "数据卷已经不存在！"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume.py:66
+#: nebula/core/mission/flows/volumes/recover_volume.py:139
+msgid "申请删除数据卷成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume.py:69
+msgid "删除数据卷失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume.py:81
+msgid "开始删除数据卷的数据库记录"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume.py:94
+#, python-format
+msgid "删除存数据卷的数据库记录失败：%s"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume.py:99
+msgid "删除存数据卷的数据库记录成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume.py:100
+msgid "删除数据卷成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume.py:104
+msgid "删除数据卷的数据库记录失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume_backup.py:39
+msgid "开始删除数据卷备份"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume_backup.py:42
+msgid "正在删除数据卷备份"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume_backup.py:52
+msgid "备份已经不存在！"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume_backup.py:60
+msgid "申请删除数据卷备份成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume_backup.py:64
+msgid "申请数据卷备份删除失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume_backup.py:75
+msgid "开始删除数据卷备份的数据库记录"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume_backup.py:79
+msgid "删除存数据卷备份的数据库记录成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume_backup.py:80
+msgid "删除数据卷备份成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/delete_volume_backup.py:84
+msgid "删除数据卷备份数据库记录失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/detach_volume.py:28
+msgid "开始卸载数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/detach_volume.py:32
+msgid "申请卸载数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/detach_volume.py:37
+msgid "申请卸载数据卷资成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/detach_volume.py:40
+msgid "卸载数据卷资源失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/detach_volume.py:65
+msgid "更新数据卷卸载信息到数据库，等待消息通知"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/detach_volume.py:75
+msgid "数据卷卸载中"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/detach_volume.py:80
+msgid "数据卷卸载失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/detach_volume.py:83
+msgid "存入数据卷卸载信息到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/detach_volume.py:90
+msgid "卸载数据卷成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/detach_volume.py:100
+msgid "卸载数据卷失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/extend_volume.py:29
+msgid "开始扩容数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/extend_volume.py:31
+msgid "申请扩容数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/extend_volume.py:37
+msgid "申请数据卷扩容成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/extend_volume.py:47
+msgid "申请扩容数据卷失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/extend_volume.py:73
+msgid "存入扩容数据卷到数据库，等待消息通知"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/extend_volume.py:75
+msgid "数据卷扩容中"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/extend_volume.py:79
+msgid "存入扩容数据卷到数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/extend_volume.py:80
+msgid "扩容数据卷成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/recover_volume.py:31
+msgid "开始新建数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/recover_volume.py:35
+msgid "申请新建数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/recover_volume.py:42
+msgid "新建数据卷资源成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/recover_volume.py:48
+msgid "新建数据卷资源失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/recover_volume.py:79
+msgid "保存新建数据卷申请到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/recover_volume.py:89
+msgid "数据卷恢复中"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/recover_volume.py:95
+msgid "新建数据卷成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/recover_volume.py:100
+msgid "新建数据卷存储出错，数据卷资源新建失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/recover_volume.py:114
+msgid "开始删除源数据卷及备份信息"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/recover_volume.py:127
+msgid "删除源存储卷备份信息失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/recover_volume.py:136
+msgid "删除源存储卷备失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/recover_volume.py:142
+msgid "源数据卷及备份信息删除失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume.py:26
+msgid "申请修改数据卷"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume.py:33
+msgid "申请修改数据卷成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume.py:37
+msgid "修改数据卷资源失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume.py:48
+msgid "更新数据卷存入到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume.py:55
+msgid "更新数据卷存入到数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume.py:56
+msgid "更新数据卷成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume.py:60
+msgid "更新数据卷失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume_backup.py:26
+msgid "开始修改数据卷备份"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume_backup.py:27
+msgid "申请修改数据卷备份"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume_backup.py:33
+msgid "申请修改数据卷资源备份成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume_backup.py:36
+msgid "更新数据卷资源备份失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume_backup.py:48
+msgid "存入数据卷备份更新申请到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume_backup.py:51
+msgid "存入数据卷备份更新申请到数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume_backup.py:52
+msgid "更新数据卷备份成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/update_volume_backup.py:56
+msgid "更新数据卷备份失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/volume_upload_image.py:28
+msgid "开始数据卷转换镜像"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/volume_upload_image.py:29
+msgid "开始申请数据卷转换镜像"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/volume_upload_image.py:39
+msgid "申请数据卷转换镜像成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/volume_upload_image.py:78
+msgid "申请数据卷转换镜像失败"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/volume_upload_image.py:102
+#: nebula/core/mission/flows/volumes/volume_upload_image.py:113
+msgid "数据卷转换镜像成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/volume_upload_image.py:105
+msgid "存入数据卷镜像到数据库"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/volume_upload_image.py:107
+msgid "数据卷创建镜像中"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/volume_upload_image.py:112
+msgid "存入数据卷镜像到数据库成功"
+msgstr ""
+
+#: nebula/core/mission/flows/volumes/volume_upload_image.py:118
+msgid "数据卷转换镜像失败"
+msgstr ""
+
+#: nebula/core/models/job.py:32 nebula/portal/jinja_ext/filters/jobs.py:36
+msgid "等待中"
+msgstr ""
+
+#: nebula/mission_control/tasks/flows.py:14
+#, python-format
+msgid "[%(job_name)s(%(book_uuid)s+%(flow_uuid)s)]"
+msgstr ""
+
+#: nebula/mission_control/tasks/flows.py:21
+#, python-format
+msgid "%s Loading job from database."
+msgstr ""
+
+#: nebula/mission_control/tasks/flows.py:26
+#, python-format
+msgid "%s Job execution failed: %s"
+msgstr ""
+
+#: nebula/mission_control/tasks/flows.py:28
+#, python-format
+msgid "%s Job execution succeed."
+msgstr ""
+
+#: nebula/openstack/common/gettextutils.py:271
+msgid "Message objects do not support addition."
+msgstr ""
+
+#: nebula/openstack/common/gettextutils.py:280
+msgid ""
+"Message objects do not support str() because they may contain non-ascii "
+"characters. Please use unicode() or translate() instead."
+msgstr ""
+
+#: nebula/openstack/common/log.py:327
+#, python-format
+msgid "Deprecated: %s"
+msgstr ""
+
+#: nebula/openstack/common/log.py:438
+#, python-format
+msgid "Error loading logging config %(log_config)s: %(err_msg)s"
+msgstr ""
+
+#: nebula/openstack/common/log.py:489
+#, python-format
+msgid "syslog facility must be one of: %s"
+msgstr ""
+
+#: nebula/openstack/common/log.py:710
+#, python-format
+msgid "Fatal call to deprecated config: %(msg)s"
+msgstr ""
+
+#: nebula/openstack/common/strutils.py:92
+#, python-format
+msgid "Unrecognized value '%(val)s', acceptable values are: %(acceptable)s"
+msgstr ""
+
+#: nebula/openstack/common/strutils.py:203
+#, python-format
+msgid "Invalid unit system: \"%s\""
+msgstr ""
+
+#: nebula/openstack/common/strutils.py:212
+#, python-format
+msgid "Invalid string format: %s"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/i18n.py:6
+#: nebula/portal/views/portal/systems/users.py:231
+msgid "instances"
+msgstr "虚拟机（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:7
+#: nebula/portal/views/portal/systems/users.py:228
+msgid "cores"
+msgstr "CPU核数（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:8
+#: nebula/portal/views/portal/instance/forms.py:33
+#: nebula/portal/views/portal/instance/forms.py:58
+#: nebula/portal/views/portal/instance/forms.py:117
+#: nebula/portal/views/portal/instance/forms.py:255
+#: nebula/portal/views/portal/systems/users.py:229
+msgid "ram"
+msgstr "内存"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:9
+#: nebula/portal/views/portal/systems/users.py:236
+msgid "images"
+msgstr "镜像（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:10
+msgid "floating_ips"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/i18n.py:11
+msgid "fixed_ips"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/i18n.py:12
+msgid "metadata_items"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/i18n.py:13
+msgid "injected_files"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/i18n.py:14
+msgid "injected_file_content_bytes"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/i18n.py:15
+msgid "injected_file_path_length"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/i18n.py:16
+#: nebula/portal/jinja_ext/filters/i18n.py:36
+#: nebula/portal/views/portal/systems/users.py:241
+msgid "instance_attach_volumes"
+msgstr "虚拟机挂载数据卷（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:17
+#: nebula/portal/views/portal/systems/users.py:240
+msgid "instance_attach_ports"
+msgstr "虚拟机挂载网卡（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:18
+msgid "instance_backups"
+msgstr "虚拟机备份（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:19
+#: nebula/portal/jinja_ext/filters/i18n.py:37
+msgid "volume_backups"
+msgstr "数据卷备份（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:20
+msgid "volume_capacity"
+msgstr "数据卷容量（GB）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:21
+msgid "instance_cores_min"
+msgstr "虚拟机最小CPU核数（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:22
+msgid "instance_cores_max"
+msgstr "虚拟机最大CPU核数（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:23
+msgid "instance_ram_min"
+msgstr "虚拟机最小内存（MB）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:24
+msgid "instance_ram_max"
+msgstr "虚拟机最大内存（MB）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:25
+msgid "network_vlan_min"
+msgstr "VLAN最小值"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:26
+msgid "network_vlan_max"
+msgstr "VLAN最大值"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:27
+#: nebula/portal/views/portal/systems/users.py:234
+msgid "virtual_routers"
+msgstr "虚拟路由器（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:28
+#: nebula/portal/views/portal/systems/users.py:239
+msgid "firewalls"
+msgstr "虚拟机防火墙（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:29
+#: nebula/portal/views/portal/systems/users.py:237
+msgid "bandwidth_tx"
+msgstr "上行带宽（MB）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:30
+#: nebula/portal/views/portal/systems/users.py:238
+msgid "bandwidth_rx"
+msgstr "下行带宽（MB）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:31
+msgid "binding_publicips"
+msgstr "绑定IP（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:32
+#: nebula/portal/views/portal/systems/users.py:232
+msgid "private_networks"
+msgstr "私有网络（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:33
+#: nebula/portal/views/portal/systems/users.py:230
+msgid "volumes"
+msgstr "数据卷（GB）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:34
+msgid "binding_private_networks"
+msgstr "绑定私有网络（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:35
+msgid "attach_ports"
+msgstr "挂载网卡（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:38
+msgid "system_cores"
+msgstr "VCPU总量（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:39
+msgid "system_ram"
+msgstr "内存总量（个）"
+
+#: nebula/portal/jinja_ext/filters/i18n.py:40
+msgid "system_local_storage"
+msgstr "存储总量（GB）"
+
+#: nebula/portal/jinja_ext/filters/jobs.py:34
+msgid "任务中"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/size.py:5
+msgid "B"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/size.py:6
+msgid "KB"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/size.py:7
+msgid "MB"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/size.py:8
+msgid "GB"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/size.py:9
+msgid "TB"
+msgstr ""
+
+#: nebula/portal/jinja_ext/filters/size.py:10
+msgid "PB"
+msgstr ""
+
+#: nebula/portal/views/portal/__init__.py:72
+msgid "User Manage - User List"
+msgstr "用户管理 - 用户列表"
+
+#: nebula/portal/views/portal/__init__.py:76
+msgid "User Manage - Create User"
+msgstr "用户管理 - 创建用户"
+
+#: nebula/portal/views/portal/__init__.py:80
+msgid "User Manage - User Detail"
+msgstr "用户管理 - 用户详情"
+
+#: nebula/portal/views/portal/__init__.py:85
+msgid "User Manage - Reset Password"
+msgstr "用户管理 - 重置密码"
+
+#: nebula/portal/views/portal/__init__.py:89
+msgid "User Manage - Set Roles"
+msgstr "用户管理 - 设置角色"
+
+#: nebula/portal/views/portal/__init__.py:93
+msgid "User Manage - Update User"
+msgstr "用户管理 - 更新基本信息"
+
+#: nebula/portal/views/portal/__init__.py:97
+msgid "User Manage - Update User Status"
+msgstr "用户管理 - 更新用户状态"
+
+#: nebula/portal/views/portal/__init__.py:102
+msgid "Role Manage - Role Manage"
+msgstr "角色管理"
+
+#: nebula/portal/views/portal/__init__.py:106
+msgid "Role Manage - Create Role"
+msgstr "角色管理 - 创建角色"
+
+#: nebula/portal/views/portal/__init__.py:110
+msgid "Role Manage - Role Detail"
+msgstr "角色管理 - 角色详情"
+
+#: nebula/portal/views/portal/__init__.py:115
+msgid "Role Manage - Update Role Users"
+msgstr "角色管理 - 分配用户"
+
+#: nebula/portal/views/portal/__init__.py:121
+msgid "Role Manage - Update Role Permission"
+msgstr "角色管理 - 分配权限"
+
+#: nebula/portal/views/portal/__init__.py:125
+msgid "Role Manage - Update Role Profile"
+msgstr "角色管理 - 更新角色信息"
+
+#: nebula/portal/views/portal/__init__.py:131
+msgid "System ResourceSettings"
+msgstr "系统管理 - 资源性能配置"
+
+#: nebula/portal/views/portal/__init__.py:136
+msgid "System  SystemSettings"
+msgstr "系统管理 - 系统配置"
+
+#: nebula/portal/views/portal/__init__.py:142
+msgid "System  SystemSettings Logo"
+msgstr "系统管理 - 系统logo管理"
+
+#: nebula/portal/views/portal/__init__.py:149
+msgid "System - Update Logo File"
+msgstr "系统管理 - 上传logo"
+
+#: nebula/portal/views/portal/__init__.py:155
+msgid "System Hypervisors"
+msgstr "VCPU总量（个）"
+
+#: nebula/portal/views/portal/__init__.py:161
+msgid "Monitor Manage - Update Tactic"
+msgstr "监控管理 - 更新策略"
+
+#: nebula/portal/views/portal/__init__.py:167
+msgid "System Log"
+msgstr "系统日志"
+
+#: nebula/portal/views/portal/__init__.py:171
+msgid "System Log - Login Log"
+msgstr "系统日志 - 登录日志"
+
+#: nebula/portal/views/portal/__init__.py:175
+msgid "System Log - Operation Log"
+msgstr "系统日志 - 操作日志"
+
+#: nebula/portal/views/portal/__init__.py:179
+msgid "System Log - Warning Log"
+msgstr "系统日志 - 告警日志"
+
+#: nebula/portal/views/portal/__init__.py:183
+msgid "System Log - Alert Log"
+msgstr "系统日志 - 告警提示"
+
+#: nebula/portal/views/portal/__init__.py:187
+msgid "System Alert"
+msgstr "告警提示"
+
+#: nebula/portal/views/portal/__init__.py:203
+msgid "Personal Manager - My Profile"
+msgstr "个人管理 - 我的资料"
+
+#: nebula/portal/views/portal/__init__.py:208
+msgid "Personal Manager - Change Password"
+msgstr "个人管理 - 重置密码"
+
+#: nebula/portal/views/portal/__init__.py:212
+msgid "Personal Manager - My Log"
+msgstr "个人管理 - 我的日志"
+
+#: nebula/portal/views/portal/__init__.py:219
+msgid "User Log - Alert Log"
+msgstr "系统日志 - 告警提示"
+
+#: nebula/portal/views/portal/__init__.py:314
+msgid "Private Network - Form - Create Virtualrouter"
+msgstr "私有网络 - 表单 - 创建虚拟路由器"
+
+#: nebula/portal/views/portal/__init__.py:319
+msgid "Private Network - Form - Update Virtualrouter"
+msgstr "私有网络 - 表单 - 更新虚拟路由器"
+
+#: nebula/portal/views/portal/__init__.py:324
+msgid "Private Network - Form - Delete Virtualrouter"
+msgstr "私有网络 - 表单 - 删除虚拟路由器"
+
+#: nebula/portal/views/portal/__init__.py:329
+msgid "Private Network - Form - Set Virtualrouter Bandwidth"
+msgstr "私有网络 - 表单 - 设置虚拟路由器带宽"
+
+#: nebula/portal/views/portal/__init__.py:334
+msgid "Float IP Management - Form - Create PublicIP"
+msgstr "外部IP管理 - 表单 - 创建外部IP"
+
+#: nebula/portal/views/portal/__init__.py:339
+msgid "Float IP Management - Form - Update PublicIP"
+msgstr "外部IP管理 - 表单 - 更新外部IP"
+
+#: nebula/portal/views/portal/__init__.py:344
+msgid "Float IP Manage - Float IP List"
+msgstr "外部IP管理 - 外部IP列表"
+
+#: nebula/portal/views/portal/__init__.py:349
+msgid "Float IP Manage - Create PublicIP"
+msgstr "外部IP管理 - 创建外部IP"
+
+#: nebula/portal/views/portal/__init__.py:354
+msgid "Float IP Manage - Form - Delete PublicIP"
+msgstr "外部IP管理 - 表单 - 删除外部IP"
+
+#: nebula/portal/views/portal/__init__.py:359
+msgid "Float IP Manage - Delete PublicIP"
+msgstr "外部IP管理 - 删除外部IP"
+
+#: nebula/portal/views/portal/__init__.py:364
+msgid "Float IP Manage - Update PublicIP"
+msgstr "外部IP管理 - 更新外部IP"
+
+#: nebula/portal/views/portal/__init__.py:370
+msgid "Private Network - Form - Virtualrouter Binding PublicIP"
+msgstr "私有网络 - 表单 - 虚拟路由器绑定外部IP"
+
+#: nebula/portal/views/portal/__init__.py:376
+msgid "Private Network - Form - Virtualrouter Binding Private Network"
+msgstr "私有网络 - 表单 - 虚拟路由器绑定私有网络"
+
+#: nebula/portal/views/portal/__init__.py:382
+msgid "Private Network - Form - Virtualrouter Unbinding Private Network"
+msgstr "私有网络 - 表单 - 虚拟路由器解绑私有网络"
+
+#: nebula/portal/views/portal/__init__.py:387
+msgid "Private Network - Form - Create Nat"
+msgstr "私有网络 - 表单 - 创建网络映射"
+
+#: nebula/portal/views/portal/__init__.py:391
+msgid "Private Network - Form - Delete Nat"
+msgstr "私有网络 - 表单 - 删除网络映射"
+
+#: nebula/portal/views/portal/__init__.py:397
+msgid "Private Network - Form - Create Security Group"
+msgstr "私有网络 - 表单 - 创建虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:403
+msgid "Private Network - Form - Update Security Group"
+msgstr "私有网络 - 表单 - 更新虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:409
+msgid "Private Network - Form - Delete Security Group"
+msgstr "私有网络 - 表单 - 删除虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:415
+msgid "Private Network - Form - Effect Security Group"
+msgstr "私有网络 - 表单 - 应用虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:421
+msgid "Private Network - Form - Create Security Group Rule"
+msgstr "私有网络 - 表单 - 创建虚拟防火墙规则"
+
+#: nebula/portal/views/portal/__init__.py:427
+msgid "Private Network - Form - Effect Security Group to Instance"
+msgstr "私有网络 - 表单 - 应用虚拟防火墙规则到虚拟机"
+
+#: nebula/portal/views/portal/__init__.py:433
+msgid "Private Network - Form - Create Private Netwrok"
+msgstr "私有网络 - 表单 - 创建私有网络"
+
+#: nebula/portal/views/portal/__init__.py:439
+msgid "Private Network - Form - Update Private Network"
+msgstr "私有网络 - 表单 - 更新私有网络"
+
+#: nebula/portal/views/portal/__init__.py:445
+msgid "Private Network - Form - delete Private Network"
+msgstr "私有网络 - 表单 - 删除私有网络"
+
+#: nebula/portal/views/portal/__init__.py:451
+msgid "Private Network - Form- Private Network - Create Subnet"
+msgstr "私有网络 - 表单 - 私有网络 - 创建子网"
+
+#: nebula/portal/views/portal/__init__.py:457
+msgid "Private Network - Form - Create Port"
+msgstr "私有网络 - 表单 - 创建网卡"
+
+#: nebula/portal/views/portal/__init__.py:463
+msgid "Private Network - Form - Detach Port"
+msgstr "私有网络 - 表单 - 卸载网卡"
+
+#: nebula/portal/views/portal/__init__.py:469
+msgid "Private Network - Form - Binding Virtualrouter"
+msgstr "私有网络 - 表单 - 绑定虚拟路由器"
+
+#: nebula/portal/views/portal/__init__.py:475
+msgid "Private Network - Form - Break Virtualrouter"
+msgstr "私有网络 - 表单 - 解绑虚拟路由器"
+
+#: nebula/portal/views/portal/__init__.py:480
+msgid "Private Network - Form - Delete Subnet"
+msgstr "私有网络 - 表单 - 删除子网"
+
+#: nebula/portal/views/portal/__init__.py:489
+msgid "Job - Job List"
+msgstr "任务 -  任务列表"
+
+#: nebula/portal/views/portal/__init__.py:493
+msgid "Job - job Sub List"
+msgstr "任务 - 任务子列表"
+
+#: nebula/portal/views/portal/__init__.py:499
+msgid "Networks - Virtualrouter List"
+msgstr "私有网络 - 虚拟路由器列表"
+
+#: nebula/portal/views/portal/__init__.py:503
+msgid "Networks - Virtualrouter Detail"
+msgstr "私有网络 - 虚拟路由器详情"
+
+#: nebula/portal/views/portal/__init__.py:507
+msgid "Networks - Create Virtualrouter"
+msgstr "私有网络 - 创建虚拟路由器"
+
+#: nebula/portal/views/portal/__init__.py:511
+msgid "Networks - Delete Virtualrouter"
+msgstr "私有网络 - 删除虚拟路由器"
+
+#: nebula/portal/views/portal/__init__.py:515
+msgid "Networks - Update Virtualrouter"
+msgstr "私有网络 - 更新虚拟路由器"
+
+#: nebula/portal/views/portal/__init__.py:519
+msgid "Networks - Set Virtualrouter Bandwidth"
+msgstr "私有网络 - 设置虚拟路由器带宽"
+
+#: nebula/portal/views/portal/__init__.py:525
+msgid "Networks - Virtualrouter Binding PublicIP"
+msgstr "私有网络 - 虚拟路由器绑定外部IP"
+
+#: nebula/portal/views/portal/__init__.py:530
+msgid "Networks - Virtualrouter Unbinding PublicIP"
+msgstr "私有网络 - 虚拟路由器解绑外部IP"
+
+#: nebula/portal/views/portal/__init__.py:535
+msgid "Networks - Virtualrouter Binding Private Network"
+msgstr "私有网络 - 虚拟路由器绑定私有网络"
+
+#: nebula/portal/views/portal/__init__.py:540
+msgid "Networks - Virtualrouter Monitor"
+msgstr "私有网络 - 虚拟路由器监控"
+
+#: nebula/portal/views/portal/__init__.py:545
+msgid "Networks - Create Nat"
+msgstr "私有网络 - 创建网络映射"
+
+#: nebula/portal/views/portal/__init__.py:549
+msgid "Networks - Delete Nat"
+msgstr "私有网络 - 删除网络映射"
+
+#: nebula/portal/views/portal/__init__.py:553
+msgid "Networks - Nat List"
+msgstr "私有网络 - 网络映射列表"
+
+#: nebula/portal/views/portal/__init__.py:557
+msgid "Networks - Network Topology"
+msgstr "私有网络 - 网络拓扑图"
+
+#: nebula/portal/views/portal/__init__.py:561
+msgid "Networks - Network Topology Context"
+msgstr "私有网络 - 网络拓扑图内容"
+
+#: nebula/portal/views/portal/__init__.py:566
+msgid "Networks - Private Network List"
+msgstr "私有网络 - 私有网络列表"
+
+#: nebula/portal/views/portal/__init__.py:570
+msgid "Networks - Private Netwrok - Instance List"
+msgstr "私有网络 - 私有网络虚拟机列表"
+
+#: nebula/portal/views/portal/__init__.py:574
+msgid "Networks - Private Network Sub List"
+msgstr "私有网络 - 私有网络子列表"
+
+#: nebula/portal/views/portal/__init__.py:578
+msgid "Networks - Private Network Detail"
+msgstr "私有网络 - 私有网络详情"
+
+#: nebula/portal/views/portal/__init__.py:582
+msgid "Networks - Delete Private Network"
+msgstr "私有网络 - 删除私有网络"
+
+#: nebula/portal/views/portal/__init__.py:586
+msgid "Networks - Update Private Network"
+msgstr "私有网络 - 更新私有网络"
+
+#: nebula/portal/views/portal/__init__.py:590
+msgid "Networks - Create Private Network"
+msgstr "私有网络 - 创建私有网络"
+
+#: nebula/portal/views/portal/__init__.py:595
+msgid "Networks - Private Network - Binding Virtualrouter"
+msgstr "私有网络 - 私有网络绑定虚拟路由器"
+
+#: nebula/portal/views/portal/__init__.py:600
+msgid "Networks - Private Network - Unbinding Virutalrouter"
+msgstr "私有网络 - 私有网络解绑虚拟路由器"
+
+#: nebula/portal/views/portal/__init__.py:605
+msgid "Networks - Subnet List"
+msgstr "私有网络 - 子网列表"
+
+#: nebula/portal/views/portal/__init__.py:609
+msgid "Networks - Create Subnet"
+msgstr "私有网络 - 创建子网"
+
+#: nebula/portal/views/portal/__init__.py:613
+msgid "Networks - Delete Subnet"
+msgstr "私有网络 - 删除子网"
+
+#: nebula/portal/views/portal/__init__.py:618
+msgid "Networks - Create Port"
+msgstr "私有网络 - 创建网卡"
+
+#: nebula/portal/views/portal/__init__.py:622
+msgid "Networks - Detach Port"
+msgstr "私有网络 - 卸载网卡"
+
+#: nebula/portal/views/portal/__init__.py:627
+msgid "Security Group - Security Group List"
+msgstr "虚拟防火墙 - 虚拟防火墙列表"
+
+#: nebula/portal/views/portal/__init__.py:631
+msgid "Security Group - Security Group Detail"
+msgstr "虚拟防火墙 - 虚拟防火墙详情"
+
+#: nebula/portal/views/portal/__init__.py:635
+msgid "Security Group - Create Security Group"
+msgstr "虚拟防火墙 - 创建虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:640
+msgid "Security Group - Apply Security Group"
+msgstr "虚拟防火墙 - 应用虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:645
+msgid "Security Group - Update Security Group"
+msgstr "虚拟防火墙 - 更新虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:649
+msgid "Security Group - Effect Security Group"
+msgstr "虚拟防火墙 - 应用虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:653
+msgid "Security Group - Delete Security Group"
+msgstr "虚拟防火墙 - 删除虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:657
+msgid "Security Group - Create Security Group Rule"
+msgstr "虚拟防火墙 - 创建虚拟防火墙规则"
+
+#: nebula/portal/views/portal/__init__.py:661
+msgid "Security Group - Security Group Rule List"
+msgstr "虚拟防火墙 - 虚拟防火墙规则列表"
+
+#: nebula/portal/views/portal/__init__.py:665
+msgid "Security Group - Delete Security Group Rule"
+msgstr "虚拟防火墙 - 删除虚拟防火墙规则"
+
+#: nebula/portal/views/portal/__init__.py:704
+msgid "Volume - Form - Update Volume"
+msgstr "数据卷 - 表单 - 更新数据卷"
+
+#: nebula/portal/views/portal/__init__.py:709
+msgid "Volume - Form - Delete Volume"
+msgstr "数据卷 - 表单 - 删除数据卷"
+
+#: nebula/portal/views/portal/__init__.py:714
+msgid "Volume - Form - Recover Volume"
+msgstr "数据卷 - 表单 - 恢复数据卷"
+
+#: nebula/portal/views/portal/__init__.py:719
+msgid "Volume - Form - Attach Volume"
+msgstr "数据卷 - 表单 - 挂载数据卷"
+
+#: nebula/portal/views/portal/__init__.py:724
+msgid "Volume - Form - Create Volume"
+msgstr "数据卷 - 表单 - 创建数据卷"
+
+#: nebula/portal/views/portal/__init__.py:729
+msgid "Volume - Form - Clone Volume"
+msgstr "数据卷 - 表单 - 克隆数据卷"
+
+#: nebula/portal/views/portal/__init__.py:734
+msgid "Volume - Form - Extend Volume"
+msgstr "数据卷 - 表单 - 扩容数据卷"
+
+#: nebula/portal/views/portal/__init__.py:739
+msgid "Volume - Form - Create Volume Backup"
+msgstr "数据卷 - 表单 - 创建数据卷备份"
+
+#: nebula/portal/views/portal/__init__.py:744
+msgid "Volume - Form - Update Volume Backup"
+msgstr "数据卷 - 表单 - 更新数据卷备份"
+
+#: nebula/portal/views/portal/__init__.py:749
+msgid "Volume - Form - Recover Volume Backup"
+msgstr "数据卷 - 表单 - 从备份恢复数据卷"
+
+#: nebula/portal/views/portal/__init__.py:754
+msgid "Volume - Form - Upload Volume Image"
+msgstr "数据卷 - 表单 - 数据卷转镜像"
+
+#: nebula/portal/views/portal/__init__.py:760
+msgid "Volume - Volume List"
+msgstr "数据卷 - 数据卷列表"
+
+#: nebula/portal/views/portal/__init__.py:764
+msgid "Volume - Volume Sub List"
+msgstr "数据卷 - 数据卷子列表"
+
+#: nebula/portal/views/portal/__init__.py:768
+msgid "Volume - Volume Backup List"
+msgstr "数据卷 - 数据卷备份列表"
+
+#: nebula/portal/views/portal/__init__.py:772
+msgid "Volume - Volume Backup Sub List"
+msgstr "数据卷 - 数据卷备份子列表"
+
+#: nebula/portal/views/portal/__init__.py:776
+msgid "Volume - Volume Detail"
+msgstr "数据卷 - 数据卷详情"
+
+#: nebula/portal/views/portal/__init__.py:780
+msgid "Volume - Create Volume"
+msgstr "数据卷 - 创建数据卷"
+
+#: nebula/portal/views/portal/__init__.py:784
+msgid "Volume - Update Volume"
+msgstr "数据卷 - 更新数据卷"
+
+#: nebula/portal/views/portal/__init__.py:788
+msgid "Volume - Delete Volume"
+msgstr "数据卷 - 删除数据卷"
+
+#: nebula/portal/views/portal/__init__.py:792
+msgid "Volume - Clone Volume"
+msgstr "数据卷 - 克隆数据卷"
+
+#: nebula/portal/views/portal/__init__.py:796
+msgid "Volume - Recover Volume"
+msgstr "数据卷 - 恢复数据卷"
+
+#: nebula/portal/views/portal/__init__.py:800
+msgid "Volume - Attach Volume"
+msgstr "数据卷 - 挂载数据卷"
+
+#: nebula/portal/views/portal/__init__.py:804
+msgid "Volume - Detach Volume"
+msgstr "数据卷 - 卸载数据卷"
+
+#: nebula/portal/views/portal/__init__.py:808
+msgid "Volume - Create Volume Backup"
+msgstr "数据卷 - 创建数据卷备份"
+
+#: nebula/portal/views/portal/__init__.py:812
+msgid "Volume - Delete Volume Backup"
+msgstr "数据卷 - 删除数据卷备份"
+
+#: nebula/portal/views/portal/__init__.py:816
+msgid "Volume - Update Volume Backup"
+msgstr "数据卷 - 更新数据卷备份"
+
+#: nebula/portal/views/portal/__init__.py:820
+msgid "Volume - Extend Volume"
+msgstr "数据卷 - 扩容数据卷"
+
+#: nebula/portal/views/portal/__init__.py:824
+msgid "Volume - Volume Upload Image"
+msgstr "数据卷 - 数据卷生成镜像"
+
+#: nebula/portal/views/portal/__init__.py:864
+msgid "Instance - Form - Create Instance"
+msgstr "虚拟机 - 表单 - 创建虚拟机"
+
+#: nebula/portal/views/portal/__init__.py:869
+msgid "Instance - Form - Create Instance Backup"
+msgstr "虚拟机 - 表单 - 创建虚拟机备份"
+
+#: nebula/portal/views/portal/__init__.py:874
+msgid "Instance - Form - Attach Port"
+msgstr "虚拟机 - 表单 - 挂载网卡"
+
+#: nebula/portal/views/portal/__init__.py:879
+msgid "Instance - Attach Port"
+msgstr "虚拟机 - 挂载网卡"
+
+#: nebula/portal/views/portal/__init__.py:884
+msgid "Instance - Form - Detach Port"
+msgstr "虚拟机 - 表单 - 卸载网卡"
+
+#: nebula/portal/views/portal/__init__.py:889
+msgid "Instance - Detach Port"
+msgstr "虚拟机 - 卸载网卡"
+
+#: nebula/portal/views/portal/__init__.py:894
+msgid "Instance - Form - Apply Security Group"
+msgstr "虚拟机 - 表单 - 应用虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:899
+msgid "Instance - Apply Security Grop"
+msgstr "虚拟机 - 应用虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:904
+msgid "Instance - Delete Security Group"
+msgstr "虚拟机 - 删除虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:909
+msgid "Instance - Form - Detach Security Group"
+msgstr "虚拟机 - 表单 - 取消虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:914
+msgid "Instance - Detach Security Group"
+msgstr "虚拟机 - 取消虚拟防火墙"
+
+#: nebula/portal/views/portal/__init__.py:919
+msgid "Instance - Form - Detach Volume"
+msgstr "虚拟机 - 表单 - 卸载数据卷"
+
+#: nebula/portal/views/portal/__init__.py:924
+msgid "Instance - Form - Change Passwd"
+msgstr "虚拟机 - 表单 - 修改密码"
+
+#: nebula/portal/views/portal/__init__.py:931
+msgid "Instance - Instance List"
+msgstr "虚拟机 - 虚拟机列表"
+
+#: nebula/portal/views/portal/__init__.py:935
+msgid "Instance - Instance Detail"
+msgstr "虚拟机 - 虚拟机详情"
+
+#: nebula/portal/views/portal/__init__.py:939
+msgid "Instance - Create Instance"
+msgstr "虚拟机 - 创建虚拟机"
+
+#: nebula/portal/views/portal/__init__.py:943
+msgid "Instance - Update Instance"
+msgstr "虚拟机 - 更新虚拟机"
+
+#: nebula/portal/views/portal/__init__.py:947
+msgid "Instance - Delete Instance"
+msgstr "虚拟机 - 删除虚拟机"
+
+#: nebula/portal/views/portal/__init__.py:951
+#: nebula/portal/views/portal/__init__.py:1001
+msgid "Instance - Instance Monitor"
+msgstr "虚拟机 - 虚拟机监控"
+
+#: nebula/portal/views/portal/__init__.py:955
+#: nebula/portal/views/portal/__init__.py:1005
+msgid "Instance - Instance Monitor History"
+msgstr "虚拟机 - 虚拟机历史数据监控"
+
+#: nebula/portal/views/portal/__init__.py:959
+msgid "Instance - Chnage Instance IOPS"
+msgstr "虚拟机 - 更改IOPS"
+
+#: nebula/portal/views/portal/__init__.py:963
+msgid "Instance - Modify Instance"
+msgstr "虚拟机 - 修改虚拟机"
+
+#: nebula/portal/views/portal/__init__.py:967
+msgid "Instance - Change Instance"
+msgstr "虚拟机 - 修改虚拟机配置"
+
+#: nebula/portal/views/portal/__init__.py:971
+msgid "Instance - Attach Volume"
+msgstr "虚拟机 - 挂载数据卷"
+
+#: nebula/portal/views/portal/__init__.py:975
+msgid "Instance - Detach Volume"
+msgstr "虚拟机 - 卸载数据卷"
+
+#: nebula/portal/views/portal/__init__.py:979
+msgid "Instance - Change Password"
+msgstr "虚拟机 - 修改密码"
+
+#: nebula/portal/views/portal/__init__.py:984
+msgid "Instance - Instance Migration"
+msgstr "虚拟机 - 虚拟机迁移"
+
+#: nebula/portal/views/portal/__init__.py:990
+msgid "System Management - Monitor Management"
+msgstr "系统管理 - 监控管理"
+
+#: nebula/portal/views/portal/__init__.py:995
+msgid "System Management - Update Monitor Management"
+msgstr "系统管理 - 更新监控采集频率"
+
+#: nebula/portal/views/portal/__init__.py:1036
+msgid "Host - Host List"
+msgstr "主机 - 主机列表"
+
+#: nebula/portal/views/portal/__init__.py:1040
+msgid "Host - Host Detail"
+msgstr "主机 - 主机详情"
+
+#: nebula/portal/views/portal/__init__.py:1044
+msgid "Host - Host Instance List"
+msgstr "主机 - 主机关联虚拟机列表"
+
+#: nebula/portal/views/portal/__init__.py:1049
+msgid "Host - Host Monotor"
+msgstr "主机 - 主机监控"
+
+#: nebula/portal/views/portal/__init__.py:1053
+msgid "Host - Host Monitor History"
+msgstr "主机 - 主机监控历史数据"
+
+#: nebula/portal/views/portal/__init__.py:1059
+msgid "Host - Form - Add Host"
+msgstr "主机 - 表单 - 添加主机"
+
+#: nebula/portal/views/portal/__init__.py:1063
+msgid "Host - Add Host"
+msgstr "主机 - 添加主机"
+
+#: nebula/portal/views/portal/__init__.py:1068
+msgid "Host - Form - Update Host"
+msgstr "主机 - 表单 - 更新主机"
+
+#: nebula/portal/views/portal/__init__.py:1072
+msgid "Host - Update Host"
+msgstr "主机 - 更新主机"
+
+#: nebula/portal/views/portal/__init__.py:1078
+msgid "Host - Form - Add Host to Aggregate"
+msgstr "主机 - 表单 - 加入集群"
+
+#: nebula/portal/views/portal/__init__.py:1082
+msgid "Host - Add Host to Aggregate"
+msgstr "主机 - 加入集群"
+
+#: nebula/portal/views/portal/__init__.py:1087
+msgid "Host - Form - Remove Host to Aggregate"
+msgstr "主机 - 表单 - 移出集群"
+
+#: nebula/portal/views/portal/__init__.py:1091
+msgid "Host - Remove Host to Aggregate"
+msgstr "主机 - 移出集群"
+
+#: nebula/portal/views/portal/__init__.py:1096
+msgid "Host - Form - Live Migration Instance"
+msgstr "主机 - 表单 - 迁移虚拟机"
+
+#: nebula/portal/views/portal/__init__.py:1100
+msgid "Host - Live Migration Instance"
+msgstr "主机 - 迁移虚拟机"
+
+#: nebula/portal/views/portal/__init__.py:1107
+msgid "Host - Form - Set Maintain"
+msgstr "主机 - 表单 - 置维护"
+
+#: nebula/portal/views/portal/__init__.py:1111
+msgid "Host - Set Maintain"
+msgstr "主机 - 置维护"
+
+#: nebula/portal/views/portal/__init__.py:1116
+msgid "Host - Form - Set Active"
+msgstr "主机 - 表单 - 恢复"
+
+#: nebula/portal/views/portal/__init__.py:1120
+msgid "Host - Set Active"
+msgstr "主机 - 恢复"
+
+#: nebula/portal/views/portal/__init__.py:1126
+msgid "Host - Delete Host"
+msgstr "主机 - 删除主机"
+
+#: nebula/portal/views/portal/__init__.py:1131
+msgid "Host - Sync Host"
+msgstr "主机 - 同步计算主机"
+
+#: nebula/portal/views/portal/__init__.py:1160
+msgid "Aggregate - Form - Create Aggregate"
+msgstr "集群 - 表单 - 创建集群"
+
+#: nebula/portal/views/portal/__init__.py:1165
+msgid "Aggregate - Create Aggregate"
+msgstr "集群 - 创建集群"
+
+#: nebula/portal/views/portal/__init__.py:1171
+msgid "Aggregate - Form - Delete Aggregate"
+msgstr "集群 - 表单 - 删除集群"
+
+#: nebula/portal/views/portal/__init__.py:1177
+msgid "Aggregate - Form - Update Aggregate"
+msgstr "集群 - 删除集群"
+
+#: nebula/portal/views/portal/__init__.py:1182
+msgid "Aggregate - Update Aggregate"
+msgstr "集群 - 更新集群"
+
+#: nebula/portal/views/portal/__init__.py:1188
+msgid "Aggregate - Aggregate Detail"
+msgstr "集群 - 集群详情"
+
+#: nebula/portal/views/portal/__init__.py:1193
+msgid "Aggregate - Aggregate list"
+msgstr "集群 - 集群详情"
+
+#: nebula/portal/views/portal/__init__.py:1199
+msgid "Aggregate - Form - Add Host"
+msgstr "集群 - 表单 - 添加主机"
+
+#: nebula/portal/views/portal/__init__.py:1204
+msgid "Aggregate - Add host"
+msgstr "集群 - 添加主机"
+
+#: nebula/portal/views/portal/__init__.py:1210
+msgid "Aggregate - Form - Remove Host"
+msgstr "集群 - 表单 - 移除主机"
+
+#: nebula/portal/views/portal/__init__.py:1214
+msgid "Aggregate - Remove Host"
+msgstr "集群 - 移除主机"
+
+#: nebula/portal/views/portal/__init__.py:1219
+msgid "Aggregate - Host List"
+msgstr "集群 - 主机列表"
+
+#: nebula/portal/views/portal/__init__.py:1233
+msgid "Zone - Zone list"
+msgstr "可用域 - 可用域列表"
+
+#: nebula/portal/views/portal/__init__.py:1257
+msgid "Image - Form - Update Image"
+msgstr "镜像 - 表单 - 更新镜像"
+
+#: nebula/portal/views/portal/__init__.py:1263
+msgid "Image - Form - Update User Image"
+msgstr "镜像 - 表单 - 更新自有镜像"
+
+#: nebula/portal/views/portal/__init__.py:1268
+msgid "Image - Update Image"
+msgstr "镜像 - 更新镜像"
+
+#: nebula/portal/views/portal/__init__.py:1274
+#: nebula/portal/views/portal/__init__.py:1305
+msgid "Image - Update User Image"
+msgstr "镜像 - 更新自有镜像"
+
+#: nebula/portal/views/portal/__init__.py:1279
+msgid "Image - Delete Image"
+msgstr "镜像 - 删除镜像"
+
+#: nebula/portal/views/portal/__init__.py:1285
+msgid "Image - Delete User Image"
+msgstr "镜像 - 删除自有镜像"
+
+#: nebula/portal/views/portal/__init__.py:1290
+msgid "Image - Image List"
+msgstr "镜像 - 镜像列表"
+
+#: nebula/portal/views/portal/__init__.py:1295
+msgid "Image - User Image List"
+msgstr "镜像 - 自有镜像列表"
+
+#: nebula/portal/views/portal/__init__.py:1301
+msgid "Image - Update Image File"
+msgstr "镜像 - 上传镜像文件"
+
+#: nebula/portal/views/portal/__init__.py:1325
+msgid "Instance Backup - Instance Backup List"
+msgstr "虚拟机备份 - 虚拟机备份列表"
+
+#: nebula/portal/views/portal/__init__.py:1330
+msgid "Instance Backup - Modify Instance Backup"
+msgstr "虚拟机备份 - 修改虚拟机备份"
+
+#: nebula/portal/views/portal/__init__.py:1335
+msgid "Instance Backup - Form - Update Instance Backup"
+msgstr "虚拟机备份 - 表单 - 更新虚拟机备份"
+
+#: nebula/portal/views/portal/__init__.py:1340
+msgid "Instance Backup - Delete Instance Backup"
+msgstr "虚拟机备份 - 删除虚拟机备份"
+
+#: nebula/portal/views/portal/__init__.py:1345
+msgid "Instance Backup - Revert Instance Backup"
+msgstr "虚拟机备份 - 备份恢复虚拟机"
+
+#: nebula/portal/views/portal/__init__.py:1350
+msgid "Instance Backup - Convert Instance Backup to Image"
+msgstr "虚拟机备份 - 转换虚拟机备份为镜像"
+
+#: nebula/portal/views/portal/__init__.py:1374
+msgid "Alarms - Alarms rules to be configured"
+msgstr "监控告警 - 告警策略列表"
+
+#: nebula/portal/views/portal/__init__.py:1379
+msgid "Alarm Create - Form - Create new alarm"
+msgstr "监控告警 - 表单 - 创建监控告警策略"
+
+#: nebula/portal/views/portal/__init__.py:1384
+msgid "Alarm - Create alarm"
+msgstr "监控告警 -　创建监控告警策略"
+
+#: nebula/portal/views/portal/__init__.py:1389
+msgid "Alarm - Form - Delete alarm"
+msgstr "监控告警 - 表单 - 删除监控告警策略"
+
+#: nebula/portal/views/portal/__init__.py:1394
+msgid "Alarm - Delete alarm"
+msgstr "监控告警 -　删除监控告警策略"
+
+#: nebula/portal/views/portal/__init__.py:1399
+msgid "Alarms Binding - Form - Create new alarms binding"
+msgstr "监控告警 - 表单 - 绑定告警策略"
+
+#: nebula/portal/views/portal/__init__.py:1404
+msgid "Alarms Binding - Alarms binding to instance"
+msgstr "监控告警 - 绑定告警策略"
+
+#: nebula/portal/views/portal/__init__.py:1409
+msgid "Alarms Binding - Form - Unbinding alarms with instance"
+msgstr "监控告警 - 表单 - 解绑告警策略"
+
+#: nebula/portal/views/portal/__init__.py:1414
+msgid "Alarms UnBinding - Unbinding alarms with instance"
+msgstr "监控告警 - 解绑告警策略"
+
+#: nebula/portal/views/portal/__init__.py:1419
+msgid "Alarm - Bind on which resources "
+msgstr "监控告警 - 绑定的资源列表"
+
+#: nebula/portal/views/portal/__init__.py:1424
+msgid "Alarm Modify - Form - Modify an alarm"
+msgstr "监控告警 - 表单 - 修改告警策略"
+
+#: nebula/portal/views/portal/__init__.py:1429
+msgid "Alarm Modify - Modify an alarm"
+msgstr "监控告警 - 修改告警策略"
+
+#: nebula/portal/views/portal/__init__.py:1445
+msgid "System Management - Alarm Meters Management "
+msgstr "系统管理 - 告警项管理"
+
+#: nebula/portal/views/portal/__init__.py:1450
+msgid "System Management - Update Alarm Meters Management "
+msgstr "系统管理 - 更新告警项"
+
+#: nebula/portal/views/portal/aggregate/aggregate.py:47
+msgid "集群名称"
+msgstr ""
+
+#: nebula/portal/views/portal/aggregate/aggregate.py:49
+msgid "描述"
+msgstr ""
+
+#: nebula/portal/views/portal/aggregate/aggregate.py:52
+msgid "区域"
+msgstr ""
+
+#: nebula/portal/views/portal/aggregate/aggregate.py:63
+#: nebula/portal/views/portal/aggregate/aggregate.py:93
+#, python-format
+msgid "集群名称[%s]已经被使用."
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:45
+#: nebula/portal/views/portal/alarms/alarms.py:74
+#: nebula/portal/views/portal/alarms/alarms.py:104
+msgid "告警名称"
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:47
+#: nebula/portal/views/portal/alarms/alarms.py:76
+msgid "告警类型"
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:49
+msgid "告警周期"
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:51
+msgid "规则"
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:53
+msgid "是否发送告警"
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:55
+msgid "告警通知"
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:57
+msgid "消除告警通知"
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:59
+msgid "没有数据通知"
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:69
+#, python-format
+msgid "告警名称[%s]已经被使用."
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:84
+#: nebula/portal/views/portal/alarms/alarms.py:92
+msgid "告警ID"
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:86
+msgid "监控对象标识"
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:88
+#: nebula/portal/views/portal/alarms/alarms.py:99
+#: nebula/portal/views/portal/network/private_networks.py:62
+msgid "类型"
+msgstr ""
+
+#: nebula/portal/views/portal/alarms/alarms.py:97
+msgid "监控资源"
+msgstr ""
+
+#: nebula/portal/views/portal/hosts/hosts.py:57
+msgid "hostname"
+msgstr "名称"
+
+#: nebula/portal/views/portal/hosts/hosts.py:60
+msgid "host_ip"
+msgstr "管理IP"
+
+#: nebula/portal/views/portal/hosts/hosts.py:63
+msgid "os_user"
+msgstr "操作系统用户名"
+
+#: nebula/portal/views/portal/hosts/hosts.py:66
+msgid "os_user_pwd"
+msgstr "操作系统密码"
+
+#: nebula/portal/views/portal/hosts/hosts.py:69
+msgid "host_aggregate"
+msgstr "集群"
+
+#: nebula/portal/views/portal/hosts/hosts.py:80
+#, python-format
+msgid "IP [%s] host already exists."
+msgstr "该主机[%s]已经存在."
+
+#: nebula/portal/views/portal/image/images.py:185
+msgid "镜像"
+msgstr ""
+
+#: nebula/portal/views/portal/image/images.py:186
+msgid "os_type"
+msgstr "操作系统"
+
+#: nebula/portal/views/portal/image/images.py:187
+msgid "disk_format"
+msgstr "镜像格式"
+
+#: nebula/portal/views/portal/image/images.py:188
+msgid "container_format"
+msgstr "容器格式"
+
+#: nebula/portal/views/portal/image/images.py:189
+msgid "file_name"
+msgstr "上传文件"
+
+#: nebula/portal/views/portal/image/images.py:190
+msgid "image_size"
+msgstr "镜像大小"
+
+#: nebula/portal/views/portal/image/images.py:204
+#: nebula/portal/views/portal/instance_backup/instance_backup.py:114
+#: nebula/portal/views/portal/volume/data_volume.py:219
+msgid "自有镜像个数超出配额限制"
+msgstr ""
+
+#: nebula/portal/views/portal/instance/forms.py:23
+#: nebula/portal/views/portal/instance/forms.py:110
+msgid "instance_name"
+msgstr "虚拟机名称"
+
+#: nebula/portal/views/portal/instance/forms.py:25
+#: nebula/portal/views/portal/instance/forms.py:112
+msgid "instance_description"
+msgstr "虚拟机描述"
+
+#: nebula/portal/views/portal/instance/forms.py:30
+#: nebula/portal/views/portal/instance/forms.py:56
+#: nebula/portal/views/portal/instance/forms.py:114
+#: nebula/portal/views/portal/instance/forms.py:252
+msgid "vcpus"
+msgstr "CPU核数"
+
+#: nebula/portal/views/portal/instance/forms.py:40
+msgid "image"
+msgstr "镜像大小"
+
+#: nebula/portal/views/portal/instance/forms.py:44
+msgid "instance_batches"
+msgstr "创建个数"
+
+#: nebula/portal/views/portal/instance/forms.py:51
+msgid "volume"
+msgstr "数据卷（GB）"
+
+#: nebula/portal/views/portal/instance/forms.py:61
+msgid "instance number"
+msgstr "虚拟机数量"
+
+#: nebula/portal/views/portal/instance/forms.py:66
+msgid "subnet"
+msgstr "子网"
+
+#: nebula/portal/views/portal/instance/forms.py:68
+msgid "ip address"
+msgstr "IP地址"
+
+#: nebula/portal/views/portal/instance/forms.py:70
+msgid "mac address"
+msgstr "MAC地址"
+
+#: nebula/portal/views/portal/instance/forms.py:72
+msgid "security group"
+msgstr "安全组"
+
+#: nebula/portal/views/portal/instance/forms.py:74
+msgid "bandwidth tx"
+msgstr "上行带宽"
+
+#: nebula/portal/views/portal/instance/forms.py:76
+msgid "bandwidth rx"
+msgstr "下行带宽"
+
+#: nebula/portal/views/portal/instance/forms.py:77
+msgid "zone"
+msgstr "可用域"
+
+#: nebula/portal/views/portal/instance/forms.py:85
+#: nebula/portal/views/portal/instance/forms.py:265
+#, python-format
+msgid "不在Vcpu可选范围[%s-%s]"
+msgstr ""
+
+#: nebula/portal/views/portal/instance/forms.py:96
+#: nebula/portal/views/portal/instance/forms.py:272
+#: nebula/portal/views/portal/instance/forms.py:297
+#, python-format
+msgid "不在内存可选范围[%s-%s]"
+msgstr ""
+
+#: nebula/portal/views/portal/instance/forms.py:103
+#, python-format
+msgid "超出管理员设定最大单次创建数：[%s]instance_batches"
+msgstr ""
+
+#: nebula/portal/views/portal/instance/forms.py:107
+msgid "action"
+msgstr "动作"
+
+#: nebula/portal/views/portal/instance/forms.py:108
+msgid "resource_id"
+msgstr "资源ID"
+
+#: nebula/portal/views/portal/instance/forms.py:120
+msgid "backup name"
+msgstr "备份名称"
+
+#: nebula/portal/views/portal/instance/forms.py:139
+msgid "password"
+msgstr "密码"
+
+#: nebula/portal/views/portal/instance/forms.py:140
+msgid "确认密码"
+msgstr ""
+
+#: nebula/portal/views/portal/instance/forms.py:145
+msgid "IOPS"
+msgstr ""
+
+#: nebula/portal/views/portal/instance/forms.py:153
+msgid "name"
+msgstr "名称"
+
+#: nebula/portal/views/portal/instance/forms.py:191
+#: nebula/portal/views/portal/network/ports.py:40
+msgid "挂载网卡超过限制"
+msgstr ""
+
+#: nebula/portal/views/portal/instance/forms.py:237
+#: nebula/portal/views/portal/volume/data_volume.py:202
+msgid "挂载磁盘超过限制"
+msgstr ""
+
+#: nebula/portal/views/portal/instance/forms.py:286
+#, python-format
+msgid "CPU超出配额限制，剩余配额[%s核]"
+msgstr ""
+
+#: nebula/portal/views/portal/instance/forms.py:288
+#: nebula/portal/views/portal/instance/forms.py:310
+#, python-format
+msgid "内存超出配额限制，剩余内存[%sGB]"
+msgstr ""
+
+#: nebula/portal/views/portal/network/private_networks.py:80
+msgid "私有网络个数超出配额限制"
+msgstr ""
+
+#: nebula/portal/views/portal/network/private_networks.py:88
+#, python-format
+msgid "vlan不能超过(%s-%s)范围"
+msgstr ""
+
+#: nebula/portal/views/portal/network/private_networks.py:92
+#, python-format
+msgid "vlan %s 已经存在"
+msgstr ""
+
+#: nebula/portal/views/portal/network/private_networks.py:114
+#: nebula/portal/views/portal/network/private_networks.py:116
+#, python-format
+msgid "虚拟机[%s]不存在."
+msgstr ""
+
+#: nebula/portal/views/portal/network/private_networks.py:134
+#: nebula/portal/views/portal/network/virtualrouters.py:204
+#, python-format
+msgid "虚拟路由器[%s]状态错误"
+msgstr ""
+
+#: nebula/portal/views/portal/network/private_networks.py:144
+#, python-format
+msgid "子网[%s]和虚拟路由器[%s]不属于同一用户"
+msgstr ""
+
+#: nebula/portal/views/portal/network/private_networks.py:152
+msgid "可绑定子网超出最大限制"
+msgstr ""
+
+#: nebula/portal/views/portal/network/private_networks.py:170
+#: nebula/portal/views/portal/network/virtualrouters.py:220
+#, python-format
+msgid "网络[%s]和虚拟路由器[%s]不属于同一用户"
+msgstr ""
+
+#: nebula/portal/views/portal/network/security_group_rules.py:77
+msgid "方向字段为必填字段"
+msgstr ""
+
+#: nebula/portal/views/portal/network/security_group_rules.py:88
+msgid "TCP/UDP协议必须输入端口号"
+msgstr ""
+
+#: nebula/portal/views/portal/network/security_groups.py:65
+msgid "虚拟防火墙个数超出配额限制"
+msgstr ""
+
+#: nebula/portal/views/portal/network/subnets.py:61
+msgid "网关地址必须在可用IP地址段内"
+msgstr ""
+
+#: nebula/portal/views/portal/network/subnets.py:79
+#, python-format
+msgid "%s/%s与另外一个子网%s重叠"
+msgstr ""
+
+#: nebula/portal/views/portal/network/subnets.py:89
+msgid "该网络不在Active状态，无法创建子网！"
+msgstr ""
+
+#: nebula/portal/views/portal/network/subnets.py:91
+msgid "该网络不存在，无法创建子网！"
+msgstr ""
+
+#: nebula/portal/views/portal/network/virtualrouters.py:112
+#: nebula/portal/views/portal/network/virtualrouters.py:121
+#: nebula/portal/views/portal/network/virtualrouters.py:130
+#: nebula/portal/views/portal/network/virtualrouters.py:177
+#: nebula/portal/views/portal/network/virtualrouters.py:189
+msgid "程序内部错误"
+msgstr ""
+
+#: nebula/portal/views/portal/network/virtualrouters.py:114
+msgid "虚拟路由器个数超出配额限制"
+msgstr ""
+
+#: nebula/portal/views/portal/network/virtualrouters.py:123
+#: nebula/portal/views/portal/network/virtualrouters.py:179
+msgid "虚拟路由器下行带宽超出配额限制"
+msgstr ""
+
+#: nebula/portal/views/portal/network/virtualrouters.py:132
+#: nebula/portal/views/portal/network/virtualrouters.py:191
+msgid "虚拟路由器上行带宽超出配额限制"
+msgstr ""
+
+#: nebula/portal/views/portal/network/virtualrouters.py:208
+#, python-format
+msgid "虚拟路由器[%s]已经设置了网关，不能重复设置！ 请刷新网页查看。"
+msgstr ""
+
+#: nebula/portal/views/portal/network/virtualrouters.py:222
+#, python-format
+msgid "网络[%s]状态错误"
+msgstr ""
+
+#: nebula/portal/views/portal/network/virtualrouters.py:599
+msgid "所选网络没有子网！"
+msgstr ""
+
+#: nebula/portal/views/portal/systems/meters.py:53
+msgid "Update alarm meter status failure."
+msgstr ""
+
+#: nebula/portal/views/portal/systems/users.py:198
+msgid "password and confirm password are different."
+msgstr "两次输入的密码不一致"
+
+#: nebula/portal/views/portal/systems/users.py:223
+msgid "user_id"
+msgstr "用户ID"
+
+#: nebula/portal/views/portal/systems/users.py:224
+msgid "username"
+msgstr "用户名称"
+
+#: nebula/portal/views/portal/systems/users.py:225
+msgid "email"
+msgstr "邮箱"
+
+#: nebula/portal/views/portal/systems/users.py:226
+msgid "phone"
+msgstr "电话"
+
+#: nebula/portal/views/portal/systems/users.py:227
+msgid "status"
+msgstr "状态"
+
+#: nebula/portal/views/portal/users/login.py:36
+#: nebula/portal/views/portal/users/login.py:42
+msgid "Wrong username or password"
+msgstr "错误的用户名或密码"
+
+#: nebula/portal/views/portal/users/login.py:39
+msgid "User has been deactivated"
+msgstr "该用户已被冻结"
+
+#: nebula/portal/views/portal/users/profile.py:75
+msgid "not found user"
+msgstr "用户不存在"
+
+#: nebula/portal/views/portal/users/profile.py:79
+msgid "origin password not validate"
+msgstr "原始密码不正确"
+
+#: nebula/portal/views/portal/volume/data_volume.py:79
+#, python-format
+msgid "数据卷最大不能超过%sG"
+msgstr ""
+
+#: nebula/portal/views/portal/volume/data_volume.py:88
+msgid "数据卷容量超出配额限制"
+msgstr ""
+
+#: nebula/portal/views/portal/volume/data_volume.py:115
+msgid "数据卷配额不足不能克隆"
+msgstr ""
+
+#: nebula/portal/views/portal/volume/data_volume.py:133
+msgid "数据卷备份个数超出限制"
+msgstr ""
+
+#: nebula/portal/views/portal/volume/data_volume.py:158
+msgid "数据卷配额不足不能扩容"
+msgstr ""
+
+#: nebula/portal/views/portal/volume/data_volume.py:181
+msgid "数据卷配额不足不能恢复"
+msgstr ""
+
+#: nebula/portal/views/portal/zone/zone.py:60
+msgid "服务已运行"
+msgstr ""
+
+#: nebula/portal/views/portal/zone/zone.py:60
+msgid "服务已停止"
+msgstr ""
+
+#~ msgid "The vlan is beyond range(%s-%s)"
+#~ msgstr ""
+
+#~ msgid "The segmentation_id %s alreadly exists."
+#~ msgstr ""
+
+#~ msgid "the protocol field required"
+#~ msgstr ""
+
+#~ msgid "protocol port error!"
+#~ msgstr ""
+
+#~ msgid "protocol port can not be None!"
+#~ msgstr ""
+
+#~ msgid "更新集群创建失败"
+#~ msgstr ""
+
+#~ msgid "数据库子网删除成功"
+#~ msgstr ""
+
+#~ msgid "数据库网络绑定路由器删除成功"
+#~ msgstr ""
+
+#~ msgid "数据库网络绑定路由器删除失败"
+#~ msgstr ""
+
+#~ msgid "存入数据卷卸载到数据库成功"
+#~ msgstr ""
+
+#~ msgid "更新虚拟防火墙络存入数据库成功"
+#~ msgstr ""
+
+#~ msgid "申请删除数据卷"
+#~ msgstr ""
+
+#~ msgid "申请删除数据卷备份"
+#~ msgstr ""
+
+#~ msgid "开始添加镜像"
+#~ msgstr ""
+
+#~ msgid "后台开始虚机恢复"
+#~ msgstr ""
+
+#~ msgid "数据库网卡删除成功"
+#~ msgstr ""
+
+#~ msgid "数据库网卡删除失败"
+#~ msgstr ""
+
+#~ msgid "网卡挂载申请成功"
+#~ msgstr ""
+
+#~ msgid "应用虚拟防火墙成功存入数据库"
+#~ msgstr ""
+
+#~ msgid "应用虚拟防火墙入库成功"
+#~ msgstr ""
+
+#~ msgid "私有网络绑定到虚拟路由器存入数据库成功"
+#~ msgstr ""
+
+#~ msgid "网卡创建成功存入数据库"
+#~ msgstr ""
+
+#~ msgid "网卡存入数据库成功"
+#~ msgstr ""
+
+#~ msgid "数据库网络资源删除成功"
+#~ msgstr ""
+
+#~ msgid "数据库规则删除成功"
+#~ msgstr ""
+
+#~ msgid "数据库规则删除失败"
+#~ msgstr ""
+
+#~ msgid "数据库子网删除失败"
+#~ msgstr ""
+
+#~ msgid "删除虚拟路由器失败：%s"
+#~ msgstr ""
+
+#~ msgid "应用安全组到网卡成功存入数据库"
+#~ msgstr ""
+
+#~ msgid "应用安全组存入数据库成功"
+#~ msgstr ""
+
+#~ msgid "description"
+#~ msgstr "集群描述"
+
+#~ msgid "virtual type"
+#~ msgstr "虚拟化类型"
+
+#~ msgid "storage type"
+#~ msgstr "存储池类型"
+
+#~ msgid "zone"
+#~ msgstr "可用区域"
+
+#~ msgid "is ha"
+#~ msgstr "是否高可用"
+
+#~ msgid "aggregate name [%s] is used."
+#~ msgstr "集群[%s]已经存在"
+
+#~ msgid "instance %s does not exist."
+#~ msgstr ""
+
+#~ msgid "The instance %s is invalid."
+#~ msgstr ""
+
+#~ msgid "The virtualrouter %s is invalid"
+#~ msgstr ""
+
+#~ msgid "The network %s is creating"
+#~ msgstr ""
+
+#~ msgid "The network %s had been bound"
+#~ msgstr ""
+
+#~ msgid "Input is invalid."
+#~ msgstr ""
+
+#~ msgid "公网IP%s已经存在"
+#~ msgstr ""
+
+#~ msgid "集群创建成功"
+#~ msgstr ""
+
+#~ msgid "集群创建失败"
+#~ msgstr ""
+
+#~ msgid "开始移除集群主机"
+#~ msgstr ""
+
+#~ msgid "开始删除Openstack资源"
+#~ msgstr ""
+
+#~ msgid "删除Openstack资源成功"
+#~ msgstr ""
+
+#~ msgid "删除Openstack资源异常"
+#~ msgstr ""
+
+#~ msgid "删除集群主机失败"
+#~ msgstr ""
+
+#~ msgid "添加主机失败,"
+#~ msgstr ""
+
+#~ msgid "正在加入集群中"
+#~ msgstr ""
+
+#~ msgid "主机恢复失败"
+#~ msgstr ""
+
+#~ msgid "主机恢复成功"
+#~ msgstr ""
+
+#~ msgid "置维护失败"
+#~ msgstr ""
+
+#~ msgid "资源删除中"
+#~ msgstr ""
+
+#~ msgid "主机移除集群成功"
+#~ msgstr ""
+
+#~ msgid "镜像上传成功"
+#~ msgstr ""
+
+#~ msgid "开始删除虚机备份"
+#~ msgstr ""
+
+#~ msgid "该虚机备份底层不存在"
+#~ msgstr ""
+
+#~ msgid "虚机备份有任务"
+#~ msgstr ""
+
+#~ msgid "虚机恢复成功"
+#~ msgstr ""
+
+#~ msgid "开始虚机恢复"
+#~ msgstr ""
+
+#~ msgid "数据卷资挂载申请成功"
+#~ msgstr ""
+
+#~ msgid "数据卷资源挂载失败"
+#~ msgstr ""
+
+#~ msgid "数据卷挂载成功"
+#~ msgstr ""
+
+#~ msgid "数据卷挂载失败"
+#~ msgstr ""
+
+#~ msgid "虚拟机正在执行其他任务，无法完成备份操作"
+#~ msgstr ""
+
+#~ msgid "虚机备份创建成功"
+#~ msgstr ""
+
+#~ msgid "虚机不存在"
+#~ msgstr ""
+
+#~ msgid "虚机flavor不存在"
+#~ msgstr ""
+
+#~ msgid "虚机迁移成功"
+#~ msgstr ""
+
+#~ msgid "虚机开始迁移"
+#~ msgstr ""
+
+#~ msgid "开始恢复挂起虚拟机"
+#~ msgstr ""
+
+#~ msgid "恢复挂起虚拟机成功"
+#~ msgstr ""
+
+#~ msgid "恢复挂起虚拟机失败"
+#~ msgstr ""
+
+#~ msgid "开始恢复暂停虚拟机"
+#~ msgstr ""
+
+#~ msgid "恢复暂停虚拟机成功"
+#~ msgstr ""
+
+#~ msgid "恢复暂停虚拟机失败"
+#~ msgstr ""
+
+#~ msgid "网卡资源卸载成功"
+#~ msgstr ""
+
+#~ msgid "网卡资源卸载失败"
+#~ msgstr ""
+
+#~ msgid "网卡从数据库删除成功"
+#~ msgstr ""
+
+#~ msgid "网卡从数据库删除失败"
+#~ msgstr ""
+
+#~ msgid "网卡挂载成功"
+#~ msgstr ""
+
+#~ msgid "网卡挂载失败"
+#~ msgstr ""
+
+#~ msgid "开始绑定私有网络到虚拟路由器"
+#~ msgstr ""
+
+#~ msgid "申请绑定私有网络到虚拟路由器"
+#~ msgstr ""
+
+#~ msgid "绑定私有网络到虚拟路由器成功"
+#~ msgstr ""
+
+#~ msgid "私有网络绑定到虚拟路由器成功存入数据库"
+#~ msgstr ""
+
+#~ msgid "私有网络绑定到虚拟路由器成功"
+#~ msgstr ""
+
+#~ msgid "私有网络绑定到虚拟路由器失败"
+#~ msgstr ""
+
+#~ msgid "开始绑定外部IP"
+#~ msgstr ""
+
+#~ msgid "开始申请底层资源"
+#~ msgstr ""
+
+#~ msgid "申请底层资源成功"
+#~ msgstr ""
+
+#~ msgid "开始写入数据库"
+#~ msgstr ""
+
+#~ msgid "绑定外部IP成功"
+#~ msgstr ""
+
+#~ msgid "绑定外部IP失败"
+#~ msgstr ""
+
+#~ msgid "开始断开私有网络"
+#~ msgstr ""
+
+#~ msgid "申请断开网络资源"
+#~ msgstr ""
+
+#~ msgid "网络资源断开成功"
+#~ msgstr ""
+
+#~ msgid "网络资源断开失败"
+#~ msgstr ""
+
+#~ msgid "开始删除数据库网络绑定路由器"
+#~ msgstr ""
+
+#~ msgid "网络映射资源申请成功"
+#~ msgstr ""
+
+#~ msgid "网络映射创建成功"
+#~ msgstr ""
+
+#~ msgid "网络映射创建失败"
+#~ msgstr ""
+
+#~ msgid "网卡创建成功"
+#~ msgstr ""
+
+#~ msgid "网卡创建失败"
+#~ msgstr ""
+
+#~ msgid "申请申请挂载网卡"
+#~ msgstr ""
+
+#~ msgid "网卡挂载申请失败"
+#~ msgstr ""
+
+#~ msgid "开始创建私有网络"
+#~ msgstr ""
+
+#~ msgid "网络资源申请成功"
+#~ msgstr ""
+
+#~ msgid "私有网络创建成功存入数据库"
+#~ msgstr ""
+
+#~ msgid "私有网络存入数据库成功"
+#~ msgstr ""
+
+#~ msgid "私有网络创建成功"
+#~ msgstr ""
+
+#~ msgid "私有网络创建失败"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙资源申请成功"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙创建成功"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙创建失败"
+#~ msgstr ""
+
+#~ msgid "规则资源申请成功"
+#~ msgstr ""
+
+#~ msgid "规则创建成功"
+#~ msgstr ""
+
+#~ msgid "规则创建失败"
+#~ msgstr ""
+
+#~ msgid "子网资源申请成功"
+#~ msgstr ""
+
+#~ msgid "子网资源申请失败"
+#~ msgstr ""
+
+#~ msgid "子网创建成功"
+#~ msgstr ""
+
+#~ msgid "子网创建失败"
+#~ msgstr ""
+
+#~ msgid "虚拟路由器资源申请成功"
+#~ msgstr ""
+
+#~ msgid "虚拟路由器创建成功"
+#~ msgstr ""
+
+#~ msgid "虚拟路由器创建失败"
+#~ msgstr ""
+
+#~ msgid "私有网络已经被删除，可以忽略！"
+#~ msgstr ""
+
+#~ msgid "网络资源删除成功"
+#~ msgstr ""
+
+#~ msgid "网络资源删除失败"
+#~ msgstr ""
+
+#~ msgid "开始删除数据库网络资源"
+#~ msgstr ""
+
+#~ msgid "私有网络删除成功"
+#~ msgstr ""
+
+#~ msgid "数据库网络资源删除失败"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙资源已经被删除，可以忽略！"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙资源删除成功"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙资源删除失败"
+#~ msgstr ""
+
+#~ msgid "开始删除数据库虚拟防火墙对应虚拟防火墙规则"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙中虚拟防火墙规则删除成功"
+#~ msgstr ""
+
+#~ msgid "数据库虚拟防火墙中虚拟防火墙规则删除失败"
+#~ msgstr ""
+
+#~ msgid "开始删除数据库虚拟防火墙"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙删除成功"
+#~ msgstr ""
+
+#~ msgid "数据库虚拟防火墙删除失败"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙资源卸载成功"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙资源卸载失败"
+#~ msgstr ""
+
+#~ msgid "数据库虚拟防火墙中虚拟防火墙规则删除成功"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙规则删除成功"
+#~ msgstr ""
+
+#~ msgid "规则资源删除成功"
+#~ msgstr ""
+
+#~ msgid "规则资源删除失败"
+#~ msgstr ""
+
+#~ msgid "规则删除成功"
+#~ msgstr ""
+
+#~ msgid "规则删除失败"
+#~ msgstr ""
+
+#~ msgid "子网资源删除成功"
+#~ msgstr ""
+
+#~ msgid "子网资源删除失败"
+#~ msgstr ""
+
+#~ msgid "开始删除数据库子网"
+#~ msgstr ""
+
+#~ msgid "子网删除成功"
+#~ msgstr ""
+
+#~ msgid "子网删除失败"
+#~ msgstr ""
+
+#~ msgid "断开虚拟机成功"
+#~ msgstr ""
+
+#~ msgid "断开虚拟机失败"
+#~ msgstr ""
+
+#~ msgid "设置路由器资源成功"
+#~ msgstr ""
+
+#~ msgid "开始解绑外部IP"
+#~ msgstr ""
+
+#~ msgid "解绑外部IP失败"
+#~ msgstr ""
+
+#~ msgid "解绑外部IP成功"
+#~ msgstr ""
+
+#~ msgid "应用虚拟防火墙到网卡成功存入数据库"
+#~ msgstr ""
+
+#~ msgid "网络更新成功"
+#~ msgstr ""
+
+#~ msgid "网络更新失败"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙更新成功"
+#~ msgstr ""
+
+#~ msgid "虚拟防火墙更新失败"
+#~ msgstr ""
+
+#~ msgid "成功存入数据库"
+#~ msgstr ""
+
+#~ msgid "更新虚拟防火墙更新失败"
+#~ msgstr ""
+
+#~ msgid "更新路由器创建失败"
+#~ msgstr ""
+
+#~ msgid "数据卷资源克隆申请成功"
+#~ msgstr ""
+
+#~ msgid "数据卷克隆成功"
+#~ msgstr ""
+
+#~ msgid "数据卷克隆失败"
+#~ msgstr ""
+
+#~ msgid "数据卷资源申请成功"
+#~ msgstr ""
+
+#~ msgid "数据卷创建中"
+#~ msgstr ""
+
+#~ msgid "数据卷创建成功"
+#~ msgstr ""
+
+#~ msgid "数据卷创建失败"
+#~ msgstr ""
+
+#~ msgid "数据卷资源备份申请成功"
+#~ msgstr ""
+
+#~ msgid "数据卷备份创建成功"
+#~ msgstr ""
+
+#~ msgid "数据卷备份创建失败"
+#~ msgstr ""
+
+#~ msgid "数据卷删除中"
+#~ msgstr ""
+
+#~ msgid "数据卷已经被删除，可以忽略！"
+#~ msgstr ""
+
+#~ msgid "数据卷删除申请成功"
+#~ msgstr ""
+
+#~ msgid "数据卷删除失败"
+#~ msgstr ""
+
+#~ msgid "开始删除数据卷数据库记录"
+#~ msgstr ""
+
+#~ msgid "删除存数据卷数据库记录成功"
+#~ msgstr ""
+
+#~ msgid "删除数据卷数据库记录失败"
+#~ msgstr ""
+
+#~ msgid "数据卷备份删除中"
+#~ msgstr ""
+
+#~ msgid "备份已经被删除，可以忽略！"
+#~ msgstr ""
+
+#~ msgid "数据卷备份删除申请成功"
+#~ msgstr ""
+
+#~ msgid "数据卷备份申请删除失败"
+#~ msgstr ""
+
+#~ msgid "开始删除数据卷备份数据库记录"
+#~ msgstr ""
+
+#~ msgid "删除存数据卷备份数据库记录成功"
+#~ msgstr ""
+
+#~ msgid "数据卷资卸载申请成功"
+#~ msgstr ""
+
+#~ msgid "数据卷资源卸载失败"
+#~ msgstr ""
+
+#~ msgid "存入数据卷卸载到数据库"
+#~ msgstr ""
+
+#~ msgid "数据卷卸载成功"
+#~ msgstr ""
+
+#~ msgid "数据卷卸载失败"
+#~ msgstr ""
+
+#~ msgid "数据卷扩容申请成功"
+#~ msgstr ""
+
+#~ msgid "数据卷扩容成功"
+#~ msgstr ""
+
+#~ msgid "数据卷资源新建成功"
+#~ msgstr ""
+
+#~ msgid "数据卷资源新建失败"
+#~ msgstr ""
+
+#~ msgid "存入新建数据卷到数据库"
+#~ msgstr ""
+
+#~ msgid "数据卷新建成功"
+#~ msgstr ""
+
+#~ msgid "数据卷资源修改申请成功"
+#~ msgstr ""
+
+#~ msgid "数据卷资源修改失败"
+#~ msgstr ""
+
+#~ msgid "存入数据卷更新到数据库"
+#~ msgstr ""
+
+#~ msgid "存入数据卷更新到数据库成功"
+#~ msgstr ""
+
+#~ msgid "数据卷更新成功"
+#~ msgstr ""
+
+#~ msgid "数据卷更新失败"
+#~ msgstr ""
+
+#~ msgid "数据卷资源备份修改申请成功"
+#~ msgstr ""
+
+#~ msgid "数据卷资源备份更新失败"
+#~ msgstr ""
+
+#~ msgid "存入数据卷备份更新到数据库"
+#~ msgstr ""
+
+#~ msgid "存入数据卷备份更新到数据库成功"
+#~ msgstr ""
+
+#~ msgid "数据卷备份更新成功"
+#~ msgstr ""
+
+#~ msgid "数据卷备份更新失败"
+#~ msgstr ""
+
+#~ msgid "PublicIP Manage - PublicIP Sub List"
+#~ msgstr "外部IP管理 - 外部IP子列表"
+
+#~ msgid "image_name"
+#~ msgstr "镜像名称"
+
+#~ msgid "网络[%s]已经被绑定"
+#~ msgstr ""
+
+#~ msgid "%s不是一个合法的CIDR地址，推荐使用%s"
+#~ msgstr ""
+
+#~ msgid "外部IP地址起始范围超出限制，默认最大254"
+#~ msgstr ""
+
+#~ msgid "起始IP不能大于结束IP"
+#~ msgstr ""
+
+#~ msgid "外部IP%s已经存在"
+#~ msgstr ""
+
+#~ msgid "输入不正确"
+#~ msgstr ""
+
+#~ msgid "PublicIP Manage - PublicIP List"
+#~ msgstr "外部IP管理 - 外部IP列表"
+
+#~ msgid "移除主机告警成功"
+#~ msgstr ""
+
+#~ msgid "移除主机告警失败"
+#~ msgstr ""
+
+#~ msgid "更新虚拟机告警状态中"
+#~ msgstr ""
+
+#~ msgid "移除虚拟机告警成功"
+#~ msgstr ""
+
+#~ msgid "移除虚拟机告警失败"
+#~ msgstr ""
+
+#~ msgid "申请规则资源"
+#~ msgstr ""
+
+#~ msgid "申请规则资源成功"
+#~ msgstr ""
+
+#~ msgid "虚拟化类型"
+#~ msgstr ""
+
+#~ msgid "存储类型"
+#~ msgstr ""
+
+#~ msgid "HA"
+#~ msgstr ""
+
+#~ msgid "aggregate"
+#~ msgstr "集群"
+
+#~ msgid "镜像配额回滚"
+#~ msgstr ""
+
+#~ msgid "配额超限"
+#~ msgstr ""
+
+#~ msgid "申请路由器资源成功"
+#~ msgstr ""
+
+#~ msgid "更新虚拟路由器成功"
+#~ msgstr ""
+

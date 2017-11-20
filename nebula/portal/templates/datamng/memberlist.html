@@ -1,0 +1,39 @@
+<div id="{{ etl_href }}" class="tab-pane active">
+    {% import 'bootstrap/wtf.html' as wtf %}
+
+    <ul>
+            <ul class="nav nav-header">
+                <li style="float: left">{{ pagination.info }}</li>
+            </ul>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <a class="list-group-item active">
+                        <tr>
+                            <th width="80pix">ID</th>
+                            <th>姓名</th>
+                            <th>员工号</th>
+                            <th>状态</th>
+                            <th width="140pix">修改日期</th>
+                        </tr>
+                    </a>
+                    </thead>
+                    <tbody>
+                    {% for dir in dirs %}
+                        <tr>
+                            <td><a href="#">{{ dir.id}}</a></td>
+                            <td>{{ dir.name }}</td>
+                            <td>{{ dir.number }}</td>
+                            <td>{{ dir.state }}</td>
+                            <td>{{ dir.updated_at }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <ul class="pagination">
+                    {{ pagination.links }}
+                </ul>
+            </div>
+    </ul>
+</div>
+

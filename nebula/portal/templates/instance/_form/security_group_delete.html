@@ -1,0 +1,131 @@
+<!-- 删除虚拟防火墙Modal -->
+<div class="modal fade" id="deleteSecurityGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">卸载虚拟防火墙- <span class="text-success">{{instance.display_name}}</span></h4>
+      </div>
+      <div class="modal-body">
+        <form id="form_traditional_validation" action="{{ url_for('portal.instance_security_group_delete', id=instance.id) }}" class="form-horizontal row" method="post">
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>网卡</label>
+            <div class="col-sm-7">
+              <select name="port_id" id=""port_id"" class="select2 form-control"  >
+              	<option value="0">选择网卡</option>
+                {% for port in ports %}
+                <option value="{{port.id}}" >{{port.network.name}} ({{port.fixed_ips[0]["ip_address"]}})</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">&nbsp;</label>
+            <div class="col-sm-7">
+              <div class="form-table">
+                <table class="table table-bordered table-hover no-more-tables security">
+                  <thead>
+                    <tr>
+                      <th style="width:1%"> <div class="checkbox check-default">
+                          <input id="checkbox_n" type="checkbox" value="1" class="checkall">
+                          <label for="checkbox_n"></label>
+                        </div>
+                      </th>
+                      <th>虚拟防火墙</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                  </tbody>
+                </table>
+              </div>
+              <!--form-table-->
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+            	<input type="hidden" name="sgroup_id">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>确 认</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--删除虚拟防火墙Modal-->
+
+<script>
+	var port = new Array();
+	var map=new Array();
+	{% for port in ports %}
+		var groups = new Array();
+		var i=0;
+		{% for group in port.security_group %}
+			groups[i] = "{{group.security_groups.id}}:::{{group.security_groups.name}}" ;
+			i++;
+		{% endfor %}
+		map[{{port.id}}]=groups;
+	{% endfor %}
+	var str='<tr><td class="v-align-middle"><div class="checkbox check-default" style="margin-top:-10px;">'+
+        '<input id="checkbox{index}" name="sgroupid" type="checkbox" value="{value}"><label for="checkbox{index}"></label></div></td><td>{name}</td></tr>'
+	$(function(){
+		$(".checkall").attr("disabled","disabled");
+		$("select[name=port_id]").change(function(){
+				var html="";
+				var value=$(this).val();
+				if(value!="0"){
+					var _port=map[value];
+					for(var i=0;i<_port.length;i++){
+						var array=_port[i].split(":::");
+						html+=str.replace(/{index}/g,i).replace("{value}",array[0]).replace("{name}",array[1]);
+					}
+					if(html!=""){
+						$(".checkall").removeAttr("disabled");
+					}
+					$("#deleteSecurityGroup tbody").html("").html(html);
+					$(".checkall").click(function(){
+						var checked=$(this).attr("checked");
+						if(checked=="checked"){
+							$("input[name=sgroupid]").attr("checked","checked");
+						}else{
+							$("input[name=sgroupid]").removeAttr("checked");
+						}
+						getValues();
+					});
+
+					$(".security tbody input[type=checkbox]").click(function(){
+						getValues();
+					});
+
+				}else{
+					$("#deleteSecurityGroup tbody").html("");
+					$(".checkall").removeAttr("checked");
+					$(".checkall").attr("disabled","disabled");
+				}
+
+		});
+
+
+	});
+
+	function getValues(){
+		var s="";
+
+		$("input[name=sgroup_id]").val("");
+		$("input[name=sgroupid]:checked").each(function(){
+			s+=$(this).val()+",";
+		});
+		if(s!=""){
+			s=s.substring(0,s.length-1);
+		}
+		$("input[name=sgroup_id]").val(s);
+	}
+</script>
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% from 'layout/pagination.html' import render_pagination with context %}
+<div class="grid-title no-border  no-margin">
+    <button type="button" class="btn btn-white btn-cons reload"  data-url="/instance/instance-backups/?segment=true"><i class="fa fa-refresh"></i></button>
+    <div class="btn-group"><a class="btn btn-white dropdown-toggle btn-demo-space" data-toggle="dropdown"
+                              href="#"> 更多操作 <span class="caret"></span> </a>
+        <ul class="dropdown-menu" id="vm_backup_menu">
+            <li><a href="#" name="#mirrorImage" data-url="/instance/instance-backups-convert-image/{id}" data-rule="UpdateInstanceBackup"><i class="fa fa-file-video-o"></i>&nbsp;生成镜像</a></li>
+            <li><a href="#" name="#revertinstancebackup" data-url="/instance/instance-backups-revert/{id}" data-rule="UpdateInstanceBackup"><i class="fa fa-history"></i>&nbsp;恢复</a></li>
+            <li><a href="#" name="#updateBackup" data-url="/form/instance/instance-backup/{id}" data-rule="UpdateInstanceBackup"><i class="fa fa-pencil"></i>&nbsp;修改</a></li>
+            <li><a href="#" name="#deleteinstancebackup"><i class="fa fa-trash-o"></i>&nbsp;删除</a></li>
+        </ul>
+    </div>
+    <div class=" input-prepend inside search-form no-boarder">
+        <form action="#" method="get" class="">
+           <span class="add-on" >
+               <span class="iconset top-search"></span>
+           </span>
+        	<input name="search" type="text" class="no-boarder " placeholder="{% if search %}{{ search }}{% else %}搜索{% endif %}" style="width:200px;" value="{{search}}">
+         </form>
+    </div>
+    <div class="grid-body no-border" name="listtable">
+        {% include 'instance_backup/_instance_backup_sub_list.html' %}
+	</div>
+</div>
+

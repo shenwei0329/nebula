@@ -1,0 +1,50 @@
+{% from 'layout/sublist_pagination.html' import render_sub_pagination with context %}
+
+<div class="grid simple">
+  <div class="grid-title no-border">
+    <h4>已绑定列表</h4>
+    <div class="tools"> <a href="javascript:;" class="reload"></a></div>
+  </div>
+  <div class="grid-body no-border" style="overflow: hidden;">
+    <table class="table no-more-tables">
+      <thead>
+        <tr>
+          <th>名称</th>
+          <th>状态</th>
+          <th>属于者</th>
+          <th>创建于</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for resource in pagination.items %}
+          {% if resource %}
+		<tr>
+          <td ><a href="#">{{ resource.name }}</a></td>
+          <td><span class=" text-success"><i class="fa fa-check "></i> {{ resource.status }}</span></td>
+          <td class="text-info">管理员</td>
+          <td >{{ resource.created_at | timesince }}</td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+        <tr>
+          <td ><a href="#">静态机器名</a></td>
+          <td><span class=" text-success"><i class="fa fa-check "></i> &nbsp;运行中</span></td>
+          <td class="text-info">管理员</td>
+          <td >0000</td>
+        </tr>
+      </tbody>
+    </table>
+    <!--分页-->
+   
+  {% if pagination %}
+   {% if pagination.items %}
+      {{ render_sub_pagination(pagination, 'portal.private_network_instance_list', resource_id) }}
+    {% else %}
+      <p class=""><em>该列表中暂时没有数据。</em></p>
+    {% endif %}
+  {% endif %}
+    <!--分页--> 
+  </div>
+  <!--grid-body--> 
+</div>
+

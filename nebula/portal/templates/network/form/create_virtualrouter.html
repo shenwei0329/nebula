@@ -1,0 +1,94 @@
+<!-- 新建路由器modal begin-->
+<div class="modal fade" id="newRouter" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="myModalLabel">新建路由器</h4>
+        </div>
+        <div class="modal-body">
+        <div class="alert alert-info">一种工作在OSI模型IP层的设备，它基于IP信息完成报文的转发，用于连接多个逻辑上分开的子网</div>
+          <form id="form_traditional_validation" method="POST"
+                action="{{ url_for('portal.virtualrouter_create') }}" class="form-horizontal">
+            <div class="form-group text-primary">
+              <label for="" class="col-sm-3 control-label">路由器配额</label>
+              <label for="" class="col-sm-2 control-label text-left text-success" id="vr_total_quota">
+                  {{ vr_quota }}</label>
+              <label for="" class="col-sm-2 control-label">可用配额</label>
+              <label for="" class="col-sm-3 control-label text-left text-success" id="vr_usable_quota">
+                  {{ vr_usable }}</label>
+            </div>
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">名称</label>
+              <div class="col-sm-7 input-validation right">
+                <input type="text" name="name" id="" class="form-control" maxlength="30">
+              </div>
+            </div>
+            <!--form-group-->
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">描述</label>
+              <div class="col-sm-7 input-validation right">
+                <textarea class="form-control" rows="3" name="description"></textarea>
+              </div>
+            </div>
+            <!--form-group-->
+            <h5 class=" m-l-20">高级设置 <a class="m-l-10 advanceSetting-1" href="#">
+                <i class="fa fa-plus"></i></a></h5>
+            <div class="advanceSettingInfo-1">
+            <div class="form-group text-primary">
+              <label for="" class="col-sm-3 control-label">上行带宽配额</label>
+              <label for="" class="col-sm-3 control-label text-left text-success">
+                  {{ bandwidth_tx_quota }}
+                  <span class="text-muted p-l-10 ">Mb/s</span>
+              </label>
+              <label for="" class="col-sm-2 control-label">可用带宽</label>
+              <label for="" class="col-sm-3 control-label text-left text-success">
+                  {{ bandwidth_tx_usable }}
+                  <span class="text-muted p-l-10 ">Mb/s</span>
+              </label>
+            </div>
+            <!--form-group-->
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">上行带宽</label>
+              <div class="col-sm-5">
+                <input type="text" name="bandwidth_tx" id="" class="form-control digits required" max="{{ bandwidth_tx_usable }}" min="1" value="1">
+              </div>
+              <span class="pull-left p-t-10 inline">Mb/s</span>
+            </div>
+            <div class="form-group text-primary">
+              <label for="" class="col-sm-3 control-label">下行带宽配额</label>
+              <label for="" class="col-sm-3 control-label text-left text-success">
+                  {{ bandwidth_rx_quota }}
+                  <span class="text-muted p-l-10 ">Mb/s</span>
+              </label>
+              <label for="" class="col-sm-2 control-label">可用带宽</label>
+              <label for="" class="col-sm-3 control-label text-left text-success">
+                  {{ bandwidth_rx_usable }}
+                  <span class="text-muted p-l-10 ">Mb/s</span>
+              </label>
+            </div>
+            <!--form-group-->
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">下行带宽</label>
+              <div class="col-sm-5">
+                <input type="text" name="bandwidth_rx" id="" class="form-control digits required" max=" {{ bandwidth_rx_usable }}" min="1" value="1">
+              </div>
+              <span class="pull-left p-t-10 inline">Mb/s</span>
+            </div>
+            <!--form-group-->
+            </div>
+            <div class="form-actions">
+              <div class="pull-right">
+
+                  <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+                  <button type="submit" class="btn btn-primary btn-cons{% if vr_usable and bandwidth_rx_usable and bandwidth_tx_usable %}{% else %} disabled{% endif %}"><i class="icon-ok"></i>保存</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- 新建路由器modal end-->
+

@@ -1,0 +1,202 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}{% endblock %}
+{% block style %}
+{% endblock %}
+
+{% block resource_type %}ETL{% endblock %}
+
+{% block container %}
+
+        <!-- 页面内容从此处开始-->
+        <div class="content">
+        <!--content-->
+
+                <script type="application/javascript">
+
+                    /* 注意：任何AJAX操作后，都应该调用 GetStatus 函数 确保当前URL为 /etltools/change */
+                    function ajaxForm(value) {
+                        $.ajax({
+                            type: 'POST',
+                            contentType: 'application/json',
+                            url: '/datamng/report',
+                            dataType: 'json',
+                            data: JSON.stringify({ value: value }),
+                            error: function() {
+                                alert('Error');
+                            },
+                            success: function (msg) {
+                                $("#add-rec").html(msg['body']);
+                                $('#InputModal').modal('show');
+                            }
+                        });
+                        return false;
+                    }
+
+                    function ItemOnclick(value){
+                        ajaxForm(value);
+                    }
+
+                    function PageOnChange(value){
+                        /*
+                        提交页面更改的 表单
+                        =================
+                        表单返回的是当前页面刷新内容，该内容以 ajax 方式对 etl_href 标签内容进行刷新
+                         */
+                        $.ajax({
+                            type: 'POST',
+                            contentType: 'application/json',
+                            url: '/datamng/datamngchange',
+                            dataType: 'json',
+                            data: JSON.stringify({ value: value }),
+                            error: function() {
+                                alert('Error');
+                            },
+                            success: function (msg) {
+                                $("#{{ etl_href }}").html(msg['body']);
+                            }
+                        });
+                    }
+
+                    function delete_confirm(name){
+                        /*
+                        删除记录确认
+                         */
+                        var r=confirm("删除记录［" + name + "］，请确认！")
+                        if (r==true){
+                            /*
+                            提交删除记录的 表单
+                             */
+                            $.ajax({
+                                type: 'POST',
+                                contentType: 'application/json',
+                                url: '/datamng/dataelementdelete',
+                                dataType: 'json',
+                                data: JSON.stringify({ keyid: name }),
+                                error: function() {
+                                    alert('Error');
+                                },
+                                success: function (msg) {
+                                    $("#{{ etl_href }}").html(msg['body']);
+                                    GetStatus();
+                                }
+                            });
+                        }
+                    }
+
+                    function ShowProductInfo(name){
+                        /*
+                        提交页面更改的 表单
+                        =================
+                        表单返回的是当前页面刷新内容，该内容以 ajax 方式对 etl_href 标签内容进行刷新
+                         */
+                            $.ajax({
+                                type: 'POST',
+                                contentType: 'application/json',
+                                url: '/datamng/showproductinfo',
+                                dataType: 'json',
+                                data: JSON.stringify({ name: name }),
+                                error: function() {
+                                    alert('Error');
+                                },
+                                success: function (msg) {
+                                    $('#text_info').html(msg['body']);
+		                            $('#Modal').modal('show');
+                                }
+                            });
+                    }
+
+                    function ShowProjectInfo(name){
+                        /*
+                        提交页面更改的 表单
+                        =================
+                        表单返回的是当前页面刷新内容，该内容以 ajax 方式对 etl_href 标签内容进行刷新
+                         */
+                            $.ajax({
+                                type: 'POST',
+                                contentType: 'application/json',
+                                url: '/datamng/showprojectinfo',
+                                dataType: 'json',
+                                data: JSON.stringify({ name: name }),
+                                error: function() {
+                                    alert('Error');
+                                },
+                                success: function (msg) {
+                                    $('#text_info').html(msg['body']);
+		                            $('#Modal').modal('show');
+                                }
+                            });
+                    }
+
+                </script>
+
+                <div class="grid no-padding ">
+                            <ul id="etl_tools" class="nav nav-pills ajax-tabs" data-sticky-tabs="sticky" style="width: 100%" >
+                                {% if _page==0 %}<li class="active" onclick="PageOnChange(0)">{% else %}<li class onclick="PageOnChange(0)">{% endif %}
+                                    <a href="?etl_app=data_element_list" data-toggle="tab" data-target="#data_element_list" data-loaded="true">数据元浏览</a>
+                                </li>
+                                {% if _page==1 %}<li class="active" onclick="PageOnChange(1)">{% else %}<li class onclick="PageOnChange(1)">{% endif %}
+                                    <a href="?etl_app=member_list" data-toggle="tab" data-target="#project_list" data-loaded="true">员工浏览</a>
+                                </li>
+                                {% if _page==2 %}<li class="active" onclick="PageOnChange(2)">{% else %}<li class onclick="PageOnChange(2)">{% endif %}
+                                    <a href="?etl_app=project_list" data-toggle="tab" data-target="#project_list" data-loaded="true">项目浏览</a>
+                                </li>
+                                {% if _page==3 %}<li class="active" onclick="PageOnChange(3)">{% else %}<li class onclick="PageOnChange(3)">{% endif %}
+                                    <a href="?etl_app=task_list" data-toggle="tab" data-target="#task_list" data-loaded="true">任务浏览</a>
+                                </li>
+                                {% if _page==4 %}<li class="active" onclick="PageOnChange(4)">{% else %}<li class onclick="PageOnChange(4)">{% endif %}
+                                    <a href="?etl_app=product_list" data-toggle="tab" data-target="#product_list" data-loaded="true">产品浏览</a>
+                                </li>
+                                {% if _page==5 %}<li class="active" onclick="PageOnChange(5)">{% else %}<li class onclick="PageOnChange(5)">{% endif %}
+                                    <a href="?etl_app=enginerring_list" data-toggle="tab" data-target="#product_list" data-loaded="true">工程浏览</a>
+                                </li>
+                                {% if _page==6 %}<li class="active" onclick="PageOnChange(6)">{% else %}<li class onclick="PageOnChange(6)">{% endif %}
+                                    <a href="?etl_app=delivery_list" data-toggle="tab" data-target="#product_list" data-loaded="true">产品交付浏览</a>
+                                </li>
+                                {% if _page==7 %}<li class="active" onclick="PageOnChange(7)">{% else %}<li class onclick="PageOnChange(7)">{% endif %}
+                                    <a href="?etl_app=upfile" data-toggle="tab" data-target="#upfile" data-loaded="true">上传文件日志浏览</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                {% if _page==0 %}
+                                    {% include 'datamng/dataelementlist.html' %}
+                                {% elif _page==1 %}
+                                    {% include 'datamng/memberlist.html' %}
+                                {% elif _page==2 %}
+                                    {% include 'datamng/projectlist.html' %}
+                                {% elif _page==3 %}
+                                    {% include 'datamng/tasklist.html' %}
+                                {% elif _page==4 %}
+                                    {% include 'datamng/productlist.html' %}
+                                {% elif _page==5 %}
+                                    {% include 'datamng/enginerringlist.html' %}
+                                {% elif _page==6 %}
+                                    {% include 'datamng/deliverylist.html' %}
+                                {% else %}
+                                    {% include 'datamng/upfilelist.html' %}
+                                {% endif %}
+                            </div>
+                </div>
+            </div>
+        <!-- 页面内容到此结束-->
+
+    <div class="modal hide fade" id="Modal" style="margin:0  atuo;">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3>信息</h3>
+		</div>
+		<div class="modal-body">
+            <p id="text_info">
+                {% for t in text %}
+                    {{ t }}<br/>
+                {% endfor %}
+            </p>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">Close</a>
+		</div>
+	</div>
+
+
+{% endblock %}

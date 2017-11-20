@@ -1,0 +1,66 @@
+<!--登录日志-->
+{% from 'layout/pagination.html' import render_pagination with context %}
+{% extends 'layout/base.html' %}
+{% block title %}系统日志{% endblock %}
+{% block style %}
+{% endblock %}
+{% block resource_type %}Systemlogs{% endblock %}
+{% block container %}
+
+<!-- BEGIN PAGE -->
+  <div class="page-content">
+    <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+    <div class="content">
+      <!--title-->
+      <div class="page-title">
+        <h3>系统日志</h3>
+      </div>
+      <!--title-->
+      <div class="row">
+        <div class="col-md-12">
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs">
+            <li><a href="{{ url_for('portal.system_logs_warning') }}">告警日志</a></li>
+            <li><a href="{{ url_for('portal.system_logs_op') }}">操作日志</a></li>
+            <li class="active"><a href="{{ url_for('portal.system_logs_user_login') }}">登录日志</a></li>
+          </ul>
+
+          <div class="tab-content">
+          <div class="tab-pane active" id="login">
+              <!--登录日志-->
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>登录时间</th>
+                    <th>登录用户</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for user_login in pagination.items %}
+                  <tr>
+                    <td><i class="fa fa-clock-o m-r-10"></i>{{user_login.created_at | datetime }}</td>
+                    <td class="text-info"><i class="fa fa-user m-r-10"></i>{{user_login.user.username}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <!--分页-->
+              {% if pagination.items %}
+              {{ render_pagination(pagination, 'portal.system_logs_user_login', '') }}
+              {% else %}
+              <p class=""><em>该列表中暂时没有数据。</em></p>
+              {% endif %}
+              <!--分页-->
+              <!--登录日志-->
+             </div>
+          </div>
+        </div>
+        </div>
+      </div>
+      <!--col-md-12-->
+    </div>
+    <!--row-->
+  </div>
+  <!--content-->
+{% endblock %}

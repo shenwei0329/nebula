@@ -1,0 +1,38 @@
+<!-- 加入集群Modal -->
+<div class="modal fade" id="addCluster" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">加入集群-<span class="text-success">{{ host.hostname }}</span></h4>
+      </div>
+      <div class="modal-body">
+        <form action="{{ url_for('portal.add_aggregate',id=host.id) }}" method="POST" class="form-horizontal row">
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">集群</label>
+            <div class="col-sm-7">
+              <select name="aggregate_id" id="aggregate_id" class="select2 form-control"  >
+                <option value="-1">选择集群</option>
+                {% for hostgroup in aggregates %}
+                <option value="{{ hostgroup.id }}">{{ hostgroup.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保 存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--加入集群Modal-->
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

@@ -1,0 +1,50 @@
+<div id="{{ etl_href }}">
+    {% import 'bootstrap/wtf.html' as wtf %}
+
+    <ul>
+        <ul class="nav nav-header">
+            <li style="float: left">{{ pagination.info }}</li>
+            <li>
+                <button type="button" class="small button"  style="float: right" onclick="ItemOnclick(1)" >
+                      <i class="icon-plus"></i>&nbsp;添加资源&nbsp;</button>
+            </li>
+        </ul>
+        <div class="table-responsive">
+               {% if path!="根目录" %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <a class="list-group-item active">
+                            <tr>
+                                <th width="120pix">名称</th>
+                                <th width="200pix">描述</th>
+                                <th>执行脚本</th>
+                                <th width="100pix">版本</th>
+                                <th width="140pix">提交日期</th>
+                                <th width="200pix">操作</th>
+                            </tr>
+                        </a>
+                        </thead>
+                        <tbody>
+                        {% for job in mods %}
+                            <tr>
+                                <td>{{ job.name }}</td>
+                                <td>{{ job.desc }}</td>
+                                <td>{{ job.cmd }}</td>
+                                <td>{{ job.version }}</td>
+                                <td>{{ job.created_at }}</td>
+                                <td>
+                                    <button id='job_delete' value={{ job.name }} type='button' class="small button" onclick="delete_confirm('{{ job.name }}')"><i class="icon-remove" style="color: #f00000;"></i></button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <ul class="pagination">
+                        {{ pagination.links }}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </ul>
+</div>

@@ -1,0 +1,13 @@
+<div class="page-title">
+  <!--面包屑-->
+  <ul class="breadcrumb">
+    <li>
+      <p>您在这儿</p>
+    </li>
+    <li><a href="{{ url_for('portal.instance_list') }}" class="">虚拟机</a></li>
+    <li>
+      <a href="{{ url_for('portal.instance_detail', id=instance.id) }}" class="active text-success" style="font-size:18px">虚拟机详情</a>
+    </li>
+  </ul>
+  <!--面包屑-->
+</div>

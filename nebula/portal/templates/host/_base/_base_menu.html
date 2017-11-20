@@ -1,0 +1,53 @@
+<li>
+  <a href="#" name="#addCluster"
+     data-rule="addAggregate"
+     data-url="/forms/host/{id}/add_aggregate/">
+  <i class="fa fa-cubes"></i>&nbsp;加入集群</a>
+</li>
+<li>
+  <a href="#" name="#removeAggregate"
+     data-rule="reomveAggregate"
+     data-url="/forms/host/{id}/remove_aggregate/">
+  <i class="fa fa-cube"></i>&nbsp;移除集群</a>
+</li>
+<li>
+  <a href="#" name="#maintain"
+     data-rule="maintain"
+     data-url="/forms/host/{id}/maintain/">
+  <i class="fa fa-wrench"></i>&nbsp;置维护</a>
+</li>
+
+<li>
+  <a href="#" name="#active"
+     data-rule="active"
+     data-url="/forms/host/{id}/active/">
+  <i class="fa fa-history"></i>&nbsp;恢复</a>
+</li>
+<!--
+<li><a href="#" name="#live-migration"
+     data-rule="live-migration"
+     data-url="/forms/host/{id}/live_migration/">
+    <i class="fa fa-clipboard"></i>&nbsp;虚拟机迁移</a>
+</li>
+-->
+<li class="vm-list"><i class="fa fa-bullhorn"></i>&nbsp;监控策略<i class="fa fa-caret-right pull-right vm-list-right"></i>
+	<ul class="vm-dropdown-menu">
+    	<li><a href="#"
+               data-rule="applyAlarmRule"
+               data-url="/forms/alarms/binding/host/{id}/">
+            <i class="fa fa-bullhorn"></i>&nbsp; 绑定监控策略</a>
+        </li>
+    	<li><a href="#" data-url="/forms/alarms/unbinding/host/{id}/"><i class="fa fa-bullhorn"></i>&nbsp; 解除监控策略</a></li>
+    </ul>
+</li>
+<li>
+  <a href="#" name="#update"
+     data-rule="updateHostRule"
+     data-url="/forms/host/{id}/update/">
+  <i class="fa fa-pencil"></i>&nbsp;修改</a>
+</li>
+<li>
+  <a href="#" name="#deleteHost">
+  <i class="fa fa-trash-o"></i>&nbsp;删除</a>
+</li>
+

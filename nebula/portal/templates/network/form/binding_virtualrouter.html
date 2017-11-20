@@ -1,0 +1,48 @@
+<!-- Modal -->
+<div class="modal fade" id="connectRouter" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="myModalLabel">连接路由器-
+              <span class="text-success">{{ network.name }}</span></h4>
+        </div>
+        <div class="modal-body">
+          <form id="form_traditional_validation"
+                action="{{ url_for('portal.private_network_binding_virtualrouter', id=network.id) }}"
+                class="form-horizontal" method="POST">
+            {% if not error_flag %}
+            <input type="hidden" name="id">
+            <input type="hidden" name="network_id" name="network_id" value="{{ network.id }}">
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">连接路由器</label>
+              <div class="col-sm-7 input-validation right">
+                <select name="virtualrouter_id" id="formCluster" class="select2 form-control"  >
+                <option value="">选择接路由器</option>
+                  {% for vr in virtualrouters %}
+                    <option value="{{ vr.id }}" class="form-option">{{ vr.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <div class="pull-right">
+                  <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+                  <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保存</button>
+              </div>
+            </div>
+            {% else %}
+            <div class="form-actions">
+              <p>该私有网络已经绑定到路由器！</p>
+            </div>
+            {% endif %}
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+<!--modal-->
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

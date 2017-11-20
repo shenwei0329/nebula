@@ -1,0 +1,66 @@
+<div class="modal fade" id="new_role" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">新建角色</h4>
+      </div>
+      <div class="modal-body">
+		<form class=" form-horizontal" action="{{ url_for('portal.role_create')}}" method="POST">
+          <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right">名 称：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8">
+              <input type="text" class="form-control" name="name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right">权 限：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8" style="padding-left:20px;">
+              <select multiple="multiple" id="multi-select1" name="permissions">
+                {% for item in permissions %}
+                <option value="{{ item.id }}">{{ item.name | translate }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right">用 户：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8" style="padding-left:20px;">
+              <select multiple="multiple" id="multi-select2" name="users">
+                {% for item in users %}
+                <option value="{{ item.id }}">{{ item.username }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+	      <div class="form-actions">
+	      	<div class="pull-right">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+	        <button type="submit" class="btn btn-primary">保 存</button>
+	        </div>
+	      </div>
+	    </form>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<script>
+$(function(){
+	
+	 var role_selectHeader = {
+	    		selectableHeader: "<div class='custom-header'>未分配权限</div><input type='text' class='form-control' autocomplete='off' placeholder='输入可筛选'>",
+	    		selectionHeader: "<div class='custom-header'>已分配权限</div><input type='text' class='form-control' autocomplete='off' placeholder='输入可筛选'>"
+	 } ;
+	 setMultiSelect($('#multi-select1') , role_selectHeader ) ;
+	    
+    var user_selectHeader = {
+    		selectableHeader: "<div class='custom-header'>未分配用户</div><input type='text' class='form-control' autocomplete='off' placeholder='输入可筛选'>",
+    		selectionHeader: "<div class='custom-header'>已分配用户</div><input type='text' class='form-control' autocomplete='off' placeholder='输入可筛选'>"
+    } ;
+    setMultiSelect($('#multi-select2') , user_selectHeader ) ;
+    
+});
+</script>

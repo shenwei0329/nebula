@@ -1,0 +1,219 @@
+{% from 'network/segment/subnet_list.html' import build_subnet_list with context%}
+{% extends 'layout/base.html' %}
+{% block style %}
+<link href="/static/plugins/bootstrap-select2/select2.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="/static/plugins/pace/pace-theme-flash.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="/static/plugins/form-multiselect/css/multi-select.css" rel="stylesheet" type="text/css" media="screen"/>
+{% endblock %}
+{% block container %}
+<div class="page-content" >
+    <!-- 页面内容从此处开始-->
+    <div class="content">
+      <div class="page-title" >
+        <!--面包屑-->
+        <ul class="breadcrumb " >
+          <li>
+            <p>您在这儿</p>
+          </li>
+          <li><a href="{{ url_for('portal.private_network_list') }}" class="">网络</a></li>
+          <li><a href="#" class="active text-success" style="font-size:18px">网络详情</a></li>
+        </ul>
+        <!--面包屑-->
+      </div>
+      <!--基本信息-->
+      <div class="row">
+        <div class="col-md-4 col-xs-4" id="basic-info">
+          <div class="grid simple">
+            <div class="grid-title no-border">
+              <h4>基本信息</h4>
+              <div class="tools"> <a href="#grid-config" class="dropdown-toggle config" data-toggle="dropdown"></a>
+                <ul class="dropdown-menu">
+                    <li {% if private_network.external_net  %}class="disabled"{% endif %}><a href="#" name="#inVM"
+                       data-rule="inVMRule"
+                       data-url="/forms/private-networks/{{ private_network.id }}/port/create/">
+                    <i class="fa fa-plus-square"></i>&nbsp;接入虚拟机</a></li>
+                    <li {% if private_network.external_net  %}class="disabled"{% endif %}>
+                        <a href="#" name="#outVM"
+                           data-rule="outVMRule"
+                           data-url="/forms/private-networks/{{ private_network.id }}/port/detach/">
+                        <i class="fa fa-minus-circle"></i>&nbsp;断开虚拟机</a></li>
+
+                    <!--
+                    <li><a href="#" name="#connectRouter"
+                           data-rule="connectRouterRule"
+                           data-url="/forms/private-networks/{{ private_network.id }}/virtualrouter/binding/">
+                        <i class="fa fa-chain"></i>&nbsp;连接路由器</a></li>
+                    <li><a href="#" name="#tearRouter"
+                           data-rule="tearRouterRule"
+                           data-url="/forms/private-networks/{{ private_network.id }}/virtualrouter/break/">
+                        <i class="fa fa-chain-broken"></i>&nbsp;断开路由器</a></li>
+                    -->
+
+                    <li><a href="#" name="#updateNetwork"
+                           data-rule="updatePrivateNetworkRule"
+                           data-url="/forms/private-networks/{{ private_network.id }}/update/">
+                        <i class="fa fa-pencil"></i>&nbsp;修改</a></li>
+                    <li><a href="#" name="#deletePrivateNetwork"
+                           data-rule="deletePrivateNetworkRule"
+                           data-url="/forms/private-networks/{{ private_network.id }}/delete/">
+                        <i class="fa fa-trash-o"></i>&nbsp;删除</a></li>
+                </ul>
+                 </div>
+            </div>
+            <!--grid-title-->
+            <div class="grid-body no-border">
+              <table class="table table-info">
+                <tbody>
+                  <tr>
+                    <td width="30%">ID</td>
+                    <td >{{ private_network.id }}</td>
+                  </tr>
+                  <tr>
+                    <td >名称</td>
+                    <td >{{ private_network.name }}</td>
+                  </tr>
+                  <tr>
+                    <td>描述</td>
+                    <td>{{ private_network.description }}</td>
+                  </tr>
+                  {% if private_network.external_net %}
+                  <tr>
+                    <td >路由器</td>
+                    <td >
+                    {% if private_network.virtualrouter %}
+                      <a href="{{ url_for('portal.virtualrouter_detail',
+                      id=private_network.virtualrouter.id) }}">
+                        {{ private_network.virtualrouter.name }}</a>
+                    {% endif %}
+                    </td>
+                  </tr>
+                {% endif %}
+                </tbody>
+              </table>
+            </div>
+            <!--grid-body-->
+            <div class="grid-title no-border">
+              <h4>统计信息</h4>
+            </div>
+            <!--grid-title-->
+            <div class="grid-body no-border">
+              <!--统计图-->
+              <div class="row">
+                      <div class="mini-chart-wrapper col-md-4" style="width:auto">
+                        <div class="chart-details-wrapper ">
+                          <div class="chartname"> 运行虚拟机 </div>
+                          <div class="chart-value text-success large-text bold">
+                              <i class="fa fa-check"></i> {{ private_network.instance_statistic["run_server"] }}</div>
+                        </div>
+                      </div>
+                      <!--mini-chart-wrapper-->
+                      <div class="mini-chart-wrapper col-md-4"  style="width:auto">
+                        <div class="chart-details-wrapper">
+                          <div class="chartname"> 停止虚拟机 </div>
+                          <div class="chart-value text-info large-text bold">
+                              <i class="fa fa-pause"></i> {{ private_network.instance_statistic["stop_server"] }}</div>
+                        </div>
+
+                  </div>
+                  <!--mini-chart-wrapper-->
+                  <div class="mini-chart-wrapper col-md-4"  style="width:auto">
+                        <div class="chart-details-wrapper">
+                          <div class="chartname"> 异常虚拟机 </div>
+                          <div class="chart-value text-error large-text bold">
+                              <i class="fa fa-times"></i> {{ private_network.instance_statistic["error_server"] }}</div>
+                        </div>
+                  </div><!--mini-chart-wrapper-->
+                  </div>
+              <!--统计图-->
+            </div>
+            <!--操作日志 begin-->
+            <div class="others-info">
+              <div class="listleft" data-url="/sub/jobs/?resource_type=Network&resource_id={{ private_network.id }}"></div>
+            </div>
+            <!--操作日志 end-->
+          </div>
+          <!--grid-->
+        </div>
+        <!--col-md-4-->
+        <div class="col-md-8 col-xs-8">
+	        <ul class="nav nav-tabs">
+	            <li class="active">
+	            	<a href="#home" data-toggle="tab">子网管理</a>
+	            </li>
+	            <li class="pull-right">
+	              <div class="m-t-10 m-r-10" >
+	                  <a class="fullscreen"><i class="fa fa-expand fullscreen-on"></i></a>
+	                  <a class="fullscreen" style="display:none;">
+	                      <i class="fa fa-compress fullscreen-off"></i>
+	                  </a>
+	              </div>
+	            </li>
+	          </ul>
+	          <div class="tab-content">
+				<div class="tab-pane active" id="home">
+		              <h4>已有子网
+		              	<a href="javascript:;" name="a_load" class="reload inline pull-right" style=" font-size:12px;"
+		          	    	data-url="{{ url_for('portal.subnet_list',resource_id=private_network.id) }}">
+		              		<i class="fa fa-refresh"></i>
+		              	</a>	
+		              </h4>
+		 				<button type="button" class="btn btn-success btn-cons btn-small"
+		                       data-url="/forms/private-networks/{{ private_network.id }}/subnet/create/" data-rule="addSubnetRule"
+                                {% if private_network.external_net and private_network.get_subnets() %}
+                                      disabled
+                                {% endif %}
+                                >
+		                    <i class="fa fa-plus"></i>&nbsp;&nbsp;增加子网</button>
+		                    <div class="reload_table" id="sub_net_list_div">
+		                {{ build_subnet_list(private_network.get_subnet_list(), private_network.id) }}
+		                	</div>
+	            <!--tab-pane body-->
+		         </div>
+          </div>
+          <!--grid-->
+        </div>
+        <!--col-md-8-->
+      </div>
+      <!--row-->
+      <!--基本信息-->
+    </div>
+    <!--content-->
+    <!-- 页面内容到此结束-->
+  </div>
+{% endblock %}
+{% block modal %}
+
+{% endblock %}
+{% block extend_js %}
+<!-- BEGIN PAGE LEVEL JS -->
+<script src="/static/plugins/jquery-sparkline/jquery-sparkline.js"></script>
+<script src="/static/js/detail.js" type="text/javascript"></script>
+<script src="/static/js/network/private_network_info.js" type="text/javascript"></script>
+<script src="/static/js/info.js" type="text/javascript"></script>
+<script>
+$(document).ready(function() {
+	$("#sub_net_list_div").on("click","table tbody td a.subnetShowDetail",function(evt){
+        evt.preventDefault();
+        $current = $(this);
+    	if($(this).hasClass("collapsed")){
+    		$current.parents("tr").next(".subnet_details").fadeOut();
+    		$current.removeClass("collapsed");
+		}else{
+			$opened = $current.closest("tbody").find("td a.subnetShowDetail.collapsed") ;
+			$opened.parents("tr").next(".subnet_details").hide();
+    		$opened.removeClass("collapsed");
+
+    		$current.parents("tr").next(".subnet_details").fadeIn();
+			$current.addClass("collapsed");
+		}
+    });
+    $("#sub_net_list_div ").on("click","table.table-striped a[name=delete_subnet]",function(evt){
+        evt.preventDefault();
+        var $this=$(this);
+        createDynamicDivAjax($this.attr("href"),{},0,{});
+    });
+});
+
+</script>
+<!-- END PAGE LEVEL PLUGINS -->
+{% endblock %}

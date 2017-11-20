@@ -1,0 +1,103 @@
+{% from 'layout/pagination.html' import render_pagination with context %}
+
+		<table class="table table-bordered table-hover no-more-tables">
+                <thead>
+                  <tr>
+                    <th style="width:1%"> <div class="checkbox check-default">
+                        <input id="checkbox10" type="checkbox" value="1" class="checkall">
+                        <label for="checkbox10"></label>
+                      </div>
+                    </th>
+                    <th >名称</th>
+                    <th >状态</th>
+                    <th >类型</th>
+                    <th >监控周期</th>
+                    <th>创建于</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {%- for alarm in pagination.items %}
+                  <tr  class="show-others">
+                    <td class="v-align-middle">
+                    	<div class="checkbox check-default">
+                    		<input id="checkbox{{ loop.index }}" type="checkbox" value="{{ alarm.id }}">
+	                        <label for="checkbox{{ loop.index }}"></label>
+                      	</div></td>
+                    <td class="text-info">{{ alarm.name }}</td>
+                    <td class="text-success"><i class="fa fa-dot-circle-o m-r-10"></i>可使用</td>
+                    <td>
+                        {% if alarm.type == '1' %}
+                            物理主机
+                        {% elif alarm.type == '2' %}
+                            虚拟机
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if alarm.alarm_rules %}
+                            {{ alarm.alarm_rules[0].start[(alarm.alarm_rules[0].start.find('/') + 1 ) : (alarm.alarm_rules[0].start.find(' '))] }} 分钟
+                        {% endif %}
+                    </td>
+                    <td>{{ alarm.created_at | timesince }}</td>
+                  </tr>
+                  {%- endfor %}
+                </tbody>
+ 			</table>
+
+<!--分页-->
+{% if pagination.items %}
+    {{ render_pagination(pagination, 'portal.alarms_list', '点击每行显示操作日志') }}
+{% else %}
+    <p class=""><em>该列表中暂时没有数据。</em></p>
+{% endif %}
+<!--分页-->
+
+<script>
+$(function(){
+    var $dropdown_lis = $("ul#virtualrouter_menu li");
+
+    function disableAll(){
+    	$dropdown_lis.addClass("disabled");
+    }
+
+    function activeAll(){
+     	$dropdown_lis.removeClass("disabled");
+    }
+
+    // 先屏蔽所有按钮
+    disableAll();
+
+	$("input[type=checkbox]").unbind("click").click(function(){
+        disableAll();
+		$('.dropdown-toggle').unbind("click");
+        var $checked_virtualrouter = $("input[type=checkbox]:checked");
+        var len=$checked_virtualrouter.length;
+        var instance_backup_uuid = $checked_virtualrouter.attr("data-resource-uuid");
+
+        // dropdown-menu
+        var $modify_btn = $(".dropdown-menu li:contains(修改)");
+        var $delete_btn = $(".dropdown-menu li:contains(删除)");
+
+        //  选中单个虚拟机时, 进行判断
+        if(len==1){
+            // 先屏蔽所有按钮
+            disableAll();
+
+            //处理task status
+            var task_status = $("input[type=checkbox]:checked").parents("tr").find("td:eq(2)").text().trim();
+
+            if(task_status=="任务中" || task_status=="等待中"){
+                $delete_btn.removeClass("disabled");
+                return;
+            };
+            if(!instance_backup_uuid || instance_backup_uuid==""){
+                $delete_btn.removeClass("disabled");
+                return;
+            }
+            else{
+                activeAll();
+            }
+        };
+    });
+
+});
+</script>

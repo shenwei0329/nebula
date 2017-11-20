@@ -1,0 +1,58 @@
+<div class="modal fade" id="roleCompetence" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+   <form class=" form-horizontal" action="{{ url_for('portal.role_update_permissions', id=role.id)}}" method="POST">
+    <div class="modal-content">
+   
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">角色权限分配-<span class="text-success">{{ role.name }}</span></h4>
+      </div>
+      <div class="modal-body">
+        
+            <input  type="hidden" value="{{role.id}}" name="role_id"/>
+            <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right">权 限：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8" style="padding-left:20px;">
+              <select multiple="multiple" id="multi-select4" name="permissions">
+                {% for item in permissions %}
+                <option value="{{ item.id }}" {% if item.selected == True %}selected="selected"{% endif %}>{{ item.name | translate }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        <button type="submit" class="btn btn-primary">保 存</button>
+      </div>
+      
+    </div>
+     </form>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<script>
+$(function(){
+	$('#multi-select4').multiSelect({
+		selectableHeader: "<div class='custom-header'>未分配权限</div>",
+		selectionHeader: "<div class='custom-header'>已分配权限</div>",
+		afterSelect: function(values){
+            $("#multi-select4").find('option').each(function(){
+                if($(this).val() == values[0]){
+                    $(this).attr("selected", true);
+                }
+            });
+	    },
+        afterDeselect: function(values){
+            $("#multi-select4").find('option').each(function(){
+                if($(this).val() == values[0]){
+                    $(this).attr("selected", false);
+                }
+            });
+        }
+});
+});
+</script>

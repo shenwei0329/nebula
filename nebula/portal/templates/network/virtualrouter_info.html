@@ -1,0 +1,337 @@
+{% from 'layout/operate_log.html' import render_operatelog %}
+{% from 'network/segment/sub_private_network_list.html' import build_private_subnet_sublist with context %}
+{% from 'network/segment/nat_list.html' import build_virtualrouter_nat_list with context %}
+{% extends 'layout/base.html' %}
+{% block title %}路由器详情-{% endblock %}
+{% block style %}
+<link href="/static/plugins/bootstrap-select2/select2.css" rel="stylesheet" type="text/css" media="screen"/>
+<link rel="stylesheet" href="/static/plugins/jquery-morris-chart/css/morris.css" type="text/css" media="screen">
+{% endblock %}
+{% block resource_type %}Virtualrouter{% endblock %}
+
+{% block container %}
+  <!-- BEGIN PAGE CONTAINER-->
+  <div class="page-content" >
+    <!-- 页面内容从此处开始-->
+    <div class="content">
+      <div class="page-title" >
+        <!--面包屑-->
+        <ul class="breadcrumb " >
+          <li>
+            <p>您在这儿</p>
+          </li>
+          <li><a href="{{ url_for('portal.virtualrouter_list') }}" class="">路由器</a></li>
+          <li><a href="#" class="active text-success" style="font-size:18px">路由器详情</a></li>
+        </ul>
+        <!--面包屑-->
+
+      </div>
+      <!--基本信息-->
+      <div class="row">
+        <div class="col-md-4 col-xs-4" id="basic-info">
+          <div class="grid simple">
+            <div class="grid-title no-border">
+              <h4>基本信息</h4>
+              <div class="tools"> <a href="#grid-config" class="dropdown-toggle config" data-toggle="dropdown"></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#" name="#bandwidthSetting"
+                         data-rule="bandwidthSettingRule"
+                         data-url="{{ url_for('portal.virtualrouter_set_form', id=virtualrouter.id) }}">
+                      <i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;带宽设置</a></li>
+                  <li><a href="#" name="#updateRouter"
+                         data-rule="updateRouterRule"
+                         data-url="{{ url_for('portal.virtualrouter_update_form', id=virtualrouter.id) }}">
+                      <i class="fa fa-pencil"></i>&nbsp;&nbsp;修改</a></li>
+                  <li><a href="#" name="#deleteRouter"
+                          data-rule="deleteRouterRule"
+                          data-url="/forms/virtualrouter/{{ virtualrouter.id }}/delete/">
+                      <i class="fa fa-trash-o"></i>&nbsp;&nbsp;删除</a></li>
+                </ul>
+                </div>
+            </div>
+            <!--grid-title-->
+            <div class="grid-body no-border">
+              <table class="table table-info">
+                <tbody>
+                  <tr>
+                    <td width="30%">ID</td>
+                    <td>{{ virtualrouter.id }}</td>
+                  </tr>
+                  <tr>
+                    <td>名称&nbsp;&nbsp;&nbsp; </td>
+                    <td class="text-info">{{ virtualrouter.name }}</td>
+                  </tr>
+                  <tr>
+                    <td>描述&nbsp;&nbsp;&nbsp;</td>
+                    <td>{{ virtualrouter.description }}</td>
+                  </tr>
+                  <tr>
+                    <td>创建时间</td>
+                    <td>{{ virtualrouter.created_at | datetime }}</td>
+                  </tr>
+                  <tr>
+                    <td>上行带宽</td>
+                    <td>
+                        {% if virtualrouter.bandwidth_tx == -1 %}
+                            无限制
+                        {% else %}
+                            {{ virtualrouter.bandwidth_tx }}Mb/S
+                        {% endif %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>下行带宽</td>
+                    <td>
+                        {% if virtualrouter.bandwidth_rx == -1 %}
+                            无限制
+                        {% else %}
+                            {{ virtualrouter.bandwidth_rx }}Mb/S
+                        {% endif %}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!--grid-body-->
+            <div class="grid-title no-border">
+              <h4>外部网络</h4>
+              <button type="button" class="btn btn-success btn-cons btn-small pull-right"
+                      {% if virtualrouter.virtualrouter_networks %}
+                        disabled
+                      {% endif %}
+                      name="#IP"
+                      data-rule="bindIpRule"
+                      data-url="{{ url_for('portal.virtualrouter_publicip_binding_update_form',
+                      id=virtualrouter.id) }}">
+                  <i class="fa fa-plus"></i>&nbsp;&nbsp;设置网关</button>
+            </div>
+            <!--grid-title-->
+            <div class="grid-body no-border">
+              <table class="table table-info">
+                <tbody>
+                {% for vn in virtualrouter.virtualrouter_networks %}
+                  <tr>
+                    <td><a href="{{ url_for('portal.private_network_detail', id=vn.network.id) }}">{{ vn.network.name }}</a></td>
+                    <td><a name="unbinding"
+                           href="{{ url_for('portal.virtualrouter_unbinding_publicip_form',
+                                     id=vn.id) }}">
+                        <i class="fa fa-chain-broken m-r-10"></i>清除网关</a></td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <!--grid-body-->
+            <!-- opeator log being -->
+             <div class="others-info">
+              <div class="listleft" data-url="/sub/jobs/?resource_type=Virtualrouter&resource_id={{ virtualrouter.id }}"></div>
+            </div>
+            <!-- opeator log end -->
+          </div>
+          <!--grid-->
+        </div>
+        <!--col-md-4-->
+        <div class="col-md-8 col-xs-8">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#home" data-toggle="tab">绑定私有子网</a></li>
+            <li><a href="#profile" data-toggle="tab">网络映射</a></li>
+            <li><a href="#messages" data-toggle="tab">流量监控</a></li>
+            <li class="pull-right">
+              <div class="m-t-10 m-r-10" >
+                  <a class="fullscreen"><i class="fa fa-expand fullscreen-on"></i></a>
+                  <a class="fullscreen" style="display:none;">
+                      <i class="fa fa-compress fullscreen-off"></i>
+                  </a>
+              </div>
+            </li>
+          </ul>
+
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active" id="home">
+                <h4>已绑定私有子网
+                  <a href="javascript:;" class="reload inline pull-right" name="a_load"
+                     style=" font-size:12px;" data-url="{{ url_for('portal.private_network_sublist',
+                          resource_id=virtualrouter.id, segment=true) }}"><i class="fa fa-refresh"></i>
+                  </a>
+                </h4>
+                <button type="button" class="btn btn-success btn-cons btn-small"
+                      data-rule="bindPrivateNetworkRule"
+                      data-url="{{ url_for('portal.virtualrouter_binding_private_network_form',
+                      id=virtualrouter.id) }}">
+                  <i class="fa fa-plus"></i>&nbsp;&nbsp;绑定私有子网</button>
+                <div class="reload_table">
+                  {{ build_private_subnet_sublist(virtualrouter.get_virtualrouter_subnet_list()) }}
+                </div>
+            </div>
+            <div class="tab-pane" id="profile">
+                <h4>网络映射<a href="javascript:;" name="a_load" class="reload inline pull-right" style=" font-size:12px;"
+                      data-url="{{ url_for('portal.nat_list', resource_id=virtualrouter.id) }}">
+                  <i class="fa fa-refresh"></i></a></h4>
+                <button type="button" class="btn btn-success btn-cons btn-small"
+                      data-rule="newNetworkMappingRule"
+                      data-url="{{ url_for('portal.nat_create_form',
+                      virtualrouter_id=virtualrouter.id) }}">
+                  <i class="fa fa-plus"></i>&nbsp;&nbsp;新建网络映射</button>
+              <div class="reload_table">
+                  {{ build_virtualrouter_nat_list(virtualrouter.get_virtualrouter_nat_list(),
+                          resource_id=virtualrouter.id) }}
+              </div>
+            </div>
+            <div class="tab-pane" id="messages">
+              <div class="row ">
+                <!--col-md-12-->
+                <div class="col-md-12">
+                  <h4>上行流量</h4>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="0" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="0" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="0" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="0" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-0"> </div>
+                </div>
+                <!--col-md-12-->
+                <div class="col-md-12">
+                  <h4>下行流量</h4>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="1" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="1" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="1" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="1" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-1"> </div>
+                </div>
+                <!--col-md-12-->
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <!--col-md-8-->
+      </div>
+      <!--row-->
+      <!--基本信息-->
+
+    </div>
+    <!--content-->
+    <!-- 页面内容到此结束-->
+  </div>
+  <!-- END CONTAINER -->
+{% endblock %}
+
+{% block modal %}
+
+{% endblock %}
+
+{% block extend_js %}
+<script src="/static/plugins/raphael-min.js" type="text/javascript"></script>
+<script src="/static/plugins/jquery-morris-chart/js/morris.min.js"></script>
+<script src="/static/plugins/jquery-sparkline/jquery-sparkline.js"></script>
+<script src="/static/js/info.js" type="text/javascript"></script>
+<script src="/static/js/detail.js" type="text/javascript"></script>
+<script src="/static/js/network/virtualrouters_info.js" type="text/javascript"></script>
+<script>
+/* 解绑公网IP、断开私有网络、删除网络映射 */
+	$(function(){
+		$("a[name=unbinding]").click(function(evt){
+			evt.preventDefault();
+			var $this=$(this);
+			createDynamicDivAjax($this.attr("href"),{},0,{});
+		});
+        $("a[name=break]").click(function(evt){
+			evt.preventDefault();
+			var $this=$(this);
+			createDynamicDivAjax($this.attr("href"),{},0,{});
+		});
+	});
+	$(function(){
+		$("a[name=delete_nat]").click(function(evt){
+			evt.preventDefault();
+			var $this=$(this);
+			createDynamicDivAjax($this.attr("href"),{},0,{});
+		});
+	});
+/* 解绑公网IP、断开私有网络、删除网络映射 */
+</script>
+
+<script type="application/javascript">
+    function parseData(data){
+        if(data!=null){
+            var monitor_data=data.monitor_data;
+            if(monitor_data!=null){
+                var x=[];
+                for(var i=0;i<monitor_data.length;i++){
+                    var s={};
+                    var _d  = monitor_data[i];
+                    s.y = _d.dtime;
+                    s.a = _d.avg;  //avg
+                    s.b = _d.max;
+                    s.c = _d.min;
+                    //s = "{y:'"+_in.time+"',a:"+ _in.value +",b:"+ _out.value+"}";
+                    x.push(s);
+                }
+                return x;
+            }
+        }
+    }
+
+    var m_obj = [];
+    var vrouter_history_monitor  = function(type,pre){
+        var resource_id = "{{ virtualrouter.id }}";
+        $.ajax({
+            url: "/network/virtualrouter/"+resource_id+"/monitor-history/"+ type +"/"+pre,
+            success: function (outEvoVal) {
+                var p_data = parseData(outEvoVal)
+                if(p_data == undefined){
+                    $("#line-"+type).html("<span style='padding-left: 20px;height:60px'>暂无数据</span>");
+                    return
+                }
+                if(m_obj[type] != undefined){
+                    //存在就直接更新
+                    m_obj[type].setData(p_data);
+                    return
+                }
+                if (p_data.length >=1) {
+                    $("#line-"+type).css("height", "342px");
+                    $("#line-"+type).css("width", "600px");
+                    m_obj[type] = Morris.Area({
+                        element: 'line-' + type,
+                        data: p_data,
+                        behaveLikeLine: true,
+                        resize: true,
+                        height: 200,
+                        xkey: 'y',
+                        units: '('+ outEvoVal.monitor_data[0].unit+')',
+                        ykeys: ['b','a','c'],
+                        labels: ['MAX','AVG','MIN'],
+                        lineColors: ['rgba(0,144,217,0.51)', '#7fb054', '#cecece'],//, '#cecece'
+                        lineWidth: 3
+                    });
+                }else{
+                     $("#line-"+type).html("<span style='padding-left: 20px;height:60px'>暂无数据</span>");
+                }
+            },
+            error: function(e) {
+                 $("#line-"+type).html("<span style='padding-left: 20px;height:60px'>暂无数据</span>");
+            }
+        });
+    }
+
+
+    $(document).ready(function() {
+        $(".btn-sm").click(function(){
+
+            $(this).parent().children('.btn-sm').removeClass('btn-primary');
+            $(this).addClass("btn-primary");
+            var m = $(this).attr("meter");
+            var p = $(this).attr("pre_num");
+            vrouter_history_monitor(m,p);
+        });
+        vrouter_history_monitor(0,1);
+        vrouter_history_monitor(1,1);
+    });
+
+</script>
+{% endblock %}

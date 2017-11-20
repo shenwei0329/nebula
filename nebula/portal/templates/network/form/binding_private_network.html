@@ -1,0 +1,63 @@
+<!-- 绑定私有网络Modal -->
+<div class="modal fade" id="network" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">绑定私有子网-<span class="text-success">{{ virtualrouter.name }}</span></h4>
+      </div>
+      <div class="modal-body">
+        <form id="form_traditional_validation" data-rule="bindPrivateNetworkRule" action="{{ url_for('portal.virtualrouter_binding_private_network', id=virtualrouter.id) }}"
+              class="form-horizontal row" method="POST">
+			<div class="form-group text-primary">
+			   <label for="" class="col-sm-3 control-label">最大绑定：</label>
+			   <label class="col-sm-2  control-label text-left text-success" >{{ binding_net_quota }}
+			     <span class="text-muted p-l-10 ">个</span>
+			   </label>
+			   <span class="col-sm-2 control-label" >还可绑定：</span>
+			   <span class="col-sm-2 control-label text-left text-success" >{{ usable_net_quota }}
+			     <span class="text-muted p-l-10 ">个</span>
+			   </span>
+			</div>
+            
+          <!--form-group-->
+          <input type="hidden" name="virtualrouter_id" value="{{ virtualrouter.id }}">
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">私有子网：</label>
+            <div class="col-sm-7">
+              <select name="subnet_id" id="subnet_id" class="select2 form-control">
+                <option value="">请选择私有子网</option>
+                {% for net in networks %}
+                    <optgroup label="{{ net.name }}">
+                    {% for subnet in net.subnets %}
+                        {% if subnet not in virtualrouter.get_subnet_list() %}
+                            <option value="{{ subnet.id }}" data-firstip="{{subnet.cidr | first_ip }}" data-lastip="{{subnet.cidr | last_ip }}">
+                                {{ subnet.name }} ({{subnet.cidr}})
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                    </optgroup>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+                <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+                <button type="submit"    {% if usable_net_quota == 0 %} disabled  {% endif %}
+                    class="btn btn-primary btn-cons"><i class="icon-ok"></i>保 存</button>
+             
+             
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--绑定私有网络Modal-->
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

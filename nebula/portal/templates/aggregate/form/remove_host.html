@@ -1,0 +1,85 @@
+<!-- 集群-移除主机Modal -->
+<div class="modal fade" id="clusterDeleteHost" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">移除主机-<span class="text-success">{{ aggregate.name }}</span></h4>
+      </div>
+      <div class="modal-body">
+        {%- if hosts|length > 0 %}
+        <form id="form_remove_host" method="POST" action="{{ url_for('portal.aggregate_remove_host', id=aggregate.id) }}" class="form-horizontal">
+          <input type="hidden" name="aggregate_id" value="{{ aggregate.id }}"  />
+          <h5  class=" m-l-20 m-b-20">可移除的主机</h5>
+          <div class="col-sm-12">
+            <table class="table table-info one-row-selected">
+              <tbody>
+              {%- for host in hosts %}
+                <tr>
+                  <td class="v-align-middle">
+                    <div class="radio radio-primary" style="margin-top:-5px;">
+                    	<input id="checkbox-{{ host.id }}" type="radio" name="host_id_radio" value="{{ host.id }}" {%- if loop.index == 1 %} checked {%-endif %}>
+                    	<label for="checkbox-{{ host.id }}">&nbsp;</label>
+                  	</div>
+                  </td>
+                  <td class="text-info">{{ host.hostname }}</td>
+                  <td>{{ host.host_ip }}</td>
+                  <td>{{ host.aggregate_time }}</td>
+                </tr>
+              {%- endfor %}
+
+              </tbody>
+            </table>
+          </div>
+          <div class="form-actions">
+            <div class="pull-right">
+            	<input id="host_id" type="hidden" name="host_id" />
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>确 认</button>
+            </div>
+          </div>
+        </form>
+        <script>
+        $(function(){
+        	console.log("here!");
+        	var rule_name = "t_aggregateRemoveHostRule";
+        	$("#form_remove_host").validate({
+    	        focusInvalid: false,
+    	        ignore: "",
+    	        rules: global_rule[rule_name],
+    	        errorPlacement: function (label, element) { // render error placement for each input type
+    				var span = $('<span class="error">3</span>').append(label);
+    	        	var td = $("<td colspan='3'>2</td>").append(span);
+    	        	$(".table-info tbody").append($("<tr id = 'error_tr'>1</tr>").append(td)) ;
+    	        	//TODO 稍显繁琐，
+    	        },
+
+    	        highlight: function (element) { // hightlight error inputs
+    	        },
+    	        success: function (label, element) {
+    	        	$("#error_tr").remove();
+    	        },
+    			messages: global_message[rule_name]
+
+    	    });
+        	
+        	$("input#host_id").val($("input[name=host_id_radio]:checked").val());
+        	$(".radio label").click(function(){
+            	var id=$(this).attr("for");
+            	 $("input#host_id").val($(this).closest("form").find("#"+id).val());
+            });
+        });
+        </script>
+        {% else %}
+          <h5  class=" m-l-20 m-b-20">没有可移除的主机</h5>
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 集群-移除主机Modal -->

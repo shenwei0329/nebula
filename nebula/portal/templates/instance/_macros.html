@@ -1,0 +1,53 @@
+{% macro build_status_col_data(status) -%}
+  {%- if status in ['ACTIVE', 'PAUSED', 'SHUTOFF', 'RESIZE', 'VERIFY_RESIZE', 'SUSPENDED'] %}
+    {%- set text_class = 'text-success' %}
+    {%- set icon_class = 'fa fa-check' %}
+  {%- elif status in ['ERROR']  %}
+    {%- set text_class = 'text-error' %}
+    {%- set icon_class = 'fa fa-times' %}
+  {%- elif status in ['BUILD', 'REBOOT'] %}
+    {%- set text_class = 'text-info' %}
+    {%- set icon_class = 'typing_loader' %}
+  {%- endif %}
+  <span class="{{ text_class }}"><i class="{{ icon_class }} m-r-10"></i>{{ status }}</span>
+{%- endmacro %}
+
+{% macro build_image_os_type_col_data(os_type) -%}
+  {%- set os_type = os_type|default('Unknown', True)|upper %}
+  {%- set icon_class = '' %}
+  {%- if os_type in ['LINUX', 'CENTOS', 'REDHAT','UBUNTU', 'OTHER'] %}
+    {%- set icon_class = 'fa fa-linux m-r-10' %}
+  {%- elif os_type == 'WINDOWS' %}
+    {%- set icon_class = 'fa fa-windows m-r-10' %}
+  {%- endif -%}
+  <a href="#"><i class="{{ icon_class }}"></i>{{ os_type }}</a>
+{%- endmacro %}
+
+{% macro build_status_topology(status) -%}
+  {%- if status in ['ACTIVE', 'PAUSED', 'SHUTOFF', 'RESIZE', 'VERIFY_RESIZE', 'SUSPENDED'] %}
+    {%- set text_class = 'text-success' %}
+    {%- set icon_class = 'fa fa-check' %}
+  {%- elif status in ['ERROR']  %}
+    {%- set text_class = 'text-error' %}
+    {%- set icon_class = 'fa fa-times' %}
+  {%- elif status in ['BUILD', 'REBOOT'] %}
+    {%- set text_class = 'text-info' %}
+    {%- set icon_class = 'typing_loader' %}
+  {%- endif %}
+  <i class="{{ icon_class }} {{ text_class }} "></i>
+{%- endmacro %}
+
+{% macro build_image_os_type_topology(os_type) -%}
+  {%- set os_type = os_type|default('Unknown', True)|upper %}
+  {%- set icon_class = '' %}
+  {%- if os_type == 'LINUX' %}
+    {%- set icon_class = 'linux' %}
+  {%- elif os_type == 'WINDOWS' %}
+    {%- set icon_class = 'windows' %}
+  {%- elif os_type == 'CENTOS' %}
+    {%- set icon_class = 'centos' %}
+  {%- else %}
+    {%- set icon_class = 'unknown' %}
+  {%- endif -%}
+  {{ icon_class }}
+{%- endmacro %}

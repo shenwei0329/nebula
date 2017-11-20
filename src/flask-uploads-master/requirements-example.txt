@@ -1,0 +1,13 @@
+Flask==0.9
+Flask-SQLAlchemy==0.16
+-e git://github.com/kvesteri/flask-storage.git#egg=Flask-Storage
+Jinja2==2.6
+Pillow==1.7.7
+Pygments==1.5
+-e git://github.com/FelixLoether/Resizer.git#egg=Resizer
+SQLAlchemy==0.7.8
+Werkzeug==0.8.3
+boto==2.5.2
+python-cloudfiles==1.7.10
+tornado==2.3
+wsgiref==0.1.2

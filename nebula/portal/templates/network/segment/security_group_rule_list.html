@@ -1,0 +1,81 @@
+{% macro build_security_group_rule(rules) %}
+<!--
+<p>上行规则</p>
+<table class="table table-bordered table-hover no-more-tables">
+    <thead>
+      <tr>
+        <th style="width:1%">
+{#          <div class="checkbox check-default">#}
+{#            <input id="checkboxup10" type="checkbox" value="1" class="checkall" name="checkall_up">#}
+{#            <label for="checkboxup10"></label>#}
+{#          </div>#}
+        </th>
+        <th>名称</th>
+        <th>协议</th>
+        <th>起始端口</th>
+        <th>结束端口</th>
+        <th>远端IP</th>
+        <th>创建时间</th>
+      </tr>
+    </thead>
+    <tbody>
+{#    {% for rule in rules %}
+      {% if rule.direction == "egress" %}
+          <tr >
+            <td class="v-align-middle"><div class="checkbox check-default">
+                <input id="upcheckbox{{ loop.index }}" type="checkbox" value="{{ rule.id }}">
+                <label for="upcheckbox{{ loop.index }}"></label>
+              </div></td>
+            <td class="text-info">{{ rule.name }}</td>
+            <td>{{ rule.protocol }}</td>
+            <td>{% if rule.port_range_min %}{{ rule.port_range_min }}{% endif %}</td>
+            <td>{% if rule.port_range_max %}{{ rule.port_range_max }}{% endif %}</td>
+            <td>{% if rule.remote_ip_prefix %}{{ rule.remote_ip_prefix }}{% endif %}</td>
+            <td>{{ rule.created_at | datetime }}</td>
+          </tr>
+     {% endif %}
+   {% endfor %}
+   </tbody>#}
+</table>
+<p>规则</p>
+-->
+<table class="table table-bordered table-hover no-more-tables">
+    <thead>
+      <tr>
+        <th style="width:1%">
+{#          <div class="checkbox check-default">#}
+{#            <input id="checkboxall10" type="checkbox" value="0" class="checkall" name="checkall_down">#}
+{#            <label for="checkboxall10"></label>#}
+{#          </div>#}
+        </th>
+        <th>名称</th>
+        <th>协议</th>
+        <th>起始端口</th>
+        <th>结束端口</th>
+        <th>远端IP</th>
+        <th>创建时间</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for rule in rules %}
+      {% if rule.direction == "ingress" %}
+          <tr >
+            <td class="v-align-middle"><div class="checkbox check-default">
+                <input id="downcheckbox{{ loop.index }}" type="checkbox" value="{{ rule.id }}">
+                <label for="downcheckbox{{ loop.index }}"></label>
+              </div></td>
+            <td class="text-info">{{ rule.name }}</td>
+            <td>{{ rule.protocol }}</td>
+            <td>{% if rule.port_range_min %}{{ rule.port_range_min }}{% endif %}</td>
+            <td>{% if rule.port_range_max %}{{ rule.port_range_max }}{% endif %}</td>
+            <td>{% if rule.remote_ip_prefix %}{{ rule.remote_ip_prefix }}{% endif %}</td>
+            <td>{{ rule.created_at | datetime }}</td>
+          </tr>
+      {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+{% endmacro %}
+{% if pagination %}
+  {{ build_security_group_rule(pagination.items) }}
+{% endif %}

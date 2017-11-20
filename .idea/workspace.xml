@@ -1,0 +1,1257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="934b9d36-5c81-4b87-8740-aff6dbdd6ea8" name="Default" comment="" />
+    <ignored path="nebula.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <ignored path=".idea/dataSources.local.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/nebula$glance.coverage" NAME="glance Coverage Results" MODIFIED="1438230644259" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/nebula/core/openstack_clients" />
+    <SUITE FILE_PATH="coverage/nebula$server.coverage" NAME="server Coverage Results" MODIFIED="1436445809892" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tasks" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="nebula" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="mkdic.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python-proc/mkdic.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="4.81194">
+              <caret line="437" column="15" selection-start-line="437" selection-start-column="15" selection-end-line="437" selection-end-column="15" />
+              <folding>
+                <marker date="1511184790000" expanded="true" signature="2753:2774" placeholder="select count... missing_value" />
+                <marker date="1511184790000" expanded="true" signature="3618:3718" placeholder="select count... missing_value" />
+                <marker date="1511184790000" expanded="true" signature="3930:3964" placeholder="select PD_DH... product_t" />
+                <marker date="1511184790000" expanded="true" signature="4145:4203" placeholder="select PD_DH... product_t" />
+                <marker date="1511184790000" expanded="true" signature="4465:4531" placeholder="select b.PJ_... delivery_t" />
+                <marker date="1511184790000" expanded="true" signature="5002:5141" placeholder="select err_s... testrecord_t" />
+                <marker date="1511184790000" expanded="true" signature="5541:5616" placeholder="select count... testrecord_t" />
+                <marker date="1511184790000" expanded="true" signature="6283:6339" placeholder="select count... testrecord_t" />
+                <marker date="1511184790000" expanded="true" signature="6808:6864" placeholder="select count... testrecord_t" />
+                <marker date="1511184790000" expanded="true" signature="7310:7366" placeholder="select count... testrecord_t" />
+                <marker date="1511184790000" expanded="true" signature="7750:7824" placeholder="select sum(r... count_record_t" />
+                <marker date="1511184790000" expanded="true" signature="7979:8005" placeholder="select MM_XM... member_t" />
+                <marker date="1511184790000" expanded="true" signature="8109:8218" placeholder="select sum(T... task_t" />
+                <marker date="1511184790000" expanded="true" signature="8429:8504" placeholder="select sum(T... task_t" />
+                <marker date="1511184790000" expanded="true" signature="9643:9758" placeholder="select TK_RW... task_t" />
+                <marker date="1511184790000" expanded="true" signature="10255:10281" placeholder="select MM_XM... member_t" />
+                <marker date="1511184790000" expanded="true" signature="10348:10457" placeholder="select sum(T... task_t" />
+                <marker date="1511184790000" expanded="true" signature="11224:11324" placeholder="select TK_ZX... task_t" />
+                <marker date="1511184790000" expanded="true" signature="11589:11695" placeholder="select sum(T... task_t" />
+                <marker date="1511184790000" expanded="true" signature="12318:12355" placeholder="select PJ_XM... project_t" />
+                <marker date="1511184790000" expanded="true" signature="12496:12606" placeholder="select sum(T... task_t" />
+                <marker date="1511184790000" expanded="true" signature="13066:13141" placeholder="select sum(T... task_t" />
+                <marker date="1511184790000" expanded="true" signature="13315:13428" placeholder="select TK_RW... task_t" />
+                <marker date="1511184790000" expanded="true" signature="13830:13901" placeholder="select KQ_AM... checkon_t" />
+                <marker date="1511184790000" expanded="true" signature="14285:14356" placeholder="select KQ_PM... checkon_t" />
+                <marker date="1511184790000" expanded="true" signature="15652:15694" placeholder="select PDM_D... pd_management_t" />
+                <marker date="1511184790000" expanded="true" signature="15652:15729" placeholder="select PDM_D... pd_management_t" />
+                <marker date="1511184790000" expanded="true" signature="15652:15743" placeholder="select PDM_D... pd_management_t" />
+                <marker date="1511184790000" expanded="true" signature="15857:15905" placeholder="select PDM_T... pd_management_t" />
+                <marker date="1511184790000" expanded="true" signature="15857:15923" placeholder="select PDM_T... pd_management_t" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="doXLSX.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python-proc/doXLSX.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="364" column="35" selection-start-line="364" selection-start-column="35" selection-end-line="364" selection-end-column="35" />
+              <folding>
+                <marker date="1511087210000" expanded="true" signature="7155:7190" placeholder="INSERT INTO missing_value... " />
+                <marker date="1511087210000" expanded="true" signature="8240:8290" placeholder="SELECT count... missing_value" />
+                <marker date="1511087210000" expanded="true" signature="9101:9136" placeholder="INSERT INTO missing_value... " />
+                <marker date="1511087210000" expanded="true" signature="10279:10329" placeholder="SELECT count... missing_value" />
+                <marker date="1511087210000" expanded="true" signature="10734:10769" placeholder="INSERT INTO missing_value... " />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="wordHdler.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/wordHdler.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="28" column="48" selection-start-line="28" selection-start-column="48" selection-end-line="28" selection-end-column="48" />
+              <folding>
+                <element signature="e#25#47#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>admin</find>
+      <find>e</find>
+      <find>eng</find>
+      <find>engi</find>
+      <find>engin</find>
+      <find>engine</find>
+      <find>enginer</find>
+      <find>enginerr</find>
+      <find>enginerri</find>
+      <find>enginerrin</find>
+      <find>enginerring</find>
+      <find>enginerring_</find>
+      <find>enginerring_t</find>
+      <find>.</find>
+      <find>.get</find>
+      <find>.get(</find>
+      <find>ctype</find>
+      <find>ctime</find>
+      <find>select</find>
+      <find>print</find>
+      <find>len(_t</find>
+      <find>40</find>
+      <find>\r</find>
+      <find>\n</find>
+      <find>lvl=2</find>
+      <find>doOpr</find>
+      <find>小时</find>
+      <find>cent</find>
+      <find>time</find>
+      <find>date</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>工时</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>D:\nebula\etc</dir>
+      <dir>D:\nebula\nebula\portal\views</dir>
+      <dir>D:\nebula</dir>
+      <dir>D:\nebula\nebula\core\models</dir>
+      <dir>D:\nebula\nebula</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/src/flask-uploads-master" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/nebula/portal/css/style.css" />
+        <option value="$PROJECT_DIR$/nebula/portal/utils/menu.py" />
+        <option value="$PROJECT_DIR$/nebula/portal/views/base.py" />
+        <option value="$PROJECT_DIR$/nebula/portal/views/portal/__init__.py" />
+        <option value="$PROJECT_DIR$/nebula/portal/options.py" />
+        <option value="$PROJECT_DIR$/nebula/portal/views/portal/webapp/webapp.py" />
+        <option value="$PROJECT_DIR$/nebula/portal/templates/user/login.html" />
+        <option value="$PROJECT_DIR$/nebula/core/models/projectmod.py" />
+        <option value="$PROJECT_DIR$/nebula/core/models/taskmod.py" />
+        <option value="$PROJECT_DIR$/nebula/core/models/eventmod.py" />
+        <option value="$PROJECT_DIR$/nebula/core/models/productmod.py" />
+        <option value="$PROJECT_DIR$/nebula/core/models/enginnringmod.py" />
+        <option value="$PROJECT_DIR$/nebula/core/models/__init__.py" />
+        <option value="$PROJECT_DIR$/nebula/core/models/reportrecmod.py" />
+        <option value="$PROJECT_DIR$/nebula/core/models/reportmod.py" />
+        <option value="$PROJECT_DIR$/nebula/core/models/upfilemod.py" />
+        <option value="$PROJECT_DIR$/nebula/core/managers/upfilemod.py" />
+        <option value="$PROJECT_DIR$/nebula/portal/views/portal/hadoop/hadoop.py" />
+        <option value="$PROJECT_DIR$/nebula/core/models/datamngmod.py" />
+        <option value="$PROJECT_DIR$/nebula/core/managers/datamngmod.py" />
+        <option value="$PROJECT_DIR$/nebula/portal/templates/datamng/projectlist.html" />
+        <option value="$PROJECT_DIR$/nebula/portal/templates/datamng/dataelementlist.html" />
+        <option value="$PROJECT_DIR$/nebula/core/managers/enginerringmod.py" />
+        <option value="$PROJECT_DIR$/nebula/core/managers/__init__.py" />
+        <option value="$PROJECT_DIR$/nebula/core/managers/deliverymod.py" />
+        <option value="$PROJECT_DIR$/nebula/core/__init__.py" />
+        <option value="$PROJECT_DIR$/nebula/core/models/deliverymod.py" />
+        <option value="$PROJECT_DIR$/nebula/portal/templates/datamng/delierylist.html" />
+        <option value="$PROJECT_DIR$/nebula/portal/views/portal/datamng/datamng.py" />
+        <option value="$PROJECT_DIR$/nebula/portal/templates/datamng/tasklist.html" />
+        <option value="$PROJECT_DIR$/nebula/core/models/enginerringmod.py" />
+        <option value="D:/shenwei/2017-华云/研发管理数据/doXLSX.py" />
+        <option value="$PROJECT_DIR$/nebula/portal/templates/datamng/enginerringlist.html" />
+        <option value="$PROJECT_DIR$/python-proc/a.py" />
+        <option value="$PROJECT_DIR$/nebula/portal/templates/datamng/datamngbase.html" />
+        <option value="$PROJECT_DIR$/python-proc/doHour.py" />
+        <option value="$PROJECT_DIR$/nebula/portal/templates/datamng/productlist.html" />
+        <option value="$PROJECT_DIR$/python-proc/doDay.py" />
+        <option value="$PROJECT_DIR$/python-proc/weekrpt.txt" />
+        <option value="C:/Python27/Lib/site-packages/win32com/__init__.py" />
+        <option value="$PROJECT_DIR$/python-proc/DataHandler/xlsxHdler.py" />
+        <option value="$PROJECT_DIR$/python-proc/DataHandler/wordHdler.py" />
+        <option value="$PROJECT_DIR$/python-proc/DataHandler/doWord.py" />
+        <option value="$PROJECT_DIR$/python-proc/DataHandler/doPie.py" />
+        <option value="$PROJECT_DIR$/python-proc/DataHandler/crWord.py" />
+        <option value="$PROJECT_DIR$/python-proc/DataHandler/doHour.py" />
+        <option value="$PROJECT_DIR$/python-proc/mkdic.py" />
+        <option value="$PROJECT_DIR$/python-proc/info.json" />
+        <option value="$PROJECT_DIR$/mysql_file/create.sql" />
+        <option value="$PROJECT_DIR$/python-proc/doXLSX.py" />
+        <option value="$PROJECT_DIR$/python-proc/DataHandler/main.py" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" />
+  <component name="JsBuildToolPackageJson" detection-done="true" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="66" />
+    <option name="y" value="23" />
+    <option name="width" value="2300" />
+    <option name="height" value="1677" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nebula" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nebula" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nebula" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nebula" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nebula" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="python-proc" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nebula" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nebula" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nebula" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nebula" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nebula" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="mysql_file" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="recentsLimit" value="5" />
+    <property name="full.screen.before.presentation.mode" value="false" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
+    <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$" />
+    <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\nebula\python-proc\DataHandler" />
+      <recent name="D:\nebula\nebula\portal\templates\datamng" />
+      <recent name="D:\nebula\nebula\core\models" />
+      <recent name="D:\nebula\nebula\core\managers" />
+      <recent name="$PROJECT_DIR$/nebula/utils/tools" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\nebula\python-proc\pic" />
+      <recent name="D:\nebula\python-proc\DataHandler" />
+      <recent name="$PROJECT_DIR$/nebula/utils/tools" />
+      <recent name="$PROJECT_DIR$/nebula/portal/templates" />
+      <recent name="$PROJECT_DIR$/nebula/portal/views/portal" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.crWord">
+    <configuration default="false" name="server" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tasks" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tasks/server.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="glance" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/nebula/core/openstack_clients" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/nebula/core/openstack_clients/glance.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="doDay" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python-proc" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python-proc/doDay.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="doWord" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python-proc/DataHandler" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python-proc/DataHandler/doWord.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="crWord" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python-proc/DataHandler" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python-proc/DataHandler/crWord.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="DjangoTestsConfigurationType" factoryName="Django tests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="TARGET" value="" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="PyBehaveRunConfigurationType" factoryName="Behave">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="ADDITIONAL_ARGS" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="PyLettuceRunConfigurationType" factoryName="Lettuce">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="ADDITIONAL_ARGS" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run-script" />
+      <scripts />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Attests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Nosetests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PARAMS" value="" />
+      <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Unittests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PUREUNITTEST" value="false" />
+      <option name="PARAMS" value="" />
+      <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="py.test">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="nebula" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="testToRun" value="" />
+      <option name="keywords" value="" />
+      <option name="params" value="" />
+      <option name="USE_PARAM" value="false" />
+      <option name="USE_KEYWORD" value="false" />
+      <method />
+    </configuration>
+    <list size="5">
+      <item index="0" class="java.lang.String" itemvalue="Python.server" />
+      <item index="1" class="java.lang.String" itemvalue="Python.glance" />
+      <item index="2" class="java.lang.String" itemvalue="Python.doDay" />
+      <item index="3" class="java.lang.String" itemvalue="Python.doWord" />
+      <item index="4" class="java.lang.String" itemvalue="Python.crWord" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.crWord" />
+        <item index="1" class="java.lang.String" itemvalue="Python.doWord" />
+        <item index="2" class="java.lang.String" itemvalue="Python.doDay" />
+        <item index="3" class="java.lang.String" itemvalue="Python.glance" />
+        <item index="4" class="java.lang.String" itemvalue="Python.server" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SshConsoleOptionsProvider">
+    <option name="myEncoding" value="UTF-8" />
+    <option name="myConnectionType" value="NONE" />
+  </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value=",SHOW_FIELDS" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration>$USER_HOME$/.subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="934b9d36-5c81-4b87-8740-aff6dbdd6ea8" name="Default" comment="" />
+      <created>1436445546468</created>
+      <option name="number" value="Default" />
+      <updated>1436445546468</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="66" y="23" width="2300" height="1677" extended-state="0" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Remote Host" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20779221" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="SVN Repositories" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32925257" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15666965" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32814237" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26362625" sideWeight="0.5076546" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12242268" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2132753" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298969" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16081426" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17836446" sideWeight="0.49234536" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25195095" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925472" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16974972" sideWeight="0.49707174" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2173913" sideWeight="0.49307775" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24265505" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32814237" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25195095" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26362625" sideWeight="0.5076546" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12328767" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925472" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2132753" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16974972" sideWeight="0.49707174" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20424949" sideWeight="0.49234536" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20779221" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17302799" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2173913" sideWeight="0.49307775" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16081426" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24265505" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Create IT." />
+    <option name="LAST_COMMIT_MESSAGE" value="Create IT." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/nebula/core/mission/task.py</url>
+          <line>1</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/nebula/core/subscribers/user.py</url>
+          <line>1</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/nebula/core/managers/etlmod.py</url>
+          <line>8</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/nebula/portal/views/portal/hbase/hbase.py</url>
+          <line>2</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/nebula/portal/views/portal/ldapadmin/ldapadmin.py</url>
+          <line>2</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/nebula/portal/utils/user.py</url>
+          <line>2</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/nebula/portal/views/portal/etltools/etltools.py</url>
+          <line>20</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+      <option name="time" value="15" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/python-proc/mkdic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="589" column="45" selection-start-line="589" selection-start-column="45" selection-end-line="589" selection-end-column="45" />
+          <folding>
+            <marker date="1511184790000" expanded="true" signature="2753:2774" placeholder="select count... missing_value" />
+            <marker date="1511184790000" expanded="true" signature="3618:3718" placeholder="select count... missing_value" />
+            <marker date="1511184790000" expanded="true" signature="3930:3964" placeholder="select PD_DH... product_t" />
+            <marker date="1511184790000" expanded="true" signature="4145:4203" placeholder="select PD_DH... product_t" />
+            <marker date="1511184790000" expanded="true" signature="4465:4531" placeholder="select b.PJ_... delivery_t" />
+            <marker date="1511184790000" expanded="true" signature="5002:5141" placeholder="select err_s... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="5541:5616" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="6283:6339" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="6808:6864" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="7310:7366" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="7750:7824" placeholder="select sum(r... count_record_t" />
+            <marker date="1511184790000" expanded="true" signature="7979:8005" placeholder="select MM_XM... member_t" />
+            <marker date="1511184790000" expanded="true" signature="8109:8218" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="8429:8504" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="9643:9758" placeholder="select TK_RW... task_t" />
+            <marker date="1511184790000" expanded="true" signature="10255:10281" placeholder="select MM_XM... member_t" />
+            <marker date="1511184790000" expanded="true" signature="10348:10457" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="11224:11324" placeholder="select TK_ZX... task_t" />
+            <marker date="1511184790000" expanded="true" signature="11589:11695" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="12318:12355" placeholder="select PJ_XM... project_t" />
+            <marker date="1511184790000" expanded="true" signature="12496:12606" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="13066:13141" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="13315:13428" placeholder="select TK_RW... task_t" />
+            <marker date="1511184790000" expanded="true" signature="13830:13901" placeholder="select KQ_AM... checkon_t" />
+            <marker date="1511184790000" expanded="true" signature="14285:14356" placeholder="select KQ_PM... checkon_t" />
+            <marker date="1511184790000" expanded="true" signature="15652:15694" placeholder="select PDM_D... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15652:15729" placeholder="select PDM_D... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15652:15743" placeholder="select PDM_D... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15857:15905" placeholder="select PDM_T... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15857:15923" placeholder="select PDM_T... pd_management_t" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/doXLSX.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1511087210000" expanded="true" signature="7155:7190" placeholder="INSERT INTO missing_value... " />
+            <marker date="1511087210000" expanded="true" signature="8240:8290" placeholder="SELECT count... missing_value" />
+            <marker date="1511087210000" expanded="true" signature="9101:9136" placeholder="INSERT INTO missing_value... " />
+            <marker date="1511087210000" expanded="true" signature="10279:10329" placeholder="SELECT count... missing_value" />
+            <marker date="1511087210000" expanded="true" signature="10734:10769" placeholder="INSERT INTO missing_value... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/wordHdler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="28" column="48" selection-start-line="28" selection-start-column="48" selection-end-line="28" selection-end-column="48" />
+          <folding>
+            <element signature="e#25#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/mkdic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/mkdic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1511184790000" expanded="true" signature="2753:2774" placeholder="select count... missing_value" />
+            <marker date="1511184790000" expanded="true" signature="3618:3718" placeholder="select count... missing_value" />
+            <marker date="1511184790000" expanded="true" signature="3930:3964" placeholder="select PD_DH... product_t" />
+            <marker date="1511184790000" expanded="true" signature="4145:4203" placeholder="select PD_DH... product_t" />
+            <marker date="1511184790000" expanded="true" signature="4465:4531" placeholder="select b.PJ_... delivery_t" />
+            <marker date="1511184790000" expanded="true" signature="5002:5141" placeholder="select err_s... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="5541:5616" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="6283:6339" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="6808:6864" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="7310:7366" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="7750:7824" placeholder="select sum(r... count_record_t" />
+            <marker date="1511184790000" expanded="true" signature="7979:8005" placeholder="select MM_XM... member_t" />
+            <marker date="1511184790000" expanded="true" signature="8109:8218" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="8429:8504" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="9643:9758" placeholder="select TK_RW... task_t" />
+            <marker date="1511184790000" expanded="true" signature="10255:10281" placeholder="select MM_XM... member_t" />
+            <marker date="1511184790000" expanded="true" signature="10348:10457" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="11224:11324" placeholder="select TK_ZX... task_t" />
+            <marker date="1511184790000" expanded="true" signature="11589:11695" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="12318:12355" placeholder="select PJ_XM... project_t" />
+            <marker date="1511184790000" expanded="true" signature="12496:12606" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="13066:13141" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="13315:13428" placeholder="select TK_RW... task_t" />
+            <marker date="1511184790000" expanded="true" signature="13830:13901" placeholder="select KQ_AM... checkon_t" />
+            <marker date="1511184790000" expanded="true" signature="14285:14356" placeholder="select KQ_PM... checkon_t" />
+            <marker date="1511184790000" expanded="true" signature="15652:15694" placeholder="select PDM_D... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15652:15729" placeholder="select PDM_D... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15652:15743" placeholder="select PDM_D... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15857:15905" placeholder="select PDM_T... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15857:15923" placeholder="select PDM_T... pd_management_t" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/doXLSX.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="467" column="82" selection-start-line="467" selection-start-column="68" selection-end-line="467" selection-end-column="82" />
+          <folding>
+            <marker date="1511087210000" expanded="true" signature="7155:7190" placeholder="INSERT INTO missing_value... " />
+            <marker date="1511087210000" expanded="true" signature="8240:8290" placeholder="SELECT count... missing_value" />
+            <marker date="1511087210000" expanded="true" signature="9101:9136" placeholder="INSERT INTO missing_value... " />
+            <marker date="1511087210000" expanded="true" signature="10279:10329" placeholder="SELECT count... missing_value" />
+            <marker date="1511087210000" expanded="true" signature="10734:10769" placeholder="INSERT INTO missing_value... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/info.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/wordHdler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="11" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding>
+            <element signature="e#25#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/crWord.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/doWord.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="10" column="28" selection-start-line="10" selection-start-column="28" selection-end-line="10" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/xlsxHdler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/doPie.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="22" column="39" selection-start-line="22" selection-start-column="39" selection-end-line="22" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/doHour.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="92" column="28" selection-start-line="92" selection-start-column="28" selection-end-line="92" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/mkdic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1511184790000" expanded="true" signature="2753:2774" placeholder="select count... missing_value" />
+            <marker date="1511184790000" expanded="true" signature="3618:3718" placeholder="select count... missing_value" />
+            <marker date="1511184790000" expanded="true" signature="3930:3964" placeholder="select PD_DH... product_t" />
+            <marker date="1511184790000" expanded="true" signature="4145:4203" placeholder="select PD_DH... product_t" />
+            <marker date="1511184790000" expanded="true" signature="4465:4531" placeholder="select b.PJ_... delivery_t" />
+            <marker date="1511184790000" expanded="true" signature="5002:5141" placeholder="select err_s... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="5541:5616" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="6283:6339" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="6808:6864" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="7310:7366" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="7750:7824" placeholder="select sum(r... count_record_t" />
+            <marker date="1511184790000" expanded="true" signature="7979:8005" placeholder="select MM_XM... member_t" />
+            <marker date="1511184790000" expanded="true" signature="8109:8218" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="8429:8504" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="9643:9758" placeholder="select TK_RW... task_t" />
+            <marker date="1511184790000" expanded="true" signature="10255:10281" placeholder="select MM_XM... member_t" />
+            <marker date="1511184790000" expanded="true" signature="10348:10457" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="11224:11324" placeholder="select TK_ZX... task_t" />
+            <marker date="1511184790000" expanded="true" signature="11589:11695" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="12318:12355" placeholder="select PJ_XM... project_t" />
+            <marker date="1511184790000" expanded="true" signature="12496:12606" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="13066:13141" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="13315:13428" placeholder="select TK_RW... task_t" />
+            <marker date="1511184790000" expanded="true" signature="13830:13901" placeholder="select KQ_AM... checkon_t" />
+            <marker date="1511184790000" expanded="true" signature="14285:14356" placeholder="select KQ_PM... checkon_t" />
+            <marker date="1511184790000" expanded="true" signature="15652:15694" placeholder="select PDM_D... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15652:15729" placeholder="select PDM_D... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15652:15743" placeholder="select PDM_D... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15857:15905" placeholder="select PDM_T... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15857:15923" placeholder="select PDM_T... pd_management_t" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/doXLSX.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="467" column="82" selection-start-line="467" selection-start-column="68" selection-end-line="467" selection-end-column="82" />
+          <folding>
+            <marker date="1511087210000" expanded="true" signature="7155:7190" placeholder="INSERT INTO missing_value... " />
+            <marker date="1511087210000" expanded="true" signature="8240:8290" placeholder="SELECT count... missing_value" />
+            <marker date="1511087210000" expanded="true" signature="9101:9136" placeholder="INSERT INTO missing_value... " />
+            <marker date="1511087210000" expanded="true" signature="10279:10329" placeholder="SELECT count... missing_value" />
+            <marker date="1511087210000" expanded="true" signature="10734:10769" placeholder="INSERT INTO missing_value... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/info.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/wordHdler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="11" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding>
+            <element signature="e#25#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/crWord.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/doWord.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="10" column="28" selection-start-line="10" selection-start-column="28" selection-end-line="10" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/xlsxHdler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/doPie.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="22" column="39" selection-start-line="22" selection-start-column="39" selection-end-line="22" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/doHour.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="92" column="28" selection-start-line="92" selection-start-column="28" selection-end-line="92" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/doDay.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/xlsxHdler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/doWord.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="10" column="28" selection-start-line="10" selection-start-column="28" selection-end-line="10" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/doPie.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="22" column="39" selection-start-line="22" selection-start-column="39" selection-end-line="22" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/crWord.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/doHour.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="92" column="28" selection-start-line="92" selection-start-column="28" selection-end-line="92" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/info.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/mkdic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/hour.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mysql_file/create.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7982759">
+          <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/wordHdler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="28" column="48" selection-start-line="28" selection-start-column="48" selection-end-line="28" selection-end-column="48" />
+          <folding>
+            <element signature="e#25#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/doXLSX.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="364" column="35" selection-start-line="364" selection-start-column="35" selection-end-line="364" selection-end-column="35" />
+          <folding>
+            <marker date="1511087210000" expanded="true" signature="7155:7190" placeholder="INSERT INTO missing_value... " />
+            <marker date="1511087210000" expanded="true" signature="8240:8290" placeholder="SELECT count... missing_value" />
+            <marker date="1511087210000" expanded="true" signature="9101:9136" placeholder="INSERT INTO missing_value... " />
+            <marker date="1511087210000" expanded="true" signature="10279:10329" placeholder="SELECT count... missing_value" />
+            <marker date="1511087210000" expanded="true" signature="10734:10769" placeholder="INSERT INTO missing_value... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-proc/DataHandler/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="4.81194">
+          <caret line="437" column="15" selection-start-line="437" selection-start-column="15" selection-end-line="437" selection-end-column="15" />
+          <folding>
+            <marker date="1511184790000" expanded="true" signature="2753:2774" placeholder="select count... missing_value" />
+            <marker date="1511184790000" expanded="true" signature="3618:3718" placeholder="select count... missing_value" />
+            <marker date="1511184790000" expanded="true" signature="3930:3964" placeholder="select PD_DH... product_t" />
+            <marker date="1511184790000" expanded="true" signature="4145:4203" placeholder="select PD_DH... product_t" />
+            <marker date="1511184790000" expanded="true" signature="4465:4531" placeholder="select b.PJ_... delivery_t" />
+            <marker date="1511184790000" expanded="true" signature="5002:5141" placeholder="select err_s... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="5541:5616" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="6283:6339" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="6808:6864" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="7310:7366" placeholder="select count... testrecord_t" />
+            <marker date="1511184790000" expanded="true" signature="7750:7824" placeholder="select sum(r... count_record_t" />
+            <marker date="1511184790000" expanded="true" signature="7979:8005" placeholder="select MM_XM... member_t" />
+            <marker date="1511184790000" expanded="true" signature="8109:8218" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="8429:8504" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="9643:9758" placeholder="select TK_RW... task_t" />
+            <marker date="1511184790000" expanded="true" signature="10255:10281" placeholder="select MM_XM... member_t" />
+            <marker date="1511184790000" expanded="true" signature="10348:10457" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="11224:11324" placeholder="select TK_ZX... task_t" />
+            <marker date="1511184790000" expanded="true" signature="11589:11695" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="12318:12355" placeholder="select PJ_XM... project_t" />
+            <marker date="1511184790000" expanded="true" signature="12496:12606" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="13066:13141" placeholder="select sum(T... task_t" />
+            <marker date="1511184790000" expanded="true" signature="13315:13428" placeholder="select TK_RW... task_t" />
+            <marker date="1511184790000" expanded="true" signature="13830:13901" placeholder="select KQ_AM... checkon_t" />
+            <marker date="1511184790000" expanded="true" signature="14285:14356" placeholder="select KQ_PM... checkon_t" />
+            <marker date="1511184790000" expanded="true" signature="15652:15694" placeholder="select PDM_D... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15652:15729" placeholder="select PDM_D... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15652:15743" placeholder="select PDM_D... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15857:15905" placeholder="select PDM_T... pd_management_t" />
+            <marker date="1511184790000" expanded="true" signature="15857:15923" placeholder="select PDM_T... pd_management_t" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

@@ -1,0 +1,167 @@
+{% extends "layout/base.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/static/plugins/jquery-morris-chart/css/morris.css" type="text/css" media="screen">
+{% endblock %}
+
+{% block title %}虚拟机详情{% endblock %}
+
+{% block container %}
+  <!-- BEGIN PAGE CONTAINER-->
+  <div class="page-content">
+
+    <!-- 页面内容从此处开始-->
+    <div class="content">
+      {% include 'instance/_detail/_title.html' %}
+      {% include 'instance/_detail/_info.html' %}
+    </div>
+    <!--content-->
+    <!-- 页面内容到此结束-->
+  </div>
+  <!-- END PAGE CONTAINER-->
+{% endblock %}
+
+{% block modal %}
+
+    {% include 'instance/_list/start.html' %}
+    {% include 'instance/_list/stop.html' %}
+    {% include 'instance/_list/pause.html' %}
+    {% include 'instance/_list/suspend.html' %}
+    {% include 'instance/_list/delete.html' %}
+    {% include 'instance/_list/unpause.html' %}
+    {% include 'instance/_list/reboot.html' %}
+
+{% endblock %}
+
+{% block extend_js %}
+<script src="/static/plugins/jquery-sparkline/jquery-sparkline.js"></script>
+<script src="/static/plugins/jquery-ricksaw-chart/js/d3.v2.js"></script>
+<script src="/static/plugins/jquery-ricksaw-chart/js/rickshaw.min.js"></script>
+<script src="/static/js/info.js" type="text/javascript"></script>
+<script src="/static/js/detail.js" type="text/javascript"></script>
+<script src="/static/js/instance/instances_info.js" type="text/javascript"></script>
+
+<script src="/static/plugins/raphael-min.js" type="text/javascript"></script>
+<script src="/static/plugins/jquery-morris-chart/js/morris.min.js"></script>
+<script src="/static/plugins/jquery-sparkline/jquery-sparkline.js"></script>
+<script src="/static/plugins/justgage/js/justgage.1.0.1.min.js"></script>
+<script src="/static/plugins/jquery-ricksaw-chart/js/d3.v2.js"></script>
+<script src="/static/plugins/jquery-ricksaw-chart/js/rickshaw.min.js"></script>
+<script src="/static/plugins/jquery-numberAnimate/jquery.animateNumber.min.js" type="text/javascript"></script>
+
+
+<script>
+$(function(){
+    createMenuForCheck($("a.volume-modals"));
+    createMenuForCheck($("#backup-modals"));
+});
+</script>
+
+<script>
+    var inst_memory = {{ instance.memory_mb}};
+    var g1, g2, g3;
+
+    var vm_monitor = function(){
+          //cpu ,内存，磁盘实时使用情况
+        var comma_separator_number_step = $.animateNumber.numberStepFactories.separator(',')
+        $.get("{{ url_for('portal.vm_monitor', instance_uuid=instance.instance_uuid) }}",{},function(ret){
+            if(ret&&ret!=null){
+                g1.refresh(ret.monitor_data.cpu_useage);
+                g2.refresh(Math.round((ret.monitor_data.mem_useage/inst_memory) * 100));
+                g3.refresh(ret.monitor_data.disk_useage);
+                $('#r-disk_read_bytes_rate').animateNumber({number: ret.monitor_data.disk_read_bytes_rate});
+                $('#r-disk_write_bytes_rate').animateNumber({number: ret.monitor_data.disk_write_bytes_rate});
+                $('#r-network_outgoing_bytes_rate').animateNumber({number: ret.monitor_data.network_outgoing_bytes_rate});
+                $('#r-network_incoming_bytes_rate').animateNumber({number: ret.monitor_data.network_incoming_bytes_rate});
+            }
+        },"json");
+    };
+
+    function parse_d(data){
+        if(data!=null){
+            var monitor_data=data.monitor_data;
+            if(monitor_data!=null){
+                var x=[];
+                for(var i=0;i<monitor_data.length;i++){
+                    var s={};
+                    var _d  = monitor_data[i];
+                    s.y = _d.dtime;
+                    s.a = _d.avg;  //avg
+                    s.b = _d.max;
+                    s.c = _d.min;
+                    x.push(s);
+                }
+                return x;
+            }
+        }
+    }
+
+
+
+    var m_obj = [];
+    var vm_history_monitor  = function(type,pre){
+        var resource_id = "{{ instance.instance_uuid }}";
+
+
+        $.ajax({
+            url: "/instance/"+resource_id+"/monitor-history/"+ type +"/"+pre,
+            success: function (outEvoVal) {
+                var p_data = parse_d(outEvoVal)
+                if(p_data == undefined){
+                    $("#line-"+type).html("<span style='padding-left: 20px;height:60px'>暂无数据</span>");
+                    return
+                }
+
+                if (p_data.length >=1) {
+                    $("#line-"+type).html("")
+                    m_obj[type] = Morris.Area({
+                        element: 'line-' + type,
+                        data: p_data,
+                        behaveLikeLine: true,
+                        resize: true,
+                        height: 200,
+                        xkey: 'y',
+                        units: '('+ outEvoVal.monitor_data[0].unit+')',
+                        ykeys: ['b','a','c'],
+                        labels: ['MAX','AVG','MIN'],
+                        lineColors: ['rgba(0,144,217,0.51)', '#7fb054', '#cecece'],//, '#cecece'
+                        lineWidth: 3
+                    });
+                }else{
+                     $("#line-"+type).html("<span style='padding-left: 20px;height:60px'>暂无数据</span>");
+                }
+            },
+            error: function(e) {
+                 $("#line-"+type).html("<span style='padding-left: 20px;height:60px'>暂无数据</span>");
+            }
+        });
+    }
+
+
+    $(document).ready(function() {
+        $(".btn-sm").click(function(){
+
+            $(this).parent().children('.btn-sm').removeClass('btn-primary');
+            $(this).addClass("btn-primary");
+            var m = $(this).attr("meter");
+            var p = $(this).attr("pre_num");
+            vm_history_monitor(m,p);
+        });
+        g1 = new JustGage({id: "g1",value: 0,min: 0,max: 100,title: "CPU",label: "%"});
+        g2 = new JustGage({id: "g2",value: 0,min: 0,max: 100,title: "内存",label: "%"});
+        g3 = new JustGage({id: "g3",value: 0,min: 0,max: 100,title: "磁盘",label: "%"});
+        vm_monitor();
+        vm_history_monitor(0,1);
+        vm_history_monitor(1,1);
+        vm_history_monitor(2,1);
+        vm_history_monitor(3,1);
+        vm_history_monitor(4,1);
+        vm_history_monitor(5,1);
+
+        setInterval(function() {
+            vm_monitor();
+        },30000);
+
+    })
+</script>
+{% endblock %}

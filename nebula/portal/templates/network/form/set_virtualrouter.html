@@ -1,0 +1,72 @@
+<!-- 带宽设置Modal -->
+<div class="modal fade" id="bandwidthSetting" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">带宽设置-<span class="text-success">
+            {{ virtualrouter.name }}</span></h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">带宽指单位时间能通过链路的数据量。网络设备通过对带宽进行设置，来满足用户对于网络吞吐量的需求</div>
+        <form id="form_traditional_validation"
+              action="{{ url_for('portal.virtualrouter_set', id=virtualrouter.id) }}"
+              class="form-horizontal" method="POST">
+          <div class="form-group text-primary">
+              <label for="" class="col-sm-3 control-label">上行带宽配额</label>
+              <label for="" class="col-sm-2 control-label text-left text-success">
+                  {{ bandwidth_tx_quota }}
+                  <span class="text-muted p-l-10 ">Mb</span>
+              </label>
+              <label for="" class="col-sm-2 control-label">可用带宽</label>
+              <label for="" class="col-sm-3 control-label text-left text-success">
+                  {{ bandwidth_tx_usable }}
+                  <span class="text-muted p-l-10 ">Mb</span>
+              </label>
+          </div>
+          <!--form-group-->
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">上行带宽</label>
+            <div class="col-sm-5">
+{#              <input type="text" name="" id="" class="form-control digits required" max="{{ bandwidth_tx_usable }}" min="1" value="50">#}
+              {{ form.bandwidth_tx(class="form-control digits required", min=1,
+              value=virtualrouter.bandwidth_tx, max=bandwidth_tx_usable+form.bandwidth_tx.data) }}
+            </div>
+            <span class="pull-left p-t-10 inline">Mb/s</span>
+          </div>
+          <div class="form-group text-primary">
+              <label for="" class="col-sm-3 control-label">下行带宽配额</label>
+              <label for="" class="col-sm-2 control-label text-left text-success">
+                  {{ bandwidth_rx_quota }}
+                  <span class="text-muted p-l-10 ">Mb</span>
+              </label>
+              <label for="" class="col-sm-2 control-label">可用带宽</label>
+              <label for="" class="col-sm-3 control-label text-left text-success">
+                  {{ bandwidth_rx_usable }}
+                  <span class="text-muted p-l-10 ">Mb</span>
+              </label>
+          </div>
+          <!--form-group-->
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">下行带宽</label>
+            <div class="col-sm-5">
+{#              <input type="text" name="" id="" class="form-control digits required" max="{{ bandwidth_tx_usable }}" min="1" value="50">#}
+              {{ form.bandwidth_rx(class="form-control digits required",
+              min=1, value=virtualrouter.bandwidth_rx, max=bandwidth_rx_usable+form.bandwidth_rx.data) }}
+            </div>
+            <span class="pull-left p-t-10 inline">Mb/s</span>
+          </div>
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保 存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--带宽设置Modal-->
+

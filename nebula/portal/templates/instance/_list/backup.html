@@ -1,0 +1,48 @@
+<div class="modal fade" id="newBackUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">新建备份 </h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">对正在运行的主机系统盘做在线备份，备份生成的档案可用以恢复虚机和转换镜像
+                </div>
+                <p class="p-b-10">
+                    <span class="m-r-10">总共可创建&nbsp;
+                        <span class="text-success">{{ backup_limit }}</span>&nbsp;个备份；还可以创建&nbsp;
+                        <span class="text-success">{{ available_backup }}</span>&nbsp;个备份
+                    </span>
+                </p>
+                <form id="form_traditional_validation" action="/form/instance/backup/create/{{ instance.id }}" data-rule="vmBackUpRule"  class="form-horizontal" method="post">
+                    <div class="form-group">
+                        <label for="" class="col-sm-3 control-label">名称</label>
+                        <div class="col-sm-7">
+                            <input type="text" name="name" id="" class="form-control">
+                            <input type="hidden" name="id">
+                            {% if instance %}
+                            <input type="hidden" name="backup_instance_id" value="{{ instance.id }}">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!--form-group-->
+                    <div class="form-actions">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+                            <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>创 建</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        var button_status = '{{ available_backup }}';
+        if (button_status == 0){
+            $("#newBackUp button[type=submit]").attr("disabled", true);
+        }
+    });
+</script>

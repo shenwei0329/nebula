@@ -1,0 +1,34 @@
+<div class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">修改虚拟机-<span class="text-success">{{ form.display_name.data }}</span></h4>
+      </div>
+      <div class="modal-body">
+        <form data-x-ajax="true" action="{{ url_for('InstancesView:modify', id=form.id.data) }}" method="post" class="form-horizontal">
+          {{ form.id() }}
+          <div class="form-group">
+            {{ form.display_name.label(class_="col-sm-3 control-label") }}
+            <div class="col-sm-7 input-validation right">
+              {{ form.display_name(class_='form-control') }}
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-group">
+            {{ form.display_description.label(class_="col-sm-3 control-label") }}
+            <div class="col-sm-7 input-validation right">
+              {{ form.display_description(class_='form-control', rows=3) }}
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons" data-dismiss="modal">关闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

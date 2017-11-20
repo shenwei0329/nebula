@@ -1,0 +1,4 @@
+httpie>=0.7.2
+bpython>=0.12
+Sphinx>=1.2.2
+boom==0.8

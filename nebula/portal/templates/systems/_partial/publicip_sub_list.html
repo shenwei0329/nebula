@@ -1,0 +1,76 @@
+{% from 'layout/pagination.html' import render_pagination with context %}
+ <table class="table">
+           <thead>
+              <tr>
+                <th style="display:none">
+{#                  <div class="checkbox check-default">#}
+{#                    <input id="checkbox10" type="checkbox" value="1" class="checkall">#}
+{#                    <label for="checkbox10"></label>#}
+{#                  </div>#}
+                </th>
+                <th>IP地址</th>
+                <th>已映射固定IP地址</th>
+                <th>浮动IP池</th>
+                <th>路由器</th>
+                <th>用户</th>
+                <th>创建时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+                {%- for floatingip in pagination.items %}
+                <tr class="userManager">
+                    
+                    <td style="display:none">
+                        <div class="checkbox check-default">
+                        <input id="checkbox{{loop.index}}" type="checkbox" value="{{ floatingip.id }}">
+                        <label for="checkbox{{loop.index}}"></label>
+                      </div>
+                    </td>
+                   
+                    <td class="text-info">{{ floatingip.floating_ip_address }} </td>
+                    <td class="text-info">
+                    {% if floatingip.fixed_ip_address == None %}
+                        --
+                    {% else %}
+                        {{ floatingip.fixed_ip_address }}
+                    {% endif %}
+                    </td>
+                    <td class="text-info"><a href="{{ url_for('portal.private_network_detail', id=floatingip.network.id) }}">{{ floatingip.network.name }}</a></td>
+                    <td>
+                        {%- if floatingip.virtualrouter %}
+                        <a href="{{ url_for('portal.virtualrouter_detail', id=floatingip.virtualrouter.id) }}">
+                            <i class="fa fa-random m-r-10"></i>{{ floatingip.virtualrouter.name }}
+                        </a>
+                        {%- endif %}
+                    </td>
+                    <td>
+                        {% if floatingip.owner %}
+                        <a href="{{ url_for('portal.user_detail', id=floatingip.owner.id) }}">
+                            <i class="fa fa-user m-r-10"></i>{{ floatingip.owner.username }}
+                        </a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <i class="fa fa-clock-o m-r-10"></i>{{ floatingip.created_at | datetime }}
+                    </td>
+                    <td>
+                        <a name="update_floatingip" href="{{ url_for('portal.floatingip_update_form',
+                                id=floatingip.id) }}">
+                                    <i class="fa fa-pencil"></i>&nbsp;</a>
+                        <a href="#" data-url="{{ url_for('portal.floatingip_delete_view',fip_id=floatingip.id)}}" name="#deletefloatingip" id="delete_public_ip_{{floatingip.id}}">
+                            <i class="fa fa-trash-o"></i>
+                        </a>
+                    </td>
+                </tr>
+                {%- endfor %}
+
+            </tbody>
+          </table>
+          <!--分页-->
+          {% if pagination.items %}
+              {{ render_pagination(pagination, 'portal.floatingip_list') }}
+          {% else %}
+              <p class=""><em>该列表中暂时没有数据。</em></p>
+          {% endif %}
+          <!--分页-->

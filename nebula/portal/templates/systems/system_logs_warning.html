@@ -1,0 +1,59 @@
+<!--登录日志-->
+{% extends 'layout/base.html' %}
+{% block title %}系统日志{% endblock %}
+{% block style %}
+{% endblock %}
+
+{% block resource_type %}Systemlogs{% endblock %}
+
+{% block container %}
+
+
+
+<!-- BEGIN PAGE -->
+  <div class="page-content">
+    <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+    <div class="content">
+      <!--title-->
+      <div class="page-title">
+        <h3>系统日志</h3>
+      </div>
+      <!--title-->
+      <div class="row">
+        <div class="col-md-12">
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="{{ url_for('portal.system_logs_warning') }}">告警日志</a></li>
+            <li><a href="{{ url_for('portal.system_logs_op') }}">操作日志</a></li>
+            <li><a href="{{ url_for('portal.system_logs_user_login') }}">登录日志</a></li>
+          </ul>
+{% from 'layout/pagination.html' import render_pagination with context %}
+           {% include 'systems/_partial/sub_log_warning.html' %}
+           
+            <!--分页-->
+              {% if pagination.items %}
+              {{ render_pagination(pagination, 'portal.system_logs_warning', '') }}
+              {% else %}
+              <p class=""><em>该列表中暂时没有数据。</em></p>
+              {% endif %}
+              <!--分页-->
+              <!--告警日志--> 
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      <!--col-md-12--> 
+    </div>
+    <!--row--> 
+  </div>
+  <!--content--> 
+
+{% endblock %}
+
+
+
+
+
+
+

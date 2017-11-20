@@ -1,0 +1,20 @@
+<div class="modal fade" id="deletefirewall" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form action="{{ url_for('portal.instance_security_group_detach_submit') }}" method="post">
+                    <input type="hidden" name="port_id" value="{{ port.id }}"/>
+                    <input type="hidden" name="sgroup_id" value="{{ security_group_id }}"/>
+                    <div class="alert alert-block alert-info fade in">
+                        <h4 class="alert-heading">提示！</h4>
+                        <p>确定卸载虚拟防火墙 - {{ port.fixed_ips[0]['ip_address'] }} </p>
+                        <div class="button-set text-right">
+                            <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">取消</button>
+                            <button class="btn btn-success btn-cons" type=submit >确定</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

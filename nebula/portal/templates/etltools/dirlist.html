@@ -1,0 +1,42 @@
+<div id="{{ etl_href }}" class="tab-pane active">
+    {% import 'bootstrap/wtf.html' as wtf %}
+
+    <ul>
+            <ul class="nav nav-header">
+                <li style="float: left">{{ pagination.info }}</li>
+                <li>
+                    <button type="button" class="small button"  style="float: right" onclick="ItemOnclick(0)" >
+                          <i class="icon-plus"></i>&nbsp;创建目录&nbsp;
+                    </button>
+                </li>
+            </ul>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <a class="list-group-item active">
+                        <tr>
+                            <th width="120pix">名称</th>
+                            <th>描述</th>
+                            <th width="140pix">提交日期</th>
+                            <th width="100pix">操作</th>
+                        </tr>
+                    </a>
+                    </thead>
+                    <tbody>
+                    {% for dir in dirs %}
+                        <tr>
+                            <td><a href="#">{{ dir.name }}</a></td>
+                            <td>{{ dir.desc }}</td>
+                            <td>{{ dir.created_at }}</td>
+                            <td><button id='dir_name' value={{ dir.name }} type='button' class="small button" onclick="delete_confirm('{{ dir.name }}')"><i class="icon-remove"  style="color: #f00000;"></i></button>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <ul class="pagination">
+                    {{ pagination.links }}
+                </ul>
+            </div>
+    </ul>
+</div>
+

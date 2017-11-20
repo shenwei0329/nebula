@@ -1,0 +1,44 @@
+<!-- Modal -->
+<div class="modal fade" id="toVM" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title" id="myModalLabel">应用到虚拟机-<span class="text-success">{{ security_group.name }}</span></h4>
+    </div>
+    <div class="modal-body">
+      <form id="form_traditional_validation"
+            action="{{ url_for('portal.security_group_effect', id=security_group.id) }}"
+            class="form-horizontal" method="POST">
+        <input type="hidden" name="id">
+        <div class="row">
+        <div class="col-sm-12">
+        <div class="form-group">
+          <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>接入虚拟机</label>
+          <div class="col-sm-7 input-validation right">
+            <select name="port_id" id="formCluster" class="select2 form-control"  >
+            <option value="">选择接入虚拟机</option>
+              {% for instance in instances %}
+                <option value={{ instance.port_id }}>{{ instance.instance_name }}（{{ instance.ip }}）</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        </div>
+        </div>
+        <div class="form-actions">
+          <div class="pull-right">
+            <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+            <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保存</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+<!--modal-->
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

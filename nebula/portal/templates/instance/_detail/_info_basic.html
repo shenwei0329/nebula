@@ -1,0 +1,106 @@
+{% from 'instance/_macros.html' import build_status_col_data %}
+{% from 'instance/_macros.html' import build_image_os_type_col_data %}
+
+<!--grid-title-->
+<div class="grid-title no-border">
+    <h4>基本信息</h4>
+
+    <div class="tools">
+        <a href="#grid-config" class="dropdown-toggle config" data-toggle="dropdown"></a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="#" data-toggle="modal" data-url="{{ url_for('portal.volume_attach', id=instance.id) }}">
+                    <i class="fa fa-hdd-o"></i>&nbsp;挂载磁盘
+                </a>
+            </li>
+            <li>
+                <a href="#" data-toggle="modal" data-target="#addNIC" data-url="/instance/ports/{{ instance.id }}/attach/">
+                    <i class="fa fa-sitemap"></i>&nbsp;挂载网卡
+                </a>
+            </li>
+            <li>
+                <a href="#" name="#start-modal" data-toggle="modal">
+                    <i class="fa fa-play"></i>&nbsp;启动
+                </a>
+            </li>
+            <li>
+                <a href="#" name="#shutdown-modal" data-toggle="modal">
+                    <i class="fa fa-stop"></i>&nbsp;关机
+                </a>
+            </li>
+            <li>
+                <a href="#" data-toggle="modal" data-url="/instance/instances/{{ instance.id }}/modify">
+                    <i class="fa fa-pencil"></i>&nbsp;修改
+                </a>
+            </li>
+            <li>
+                <a href="#" name="#delete-modal" data-toggle="modal">
+                    <i class="fa fa-trash-o"></i>&nbsp;销毁
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<!--grid-body-->
+<div class="grid-body no-border">
+  <table class="table table-info table-detail">
+    <tbody>
+    <tr>
+      <td>ID</td>
+      <td>{{ instance.id }}</td>
+    </tr>
+    <tr>
+      <td width="30%">名称</td>
+      <td class="text-info">{{ instance.display_name }}</td>
+    </tr>
+    <tr>
+      <td>描述</td>
+      <td>{{ instance.display_description|default('', True) }}</td>
+    </tr>
+    <tr>
+      <td>状态</td>
+      <td>{{ build_status_col_data(instance.status) }}</td>
+    </tr>
+    <tr>
+      <td>任务状态</td>
+      <td class="{{ instance.job.state | job_state_class }}">{{ instance.job.state | job_state_humanize }}</td>
+    </tr>
+    <tr>
+      <td>所属者</td>
+      <td class="text-info">{{ instance.creator.username }}</td>
+    </tr>
+    <tr>
+      <td>创建时间</td>
+      <td>{{ instance.created_at | datetime }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<!--grid-title-->
+<div class="grid-title no-border">
+  <h4>配置信息</h4>
+</div>
+<!--grid-body-->
+<div class="grid-body no-border">
+  <table class="table table-info">
+    <tbody>
+    <tr>
+      <td>操作系统</td>
+      <td>{{ build_image_os_type_col_data(instance.image.os_distro) }}</td>
+    </tr>
+    <tr>
+      <td>CPU</td>
+      <td>{{ instance.flavor.vcpus }}</td>
+    </tr>
+    <tr>
+      <td>内存</td>
+      <td>{{ instance.flavor.memory_mb }}MB</td>
+    </tr>
+    <tr>
+      <td>系统盘</td>
+      <td>{{ instance.root_gb }}GB</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,82 @@
+{% from 'layout/sublist_pagination.html' import render_sub_pagination with context %}
+{% macro build_subnet_list(pagination, resource_id) %}
+<div class="table-responsive">
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th>&nbsp;</th>
+        <th>IP网段</th>
+        <th>网关</th>
+        <th>DNS</th>
+        <th>虚拟机数</th>
+        <th>可用IP数</th>
+        <th width="14%">创建时间</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for subnet in pagination.items %}
+      <tr>
+       <td><a href="#" class="subnetShowDetail"></a><input type="hidden" value="{{ subnet.id }}" name="id"></td>
+       <td class="text-info">{{ subnet.cidr }}</td>
+       <td>{{ subnet.gateway_ip }}</td>
+       <td>
+       {% if subnet.dns_nameservers %}
+           {% for dns in subnet.dns_nameservers %}
+             <p>{{ dns }}</p>
+           {% endfor %}
+       {% endif %}
+       </td>
+       <td class="text-success">{{ subnet.instance_count }}</td>
+       <td>{{ subnet.all_ip }}</td>
+       <td>{{ subnet.created_at }}</td>
+       <td><a href="{{ url_for('portal.subnet_delete_form', id=subnet.id) }}"
+              class="remove-subnet"
+              name="delete_subnet">
+           <i class="fa fa-trash-o m-r-10"></i></a></td>
+      </tr>
+      <tr class="subnet_details dispaly-none">
+        <td  colspan="8">
+            <table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;" class="inner-table">
+            <tbody>
+               <tr>
+                   <td>可用IP(起止):</td>
+                   <td>
+                     {% if subnet.allocation_pools %}
+                       {% for ip in subnet.allocation_pools %}
+                         {{ ip["start"] }}-{{ ip["end"] }}
+                       {% endfor %}
+                     {% endif %}
+                     (其中几个IP地址可能用于DHCP服务和虚拟路由器网关地址)
+                   </td>
+               </tr>
+               <tr>
+                   <td>扩展路由:</td>
+                   <td>
+                     {% if subnet.host_routes %}
+                       {% for host in subnet.host_routes %}
+                         网关(下一跳): {{ host["nexthop"] }}&nbsp;&nbsp;
+                         目的网段: {{ host["destination"] }}
+                       {% endfor %}
+                     {% endif %}
+                   </td>
+               </tr>
+               <tr>
+                   <td>描述:</td>
+                   <td>{{ subnet.description }}</td>
+               </tr>
+            </tbody>
+            </table>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+<!--分页-->
+{{ render_sub_pagination(pagination, 'portal.subnet_list', resource_id) }}
+<!--分页-->
+{% endmacro %}
+{% if pagination %}
+    {{ build_subnet_list(pagination, resource_id) }}
+{% endif %}

@@ -1,0 +1,110 @@
+{% from 'instance/_macros.html' import build_status_col_data %}
+{% from 'instance/_macros.html' import build_status_topology %}
+{% from 'instance/_macros.html' import build_image_os_type_topology %}
+<div class="topologyLeft">
+  <div id="tip_ip" class="networkCloud" data-container="body" data-toggle="popover"
+       data-placement="right" data-trigger="hover" title="浮动IP"
+       data-content="
+         <ul class='table-list'>
+           {% for ip in virtualrouter.virtualrouter_floatingips %}
+           <li>{{ ip.floating_ip_address }}</li>
+           {% endfor %}
+         </ul>">
+  <span><strong>外部网络</strong></span>
+  {% if virtualrouter.virtualrouter_floatingips|length >1%}
+    <script>
+        $("#tip_ip").popover({html: true});
+    </script>
+    <p class="text-success">（{{ virtualrouter.virtualrouter_floatingips|length }}）</p>
+  {% elif virtualrouter.virtualrouter_floatingips|length ==1 %}
+    <p class="text-success">{{ virtualrouter.virtualrouter_floatingips[0].floating_ip_address }}</p>
+  {% elif virtualrouter.virtualrouter_networks|length >0 %}
+    <p class="text-success"> </p>
+  {% else %}
+    <p class="text-success">未绑定</p>
+  {% endif%}
+   </div>
+  <!--networkCloud-->
+  <div class="networkRouter">
+    <p><i class="fa fa-random fa-2x"></i></p>
+    <p>
+        {% if virtualrouter %}
+          <a href="{{ url_for('portal.virtualrouter_detail', id=virtualrouter.id) }}">{{ virtualrouter.name | truncate(6, True) }}</a>
+        {% else %}
+          未绑定
+        {% endif %}
+    </p>
+  </div><!--networkRouter-->
+  <!--networkRouter-->
+  {% if virtualrouter %}
+  <!--路由器的连接线-->
+    {% if virtualrouter.virtualrouter_floatingips|length > 0 or virtualrouter.virtualrouter_networks|length >0 %}
+    <div class="cloudLine-success"></div><div class="routerLine-success"></div>
+    {% else %}
+    <div class="cloudLine-error"></div><div class="routerLine-success"></div>
+    {% endif %}
+  {% else %}
+  <div class="cloudLine-error"></div><div class="routerLine-error"></div>
+  {% endif %}
+  <!--路由器的连接线cloudLine-->
+</div><!--topologyLeft-->
+ <div class="topologyRight" id="topologyRightHeight">
+ <!--一个子网 begin-->
+  {% for vn in networks %}
+    {% if networks|length >1 %}
+    <div class="subnet"><a href="{{ url_for('portal.private_network_detail', id=vn.id) }}"> {{ vn.name }}：</a>
+    {% else %}
+    <div class="subnetZero"><a href="{{ url_for('portal.private_network_detail', id=vn.id) }}">{{ vn.name }}：</a>
+    {% endif %}
+      <span id="tip_subnet" class="subnetList" data-container="body"
+            data-toggle="popover" data-placement="right"
+            data-trigger="hover" data-title="可使用的子网"
+            data-original-title="" title=""
+            data-content="
+                 <ul class='table-list'>
+                   {% for sn in vn.subnets %}
+                     <li>{{ sn.cidr }}</li>
+                   {% endfor %}
+                 </ul>">
+          {% if vn.subnets|length >1 %}
+          可使用的子网（{{ vn.subnets|length }}）个
+          <script>$("#tip_subnet").popover({html: true});</script>
+          {% elif vn.subnets|length == 1%}
+            {{ vn.subnets[0].cidr }}
+          {% else %}
+            未创建子网
+          {% endif %}
+      </span>
+    </div>
+    <ul>
+      {% for sn in vn.subnets %}
+        {% if sn.ports|length > 4 %}
+        <script> 
+        	var wd={{sn.ports|length}}*110 + 510; 
+        	$("#topologyDraggable").css("width",wd+"px");
+        </script>
+        {% endif%}
+        {% for port in sn.ports %}
+          {% if port.instance %}
+          <li id="tip_vm_{{port.instance.id}}" class="vmItem" data-container="body" data-toggle="popover"
+               data-placement="right" data-trigger="hover" title="{{ port.instance.display_name }}"
+               data-content="<div class='vmItemList'><table class='table table-info'><tbody>
+                  <tr><td>ID</td><td>{{ port.instance.id }}</td></tr>
+                  <tr><td>状态</td><td class='text-success'>{{ port.instance.status }}</td></tr>
+                  <tr><td>任务状态</td><td class='text-success'>{{ port.instance.job.state | job_state_humanize }}</td></tr>
+                  <tr><td>创建时间</td><td>{{ port.instance.created_at|timesince }}</td></tr>
+                </tbody></table></div>">
+              <span class="vmCaret"></span>
+              <span class="vm {{ build_image_os_type_topology(port.instance.image.os_distro) }}">
+                  {{ build_status_topology(port.instance.status) }}</span>
+              <a href="{{ url_for('portal.instance_detail', id=port.instance.id) }}">{{ port.instance.display_name | truncate(6, True)}}</a>
+              <script>$("#tip_vm_{{port.instance.id}}").popover({html: true});</script>
+          </li>
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  {% endfor %}
+  <!--一个子网 end-->
+ </div><!--topologyRight-->
+<!--topologyRight-->

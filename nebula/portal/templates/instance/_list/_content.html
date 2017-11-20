@@ -1,0 +1,234 @@
+{% from 'layout/pagination.html' import render_pagination with context %}
+{% from 'instance/_macros.html' import build_status_col_data %}
+{% from 'instance/_macros.html' import build_image_os_type_col_data %}
+
+
+    <table class="table table-bordered table-hover no-more-tables">
+        <thead>
+        <tr>
+            <th style="width: 1%">
+                <!--
+                <div class="checkbox check-default">
+                    <input id="checkbox-all" type="checkbox" value="1" class="checkall">
+                    <label for="checkbox-all"></label>
+                </div>
+                -->
+            </th>
+            <th>名称</th>
+            <th>任务状态</th>
+            <th>状态 </th>
+            <th>操作系统</th>
+            <th>规格</th>
+            <th>IP地址</th>
+            <th>所属主机</th>
+            {%- if user.is_super -%}
+                <th>所属者</th>
+            {%- endif -%}
+            <th>创建于</th>
+        </tr>
+        </thead>
+        <tbody>
+        {%- for instance in pagination.items %}
+            <tr class="show-others">
+                <input type="hidden" name="id" value="{{ instance.id }}">
+                <td class="v-align-middle">
+                    <div class="checkbox check-default">
+                        <input id="checkbox{{ instance.id }}" type="checkbox" value="{{ instance.id }}" 
+                        data-disk-format="{{ instance.image.disk_format }}"
+                        data-resource-uuid="{{ instance.instance_uuid | default('', True) }}">
+                        <label for="checkbox{{ instance.id }}"></label>
+                    </div>
+                </td>
+                <td>
+                    {% if not instance.instance_uuid %}
+                        {{ instance.display_name }}
+                    {% else %}
+                    <a href="{{ url_for('portal.instance_detail', id=instance.id) }}" title="{{ instance.display_name }}">{{ instance.display_name | truncate(15, True) }}</a>
+                        {% if instance.vm_state == 'active' %}
+                        <a class="pull-right vnc-link"
+                           target="_blank"
+                           data-instance-id="{{ instance.id }}"
+                           href="#">
+                            <i class="fa fa-dashboard"></i>
+                        </a>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td name="task_status" class="{{ instance.job.state | job_state_class }}">
+                    {{ instance.job.state | job_state_humanize }}
+                </td>
+                <td>{{ build_status_col_data(instance.status) }}</td>
+                <td>{{ build_image_os_type_col_data(instance.image.os_distro) }}</td>
+                <td>{{ instance.flavor.vcpus }}核{{ instance.flavor.memory_mb }}M</td>
+                <td>
+                    {% if instance.ports|length <= 1 %}
+                        {%- for port in instance.ports -%}
+                            {{ port.fixed_ips[0].ip_address }}
+                        {%- endfor -%}
+                    {% else %}
+                    <span class="table-popover-list text-success" data-container="body" data-toggle="popover" data-placement="right" data-trigger="hover" data-title="IP地址">IP:{{ instance.ports|length }}个</span>
+
+                    <div class="popover-content" style="display:none;">
+                        <ul class='table-list'>
+                            {%- for port in instance.ports -%}
+                                <li>{{ port.fixed_ips[0].ip_address }}</li>
+                            {%- endfor -%}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </td>
+                <td><a href="{% if instance.compute_node %}{{ url_for('portal.host_detail', id=instance.compute_node.id) }}{% else %}#{% endif %}" title="{{ instance.compute_node.hostname }}">{{ instance.compute_node.hostname  | truncate(9, True) }}</a></td>
+                {%- if user.is_super -%}
+                <td class="text-info">{{ instance.creator.username }}</td>
+                {% endif %}
+                <td>{{ instance.created_at|timesince }}</td>
+            </tr>
+        {%- endfor %}
+        </tbody>
+    </table>
+    <!--分页-->
+    {% if pagination.items %}
+        {{ render_pagination(pagination, 'portal.instance_list', '点击每行显示操作日志和数据卷列表') }}
+    {% else %}
+        <p class=""><em>该列表中暂时没有数据。</em></p>
+    {% endif %}
+    <!--分页-->
+<script>
+
+$(function(){
+    var $buttons = $("button[data-toggle=modal]");
+
+    var $dropdown_lis = $(".dropdown-menu li");
+
+    function disableAll(){
+         $buttons.attr("disabled","disabled");
+         $dropdown_lis.addClass("disabled");
+    }
+
+    function activeAll(){
+	    $buttons.removeAttr("disabled");
+	    $dropdown_lis.removeClass("disabled");
+    }
+
+    // 先屏蔽所有按钮
+    disableAll();
+
+    $("input[type=checkbox]").unbind("click").click(function(){
+        var $checked_instance = $("input[type=checkbox]:checked");
+        var len=$checked_instance.length;
+        var instance_uuid = $checked_instance.attr("data-resource-uuid");
+        var is_vmdk = ($(this).attr("data-disk-format")==="vmdk");
+        var is_iso = ($(this).attr("data-disk-format")==="iso");
+
+        // buttons
+        var $start_btn = $("button[data-toggle=modal]:contains(启动)");
+        var $delete_btn = $(".dropdown-menu li:contains(销毁)");
+        var $change_passwd_btn = $(".dropdown-menu li:contains(设置密码)");
+        var $shutoff_btn = $("button[data-toggle=modal]:contains(关闭)");
+        var $unpause_btn = $(".dropdown-menu li:contains(暂停恢复)");
+        var $unsuspend_btn = $(".dropdown-menu li:contains(挂起恢复)");
+        
+        //vmware功能屏蔽
+        var $pause_btn = $("button[data-toggle=modal]:contains(暂停)");
+        var $backup_btn = $(".dropdown-menu li:contains(备份)");
+        var $migrate_btn = $(".dropdown-menu li:contains(虚拟机迁移)");
+        var $volume_btn = $(".dropdown-menu li:contains(数据卷)");
+        var $vif_btn = $(".dropdown-menu li:contains(网卡)");
+        var $firewall_btn = $(".dropdown-menu li:contains(虚拟防火墙)");
+        var $monitor_btn = $(".dropdown-menu li:contains(监控策略)");
+        var $sensior_set_btn = $(".dropdown-menu li:contains(高级设置)");
+
+        //  选中单个虚拟机时, 进行判断
+        if(len==1){
+            // 先屏蔽所有按钮
+            disableAll();
+
+            //处理task status
+            var task_status = $("input[type=checkbox]:checked").parents("tr").find("td:eq(2)").text().trim();
+            // 任务中或等待中的虚拟机不能进行任何操作.
+            if(task_status=="任务中" || task_status=="等待中"){
+                return
+            // 如果虚拟机的uuid为空, 则只能删除
+            }else if(!instance_uuid || instance_uuid===""){
+                $delete_btn.removeClass("disabled");
+                return
+            }
+
+            var status=	$("input[type=checkbox]:checked").parents("tr").find("td:eq(3)").text().trim();
+
+            if(status.indexOf("ACTIVE")!=-1){ // ACTIVE状态下不能修改密码, 不能启动, 不能暂停恢复, 不能挂起恢复
+                activeAll();
+                $start_btn.attr("disabled","disabled");
+                $change_passwd_btn.addClass("disabled");
+                $unpause_btn.addClass("disabled");
+                $unsuspend_btn.addClass("disabled");
+           		//vmware屏蔽功能
+                if (is_vmdk){
+            		$pause_btn.addClass("disabled");
+            		$backup_btn.addClass("disabled");
+            		$migrate_btn.addClass("disabled");
+            		$vif_btn.addClass("disabled");
+            		$firewall_btn.addClass("disabled");
+            		$sensior_set_btn.addClass("disabled");
+            	}
+            	
+            	//iso镜像创建虚机功能屏蔽
+                if (is_iso){
+            		$backup_btn.addClass("disabled");
+            		$migrate_btn.addClass("disabled");
+            		//$volume_btn.addClass("disabled");
+            	}
+            }else if(status.indexOf('SHUTOFF')!=-1){ // SHUTOFF状态下只能启动
+                $start_btn.removeAttr("disabled");
+                //放开关机条件下挂载卸载卷
+                $volume_btn.removeClass("disabled");
+                //iso虚机和vmware虚机屏蔽关机条件下修改密码
+                if (!is_iso && !is_vmdk) {
+                    $change_passwd_btn.removeClass("disabled");
+                }
+            }else if(status.indexOf('PAUSED')!=-1){ // SHUTOFF状态下只能恢复暂停
+                $unpause_btn.removeClass("disabled");
+            }else if(status.indexOf('SUSPENDED')!=-1){ // SUSPENDED状态下只能恢复挂起
+                $unsuspend_btn.removeClass("disabled");
+            }
+
+            // 单独判断删除操作
+            // 不是BUILD状态的虚拟机可以删除.
+            if(status.indexOf('BUILD')==-1){
+                $delete_btn.removeClass("disabled");
+            }
+        }else{
+          disableAll();
+        }
+    });
+
+});
+
+// 获取虚拟机vnc地址, 并在新的页面中打开.
+$(function(){
+    $("a.vnc-link").bind("click", function(event){
+        var $target = $(this);
+        var instance_id = $target.attr('data-instance-id');
+
+        $.ajax({
+			type : 'GET',
+			url : '/instance/instances/' + instance_id + '/',
+			dataType : 'json',
+			data: {
+				action : 'getvnc'
+			},
+			success : function(data){
+				var vnc_uri = data['data']['vnc_uri'];
+                var a = $("<a href='" + vnc_uri + "' target='_blank'>vnc</a>").get(0);
+                var e = document.createEvent('MouseEvents');
+                e.initEvent('click', true, true);
+                a.dispatchEvent(e);
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("服务器错误, 错误码: " + textStatus);
+			}
+		});
+        return false;
+    });
+});
+</script>

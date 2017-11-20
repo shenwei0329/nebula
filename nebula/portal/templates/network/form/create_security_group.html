@@ -1,0 +1,46 @@
+<!-- Modal -->
+<div class="modal fade in" id="newGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">添加虚拟防火墙</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">虚拟防火墙是指定义资源和对象权限的访问控制列表 (ACL) 中的集合</div>
+        <form data-rule="newSecurityGroupRule" class=" form-horizontal"
+              method="POST"
+              action="{{ url_for('portal.security_group_create') }}">
+          <div class="form-group text-primary">
+              <label for="" class="col-sm-3 control-label">虚拟防火墙配额</label>
+              <label for="" class="col-sm-2 control-label text-left text-success" id="vr_total_quota">
+                  {{ security_group_quota_hard_limit }}</label>
+              <label for="" class="col-sm-2 control-label">可用配额</label>
+              <label for="" class="col-sm-3 control-label text-left text-success" id="vr_usable_quota">
+                  {{ security_group_quota_usable }}</label>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3  control-label text-right"><span class="text-danger">*</span>名称：</label>
+            <div class="col-sm-7 input-validation right">
+              <input type="text" class="form-control" name="name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class=" col-sm-3 control-label text-right">描述：</label>
+            <div class=" col-sm-7 input-validation right ">
+              <textarea name="description" cols="36" rows="4"></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary
+              {% if not security_group_quota_usable %} disabled{% endif %}">保 存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.modal -->

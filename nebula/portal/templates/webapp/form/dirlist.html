@@ -1,0 +1,69 @@
+<div id="{{ etl_href }}" class="tab-pane active">
+    {% import 'bootstrap/wtf.html' as wtf %}
+
+    <ul class="nav nav-header">
+        <li style="float: left">{{ pagination.info }}</li>
+        <li>
+            <button type="button" class="small button"  style="float: right" onclick="ItemOnclick(3)" >
+                  <i class="icon-plus"></i>&nbsp;创建新作业&nbsp;
+            </button>
+        </li>
+    </ul>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <a class="list-group-item active">
+                <tr>
+                    <th width="120pix">名称</th>
+                    <th width="240pix">模型</th>
+                    <th width="160pix">服务器</th>
+                    <th width="140pix">调度策略:MHDmd</th>
+                    <th width="80pix">状态</th>
+                    <th width="180pix">提交日期</th>
+                    <th>操作</th>
+                </tr>
+            </a>
+            </thead>
+            <tbody>
+            {% for job in jobs %}
+                <tr>
+                    <td>{{ job.name }}</td>
+                    <td>{{ job.mod }}</td>
+                    <td>{{ job.server }}</td>
+                    <td>{{ job.schedule }}</td>
+                    {% if job.status=='DONE' %}
+                        <td><span class="label label-success"><span class="icon-time"/>&nbsp;完成</span></td>
+                    {% elif job.status=='0' %}
+                        <td><span class="label"><span class="icon-share-alt"/>&nbsp;未提交</span></td>
+                    {% elif job.status=='SCHEDULE' %}
+                        <td><span class="label label-warning"><span class="icon-time"/>&nbsp;等待</span></td>
+                    {% elif job.status!='ERROR' %}
+                        <td>
+                            <div class="progress progress-striped active">
+                                <div style="width:{{ job.status }}%;" class="bar"></div>
+                            </div>
+                        </td>
+                    {% else %}
+                        <td><span class="label label-important"><span class="icon-time"/>&nbsp;错误</span></td>
+                    {% endif %}
+                    <td>{{ job.created_at }}</td>
+                    <td>
+                        {% if job.status=='0' or job.status=='DONE' or job.status=='ERROR' or job.status=='SCHEDULE' %}
+                        <button id='job_delete' value={{ job.name }} type='button' class="small button" onclick="delete_confirm('{{ job.name }}')"><i class="icon-remove" style="color: #f00000;"></i></button>
+                        <button id='job_run' value={{ job.name }} type='button' class="small button" onclick="run_job_confirm('{{ job.name }}','{{ job.server }}','{{ job.mod }}','{{ job.schedule }}')"><i class="icon-repeat" style="color: #009926;"></i></button>
+                        {% endif %}
+                        {% if job.status=='DONE' %}
+                        <button id='job_log' value={{ job.name }} type='button' class="small button" onclick="job_log('{{ job.name }}')"><i class="icon-file" style="color: #FFC40D;"></i></button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <ul class="pagination">
+            {{ pagination.links }}
+        </ul>
+    </div>
+
+</div>
+

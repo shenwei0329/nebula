@@ -1,0 +1,62 @@
+<!--绑定外部IP begin-->
+<div class="modal fade" id="IP" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">设置网关-<span class="text-success">{{ virtualrouter.name }}</span></h4>
+            </div>
+            {% if virtualrouter.virtualrouter_networks %}
+             <div class="modal-body">
+                <div class="alert alert-info">路由器外部网络只需设置一个。您已设置 <b>
+                {%- for vn in virtualrouter.virtualrouter_networks -%}
+                	{{ vn.network.name }}
+                {%- endfor -%}
+                	</b> 为本路由器外部网络。
+                </div>
+                <div class="form-actions">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+                        </div>
+                 </div>
+             </div>     
+            {% else %}
+            <div class="modal-body">
+                <div class="alert alert-info">将私有路由器连接到外部网络，为路由器分配外网IP地址，设置外网网关为路由器网关</div>
+                <form id="form_traditional_validation" data-rule="bindIpRule"
+                      action="{{ url_for('portal.virtualrouter_publicip_binding_update',id=virtualrouter.id) }}"
+                      class="form-horizontal"
+                      method="post">
+                    <input type="hidden" name="virtualrouter_id" value="{{ virtualrouter.id }}">
+                    <div class="form-group">
+                        <label for="" class="col-sm-3 control-label">绑定外部网络</label>
+                        <div class="col-sm-7">
+                            <select name="network_id" id="network_id" class="select2 form-control"  >
+                                <option value="">选择外部网络</option>
+                                {%- for ext_net in ext_netlist %}
+                                    <option value="{{ ext_net.id }}" 
+										{%- if ext_net.subnets|count == 0 -%}
+                                        	disabled
+                                        {%- endif -%} >
+                                        {{ ext_net.name }}
+                                    </option>
+                                {%- endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+             {% endif %}
+        </div>
+    </div>
+</div>
+<!--绑定外部IP end-->
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

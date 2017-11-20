@@ -1,0 +1,212 @@
+@charset "utf-8";
+/* CSS Document */
+
+.networkTopology {
+	background:url(../img/networkBg.png) repeat;
+}
+.topologyContent {
+	padding-left:20px;
+}
+.topologyLeft {
+	display: inline-block;
+	float: left;
+	width:340px;
+	margin-bottom:50px;
+	margin-top:100px;
+}
+.networkCloud {
+	background:url(../img/cloud.png) no-repeat;
+	height:80px;
+	width:120px;
+	padding-top:27px;
+	float:left;
+	text-align:center;
+}
+.networkRouter {
+	float:right;
+	border:#cad0db 2px solid;
+	background:#fff;
+	width:80px;
+	height:80px;
+	border-radius:4px;
+	text-align:center;
+	margin-right:60px;
+	padding-top:12px;
+}
+.networkRouter i {
+	color:#19b898;
+}
+.cloudLine {
+	background:#cad0db ;
+	height:6px;
+	margin-top:40px;
+	margin-left:20px;
+	width:200px;
+}
+.cloudLine-success {
+	background:#0AA699   ;
+	height:6px;
+	margin-top:40px;
+	margin-left:20px;
+	width:200px;
+}
+.cloudLine-error {
+	background:#F35958 ;
+	height:6px;
+	margin-top:40px;
+	margin-left:20px;
+	width:200px;
+}
+.routerLine {
+	background:#cad0db ;
+	height:6px;
+	margin-top:-5px;
+	margin-left:280px;
+	position:absolute;
+	width:60px;
+}
+
+.routerLine-error {
+	background:#F35958  ;
+	height:6px;
+	margin-top:-5px;
+	margin-left:280px;
+	position:absolute;
+	width:60px;
+}
+.routerLine-success {
+	background:#0AA699  ;
+	height:6px;
+	margin-top:-5px;
+	margin-left:280px;
+	position:absolute;
+	width:60px;
+}
+
+.topologyRight{
+	border-left:6px #0AA699  solid;
+	padding: 0px;
+	overflow:auto;
+	position:relative;
+	margin-left:340px;
+	height:auto;
+	}
+
+.topologyRight .subnet{
+	clear:both;
+	background:#0AA699 ;
+	margin-top:30px;
+	padding-left:10px;
+	color:#eee;
+	}
+.topologyRightZero{
+	border-left:none;
+	padding: 0px;
+	overflow:auto;
+	position:relative;
+	margin-left:340px;
+	height:auto;
+	}
+ .subnetZero{
+	clear:both;
+	background:#0AA699 ;
+	margin-top:132px;
+	padding-left:10px;
+	color:#eee;
+	}
+.topologyRight .subnet:first-child{
+	margin-top:47px;
+	padding-left:10px;
+	}
+.topologyRight ul{
+	padding-bottom:30px;
+	}
+.topologyRight ul li{
+	list-style:none;
+	float:left;
+	width:80px;
+	height:76px;
+	border:#cad0db 2px solid;
+	border-radius:4px;
+	float:left;
+	margin-right:30px;
+	margin-bottom:40px;
+	margin-top:40px;
+	background:#fff;
+}
+.vmCaret {
+	margin:0px;
+	padding:0px;
+	font-size:20px;
+	color:#0AA699;
+	border-left:#0AA699 2px solid;
+	position:absolute;
+	margin-left:32px;
+	margin-top:-46px;
+	margin-bottom:0px;
+	padding-bottom:0px;
+}
+.vmCaret:before {
+	margin:0px;
+	padding:0px;
+	font-family: FontAwesome;
+	content:"\f0d8";
+	display: block;
+	margin-left:-7px;
+	margin-top:31px;
+	border-radius:50%;
+	margin-bottom:-8px;
+	padding-bottom:0px;
+}
+.vm{
+	background:url(../img/vm.png) no-repeat;
+	margin-top:10px;
+	margin-left:10px;
+	display:block;
+	}
+.vm i{
+	top: -5px;
+	right: -32px;
+	position: relative;
+	padding: 4px 6px;
+	}
+.vm.linux{
+	background-position: -35px -0px;
+	width: 36px;
+	height: 36px;
+	display:block;
+	}
+.vm.windows{
+	background-position: -0px -0px;
+	width: 36px;
+	height: 36px;
+	display:block;
+	}
+.vm.centos{
+	background-position: -70px -0px;
+	width: 36px;
+	height: 36px;
+	display:block;
+	}
+.vm.unknown{
+	background-position: -102px -0px;
+	width: 36px;
+	height: 36px;
+	display:block;
+	}
+.popover-content .table td{
+	font-size:12px;
+	padding: 6px 12px !important;}
+.popover-content .table-info > tbody > tr > td, .table > tfoot > tr > td {
+	border-top: 0px solid #fff;
+	border-bottom: 0px solid rgba(243, 243, 243, 0.01);
+}
+.popover-content .table td:first-child{
+	color:#999;
+	}
+.topologySearch{
+	position:absolute;
+	width:315px;
+	top:20px;
+	z-index:999;
+	}

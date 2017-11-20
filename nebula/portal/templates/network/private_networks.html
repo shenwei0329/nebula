@@ -1,0 +1,146 @@
+{% from 'network/segment/instance_list.html' import build_instance_list with context %}
+{% from 'network/segment/private_network_list.html' import build_private_network with context %}
+{% extends 'layout/base.html' %}
+{% block title %}私有网络-{% endblock %}
+{% block style %}
+{% endblock %}
+{% block resource_type %}Network{% endblock %}
+{% block container %}
+<div class="page-content">
+<!-- 页面内容从此处开始-->
+<div class="content">
+  <!-- page title begin -->
+  {% include 'network/segment/private_network_title.html' %}
+  <!-- page title end -->
+  <!--tab切换-->
+  <div class="bs-example bs-example-tabs">
+    <ul id="myTab" class="nav nav-tabs">
+      <li><a href="{{ url_for('portal.virtualrouter_list') }}">路由器</a></li>
+      <li class="active"><a href="{{ url_for('portal.private_network_list') }}">网络</a></li>
+      <li><a href="{{ url_for('portal.network_topology') }}">网络拓扑</a></li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+      <!--私有网络 end-->
+      <div class="tab-pane fade in active" id="profile" style="min-height: 310px">
+        <div class="grid no-padding ">
+          <div class="grid-title no-border  no-margin">
+          <a href="#" id="openmodal" data-toggle="modal" data-target="#newRule" style="display: none"></a>
+            <button type="button" class="btn btn-white btn-cons reload" data-url="/network/private-networks/?segment=true"><i class="fa fa-refresh"></i></button>
+            <button type="button" class="btn btn-white btn-cons _new_static"
+                    name="#newPrivateNetwork" data-rule="newPrivateNetworkRule"
+                    data-url="/forms/private-networks/create/">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;新建</button>
+            <div class="btn-group"> <a class="btn btn-white dropdown-toggle
+            btn-demo-space" data-toggle="dropdown" href="#"> 更多操作 <span class="caret"></span> </a>
+              <ul class="dropdown-menu" id="private_network_menu">
+                <li><a href="#" name="#addSubnet"
+                       data-rule="addSubnetRule"
+                       data-url="/forms/private-networks/{id}/subnet/create/">
+                    <i class="fa fa-plus"></i>&nbsp;新建子网</a></li>
+                <li><a href="#" name="#inVM"
+                       data-rule="inVMRule"
+                       data-url="/forms/private-networks/{id}/port/create/">
+                    <i class="fa fa-plus-square"></i>&nbsp;接入虚拟机</a></li>
+                <li><a href="#" name="#outVM"
+                       data-rule="outVMRule"
+                       data-url="/forms/private-networks/{id}/port/detach/">
+                    <i class="fa fa-minus-circle"></i>&nbsp;断开虚拟机</a></li>
+
+                <!--
+                <li><a href="#" name="#connectRouter"
+                       data-rule="connectRouterRule"
+                       data-url="/forms/private-networks/{id}/virtualrouter/binding/">
+                    <i class="fa fa-chain"></i>&nbsp;连接路由器</a></li>
+                <li><a href="#" name="#tearRouter"
+                       data-rule="tearRouterRule"
+                       data-url="/forms/private-networks/{id}/virtualrouter/break/">
+                    <i class="fa fa-chain-broken"></i>&nbsp;断开路由器</a></li>
+                -->
+
+                <li><a href="#" name="#updateNetwork"
+                       data-rule="updatePrivateNetworkRule"
+                       data-url="/forms/private-networks/{id}/update/">
+                    <i class="fa fa-pencil"></i>&nbsp;修改</a></li>
+                <li><a href="#" name="#deletePrivateNetwork"
+                       data-rule="deletePrivateNetworkRule"
+                       data-url="/forms/private-networks/{id}/delete/">
+                    <i class="fa fa-trash-o"></i>&nbsp;删除</a></li>
+              </ul>
+            </div>
+            <div class=" input-prepend inside search-form no-boarder">
+
+              <form action="{{ url_for('portal.private_network_list') }}" method="get" class="">
+            	<span class="add-on">
+                  <span class="iconset top-search"></span>
+                </span>
+                <input name="search" type="text" class="no-boarder"
+                       placeholder="{% if search %}{{ search }}{% else %}搜索{% endif %}"
+                       style="width:200px;" value="{{ search }}">
+              </form>
+                
+            </div>
+          </div>
+          <div class="grid-body no-border" name="listtable">
+            <!-- 私有网络列表 begin-->
+            {{ build_private_network(pagination) }}
+            <!-- 私有网络列表 end-->
+          </div>
+        </div>
+        <!--others-info-->
+        <div class="row  others-info dispaly-none">
+         	<div class="col-md-4  listleft" data-url="/sub/jobs/?resource_type=Network&resource_id="></div>
+         	<div class="col-md-8  listright" data-url="/network/private-network/instances/?resource_id="></div>
+        </div>
+        <!--row-->
+        <!--others-info-->
+      </div>
+      <!--私有网络 End-->
+    </div>
+  </div>
+  <!--tab切换-->
+</div>
+<!--content-->
+<!-- 页面内容到此结束-->
+</div>
+{% endblock %}
+{% block modal %}
+
+<!--右键出现的菜单-->
+{#<div class="rightMenu">#}
+{#  <ul>#}
+{#     <li><a href="#" name="#addSubnet"#}
+{#                       data-rule="addSubnetRule"#}
+{#                       data-url="/forms/private-networks/{id}/subnet/create/">#}
+{#                    <i class="fa fa-plus"></i>&nbsp;新建子网</a></li>#}
+{#    <li><a href="#" name="#inVM"#}
+{#           data-rule="inVMRule"#}
+{#           data-url="/forms/private-networks/{id}/port/create/">#}
+{#        <i class="fa fa-plus-square"></i>&nbsp;接入虚拟机</a></li>#}
+{#    <li><a href="#" name="#outVM"#}
+{#           data-rule="outVMRule"#}
+{#           data-url="/forms/private-networks/{id}/port/detach/">#}
+{#        <i class="fa fa-minus-circle"></i>&nbsp;断开虚拟机</a></li>#}
+{#    <li><a href="#" name="#connectRouter"#}
+{#           data-rule="connectRouterRule"#}
+{#           data-url="/forms/private-networks/{id}/virtualrouter/binding/">#}
+{#        <i class="fa fa-chain"></i>&nbsp;连接路由器</a></li>#}
+{#    <li><a href="#" name="#tearRouter"#}
+{#           data-rule="tearRouterRule"#}
+{#           data-url="/forms/private-networks/{id}/virtualrouter/break/">#}
+{#        <i class="fa fa-chain-broken"></i>&nbsp;断开路由器</a></li>#}
+{#    <li><a href="#" name="#updateNetwork"#}
+{#           data-rule="updatePrivateNetworkRule"#}
+{#           data-url="/forms/private-networks/{id}/update/">#}
+{#        <i class="fa fa-pencil"></i>&nbsp;修改</a></li>#}
+{#    <li><a href="#" name="#deletePrivateRouter"#}
+{#           data-rule="deletePrivateNetworkRule"#}
+{#           data-url="/forms/private-networks/{id}/delete/">#}
+{#        <i class="fa fa-trash-o"></i>&nbsp;删除</a></li>#}
+{#  </ul>#}
+{#</div>#}
+{% endblock %}
+<!--右键出现的菜单-->
+{% block extend_js %}
+<script src="/static/js/list.js" type="text/javascript"></script>
+<script src="/static/js/network/private_networks.js" type="text/javascript"></script>
+{% endblock %}

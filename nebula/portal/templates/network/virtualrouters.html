@@ -1,0 +1,121 @@
+{% extends 'layout/base.html' %}
+{% block title %}虚拟路由器-{% endblock %}
+{% block style %}
+{% endblock %}
+
+{% block resource_type %}Virtualrouter{% endblock %}
+
+{% block container %}
+<div class="page-content">
+<!-- 页面内容从此处开始-->
+<div class="content">
+  <!-- page title begin -->
+  {% include 'network/segment/private_network_title.html' %}
+  <!-- page title end -->
+  <!--tab切换-->
+  <div class="bs-example bs-example-tabs">
+    <ul id="myTab" class="nav nav-tabs">
+      <li class="active">
+          <a href="">路由器</a>
+      </li>
+      <li><a href="{{ url_for('portal.private_network_list') }}">网络</a></li>
+      <li><a href="{{ url_for('portal.network_topology') }}">网络拓扑</a></li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+      <!--路由器-->
+      <div class="tab-pane fade in active" id="home" style="min-height: 270px">
+        <div class="grid no-padding ">
+          <div class="grid-title no-border  no-margin">
+          <a href="#" id="openmodal" data-toggle="modal" data-target="#newRule" style="display: none"></a>
+            <button type="button"
+                    class="btn btn-white btn-cons reload"
+                    data-url="/network/virtualrouters/?segment=true">
+                <i class="fa fa-refresh"></i></button>
+            <button type="button" class="btn btn-white btn-cons _new" data-url="/forms/virtualrouter/create" data-rule="newRouterRule" >
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;新建路由器</button>
+            <div class="btn-group">
+                <a class="btn btn-white dropdown-toggle btn-demo-space" data-toggle="dropdown" href="#">
+                更多操作 <span class="caret"></span> </a>
+              <ul class="dropdown-menu" id="virtualrouter_menu">
+                <li><a href="#"  name="#bandwidthSetting"
+                       data-rule="bandwidthSettingRule"
+                       data-url="/forms/virtualrouter/{id}/set/">
+                    <i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;带宽设置</a></li>
+                <li><a href="#" name="#network" data-rule="bindPrivateNetworkRule"
+                       data-url="/forms/virtualrouter/{id}/private-networks/binding/">
+                    <i class="fa fa-chain"></i> &nbsp;绑定私有子网</a></li>
+                <li><a href="#"  name="#IP"
+                       data-rule="bindIpRule"
+                       data-url="/forms/virtualrouter-publicip-binding/{id}/update/">
+                    <i class="fa fa-globe"></i> &nbsp;设置网关</a></li>
+                <li><a href="#" name="#updateRouter"
+                       data-rule="updateRouterRule"
+                       data-url="/forms/virtualrouter/{id}/update/"><!-- 有空号的是占位符直接写成这样就行了 -->
+                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;修改</a></li>
+                <li><a href="#"  name="#deleteRouter"
+                        data-rule="deleteRouterRule"
+                       data-url="/forms/virtualrouter/{id}/delete/">
+                    <i class="fa fa-trash-o"></i>&nbsp;&nbsp;删除</a></li>
+              </ul>
+            </div>
+            <div class=" input-prepend inside search-form no-boarder">
+
+              <form action="{{ url_for('portal.virtualrouter_list') }}" method="get" class="">
+            	<span class="add-on">
+                  <span class="iconset top-search disabled"></span>
+                </span>
+                <input name="search" type="text" class="no-boarder"
+                       placeholder="{% if search %}{{ search }}{% else %}搜索{% endif %}"
+                       style="width:200px;" value="{{ search }}">
+              </form>
+
+            </div>
+          </div>
+          <div class="grid-body no-border" name="listtable">
+            {% include 'network/segment/virtualrouter_list.html' %}
+          </div>
+        </div>
+         <div class="row  others-info dispaly-none">
+         	 <div class="col-md-4  listleft" data-url="/sub/jobs/?resource_type=Virtualrouter&resource_id="></div>
+             <div class="col-md-8  listright" data-url="/network/private-sub-networks/?resource_id="></div>
+         </div>
+        <!--row-->
+      </div>
+      <!--路由器 end-->
+    </div>
+  </div>
+  <!--tab切换-->
+</div>
+<!--content-->
+<!-- 页面内容到此结束-->
+</div>
+{% endblock %}
+{% block modal %}
+<!--右键出现的菜单 -->
+{#<div class="rightMenu">#}
+{#  <ul>#}
+{#    <li><a href="#"  name="#bandwidthSetting" data-rule="bandwidthSettingRule"#}
+{#           data-url="/forms/virtualrouter/{id}/set/">#}
+{#        <i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;带宽设置</a></li>#}
+{#    <li><a href="#" name="#network" data-rule="bindPrivateNetworkRule"#}
+{#           data-url="/forms/virtualrouter/{id}/private-networks/binding/">#}
+{#        <i class="fa fa-chain"></i> &nbsp;绑定私有网络</a></li>#}
+{#    <li><a href="#"  name="#IP" data-rule="bindIpRule"#}
+{#           data-url="/forms/virtualrouter-publicip-binding/{id}/update/">#}
+{#        <i class="fa fa-globe"></i> &nbsp;绑定外部IP</a></li>#}
+{#    <li><a href="#" name="#updateRouter" data-rule="updateRouterRule"#}
+{#           data-url="/forms/virtualrouter/{id}/update/"><!-- 有空号的是占位符直接写成这样就行了 -->#}
+{#        <i class="fa fa-pencil"></i>&nbsp;&nbsp;修改</a></li>#}
+{#    <li><a href="#"  name="#deleteRouter"#}
+{#            data-rule="deleteRouterRule"#}
+{#            data-url="/forms/virtualrouter/{id}/delete/">#}
+{#        <i class="fa fa-trash-o"></i>&nbsp;&nbsp;删除</a></li>#}
+{#  </ul>#}
+{#</div>#}
+<!--右键出现的菜单-->
+{% endblock %}
+<!--右键出现的菜单-->
+{% block extend_js %}
+<script src="/static/js/list.js" type="text/javascript"></script>
+<script src="/static/js/network/virtualrouters.js" type="text/javascript"></script>
+{% endblock %}

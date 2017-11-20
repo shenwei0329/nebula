@@ -1,0 +1,80 @@
+<div class="col-md-12">
+    <div class="grid simple">
+        <div class="grid-title no-border">
+            <button type="button" class="btn btn-white btn-cons reload" data-url="/instance/instances/?segment=true"><i class="fa fa-refresh"></i></button>
+            <button type="button" class="btn btn-white btn-cons _new" data-url="{{ url_for('portal.instance_create_form') }}" data-rule="newInstanceRule">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;新建
+            </button>
+
+            <button name="#start-modal" type="button" class="btn btn-white btn-cons" data-toggle="modal"><i class="fa fa-play"></i>&nbsp;&nbsp;启动</button>
+            <button name="#shutdown-modal" type="button" class="btn btn-white btn-cons" data-toggle="modal"><i class="fa fa-stop"></i>&nbsp;&nbsp;关机</button>
+            <button name="#reboot-modal" type="button" class="btn btn-white btn-cons" data-toggle="modal"><i class="fa fa-play-circle-o"></i>&nbsp;&nbsp;重启</button>
+            <button name="#pause-modal" type="button" class="btn btn-white btn-cons" data-toggle="modal"><i class="fa fa-pause"></i>&nbsp;&nbsp;暂停</button>
+            <button name="#suspend-modal" type="button" class="btn btn-white btn-cons" data-toggle="modal"><i class="fa fa-eject"></i>&nbsp;&nbsp;挂起</button>
+
+            <div class="btn-group"> <a class="btn btn-white dropdown-toggle btn-demo-space" data-toggle="dropdown" href="#"> 更多操作 <span class="caret"></span> </a>
+                <ul class="dropdown-menu">
+               
+                    <li><a href="#" name="#delete-modal"><i class="fa fa-trash-o"></i>&nbsp;销毁</a></li>
+                    <!--
+                    <li><a href="#" data-toggle="modal" data-target="#alert"><i class="fa fa-forward"></i>&nbsp;强制重启</a></li>
+                    -->
+                    <li><a href="#" name="#unpause-modal"><i class="fa fa-caret-square-o-right"></i>&nbsp;暂停恢复</a></li>
+                    <li><a href="#" name="#unsuspend-modal"><i class="fa fa-caret-square-o-up"></i>&nbsp;挂起恢复</a></li>
+                    <li><a href="#" data-url="/form/instance/backup/create/{id}" data-rule="backupVMRule"><i class="fa fa-copy"></i>&nbsp;新建备份</a></li>
+                    <li><a href="#" data-url="/instance/instances/{id}/migration/"><i class="fa fa-clipboard"></i>&nbsp;虚拟机迁移</a></li>
+                    <li><a href="#" data-toggle="modal" name="update" data-rule="updateInstanceRule" data-url="/instance/instances/{id}/modify"><i class="fa fa-pencil"></i>&nbsp;修改</a></li>
+                    <li><a href="#" data-toggle="modal" data-url="/form/instance/{id}/passwd" data-rule="passwordIdenticalRule"><i class="fa fa-edit"></i>&nbsp;设置密码</a></li>
+                    <li class="vm-list"><i class="fa fa-hdd-o"></i>&nbsp;数据卷<i class="fa fa-caret-right pull-right vm-list-right"></i>
+                        <ul class="vm-dropdown-menu">
+                            <li><a href="#" data-toggle="modal" data-url="/instance/instances/{id}/volume_attach" data-rule="volumeToVMRule"><i class="fa fa-hdd-o"></i>&nbsp;挂载数据卷</a></li>
+                            <li><a href="#" data-toggle="modal" data-url="/form/instance/{id}/volume_detach" data-rule="noRule"><i class="fa fa-hdd-o"></i>&nbsp;卸载数据卷</a></li>
+                        </ul>
+                    </li>
+                    <li class="vm-list"><i class="fa fa-sitemap"></i>&nbsp;网卡<i class="fa fa-caret-right pull-right vm-list-right"></i>
+                        <ul class="vm-dropdown-menu">
+                            <li><a href="#" data-toggle="modal" data-target="#addNIC" data-url="/instance/ports/{id}/attach/" data-rule="attachPortRule"><i class="fa fa-sitemap"></i>&nbsp;挂载网卡</a></li>
+                            <li><a href="#" data-toggle="modal" data-target="#uninstallNIC" data-url="/instance/ports/{id}/detach/" data-rule="noRule"><i class="fa fa-sitemap"></i>&nbsp;卸载网卡</a></li>
+                        </ul>
+                    </li>
+                    <li class="vm-list"><i class="fa fa-bolt"></i>&nbsp;虚拟防火墙<i class="fa fa-caret-right pull-right vm-list-right"></i>
+                        <ul class="vm-dropdown-menu">
+                            <li><a href="#" data-toggle="modal" data-target="#userSecurityGroup" data-url="/instance/security_group/{id}/apply/" data-rule="securityGroupApply"><i class="fa fa-bolt"></i>&nbsp;应用虚拟防火墙</a></li>
+                            <li><a href="#" data-toggle="modal" data-target="#deleteSecurityGroup" data-url="/instance/security_group/{id}/delete/" data-rule="noRule"><i class="fa fa-bolt"></i>&nbsp;卸载虚拟防火墙</a></li>
+                        </ul>
+                    </li>
+                    <li class="vm-list"><i class="fa fa-bullhorn"></i>&nbsp;监控策略<i class="fa fa-caret-right pull-right vm-list-right"></i>
+                        <ul class="vm-dropdown-menu">
+		                    <li><a href="#" data-url="/forms/alarms/binding/vm/{id}/" data-rule="applyAlarmRule">
+                                <i class="fa fa-bullhorn"></i>&nbsp; 绑定监控策略</a>
+                            </li>
+		                    <li><a href="#" data-url="/forms/alarms/unbinding/vm/{id}/"><i class="fa fa-bullhorn"></i>&nbsp; 解除监控策略</a></li>
+                        </ul>
+                    </li>
+                    <li class="vm-list"><i class="fa fa-cog"></i>&nbsp;高级设置<i class="fa fa-caret-right pull-right vm-list-right"></i>
+                        <ul class="vm-dropdown-menu">
+                            <li><a href="#" data-toggle="modal" data-rule="iopsRangeRule" data-url="/instance/instances/{id}/iops"><i class="fa fa-crosshairs"></i>&nbsp;设置系统盘IOPS</a></li>
+                            <!--
+                            <li><a href="#" data-toggle="modal" data-url="/form/instance/{id}/passwd" data-rule="passwordIdenticalRule"><i class="fa fa-edit"></i>&nbsp;设置密码</a></li>
+                            -->
+                            <li><a href="#" data-toggle="modal" data-rule="memRangeRule" data-url="/instance/instances/{id}/change"><i class="fa fa-cog"></i>&nbsp;更改配置</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class=" input-prepend inside search-form no-boarder">
+
+
+                <form action="{{ url_for('portal.instance_list') }}" method="get" class="">
+                    <span class="add-on" >
+                        <span class="iconset top-search"></span>
+                    </span>
+                    <input name="search" type="text" class="no-boarder " placeholder="{% if search %}{{ search }}{% else %}搜索{% endif %}" style="width:200px;" value="{{search}}">
+                </form>
+             </div>
+        </div>
+        <div class="grid-body no-border" name="listtable">
+        {% include 'instance/_list/_content.html' %}
+        </div>
+    </div>
+</div>

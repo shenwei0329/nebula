@@ -1,0 +1,66 @@
+<div id="{{ etl_href }}" class="tab-pane active">
+    {% import 'bootstrap/wtf.html' as wtf %}
+
+    <ul>
+        <ul class="nav nav-header">
+            <li style="float: left">{{ pagination.info }}</li>
+            <li>
+                <button type="button" class="small button"  style="float: right" onclick="ItemOnclick(2)" >
+                      <i class="icon-plus"></i>&nbsp;创建新任务&nbsp;
+                </button>
+            </li>
+        </ul>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <a class="list-group-item active">
+                    <tr>
+                        <th width="160pix">名称</th>
+                        <th width="200pix">模型</th>
+                        <th width="80pix">服务器</th>
+                        <th width="80pix">状态</th>
+                        <th width="140pix">提交日期</th>
+                        <th>操作</th>
+                    </tr>
+                </a>
+                </thead>
+                <tbody>
+                {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.name }}</td>
+                        <td>{{ task.mod }}</td>
+                        <td>{{ task.server }}</td>
+                        {% if task.status=='DONE' %}
+                            <td><span class="label label-success"><span class="icon-ok"/>&nbsp;完成</span></td>
+                        {% elif task.status=='0' %}
+                            <td><span class="label"><span class="icon-share-alt"/>&nbsp;未提交</span></td>
+                        {% elif task.status!='ERROR' %}
+                            <td>
+                                <div class="progress progress-striped active">
+                                    <div style="width:{{ task.status }}%;" class="bar"></div>
+                                </div>
+                            </td>
+                        {% else %}
+                            <td><span class="label label-important"><span class="icon-remove"/>&nbsp;错误</span></td>
+                        {% endif %}
+                        <td>{{ task.created_at }}</td>
+                        <td>
+                            {% if task.status=='0' or task.status=='DONE' or task.status=='ERROR' %}
+                            <button id='task_delete' value={{ task.name }} type='button' class="small button" onclick="delete_confirm('{{ task.name }}')"><i class="icon-remove" style="color: #f00000;"></i></button>
+                            <button id='task_run' value={{ task.name }} type='button' class="small button" onclick="run_confirm('{{ task.name }}','{{ task.server }}','{{ task.mod }}')"><i class="icon-repeat" style="color: #009926;"></i></button>
+                            {% endif %}
+                            {% if task.status=='DONE' %}
+                            <button id='task_log' value={{ task.name }} type='button' class="small button" onclick="task_log('{{ task.name }}')"><i class="icon-file" style="color: #FFC40D;"></i></button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <ul class="pagination">
+                {{ pagination.links }}
+            </ul>
+        </div>
+    </ul>
+
+</div>

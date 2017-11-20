@@ -1,0 +1,90 @@
+{% extends "layout/base.html" %}
+
+{% block title %}系统设置{% endblock %}
+
+{% block container %}
+<div class="page-content">
+<div class="content">
+      <!--title-->
+      <div class="page-title">
+        <h3>系统配置</h3>
+      </div>
+      <!--title-->
+      <div class="row">
+        <div class="col-md-12">
+            <ul class="nav nav-pills" id="tab-setting">
+                <li class="active"><a href="{{ url_for('portal.system_settings') }}">基本信息配置</a></li>
+                <li><a href="{{ url_for('portal.system_set_logo') }}">logo配置</a></li>
+                <li><a href="{{ url_for('portal.resource_settings') }}">性能配置</a></li>
+            </ul>
+          <div class="grid simple ">
+            <div class="grid-body no-border">
+            <br/>
+              <form id="settingsForm" class="form-horizontal validate-form"
+              	 data-rule="settingsRule" method="POST" action="{{ url_for('portal.system_settings') }}">
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">系统名称</label>
+                    <!--输入框-->
+                   <div class="col-sm-4">
+                   <input type="text" class="form-control {% if form.system_title.errors%}error{% endif %}" id="system_title"
+                   		value="{{ settings.system_title|default('电科华云基础设施管理云平台',True) }}" name="system_title">
+                   </div>
+                   {% if form.system_title.errors %}
+                   {% for message in form.system_title.errors %}
+                   <span class="error"><label>{{ message | decode }}</label></span>
+                   {% endfor %}
+                   {% endif %}
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：在浏览器title中显示的值</p></div>
+                </div>
+                <!--form-group-->
+                <div class="form-group">
+                  <label  class="col-sm-3 control-label">系统版权信息</label>
+                  <!--输入框-->
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control {% if form.system_copyright.errors %}error{% endif %}" id="system_copyright"
+                               value="{{ settings.system_copyright|default('中电科华云信息技术有限公司',True) }}" name="system_copyright">
+                    </div>
+                   {% if form.system_copyright.errors %}
+                   {% for message in form.system_copyright.errors %}
+                   <span class="error"><label>{{ message | decode }}</label></span>
+                   {% endfor %}
+                   {% endif %}
+                   <!--输入框-->
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：所有显示版权位置的值</p></div>
+                </div>
+                <!--form-group-->
+
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">平台版本号：</label>
+                 <!--输入框-->
+                  <div class="col-sm-4 p-t-10">{{ version() }}</div>
+                   <!--输入框-->
+                </div>
+                <!--form-group-->
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">虚拟化组件版本号：</label>
+                   <!--输入框-->
+                   <div class="col-sm-4 p-t-10">{{ iaas_version() }}</div>
+                </div>
+                <!--form-group-->
+                <br/>
+                <div class="form-group">
+                  <div class="col-sm-offset-3 col-sm-9">
+                    <button type="submit" class="btn btn-primary btn-cons m-l-10">&nbsp;保&nbsp;&nbsp;&nbsp;&nbsp;存&nbsp; </button>
+                  </div>
+                </div>
+               　
+              </form>
+            </div>
+          </div>
+          <!--grid-->
+
+        </div>
+        <!--col-md-12-->
+      </div>
+      <!--row-->
+    </div>
+    <!--content-->
+</div>
+
+{% endblock %}

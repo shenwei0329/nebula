@@ -1,0 +1,43 @@
+<div class="modal fade" id="updateImage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">修改镜像-<span class="text-success">{{image.name}}</span></h4>
+            </div>
+            <div class="modal-body">
+                <form id="form_traditional_validation" action="{{ url_for('portal.user_image_update', id=image.id) }}"
+                      class="form-horizontal" method="POST">
+                    <div class="form-group">
+                        <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>名称</label>
+
+                        <div class="col-sm-7">
+                            {#<input type="text" name="" id="" class="form-control">#}
+                            {{ form.name(class="form-control") }}
+                        </div>
+                    </div>
+                    <!--form-group-->
+                    <div class="form-group">
+                        <label for="" class="col-sm-3 control-label">描述</label>
+
+                        <div class="col-sm-7">
+                            {#<textarea class="form-control" rows="3"></textarea>#}
+                            {{ form.description(class="form-control", rows="3") }}
+                        </div>
+                    </div>
+                    <!--form-group-->
+
+                    <div class="form-actions">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-white btn-cons" data-dismiss="modal">关 闭</button>
+                            <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保 存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+

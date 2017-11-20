@@ -1,0 +1,104 @@
+<script>
+function set_compute_node_name(){
+	$("#select_compute_node option").each(function(){
+		if ($(this).attr("selected")) {
+			$("#hidden_compute_node_hostname").val($(this).val());
+		}
+	});
+}
+$(function(){
+	set_compute_node_name();
+    $("#select_compute_node").change(function(){
+        set_compute_node_name();
+    });
+});
+</script>
+<!-- 虚拟机迁移Modal -->
+<div class="modal fade" id="migrationVMHost" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">虚拟机迁移-<span class="text-success">虚拟机名称</span></h4>
+      </div>
+      <div class="modal-body">
+        <!--form-group-->
+      <form id="form_traditional_validation" action="#" class="form-horizontal">
+          <input type="hidden" name="compute_node_id" value="" id="hidden_compute_node_hostname">
+          <input type="hidden" name="resource_id" value="{{host.id}}">
+          <h5  class=" m-l-20 m-b-20">可迁移的虚拟机</h5>
+           <div class="form-group">
+            <label for="" class="col-sm-6 control-label">虚拟机名称（124.124.156.12）</label>
+            <div class="col-sm-6">
+              <select name="host_id" id="select_compute_node" class="select2 form-control">
+                {% for aggregate in aggregates %}
+                <optgroup label=集群："{{ aggregate.name }}">
+                    {% for item in aggregate.compute_nodes %}
+                        {% if item.status =="active" and item.id != host.id  %}
+                            <option value="{{ item.id }}" {% if loop.first %}selected="selected"{% endif %}>{{ item.hostname }}</option>
+                        {% endif %}
+                  {% endfor %}
+                </optgroup>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <!--form-group-->
+            <div class="form-group">
+            <label for="" class="col-sm-6 control-label">虚拟机名称（124.124.156.12）</label>
+            <div class="col-sm-6">
+              <select name="formCluster" id="formCluster" class="select2 form-control"  >
+                <option value="1">选择主机</option>
+                <option value="2">主机2</option>
+                <option value="1">主机1</option>
+                <option value="2">主机2</option>
+                <option value="1">主机1</option>
+                <option value="2">主机2</option>
+              </select>
+            </div>
+          </div>
+          <!--form-group-->
+            <div class="form-group">
+            <label for="" class="col-sm-6 control-label">虚拟机名称（124.124.156.12）</label>
+            <div class="col-sm-6">
+              <select name="formCluster" id="formCluster" class="select2 form-control"  >
+                <option value="1">选择主机</option>
+                <option value="2">主机2</option>
+                <option value="1">主机1</option>
+                <option value="2">主机2</option>
+                <option value="1">主机1</option>
+                <option value="2">主机2</option>
+              </select>
+            </div>
+          </div>
+          <!--form-group-->
+            <div class="form-group">
+            <label for="" class="col-sm-6 control-label">虚拟机名称（124.124.156.12）</label>
+            <div class="col-sm-6">
+              <select name="formCluster" id="formCluster" class="select2 form-control"  >
+                <option value="1">选择主机</option>
+                <option value="2">主机2</option>
+                <option value="1">主机1</option>
+                <option value="2">主机2</option>
+                <option value="1">主机1</option>
+                <option value="2">主机2</option>
+              </select>
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>确 认</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--虚拟机迁移Modal-->
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

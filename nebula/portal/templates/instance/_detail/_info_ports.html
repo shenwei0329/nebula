@@ -1,0 +1,148 @@
+{% for port in instance.ports %}
+    <!--grid-title-->
+    <div class="grid-title no-border">
+        <h4>网卡{{ loop.index }}</h4>
+
+        <div class="tools">
+            <a href="#grid-config" class="dropdown-toggle config" data-toggle="dropdown"></a>
+            <ul class="dropdown-menu">
+                <!-- li>
+                    <a href="#" data-toggle="modal" name="#newGroup" ><i class="fa fa-bolt"></i>&nbsp;新建虚拟防火墙</a>
+                </li> -->
+                <li>
+                    <a name="#detachport-modal-{{ port.id }}" data-toggle="modal"><i class="fa fa-sitemap"></i>&nbsp;卸载网卡</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--grid-body-->
+
+	<!-- Modal --
+	<div class="modal fade" id="newGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	        <h4 class="modal-title">新建虚拟防火墙</h4>
+	      </div>
+	      <div class="modal-body">
+	        <form data-rule="newSecurityGroupRule" class=" form-horizontal"
+	              method="POST"
+	              action="{{ url_for('portal.security_group_create_apply') }}">
+	          <div class="form-group">
+	            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right">名称：</label>
+	            <div class="col-md-8 col-sm-8 col-xs-8">
+	              <input type="text" class="form-control" name="name">
+	              <input type="hidden" class="form-control" name="port_id" value="{{ port.id }}">
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right">描述：</label>
+	            <div class="col-md-8 col-sm-8 col-xs-8">
+	              <textarea name="description" cols="46" rows="4"></textarea>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <div class="modal-footer">
+	              <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+	              <button type="submit" class="btn btn-primary">保 存</button>
+	            </div>
+	          </div>
+	        </form>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<-- /.modal -->
+
+
+    <!-- detach port modal -->
+    <div class="modal fade" id="detachport-modal-{{ port.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <!--提示-->
+                    <form action="{{ url_for("portal.ports_detach_submit") }}" method="POST">
+                        <input type="hidden" name="port_id" value="{{ port.id }}"/>
+                        <div class="alert alert-block alert-info fade in">
+                            <h4 class="alert-heading">提示！</h4>
+                            <p>确定卸载&nbsp;网卡{{ loop.index }}&nbsp;<span class="resource-name"></span> ?</p>
+                            <div class="button-set text-right">
+                                <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">取消</button>
+                                <button class="btn btn-success btn-cons" type=submit >确定</button>
+                                <input type="hidden" name="instance_id" value="{{ instance.id }}"/>
+                            </div>
+                        </div>
+                    </form>
+                    <!--提示-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- detach port modal end -->
+ 
+    <!-- <div class="modal fade" id="deletefirewall" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form action="/instance/security_group/delete/single/{id}" method="delete">
+                        <input type="hidden" name="port_id" value="{{ port.id }}"/>
+                        <div class="alert alert-block alert-info fade in">
+                            <h4 class="alert-heading">提示！</h4>
+                            <p>确定删除虚拟防火墙&nbsp;"网卡"&nbsp;!</p>
+                            <div class="button-set text-right">
+                                <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">取消</button>
+                                <button class="btn btn-success btn-cons" type=submit >确定</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    -->
+
+    <div class="grid-body no-border">
+        <table class="table table-info">
+            <tbody>
+            <tr>
+                <td>网络</td>
+                <td><a href="{{ url_for('portal.private_network_detail', id=port.network.id) }}">{{ port.network.name }}</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>IP</td>
+                <td>{{ port.fixed_ips[0].ip_address }}</td> 
+                <td></td>
+            </tr>
+            <tr>
+                <td>MAC</td>
+                <td class="text-info">{{ port.mac_address }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>虚拟防火墙</td>
+                {% for security_group in port.get_security_groups() %}
+                    <td>
+                        <p class="info-delete-bg">
+                            <a href="{{ url_for('portal.security_group_detail', id=security_group.id) }}" class="m-r-10">{{ security_group.name }}</a>
+                            <a href="{{ url_for('portal.instance_security_group_detach', id=security_group.id, port_id=port.id) }}"  class="info-delete"><i class="fa fa-times"></i></a>
+                        <p>
+                    </td>
+                {% endfor %}
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+{% endfor %}
+
+<script>
+	$(function(){
+		$("a.info-delete").click(function(evt){
+			evt.preventDefault();
+			var $this=$(this);
+			createDynamicDivAjax($this.attr("href"),0,{});
+		});
+	});
+</script>

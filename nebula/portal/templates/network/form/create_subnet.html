@@ -1,0 +1,244 @@
+ <!-- 增加子网Modal -->
+<div class="modal fade" id="addSubnet" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title" id="myModalLabel">新建子网</h4>
+    </div>
+    <div class="modal-body">
+      <form id="form_traditional_validation" action="{{ url_for('portal.subnet_create') }}"
+            class="form-horizontal" method="POST">
+        <div class="form-group">
+        <input name="private_network_id" type="hidden" value="{{ network.id }}">
+        <input name="allocation_pools" type="hidden" value="">
+        <input name="host_routes" type="hidden" value="">
+        <label for="" class="col-sm-3 control-label">名称</label>
+        <div class="col-sm-7 input-validation right">
+          {{ form.name(class="form-control") }}
+        </div>
+        </div>
+        <div class="form-group">
+          <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>网段</label>
+          <div class="col-sm-7">
+            <div class="row">
+              <div class="col-sm-8 input-validation right">
+                {{ form.cidr(class="form-control") }}
+              </div>
+              <span class=" pull-left p-t-10">/</span>
+              <div class="col-sm-3 input-validation right">
+                {{ form.cidr_value(class="form-control",
+                   maxlength="2",
+                   style="width:50px; padding-right:5px !important") }}
+              </div>
+            </div>
+          </div>
+          <span class="pull-left p-t-10 text-info formNameInfo inline"
+                data-toggle="tooltip" data-placement="top" title="可用IP段掩码">
+              <i class="fa fa-question-circle"></i></span>
+        </div>
+        <!--form-group-->
+        <div class="form-group">
+          <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>默认网关</label>
+          <div class="col-sm-7 input-validation right">
+            {{ form.gateway_ip(class="form-control") }}
+          </div>
+          <span class="pull-left p-t-10 text-info formNameInfo inline"
+                data-toggle="tooltip" data-placement="top" title="网络默认出入口"><i class="fa fa-question-circle"></i></span>
+        </div>
+        <!--form-group-->
+        <div class="form-group">
+          <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>DNS</label>
+          <div class="col-sm-7 input-validation right">
+            {{ form.dns_nameservers(class="form-control") }}
+          </div>
+          <span class="pull-left p-t-10 text-info formNameInfo inline"
+                data-toggle="tooltip" data-placement="top" title="域名解析地址"><i class="fa fa-question-circle"></i></span>
+        </div>
+        <!--form-group-->
+        <div class="form-group">
+          <label for="" class="col-sm-3 control-label">描述</label>
+          <div class="col-sm-7 input-validation right">
+            <textarea class="form-control" rows="3" name="description"></textarea>
+          </div>
+        </div>
+        <!--form-group-->
+        <h5 class=" m-l-20">高级<a class="m-l-10 advanceSetting-4" href="#"><i class="fa fa-caret-right"></i></a></h5>
+        <div class="advanceSettingInfo-4 dispaly-none">
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">可用IP段</label>
+            <div class="col-sm-9">
+             <div class="row">
+               <label for="" class="col-sm-5 control-label text-left">起始IP</label>
+                <span class=" pull-left p-t-10">-</span>
+               <label for="" class="col-sm-5 control-label text-left">结束IP</label>
+              </div>
+              <!--row-->
+              <div class="row">
+                <div class="col-sm-5 input-validation right">
+                  <input type="text"  id="_startip" name="_start_ip" class="form-control">
+                </div>
+                <span class=" pull-left p-t-10">-</span>
+                <div class="col-sm-5 input-validation right">
+                  <input type="text" id="_endip" name="_end_ip" class="form-control">
+                </div>
+                <div class=" pull-left padding-t-5">
+                  <button type="button" class="btn btn-success btn-cons btn-small addIP"><i class="fa fa-check"></i></button>
+                </div>
+              </div>
+              <!--row-->
+              <div class="ipdata">
+              </div>
+              <!--row-->
+            </div>
+            <!--col-sm-7-->
+          </div>
+          <!--form-group-->
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">扩展路由</label>
+            <div class="col-sm-9">
+             <div class="row">
+               <label for="" class="col-sm-4 control-label text-left">网关(下一跳)</label>
+               <label for="" class="col-sm-6 control-label text-left">目的网段</label>
+              </div>
+              <!--row-->
+                <div class="row">
+                <div class="col-sm-4 input-validation right">
+                  <input type="text"  id="_ip" name="_ip_" class="form-control">
+                </div>
+                <div class="col-sm-6 ">
+                  <div class="row">
+                    <div class="col-sm-7">
+                      <input type="text" id="_net" name="_net_" class="form-control">
+                    </div>
+                     <span class=" pull-left p-t-10 p-r-10">/</span>
+                    <div class="pull-left">
+                      <input type="text"  id="_num" max="32" min="0" class="form-control" value="" maxlength="2" style="width:50px; padding-right:5px !important">
+                    </div>
+                     </div>
+                  <!--row-->
+                </div>
+                <div class=" pull-left padding-t-5">
+                  <button type="button" class="btn btn-success btn-cons btn-small addRouter"><i class="fa fa-check"></i></button>
+                </div>
+              </div><!--row-->
+              <div class="routerdata"></div>
+            </div>
+            <!--col-sm-7 col-xs-offset-3-->
+          </div>
+          <!--form-group-->
+        </div>
+        <!--advanceSettingInfo-2-->
+        <div class="form-actions">
+          <div class="pull-right">
+            <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+            <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保存</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+<!--增加子网Modal-->
+
+<script>
+$(document).ready(function() {
+	$(".advanceSetting-4").click(function(){
+		$(".advanceSettingInfo-4").fadeToggle();
+	});
+	$(".addIP").click(function(){
+		var _startip=$("#_startip").val();
+		var _endip=$("#_endip").val();
+		if(_startip==""||_endip==""){
+			return;
+		}
+		var obj=$(this).parents("div.row").find(".error-control");
+		if(obj&&obj.length>0){
+			return;
+		}
+		var str='<div class="row" name="ip"><label for="" name="start" class="col-sm-5 control-label text-center">'+_startip+'</label><span class=" pull-left p-t-10">-</span>'+
+		'<label for="" name="end" class="col-sm-5 control-label text-center ">'+_endip+'</label>'+
+            '<div class=" pull-left padding-t-5">'+
+             '<button type="button" class="btn btn-success btn-cons btn-small delIP"><i class="fa fa-times"></i></button></div>';
+		$(".ipdata").append(str);
+		getips();
+
+
+
+		$(".delIP").click(function(){
+			$(this).parents(".row").remove();
+			getips();
+		});
+
+		$("#_startip").val("");
+		$("#_endip").val("");
+	});
+
+	$(".addRouter").click(function(){
+		var _ip=$("#_ip").val();
+		var _net=$("#_net").val();
+		var _num=$("#_num").val();
+		if(_ip==""||_net==""||_num==""){
+			return;
+		}
+		var obj=$(this).parents("div.row").find(".error-control");
+		if(obj&&obj.length>0){
+			return;
+		}
+		var str='<div class="row" name="route"><label for="" name="_ip" class="col-sm-4 control-label text-center">'+_ip+'</label>'+
+           '<div class="col-sm-6 input-validation right"><div class="row">'+
+                 '<label for="" name="_net" class="col-sm-7 control-label text-center">'+_net+'</label>'+
+                '<span class=" pull-left p-t-10">/</span><label for="" name="_num" class="col-sm-3 control-label text-center">'+_num+'</label></div>'+
+            '</div><div class=" pull-left padding-t-5"><button type="button" class="btn btn-success btn-cons btn-small delRouter"><i class="fa fa-times"></i></button></div></div>';
+		$(".routerdata").append(str);
+		getroutes();
+		$(".delRouter").click(function(){
+			$(this).parents(".row").remove();
+			getroutes();
+		});
+		$("#_ip").val("");
+		$("#_net").val("");
+		$("#_num").val("");
+	});
+
+});
+
+function getips(){
+	var $pools=$("input[name=allocation_pools]");
+	var pools="";
+	$("div[name=ip]").each(function(){
+		var start=$(this).find("label[name=start]").html();
+		var end=$(this).find("label[name=end]").html();
+		pools+=start+"_"+end+",";
+	});
+	if(pools!=""){
+		$pools.val(new String(pools).substring(0,pools.length-1));
+	}else{
+		$pools.val("");
+	}
+}
+
+function getroutes(){
+	var $routes=$("input[name=host_routes]");
+	var routes="";
+	$("div[name=route]").each(function(){
+		var _ip=$(this).find("label[name=_ip]").html();
+		var _net=$(this).find("label[name=_net]").html();
+		var _num=$(this).find("label[name=_num]").html();
+		routes+=_ip+"_"+_net+"/"+_num+",";
+	});
+	if(routes!=""){
+		$routes.val(new String(routes).substring(0,routes.length-1));
+	}else{
+		$routes.val("");
+	}
+}
+//弹出框的问好说明信息
+	$(".formNameInfo").tooltip('toggle');
+	$(".formNameInfo").tooltip('hide');
+</script>
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

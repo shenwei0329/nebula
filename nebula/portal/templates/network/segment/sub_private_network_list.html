@@ -1,0 +1,49 @@
+{% from 'layout/sublist_pagination.html' import render_sub_pagination with context %}
+{% macro build_private_subnet_sublist(pagination) %}
+<table class="table">
+    <thead>
+      <tr>
+        <th>子网名称</th>
+        <th>所属网络</th>
+        <th>IP网段</th>
+        <th>网关</th>
+        <th>所属</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for vs in pagination.items %}
+      <tr>
+        <td class="text-info">{{ vs.subnet.name }}</td>
+        <td><a href="{{ url_for('portal.private_network_detail', id=vs.subnet.network.id) }}">{{ vs.subnet.network.name }}</a></td>
+        <td>{{ vs.subnet.cidr }}</td>
+        <td>{{ vs.subnet.gateway_ip }}</td>
+        <td class="text-info">{{ vs.subnet.owner.username }}</td>
+        <td><a name="break" href="{{ url_for('portal.private_network_virtualrouter_break_form',id=vs.id) }}">
+            <i class="fa fa-chain-broken"></i>&nbsp;断开</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<!--分页-->
+{% if pagination.items %}
+    {{ render_sub_pagination(pagination, 'portal.private_network_sublist') }}
+{% else %}
+    <p class=""><em>该列表中暂时没有数据。</em></p>
+{% endif %}
+<!--分页-->
+
+{% endmacro %}
+{% if pagination %}
+  {{ build_private_subnet_sublist(pagination) }}
+{% endif %}
+
+<script>
+	$(function(){
+		$("a[name=break]").click(function(evt){
+			evt.preventDefault();
+			var $this=$(this);
+			createDynamicDivAjax($this.attr("href"),{},0,{});
+		});
+	});
+</script>

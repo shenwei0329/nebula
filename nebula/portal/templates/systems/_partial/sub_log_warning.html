@@ -1,0 +1,71 @@
+
+<!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active" id="error"> 
+              <!--告警日志-->
+              
+              <table class="table table-bordered ">
+                <thead>
+                  <tr>
+                    <th>类型</th>
+                    <th>告警级别</th>
+                    <th>资源</th>
+                    <th>监控指标</th>
+                    <th>监控项值</th>
+                    <th>告警描述</th>
+                    <th>告警时间</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for alert in pagination.items %}
+                  <tr>
+                    <td class="text-info">
+                    {% if alert.name == "vm" %}
+                   	虚拟机
+                    {% elif   alert.name == "host" %}
+                   	 主机
+                    {% else %}
+                      {{alert.name}}
+                    {%endif%}
+                    </td>
+                    {% if alert.prioritykey  in (0, '0') %}
+                    <td><label class="label label-default m-r-10">未分类</label></td>
+                    {%endif%}
+                    {% if alert.prioritykey  in (1, '1') %}
+                    <td><label class="label label-success m-r-10">消息</label></td>
+                    {%endif%}
+                    {% if alert.prioritykey  in (2, '2') %}
+                    <td><label class="label label-warning m-r-10">警告</label></td>
+                    {%endif%}
+                    {% if alert.prioritykey  in (3, '3') %}
+                    <td><label class="label label-important m-r-10">一般严重</label></td>
+                    {%endif%}
+                    {% if alert.prioritykey  in (4, '4') %}
+                    <td><label class="label label-danger m-r-10">严重</label></td>
+                    {%endif%}
+                    {% if alert.prioritykey  in (5, '5') %}
+                    <td><label class="label label-white m-r-10">灾难</label></td>
+                    {%endif%}
+                    <td class="text-info">
+                    {% if alert.name == "host" %}
+                    <a href="{{ url_for('portal.host_detail',id=alert.resource_id)}}">
+                    	{{alert.resource_name}}
+                    </a>
+                    {% elif alert.name == "vm" %}
+                    <a href="{{ url_for('portal.instance_detail',id=alert.resource_id)}}">
+                    	{{alert.resource_name}}
+                    </a>
+                    {% else %}
+                    {{alert.resource_name}}
+                    {%endif%}
+                    </td>
+                    <td class="text-success">{{alert.key2}}</td>
+                    <td>{{alert.value}}{{alert.unit}}</td>
+                    <td>{{alert.description}}</td>
+                    <td>{{alert.time}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+             

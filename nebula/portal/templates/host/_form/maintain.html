@@ -1,0 +1,26 @@
+<!-- 提示Modal -->
+<!-- set maintain -->
+<!-- Modal -->
+<div class="modal fade" id="setMaintain" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-body">
+      <!--提示-->
+      <form action="{{ url_for('portal.set_maintain',id=host.id) }}" method="POST">
+      <div class="alert alert-block alert-info fade in">
+      <h4 class="alert-heading">提示！</h4>
+        <p>确定将主机 <font style="font-size: 14px;font-weight: bold;" color="#000"> {{ host.hostname }} </font>置成维护状态？</p>
+        <p style="padding-left: 20px;">主机置维护状态后，虚拟机将无法调度到其主机上。</p>
+        <div class="button-set text-right">
+          <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">取消</button>
+          <button class="btn btn-success btn-cons" type=submit >确定</button>
+        </div>
+      </div>
+      </form>
+      <!--提示-->
+    </div>
+  </div>
+</div>
+</div>
+<!--modal-->
+<!-- 提示Modal --> 

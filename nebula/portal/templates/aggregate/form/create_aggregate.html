@@ -1,0 +1,51 @@
+<!-- 新建集群Modal -->
+<div class="modal fade" id="newCluster" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">新建集群</h4>
+      </div>
+      <div class="modal-body">
+        <form id="form_traditional_validation" action="/aggregates/create" class="form-horizontal" method="POST">
+
+          <div class="form-group">
+            <label for="name" class="col-sm-3 control-label"><span class="text-danger">*</span>集群名称</label>
+            <div class="col-sm-7 input-validation right">
+              <input type="text" name="name" id="name" class="form-control">
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-group">
+            <label for="zone" class="col-sm-3 control-label"><span class="text-danger">*</span>可用域</label>
+            <div class="col-sm-7 input-validation right">
+              <input type="text" name="zone" id="zone" class="form-control">
+            </div>
+            <span class="pull-left p-t-10 text-info formNameInfo inline" data-toggle="tooltip" data-placement="top" title="创建虚拟机时可选，系统限制资源在可用域的范围调度；集群可指定同一个域"><i class="fa fa-question-circle"></i></span> </div>
+
+          <!--form-group-->
+           <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right">描 述</label>
+            <div class="col-md-8 col-sm-8 col-xs-8">
+             <textarea class="form-control" rows="3" name="description" id="description"></textarea>
+            </div>
+          </div>
+
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>创 建</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--新建集群modal-->
+<script src="/static/js/aggregate/aggregate.js" type="text/javascript"></script>
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

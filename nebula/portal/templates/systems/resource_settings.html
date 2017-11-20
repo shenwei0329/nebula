@@ -1,0 +1,238 @@
+{% extends "layout/base.html" %}
+
+{% block title %}性能设置{% endblock %}
+
+{% block container %}
+<div class="page-content">
+<div class="content">
+      <!--title-->
+      <div class="page-title">
+        <h3>系统资源性能参数设置</h3>
+      </div>
+      <!--title-->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="grid simple ">
+            <div class="grid-body no-border">
+            <br/>
+              <form id="settingsForm" class="form-horizontal validate-form"
+              	 data-rule="settingsRule" method="POST" action="{{ url_for('portal.resource_settings') }}">
+                <h4>虚拟机</h4>
+                <div class="form-group">
+                  <label for="input" class="col-sm-3 control-label">可挂载磁盘上限(块)</label>
+                    <!--输入框-->
+                   <div class="col-sm-2">
+                   <input type="text" class="form-control {% if form.instance_attach_volumes.errors%}error{% endif %}" id="input_attach_volume" maxlength="2"
+                   		value="{{ settings.instance_attach_volumes }}" name="instance_attach_volumes">
+                   {% if form.instance_attach_volumes.errors %}
+                   {% for message in form.instance_attach_volumes.errors %}
+                   <span class="error"><label>{{ message | decode }}</label></span>
+                   {% endfor %}
+                   {% endif %}
+                   </div>
+                   <!--输入框-->
+                  <label for="input" class="col-sm-6 control-label text-left text-muted small-text">默认可挂载磁盘：4块，最大可支持挂载：12块。</label>
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：系统对单个虚拟机可挂载的磁盘个数限制</p></div>
+                </div>
+                <!--form-group-->
+                <div class="form-group">
+                  <label for="input" class="col-sm-3 control-label">可挂载的网卡上限(张)</label>
+                  <!--输入框-->
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control {% if form.instance_attach_ports.errors %}error{% endif %}" id="input_attach_port" maxlength="1" value="{{ settings.instance_attach_ports }}" name="instance_attach_ports">
+                        {% if form.instance_attach_ports.errors %}
+                        {% for message in form.instance_attach_ports.errors %}
+                        <span class="error"><label>{{ message | decode }}</label></span>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                   <!--输入框-->
+                  <label for="input" class="col-sm-6 control-label text-left text-muted small-text">默认可挂载网卡：2张，最大可支持挂载网卡：8张</label>
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：系统对单个虚拟机可挂载的网卡个数限制</p></div>
+                </div>
+                <!--form-group-->
+
+                <div class="form-group">
+                  <label for="input" class="col-sm-3 control-label">虚拟机备份上限(个)</label>
+                 <!--输入框-->
+                   <div class="col-sm-2">
+                        <input type="text" class="form-control {% if form.instance_backups.errors %}error{% endif %}" id="input_instance_backup" maxlength="2" value="{{ settings.instance_backups }}" name="instance_backups">
+                        {% if form.instance_backups.errors %}
+                        {% for message in form.instance_backups.errors %}
+                        <span class="error"><label>{{ message | decode }}</label></span>
+                        {% endfor %}
+                        {% endif %}
+                   </div>
+                   <!--输入框-->
+                  <label for="input" class="col-sm-6 control-label text-left text-muted small-text">默认5份，最大支持50份</label>
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：虚拟机的备份会占用存储空间，建议此值不要设置太高。</p></div>
+                </div>
+                <!--form-group-->
+                  <div class="form-group">
+                  <label for="input" class="col-sm-3 control-label">vcpu可选范围(核)</label>
+                   <!--输入框-->
+                   <div class="col-sm-1" style="width: 100px;">
+                        <input type="text" class="form-control {% if form.instance_cores_min.errors %}error{% endif %}"  name="instance_cores_min" maxlength="3" value="{{ settings.instance_cores_min }}" />
+
+                   </div>
+                  <span class="pull-left">&nbsp;_&nbsp;</span>
+                   <div class="col-sm-2" style="width: 100px;">
+                        <input type="text" class="form-control {% if form.instance_cores_max.errors %}error{% endif %}" maxlength="3" value="{{ settings.instance_cores_max }}" name="instance_cores_max">
+
+                   </div>
+                   <!--输入框-->
+                  <label for="input" class="col-sm-4 control-label text-left text-muted small-text">默认vcpu上限：32核，最大支持128核</label>
+                  {% if form.instance_cores_min.errors %}
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text">
+                  {% for message in form.instance_cores_min.errors %}
+                  <span class="error"><label>{{ message | decode }}</label></span>
+                  {% endfor %}
+                  </div>
+                  {% endif %}
+                  {% if form.instance_cores_max.errors %}
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text">
+                  {% for message in form.instance_cores_max.errors %}
+                  <span class="error"><label>{{ message | decode }}</label></span>
+                  {% endfor %}
+                  </div>
+                  {% endif %}
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：此值根据实际计算节点（物理机）的配置可调整；原则上最大核数不能超过物理机的实际物理cpu(核)的2倍，否则将不能成功创建最大规格的虚拟机。</p></div>
+                </div>
+                <!--form-group-->
+                <div class="form-group">
+                  <label for="input" class="col-sm-3 control-label">内存可选范围(M)</label>
+                 <!--输入框-->
+                    <div class="col-sm-1" style="width: 100px;">
+                        <input type="text" class="form-control {% if form.instance_ram_min.errors %}error{% endif %}" id="ram_range_min" maxlength="6" value="{{ settings.instance_ram_min }}" name="instance_ram_min">
+
+                    </div>
+                  <span class="pull-left">&nbsp;_&nbsp;</span>
+                    <div class="col-sm-1" style="width: 100px;">
+                        <input type="text" class="form-control {% if form.instance_ram_min.errors %}error{% endif %}" id="ram_range_max" maxlength="6" value="{{ settings.instance_ram_max }}" name="instance_ram_max">
+
+                    </div>
+                   <!--输入框-->
+                  <label for="input" class="col-sm-6 control-label text-left text-muted small-text">默认虚拟内存上限支持：16G,最大支持1024G(1TB)</label>
+                  {% if form.instance_ram_min.errors %}
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text">
+                  {% for message in form.instance_ram_min.errors %}
+                  <span class="error"><label>{{ message | decode }}</label></span>
+                  {% endfor %}
+                  </div>
+                  {% endif %}
+                  {% if form.instance_ram_max.errors %}
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text">
+                  {% for message in form.instance_ram_max.errors %}
+                  <span class="error"><label>{{ message | decode }}</label></span>
+                  {% endfor %}
+                  </div>
+                  {% endif %}
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：此值根据实际计算节点（物理机）的配置可调整；原则上支持的最大内存不能超过实际内存的90%，否则将不能成功的创建最大规格虚拟机。单位：1T=1024G,1G=1024M</p></div>
+                </div>
+                <!--form-group-->
+                <div class="form-group">
+                  <label for="input" class="col-sm-3 control-label">批量创建虚拟机上限(个)</label>
+                 <!--输入框-->
+                   <div class="col-sm-2">
+                        <input type="text" class="form-control
+                        {% if form.instance_batches.errors %}error{% endif %}" id="input_instance_batches" maxlength="2"
+                               value="{{ settings.instance_batches }}" name="instance_batches">
+                        {% if form.instance_batches.errors %}
+                        {% for message in form.instance_batches.errors %}
+                        <span class="error"><label>{{ message | decode }}</label></span>
+                        {% endfor %}
+                        {% endif %}
+                   </div>
+                   <!--输入框-->
+                  <label for="input" class="col-sm-6 control-label text-left text-muted small-text">默认1个，最大支持20个</label>
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：批量创建虚拟机的时间会很长并且占用资源比较多，建议此值不要设置太高,推荐设置为5个。</p></div>
+                </div>
+                <h4>数据卷</h4>
+                <div class="form-group">
+                  <label for="input" class="col-sm-3 control-label">数据卷备份上限(个)</label>
+                 <!--输入框-->
+                  <div class="col-sm-2">
+                        <input type="text" class="form-control {% if form.volume_backups.errors %}error{% endif %}" id="input_volume_backup" maxlength="2"  value="{{ settings.volume_backups }}" name="volume_backups">
+                        {% if form.volume_backups.errors %}
+                        {% for message in form.volume_backups.errors %}
+                        <span class="error"><label>{{ message | decode }}</label></span>
+                        {% endfor %}
+                        {% endif %}
+                  </div>
+                <!--输入框-->
+                  <label for="input" class="col-sm-6 control-label text-left text-muted small-text">默认5份，最大支持50份</label>
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：虚拟机的备份会占用存储空间，建议此值不要设置太高。</p></div>
+                </div>
+                <!--form-group-->
+
+                <div class="form-group">
+                  <label for="input" class="col-sm-3 control-label">数据卷支持最大容量(G)</label>
+                   <!--输入框-->
+                   <div class="col-sm-2">
+                        <input type="text" class="form-control {% if form.volume_capacity.errors %}error{% endif %}" id="input_volume_capacity" maxlength="6" placeholder="" value="{{ settings.volume_capacity }}" name="volume_capacity">
+                        {% if form.volume_capacity.errors %}
+                        {% for message in form.volume_capacity.errors %}
+                        <span class="error"><label>{{ message | decode }}</label></span>
+                        {% endfor %}
+                        {% endif %}
+                   </div>
+                   <!--输入框-->
+                 <label for="input" class="col-sm-6 control-label text-left text-muted small-text">默认500G，最大支持2048G(2T)</label>
+                  <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：单个数据支持的最大容量。</p></div>
+                </div>
+                <!--form-group-->
+                <h4>网络</h4>
+                 <div class="form-group">
+                  <label for="input" class="col-sm-3 control-label">系统可用vlan范围</label>
+                  <!--输入框-->
+                   <div class="col-sm-1" style="width: 100px;">
+                        <input type="text" class="form-control {% if form.network_vlan_min.errors %}error{% endif %}"
+                         id="network_vlan_min" maxlength="4" value="{{ settings.network_vlan_min }}" name="network_vlan_min">
+
+                   </div>
+                  <span class="pull-left">_</span>
+                   <div class="col-sm-1" style="width: 100px;">
+                        <input type="text" class="form-control {% if form.network_vlan_max.errors %}error{% endif %}"
+                         id="network_vlan_max" maxlength="4" value="{{ settings.network_vlan_max }}" name="network_vlan_max">
+
+                   </div>
+                  <!--输入框-->
+                 <label for="input" class="col-sm-6 control-label text-left text-muted small-text">默认支持：2-4093</label>
+                {% if form.network_vlan_min.errors %}
+                <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text">
+                {% for message in form.network_vlan_min.errors %}
+                <span class="error"><label>{{ message | decode }}</label></span>
+                {% endfor %}
+                </div>
+                {% endif %}
+                {% if form.network_vlan_max.errors %}
+                <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text">
+                {% for message in form.network_vlan_max.errors %}
+                <span class="error"><label>{{ message | decode }}</label></span>
+                {% endfor %}
+                </div>
+                {% endif %}
+                 <div class="col-sm-offset-3 col-sm-9 p-t-10 small-text"><p>说明：该值依赖计算节点业务网卡所对应的交换机端口的vlan配置，vlan范围需要在交换机端口允许通过的范围内，超过交换机vlan允许通过范围，则虚拟机无法进行网络通信。</p></div>
+                </div>
+                <!--form-group-->
+                <br/>
+                <div class="form-group">
+                  <div class="col-sm-offset-3 col-sm-9">
+                  	<button id="xiong" type="reset" class="btn btn-white btn-cons">重置</button>
+                    <button type="submit" class="btn btn-primary btn-cons m-l-10">保存</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!--grid-->
+
+        </div>
+        <!--col-md-12-->
+      </div>
+      <!--row-->
+    </div>
+    <!--content-->
+</div>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+<div class="modal fade" id="passwordVM" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    {% if not instance.task_state and instance.vm_state == 'stopped' %}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">设置密码-<span class="text-success">{{ instance.display_name }}</span></h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">更改虚拟机的root密码；windows系统需要单独设置请参考使用手册</div>
+        <form id="form_traditional_validation" action="{{url_for('portal.instance_passwd', id=instance.id)}}" class="form-horizontal" method="POST">
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">新密码</label>
+            <div class="col-sm-7 input-validation right">
+              <input type="password" name="password" id="password" class="form-control" value="{{instance.password}}">
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">确认密码</label>
+            <div class="col-sm-7 input-validation right">
+              <input type="password" name="confirm_password" id="confirm_password" class="form-control" value="{{instance.confirm_password}}">
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保 存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      {% else %}
+      <form>
+        <div class="modal-body">
+            <div class="alert alert-block alert-error fade in">
+                <h4 class="alert-heading">提 示</h4>
+                <p>虚拟机当前状态：“{{instance.vm_state}}” ，任务状态：“{{instance.task_state}}”，请在关机状态设置密码</p>
+                <div class="button-set text-right">
+                    <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">关 闭</button>
+                </div>
+             </div>
+        </div>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>

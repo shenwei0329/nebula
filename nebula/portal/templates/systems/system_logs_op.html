@@ -1,0 +1,273 @@
+<!--登录日志-->
+{% from 'layout/pagination.html' import render_pagination with context %}
+{% extends 'layout/base.html' %}
+{% block title %}系统日志{% endblock %}
+{% block style %}
+<link href="/static/plugins/bootstrap-datepicker/css/datepicker.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block resource_type %}Systemlogs{% endblock %}
+{% block container %}
+
+<!-- BEGIN PAGE -->
+  <div class="page-content">
+    <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+    <div class="content">
+      <!--title-->
+      <div class="page-title">
+        <h3>{% if not user_log %}系统日志{% else %}我的日志{% endif %}</h3>
+      </div>
+      <!--title-->
+      <div class="row">
+        <div class="col-md-12">
+          {% if not user_log %}
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs">
+            <li><a href="{{ url_for('portal.system_logs_warning') }}">告警日志</a></li>
+            <li class="active"><a href="{{ url_for('portal.system_logs_op') }}">操作日志</a></li>
+            <li><a href="{{ url_for('portal.system_logs_user_login') }}">登录日志</a></li>
+          </ul>
+          {% endif %}
+
+
+          <div class="tab-content">
+          <div class="tab-pane active" id="do">
+              <!--操作日志-->
+              <form action="{% if user_log %}{{ url_for('portal.user_logs') }}{% else %}{{ url_for('portal.system_logs_op') }}{% endif %}" method="GET">
+              <div class="btn-group m-r-10" id="select2">
+                <select class="select2 form-control" name="resource_type" style="width:200px;" >
+                  <option value="">资源类型</option>
+                  <option value="Instance">虚拟机</option>
+                  <option value="Network">网络</option>
+                  <option value="Virtualrouter">虚拟路由器</option>
+                  <option value="VirtualrouterNetwork">虚拟路由器网络</option>
+                  <option value="Image">镜像</option>
+                  <option value="Volume">数据卷</option>
+                  <option value="VolumeBackup">数据卷备份</option>
+                  <option value="InstanceBackup">虚拟机备份</option>
+                  <option value="Subnet">子网</option>
+                  <option value="ComputeNode">计算节点</option>
+                  <option value="Port">端口</option>
+                  <option value="SecurityGroup">虚拟防火墙</option>
+                  <option value="SecurityGroupRule">虚拟防火墙规则</option>
+                  <option value="Nat">网络地址转换</option>
+                </select>
+              </div>
+              <div class="btn-group m-r-10" id="select1">
+                <select class="select2 form-control" name="state" style="width:200px;" >
+                  <option value="">状态</option>
+                  <option value="SUCCESS">成功</option>
+                  <option value="FAILURE">失败</option>
+                  <option value="REVERTED">回滚</option>
+                  <option value="RUNNING">正在运行中</option>
+                </select>
+              </div>
+              <!--data picker-->
+              <div class="btn-group m-r-40" >
+                <div class="input-append date" style="width:100px; ">
+                  <input type="text" class="form-control" name="created_at1">
+                  <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> </div>
+              </div>
+              <!--data picker-->
+              <!--data picker-->
+              <div class="btn-group m-r-40">
+                <div class="input-append date" style="width:100px;">
+                  <input type="text" class="form-control" name="created_at2">
+                  <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> </div>
+              </div>
+              <!--data picker-->
+              <button type="submit" class="btn btn-success btn-cons "><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</button>
+              </form>
+              <table class="table table-bordered m-t-10">
+                <thead>
+                  <tr>
+                    <th>资源名称</th>
+                    <th>操作</th>
+                    <th>状态</th>
+                    <th>操作者</th>
+                    <th>操作时长</th>
+                    <th>操作时间</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                {% for log in pagination.items %}
+                  <tr>
+                    {% if log.resource_type  == 'Nat' %}
+                    <td><i class="fa fa-sitemap m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'SecurityGroupRule' %}
+                    <td><i class="fa fa-th m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'SecurityGroup' %}
+                    <td><i class="fa fa-th m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'Instance' %}
+                    <td><i class="fa fa-cube m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'Network' %}
+                    <td><i class="fa fa-sitemap m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'Virtualrouter' %}
+                    <td><i class="fa fa-sitemap m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'VirtualrouterNetwork' %}
+                    <td><i class="fa fa-sitemap m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'Image' %}
+                    <td><i class="fa fa-file-code-o m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'Volume' %}
+                    <td><i class="fa fa-database m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'VolumeBackup' %}
+                    <td><i class="fa fa-copy m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'InstanceBackup' %}
+                    <td><i class="ffa fa-copy m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'Subnet' %}
+                    <td><i class="fa fa-sitemap m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'ComputeNode' %}
+                    <td><i class="fa fa-desktop m-r-10"></i>{{log.resource_name}}</td>
+                    {% elif log.resource_type  == 'Port' %}
+                    <td><i class="fa fa-sitemap m-r-10"></i>{{log.resource_name}}</td>
+                    {% else %}
+                    <td>{{log.resource_name}}</td>
+                    {%endif%}
+
+                    {% if not log.state_desc %}
+                    <td class="text-info">等待中</td>
+                    {%else%}
+                    <td class="text-info">{{log.state_desc}}</td>
+                    {%endif%}
+
+                    {% if log.state == 'SUCCESS' %}
+                    <td class="text-success"><i class="fa fa-check m-r-10"></i>成功</td>
+                    {% elif log.state == 'FAILURE' %}
+                    <td class="text-success"><i class="fa fa-times m-r-10"></i>失败</td>
+                    {% elif log.state == 'REVERTED' %}
+                    <td class="text-success"><i class="fa fa-check m-r-10"></i>回滚</td>
+                    {% elif log.state == 'PENDING' %}
+                    <td class="text-success">
+                    <div class="typing_loader"></div>
+                    <span class="p-l-10">正在运行中</span>
+                    </td>
+                    {% else %}
+                    <td class="text-success"><i class="fa fa-check m-r-10"></i>{{log.state}}</td>
+                    {% endif %}
+
+                    <td>{{ log.creator.username }}</td>
+
+                    <script >
+                    function DiffLong(datestr1, datestr2) {
+                      var date1 = new Date(Date.parse(datestr1.replace(/-/g, "/")));
+                      var date2 = new Date(Date.parse(datestr2.replace(/-/g, "/")));
+                      var datetimeTemp;
+                      var isLater = true;
+
+                      if (date1.getTime() > date2.getTime()) {
+                          isLater = false;
+                          datetimeTemp = date1;
+                          date1 = date2;
+                          date2 = datetimeTemp;
+                      }
+
+                      difference = date2.getTime() - date1.getTime();
+                      thisdays = Math.floor(difference / (1000 * 60 * 60 * 24));
+
+                      difference = difference - thisdays * (1000 * 60 * 60 * 24);
+                      thishours = Math.floor(difference / (1000 * 60 * 60));
+
+                      difference = difference - thishours * (1000 * 60 * 60);
+                      thismins = Math.floor(difference / (1000 * 60));
+
+                      difference = difference - thismins * (1000 * 60);
+                      thissecs = Math.floor(difference / (1000));
+
+                      var strRet = '';
+                      if (thisdays) {strRet = thisdays + '天'};
+                      if (thishours) {strRet = strRet + thishours + '小时'};
+                      if (thismins) {strRet = strRet + thismins + '分'};
+                      strRet = strRet  + thissecs + '秒';
+
+                      return strRet;
+                    }
+                    var datediff = '';
+                    if ("{{log.updated_at}}" == 'None') {;} else{datediff = DiffLong("{{log.created_at}}","{{log.updated_at}}");}
+
+                    document.write("<td>" + datediff + "</td>");
+                    </script>
+                    <td>{{ log.created_at | datetime }}</td>
+                  </tr>
+                {% endfor %}
+
+                </tbody>
+              </table>
+              <!--分页-->
+              {% if pagination.items %}
+                  {% if not user_log %}
+                    {{ render_pagination(pagination, 'portal.system_logs_op', '') }}
+                  {% else %}
+                    {{ render_pagination(pagination, 'portal.user_logs', '') }}
+                  {% endif %}
+              {% else %}
+              <p class=""><em>该列表中暂时没有数据。</em></p>
+              {% endif %}
+              <!--分页-->
+              <!--操作日志-->
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!--col-md-12-->
+    </div>
+    <!--row-->
+  </div>
+  <!--content-->
+{% endblock %}
+{% block extend_js %}
+<script src="/static/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
+<script src="/static/plugins/bootstrap-datepicker/js/locales/bootstrap-datepicker.zh-CN.js" type="text/javascript"></script>
+<script type="text/javascript">
+  //Date Pickers
+    $(".input-append.date").datepicker({
+       format: 'mm-dd-yyyy',
+       language : 'zh-CN'
+       });
+   $(function(){
+	   var url=location+"";
+	   if(url.indexOf("?")!=-1){
+		   var params=url.split('?');
+		  if(params!=null&&params.length>0){
+			  var _param=params[1];
+			  var arr=_param.split('&');
+			  var resource_type="",  state="",created_at1="",created_at2="";
+			  for(var i=0;i<arr.length;i++){
+				  var o=arr[i];
+				  var values=o.split('=');
+				  var len=values.length;
+				  if(len>0){
+					  if(o.indexOf("resource_type")!=-1){
+						   resource_type=values[1];
+						   $("select[name=resource_type] option").removeAttr("selected");
+							  $("#select2 span.select2-chosen").html($("select[name=resource_type] option[value="+resource_type+"]").html());
+							  $("select[name=resource_type] option[value="+resource_type+"]").attr("selected","selected");
+					  }else if(o.indexOf("state")!=-1){
+						   state=values[1];
+						   $("select[name=state] option").removeAttr("selected");
+							  $("#select1 span.select2-chosen").html($("select[name=state] option[value="+state+"]").html());
+							  $("select[name=state] option[value="+state+"]").attr("selected","selected");
+					  }else if(o.indexOf("created_at1")!=-1){
+						   created_at1=values[1];
+						   $("input[name=created_at1]").val(created_at1);
+					  }else if(o.indexOf("created_at2")!=-1){
+						   created_at2=values[1];
+						   $("input[name=created_at2]").val(created_at2);
+					  }
+				  }
+
+			  }
+		  }
+
+
+
+
+
+
+
+
+
+	   }
+   });
+</script>
+{% endblock %}

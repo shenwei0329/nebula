@@ -1,0 +1,273 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}{% endblock %}
+{% block style %}
+{% endblock %}
+
+{% block resource_type %}ETL{% endblock %}
+
+{% block container %}
+
+        <!-- 页面内容从此处开始-->
+        <div class="content">
+        <!--content-->
+
+                <script type="application/javascript">
+
+                    /* 注意：任何AJAX操作后，都应该调用 GetStatus 函数 确保当前URL为 /etltools/change */
+                    function ajaxForm(value) {
+                        $.ajax({
+                            type: 'POST',
+                            contentType: 'application/json',
+                            url: '/etltools/report',
+                            dataType: 'json',
+                            data: JSON.stringify({ value: value }),
+                            error: function() {
+                                alert('Error');
+                            },
+                            success: function (msg) {
+                                $("#add-rec").html(msg['body']);
+                                $('#InputModal').modal('show');
+                            }
+                        });
+                        return false;
+                    }
+
+                    function ItemOnclick(value){
+                        ajaxForm(value);
+                    }
+
+                    function PageOnChange(value){
+                        /*
+                        提交页面更改的 表单
+                        =================
+                        表单返回的是当前页面刷新内容，该内容以 ajax 方式对 etl_href 标签内容进行刷新
+                         */
+                        $.ajax({
+                            type: 'POST',
+                            contentType: 'application/json',
+                            url: '/etltools/change',
+                            dataType: 'json',
+                            data: JSON.stringify({ value: value }),
+                            error: function() {
+                                alert('Error');
+                            },
+                            success: function (msg) {
+                                $("#{{ etl_href }}").html(msg['body']);
+                            }
+                        });
+                    }
+
+                    function task_log(name){
+                        $.ajax({
+                            type: 'POST',
+                            contentType: 'application/json',
+                            url: '/etltools/gettasklog',
+                            dataType: 'json',
+                            data: JSON.stringify({ task_name: name }),
+                            error: function() {
+                                alert('Error');
+                            },
+                            success: function (msg) {
+                                $("#etl_log").html(msg['body']);
+                                GetStatus();
+		                        $('#Modal').modal('show');
+                           }
+                        });
+                    }
+
+                    function job_log(name){
+                        $.ajax({
+                            type: 'POST',
+                            contentType: 'application/json',
+                            url: '/etltools/getjoblog',
+                            dataType: 'json',
+                            data: JSON.stringify({ job_name: name }),
+                            error: function() {
+                                alert('Error');
+                            },
+                            success: function (msg) {
+                                $("#etl_log").html(msg['body']);
+                                GetStatus();
+		                        $('#Modal').modal('show');
+                           }
+                        });
+                    }
+
+                    function delete_confirm(name){
+                        /*
+                        删除记录确认
+                         */
+                        var r=confirm("删除记录［" + name + "］，请确认！")
+                        if (r==true){
+                            /*
+                            提交删除记录的 表单
+                             */
+                            $.ajax({
+                                type: 'POST',
+                                contentType: 'application/json',
+                                url: '/etltools/serverdelete',
+                                dataType: 'json',
+                                data: JSON.stringify({ server_name: name }),
+                                error: function() {
+                                    alert('Error');
+                                },
+                                success: function (msg) {
+                                    $("#{{ etl_href }}").html(msg['body']);
+                                    GetStatus();
+                                }
+                            });
+                        }
+                    }
+
+                    function run_confirm(name, server, mod){
+                        /*
+                        确认：提交etl任务运行请求
+                         */
+                        var r=confirm("在服务器［" + server + "］上运行该任务［" + name + "］，请确认！")
+                        if (r==true){
+                            /*
+                            提交运行etl的 表单
+                             */
+                            $.ajax({
+                                type: 'POST',
+                                contentType: 'application/json',
+                                url: '/etltools/etltaskrun',
+                                dataType: 'json',
+                                data: JSON.stringify({ 'task-name': name, 'server': server, 'mod': mod }),
+                                error: function() {
+                                    alert('Error');
+                                },
+                                success: function (msg) {
+                                    $("#{{ etl_href }}").html(msg['body']);
+                                    GetStatus();
+                               }
+                            });
+                        }
+                    }
+
+                    function run_job_confirm(name, server, mod, schedule){
+                        /*
+                        确认：提交etl任务运行请求
+                         */
+                        var r=confirm("在服务器［" + server + "］上运行该任务［" + name + "］，请确认！")
+                        if (r==true){
+                            /*
+                            提交运行etl的 表单
+                             */
+                            $.ajax({
+                                type: 'POST',
+                                contentType: 'application/json',
+                                url: '/etltools/etljobrun',
+                                dataType: 'json',
+                                data: JSON.stringify({ 'task-name': name, 'server': server, 'mod': mod, 'schedule': schedule }),
+                                error: function() {
+                                    alert('Error');
+                                },
+                                success: function (msg) {
+                                    $("#{{ etl_href }}").html(msg['body']);
+                                    GetStatus();
+                                }
+                            });
+                        }
+                    }
+
+                </script>
+
+                <div class="grid no-padding ">
+                            <ul id="etl_tools" class="nav nav-pills ajax-tabs" data-sticky-tabs="sticky" style="width: 100%" >
+                                {% if etl_page==0 %}<li class="active" onclick="PageOnChange(0)">{% else %}<li class onclick="PageOnChange(0)">{% endif %}
+                                    <a href="?etl_app=etl_list" data-toggle="tab" data-target="#etl_list" data-loaded="true">资源目录</a>
+                                </li>
+                                {% if etl_page==1 %}<li class="active" onclick="PageOnChange(1)">{% else %}<li class onclick="PageOnChange(1)">{% endif %}
+                                    <a href="?etl_app=etl_list" data-toggle="tab" data-target="#etl_mod_post" data-loaded="true">资源列表</a>
+                                </li>
+                                {% if etl_page==2 %}<li class="active" onclick="PageOnChange(2)">{% else %}<li class onclick="PageOnChange(2)">{% endif %}
+                                    <a href="?etl_app=etl_pen_post" data-toggle="tab" data-target="#etl_pen_post" data-loaded="true">任务管理</a>
+                                </li>
+                                {% if etl_page==3 %}<li class="active" onclick="PageOnChange(3)">{% else %}<li class onclick="PageOnChange(3)">{% endif %}
+                                    <a href="?etl_app=etl_scheduler_post" data-toggle="tab" data-target="#etl_scheduler_post" data-loaded="true">作业管理</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                {% if etl_page==1 %}
+                                    {% include 'etltools/modlist.html' %}
+                                {% elif etl_page==2 %}
+                                    {% include 'etltools/tasklist.html' %}
+                                {% elif etl_page==3 %}
+                                    {% include 'etltools/joblist.html' %}
+                                {% else %}
+                                    {% include 'etltools/dirlist.html' %}
+                                {% endif %}
+                            </div>
+                </div>
+            </div>
+        <!-- 页面内容到此结束-->
+
+    <script type="text/javascript">
+
+        function GetStatus(){
+            /*
+            根据获取的 etl_step 值：
+            1）刷新监控
+            2）刷新任务状态
+            3）刷新作业状态
+            */
+            $.get("/etltools/getpage",function(data,status){
+
+                if (data['etl_page']=='0') {
+                    PageOnChange(99);
+                }else{
+                    if (data['etl_sub_step']=='0'){
+                        PageOnChange(data['etl_page']);
+                    }
+                }
+            });
+        }
+
+        <!--
+        setTimeout(function() {
+            /*
+            定时器：
+            1）刷新监控图表
+            2）刷新ETL任务状态
+            3）刷新ETL作业状态
+             */
+            GetStatus();
+            setTimeout(arguments.callee, 5000);
+        }, 5000);
+        -->
+
+    </script>
+
+    <div class="modal hide fade" id="Modal" style="width: 50%">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3>日志</h3>
+		</div>
+		<div class="modal-body">
+            <p id="etl_log">
+                {% for t in text %}
+                    {{ t }}<br/>
+                {% endfor %}
+            </p>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">Close</a>
+		</div>
+	</div>
+
+
+    <div class="modal hide fade" id="InputModal" style="width: auto">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3>添加记录</h3>
+		</div>
+		<div class="modal-body" id="add-rec">
+            {% import 'bootstrap/wtf.html' as wtf %}
+            {{ wtf.quick_form(form) }}
+		</div>
+	</div>
+
+{% endblock %}

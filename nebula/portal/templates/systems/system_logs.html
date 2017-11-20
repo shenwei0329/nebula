@@ -1,0 +1,98 @@
+{% from 'layout/pagination.html' import render_pagination with context %}
+{% extends 'layout/base.html' %}
+{% block title %}系统日志{% endblock %}
+{% block style %}
+{% endblock %}
+{% block resource_type %}Systemlogs{% endblock %}
+{% block container %}
+<!-- BEGIN PAGE -->
+  <div class="page-content">
+    <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+    <div class="content">
+      <!--title-->
+      <div class="page-title">
+        <h3>系统日志</h3>
+      </div>
+      <!--title-->
+      <div class="row">
+        <div class="col-md-12">
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="{{ url_for('portal.system_logs_warning') }}">告警日志</a></li>
+            <li><a href="{{ url_for('portal.system_logs_op') }}">操作日志</a></li>
+            <li><a href="{{ url_for('portal.system_logs_user_login') }}">登录日志</a></li>
+          </ul>
+<!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active" id="error"> 
+              <!--告警日志-->
+              
+              <table class="table table-bordered ">
+                <thead>
+                  <tr>
+                    <th>名称</th>
+                    <th>告警级别</th>
+                    <th>告警IP</th>
+                    <th>监控指标</th>
+                    <th>监控项值</th>
+                    <th>告警描述</th>
+                    <th>操作时间</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for alert in pagination.items %}
+                  <tr>
+                    <td class="text-info">{{alert.name}}</td>
+                    {% if alert.prioritykey  in (0, '0') %}
+                    <td><label class="label label-default m-r-10">未分类</label></td>
+                    {%endif%}
+                    {% if alert.prioritykey  in (1, '1') %}
+                    <td><label class="label label-success m-r-10">消息</label></td>
+                    {%endif%}
+                    {% if alert.prioritykey  in (2, '2') %}
+                    <td><label class="label label-warning m-r-10">警告</label></td>
+                    {%endif%}
+                    {% if alert.prioritykey  in (3, '3') %}
+                    <td><label class="label label-important m-r-10">一般严重</label></td>
+                    {%endif%}
+                    {% if alert.prioritykey  in (4, '4') %}
+                    <td><label class="label label-danger m-r-10">严重</label></td>
+                    {%endif%}
+                    {% if alert.prioritykey  in (5, '5') %}
+                    <td><label class="label label-white m-r-10">灾难</label></td>
+                    {%endif%}
+                    <td class="text-info">{{alert.ip}}</td>
+                    <td class="text-success">{{alert.key2}}</td>
+                    <td>{{alert.value}}</td>
+                    <td>{{alert.description}}</td>
+                    <td>{{alert.time}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <!--分页-->
+              {% if pagination.items %}
+              {{ render_pagination(pagination, 'portal.system_logs_user_login', '') }}
+              {% else %}
+              <p class=""><em>该列表中暂时没有数据。</em></p>
+              {% endif %}
+              <!--分页-->
+              <!--告警日志--> 
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--col-md-12-->
+    </div>
+    <!--row-->
+  </div>
+  <!--content-->
+
+<!--右键出现的菜单-->
+{% endblock %}
+<!--右键出现的菜单-->
+{% block extend_js %}
+<!--><script src="/static/js/list.js" type="text/javascript"></script><!-->
+<!--><script src="/static/js/network/virtualrouters.js" type="text/javascript"></script><!-->
+{% endblock %}

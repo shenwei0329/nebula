@@ -1,0 +1,108 @@
+<div class="modal fade " id="newPrivateNetwork" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">新建网络</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">
+            {% if user.is_super %}
+            外部网络：连接公网的网络，用户通过把私有路由器绑定到外网来实现内网虚机与外网的通信，外网是共享的。
+       </br>
+            {% endif %}
+            私有网络：是指用户私有的，由多台计算机互联成的计算机组，它需要通过网关设备才能与其他网络中的计算机互通。</div>
+        <form class=" form-horizontal" method="POST" data-rule="newPrivateNetworkRule" action="{{ url_for("portal.private_network_create") }}">
+          <div class="form-group text-primary">
+              <label for="" class="col-sm-3 control-label">私有网络配额</label>
+              <label for="" class="col-sm-2 control-label text-left text-success" id="vr_total_quota">
+                  {{ net_quota }}</label>
+              <label for="" class="col-sm-2 control-label">可用配额</label>
+              <label for="" class="col-sm-3 control-label text-left text-success" id="vr_usable_quota">
+                  {{ net_usable_quota }}</label>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right"><span class="text-danger">*</span>名 称：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8">
+              <input type="text" name="name" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+              <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right"><span class="text-danger">*</span>类 型：</label>
+              <div class="col-md-8 col-sm-8 col-xs-8">
+                   <select name="network_type" id="network_type" class="form-control">
+                       <option value="vxlan" selected>VXLAN</option>
+                       {% if user.is_super %}
+                       <option value="flat">FLAT</option>
+                       {% endif %}
+                   </select>
+              </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right" id="lable_segmentation_id"><span class="text-danger">*</span>Vlan标识：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8">
+              <input type="text" name="segmentation_id"  id="segmentation_id" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right">描 述：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8">
+              <input type="text" name="description" class="form-control">
+            </div>
+          </div>
+          {% if user.is_super %}
+          <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right" id="lable_external_net">外部网络：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8">
+              <input type="checkbox" name="external_net" id="external_net" value="off" />
+            </div>
+          {% endif %}
+          <div class="form-group"> </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+            <button type="submit" class="btn btn-primary
+            {% if not net_usable_quota %} disabled{% endif %}" id="submit_btn">保 存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    $("#external_net").click(function(){
+        var $this = $(this);
+        if ($this.is(':checked')) {
+            $this.val("on");
+        } else {
+            $this.val("off");
+        }
+    })
+
+    $("#network_type").change(function(){
+        var label="只能有一个FLAT网络，系统中已经存在一个！"
+        if ($("#network_type option:selected").text() == 'FLAT'){
+            {% if flat_net_exist %}
+                $('<span class="error" id="error"></span>').insertAfter($(this)).append(label)
+                var parent = $(this).parent('.input-validation');
+                parent.removeClass('success-control').addClass('error-control');
+                $("#submit_btn").hide()
+            {% endif %}
+            $("#lable_segmentation_id").hide()
+            $("#segmentation_id").hide()
+            $("#lable_external_net").hide()
+            $("#external_net").hide()
+        }
+        else{
+            $("#error").hide()
+            var parent = $(this).parent('.input-validation');
+            parent.removeClass('error-control').addClass('success-control');
+            $("#submit_btn").show()
+            $("#lable_segmentation_id").show()
+            $("#segmentation_id").show()
+            $("#lable_external_net").show()
+            $("#external_net").show()
+        }
+    })
+</script>
+

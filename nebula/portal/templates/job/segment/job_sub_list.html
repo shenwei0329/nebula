@@ -1,0 +1,36 @@
+{% from 'layout/sublist_pagination.html' import render_sub_pagination with context %}
+{% macro render_sub_operatelog(pagination, endpoint) %}
+<div class="grid simple">
+    <div class="grid-title no-border">
+        <h4>操作日志</h4>
+        <div class="tools"> <a href="javascript:;" class="reload"></a></div>
+    </div>
+    <div class="grid-body no-border" style="overflow: hidden; display: block;">
+        <ul class="log">
+            {%- for job in pagination.items %}
+            <li>
+                <div class="{{ job.state | job_text }}">
+                    <i class="{{ job.state | job_fa }} m-r-10"></i>
+                    {{ job.state_desc | default('等待中', true) }}
+                    <span class="pull-right text-info">
+                        <i class="fa fa-user m-l-20"></i>&nbsp;&nbsp;{{ job.creator.username }}
+                    </span>
+                </div>
+                <div class="text-muted text-left detail-time inline" data-toggle="tooltip" data-placement="right" title="{{ job.created_at }}">
+                    <i class="fa fa-clock-o m-r-10"></i>
+                    <em class=" small-text">{{ job.created_at | timesince }}</em>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        <!--分页-->
+        {{ render_sub_pagination(pagination, endpoint) }}
+        <!--分页-->
+    </div>
+    <!--grid-body-->
+</div>
+{% endmacro %}
+
+{% if pagination %}
+    {{ render_sub_operatelog(pagination, 'portal.job_sub_list')  }}
+{% endif %}

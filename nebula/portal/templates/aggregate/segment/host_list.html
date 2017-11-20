@@ -1,0 +1,49 @@
+{% from 'layout/sublist_pagination.html' import render_sub_pagination with context %}
+<div class="grid simple">
+    <div class="grid-title no-border">
+      <h4>主机</h4>
+      <div class="tools"> <a href="javascript:;" class="reload"></a></div>
+    </div>
+    <div class="grid-body no-border" style="overflow: hidden; display: block;">
+
+<table class="table no-more-tables">
+    <thead>
+      <tr>
+        <th>名称</th>
+        <th>状态</th>
+        <th>管理IP</th>
+        <th>添加于</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for compute_node in pagination.items %}
+
+      <tr>
+        <td ><a href="{{ url_for('portal.host_detail', id=compute_node.id) }}">{{ compute_node.hostname }}</a></td>
+        <td>
+            {% if compute_node.status == 'adding'  %}
+            <span class=" text-success"><i class="fa typing_loader"></i> {{ compute_node.status}}</span>
+            {% elif compute_node.status == 'active' %}
+            <span class=" text-success"><i class="fa fa-check"></i> {{ compute_node.status}}</span>
+            {% elif compute_node.status == 'maintenance' %}
+            <span class=" text-info"><i class="fa fa-wrench"></i> {{ compute_node.status}}</span>
+            {% elif compute_node.status == 'error' %}
+            <span class=" text-error"><i class="fa fa-times"></i> {{ compute_node.status}}</span>
+            {% endif %}
+        </td>
+        <td >{{ compute_node.host_ip }}</td>
+        <td >{{ compute_node.created_at|timesince }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<!--分页-->
+{% if pagination.items %}
+    {{ render_sub_pagination(pagination, 'portal.aggregate_host_list') }}
+{% else %}
+    <p class=""><em>该列表中暂时没有数据。</em></p>
+{% endif %}
+<!--分页-->
+    </div>
+    <!--grid-body-->
+</div>

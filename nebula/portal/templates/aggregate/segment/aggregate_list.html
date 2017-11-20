@@ -1,0 +1,46 @@
+{% from 'layout/pagination.html' import render_pagination with context %}
+
+<table class="table table-bordered table-hover no-more-tables">
+    <thead>
+      <tr>
+        <th style="width:1%"> <!--<div class="checkbox check-default">
+            <input id="checkbox10" type="checkbox" value="1" class="checkall">
+            <label for="checkbox10"></label>
+          </div>-->
+        </th>
+        <th >名称</th>
+        <th>任务状态</th>
+        <th >可用域</th>
+        <th>主机数量</th>
+        <th >虚拟机数量</th>
+        <th>创建于</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- for aggregate in pagination.items %}
+      <tr  class="show-others">
+        <td class="v-align-middle"><div class="checkbox check-default">
+          <input id="checkbox{{ loop.index }}" type="checkbox" value="{{ aggregate.id }}">
+          <label for="checkbox{{ loop.index }}"></label>
+        </div></td>
+        <td class="text-info" title="{{ aggregate.name }}">{{ aggregate.name | truncate(12, True) }}</td>
+        <td name="task_status" class="{{ aggregate.job.state | job_state_class }}">
+          {{ aggregate.job.state | job_state_humanize }}
+        </td>
+        <td class="text-info">{{ aggregate.zone}}</td>
+        <td name="host_num">{{ aggregate.hosts|length }}</td>
+        <td>{{ aggregate.vm_count }}</td>
+        <td>{{ aggregate.created_at | timesince }}</td>
+      </tr>
+      {%- endfor %}
+
+    </tbody>
+    </table>
+    <!--分页-->
+    {% if pagination.items %}
+        {{ render_pagination(pagination, 'portal.aggregate_list', '') }}
+    {% else %}
+        <p class=""><em>该列表中暂时没有数据。</em></p>
+    {% endif %}
+    <!--分页-->
+

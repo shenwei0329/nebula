@@ -1,0 +1,47 @@
+<div id="{{ etl_href }}">
+
+    {% import 'bootstrap/wtf.html' as wtf %}
+
+    <ul class="nav nav-header">
+        <li style="float: left">{{ pagination.info }}</li>
+        <li>
+            <button type="button" class="small button"  style="float: right" onclick="ItemOnclick(0)" >
+                  <i class="icon-plus"></i>&nbsp;注册服务器&nbsp;
+            </button>
+        </li>
+    </ul>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <a class="list-group-item active">
+                <tr>
+                    <th width="12%">名称</th>
+                    <th width="20%">说明</th>
+                    <th width="26%">访问路径</th>
+                    <th width="10%">状态</th>
+                    <th width="180pix">提交日期</th>
+                    <th>操作</th>
+                </tr>
+            </a>
+            </thead>
+            <tbody>
+            {% for server in servers %}
+                <tr>
+                    <td>{{ server.name }}</td>
+                    <td>{{ server.desc }}</td>
+                    <td>{{ server.url }}</td>
+                    <td>{{ server.status }}</td>
+                    <td>{{ server.created_at }}</td>
+                    <td><button id='server_name' value={{ server.name }} type='button' class="small button" onclick="delete_confirm('{{ server.name }}')"><i class="icon-remove"  style="color: #f00000;"></i></button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <ul class="pagination">
+            {{ pagination.links }}
+        </ul>
+    </div>
+    {{ pagination.links }}
+</div>
+

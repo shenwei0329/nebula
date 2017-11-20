@@ -1,0 +1,152 @@
+<div class="modal fade" id="uploadLogo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">修改logo图片</h4>
+      </div>
+
+      <form class="form-horizontal" action="{{ url_for('portal.system_set_logo') }}?type={{ type }}" method="POST">
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right">
+                <span class="text-danger">*</span>选择上传图片：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8">
+                <button type="button" class="btn btn-success file-add-btn">
+                  <i class="glyphicon glyphicon-upload"></i>
+                  <span>添加图片</span>
+              </button>
+            </div>
+          </div>
+          <div class="form-group modal-footer text-left" id="uploadView" style="margin: 20px;display:none;">
+              <div id="template" class="file-row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <p class="text-muted" style="word-break:break-all;" data-dz-name></p>
+                    <strong class="error text-danger" data-dz-errormessage></strong>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                    <p class="size text-info" data-dz-size>11.5MiB</p>
+                </div>
+
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                  <button type="button" title="上传" class="btn btn-primary start">
+                  <i class="glyphicon glyphicon-upload"></i>
+                  </button>
+                  <button type="button" title="取消" data-dz-remove class="btn btn-warning cancel">
+                      <i class="glyphicon glyphicon-ban-circle"></i></button>
+                </div>
+                <div class="col-md-9 col-sm-9 col-xs-9">
+                    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                          <div class="progress-bar progress-bar-success" id="progress-suce" style="width:0%;" data-dz-uploadprogress> </div>
+                    </div>
+                </div>
+              </div>
+          </div>
+			<span><font color="red"><div id="image_upload_errorMsg_div" style="display: none;"></div></font></span>
+          <div class="form-group">
+            <input type="hidden"  id="upload_system_logo" value="{{ settings.system_logo|default('/static/img/logo.png',True) }}"  name="system_logo">
+            <input type="hidden"  id="upload_system_logo_mini" value="{{ settings.system_logo_mini|default('/static/img/logosmall.png',True) }}"  name="system_logo_mini">
+            <input type="hidden"  id="upload_system_logo_ico" value="{{ settings.system_logo_ico|default('/static/img/favicon.ico',True) }}"  name="system_logo_ico">
+          </div>
+
+        </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+            <button type="submit" id="img_submit" class="btn btn-primary" disabled>保 存</button>
+          </div>
+        </form>
+
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<script type="text/javascript">
+
+    var upload_type = "{{ type }}";
+    var previewNode = document.querySelector("#template");
+    previewNode.id = "";
+    var previewTemplate = previewNode.parentNode.innerHTML;
+    previewNode.parentNode.removeChild(previewNode);
+
+    var imgUpload = new Dropzone("div#uploadLogo", {
+        url: "{{ url_for('portal.system_logo_upload') }}",
+        maxFiles: 1,
+        maxFilesize: 2,
+        paramName: "file",
+        parallelUploads: 20,
+        previewTemplate: previewTemplate,
+        autoQueue: false,
+        previewsContainer: "#uploadView",
+        clickable: ".file-add-btn",
+        dictMaxFilesExceeded: "上传的个数已超出限制.",
+        dictCancelUploadConfirmation: "你是否真的想取消上传?"
+    });
+
+    imgUpload.on("addedfile", function(file) {
+        $("#uploadView").show();
+        $(".file-add-btn").attr("disabled", true);
+        file.previewElement.querySelector(".start").onclick = function() {
+            imgUpload.enqueueFile(file);
+        };
+    });
+
+    imgUpload.on("totaluploadprogress", function(progress) {
+        document.querySelector(".progress-bar").style.width = progress + "%";
+        $("#progress-suce").text(progress + "%");
+    });
+
+    imgUpload.on("sending", function(file) {
+        file.previewElement.querySelector(".start").setAttribute("disabled", "disabled");
+    });
+
+    imgUpload.on("removedfile", function(file) {
+        $("#uploadView").hide();
+        $("#img_submit").attr("disabled", true);
+        $(".file-add-btn").attr("disabled", false);
+    });
+
+    imgUpload.on("success", function(file, response) {
+        var ret = eval(response);
+        if (ret["code"] == 0){
+        	$("#image_upload_errorMsg_div").hide();
+
+            var file_name = Dropzone.createElement("<input type='hidden' name='file_name' value='"+ret["data"]["file_name"]+"' />");
+            var size = Dropzone.createElement("<input type='hidden' name='size' value='"+ret["data"]["size"]+"' />");
+            file.previewElement.appendChild(file_name);
+            file.previewElement.appendChild(size);
+
+            if (upload_type == "default"){
+                $("#upload_system_logo").val(ret["data"]["file_name"]);
+            }else if(upload_type == "mini"){
+                $("#upload_system_logo_mini").val(ret["data"]["file_name"]);
+            }else if(upload_type == "ico"){
+                $("#upload_system_logo_ico").val(ret["data"]["file_name"]);
+            }
+            //上传成功可以提交数据
+            $("#img_submit").attr("disabled", false);
+        } else {
+        	$("#image_upload_errorMsg_div").text(response.msg);
+        	$("#image_upload_errorMsg_div").show();
+        	//showErrorMessage(response.msg);
+
+        }
+
+    });
+
+
+    /**
+     *镜像附件删除按钮点击事件
+    */
+    function removeUploadFile(){
+      	$("#image_upload_errorMsg_div").text("");//重置错误提示信息内容
+      	$("#image_upload_errorMsg_div").hide();	//隐藏错误信息div
+    }
+
+    imgUpload.on("error", function(file, response) {
+    });
+
+
+</script>

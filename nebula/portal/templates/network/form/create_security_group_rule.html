@@ -1,0 +1,106 @@
+<!--modal-->
+<div class="modal fade" id="newRule" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+     <div class="modal-content">
+       <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+         <h4 class="modal-title" id="myModalLabel">新建规则-<span class="text-success">
+             {{ security_group.name }}</span></h4>
+       </div>
+       <div class="modal-body">
+       <div class="alert alert-info">安全规则用来保障用户只能访问授权的网络资源，过滤网络中的流量，是控制访问的一种网络技术手段</div>
+         <form id="form_traditional_validation"
+               action="{{ url_for('portal.security_group_rule_create') }}"
+               class="form-horizontal" method="POST">
+           <input type="hidden" name="id">
+           <input type="hidden" name="security_group_id" value="{{ security_group.id }}">
+           <div class="row">
+             <div class="col-sm-10 p-t-10 ">
+               <div class="form-group">
+                 <label for="" class="col-sm-4 control-label"><span class="text-danger">*</span>规则名称</label>
+                 <div class="col-sm-8 input-validation right">
+          			{{ form.name(class="form-control") }}
+                 </div>
+               </div>
+               <div class="form-group">
+                 <label for="" class="col-sm-4 control-label"><span class="text-danger">*</span>协议</label>
+                 <div class="col-sm-8 input-validation right">
+                     {{ form.protocol(class="select2 form-control", id="formCluster1") }}
+                 </div>
+               </div>
+               <div class="form-group">
+                 <label for="" class="col-sm-4 control-label"><span class="text-danger asterisk">*</span>端口</label>
+                 <div class="col-sm-8 input-validation right">
+                   <div class="row">
+                     <div class="col-sm-5 input-validation right">
+                         {{ form.port_range_min(id="formName", class="form-control") }}
+                     </div>
+                     <span class=" pull-left p-t-10">-</span>
+                     <div class="col-sm-5 input-validation right">
+                         {{ form.port_range_max(id="formName", class="form-control") }}
+                     </div>
+                   </div>
+                 </div>
+               </div>
+               <div class="form-group">
+                 <label for="" class="col-sm-4 control-label"><span class="text-danger"></span>远端地址</label>
+                 <div class="col-sm-7">
+                    <div class="row">
+                      <div class="col-sm-8 input-validation right">
+                        {{ form.remote_ip_prefix(class="form-control") }}
+                      </div>
+                      <span class=" pull-left p-t-10">/</span>
+                      <div class="col-sm-3 input-validation right">
+                        {{ form.remote_ip_suffix(class="form-control",
+                           maxlength="2",
+                           style="width:50px; padding-right:5px !important") }}
+                      </div>
+                    </div>
+                  </div>
+               </div>
+
+             </div>
+             <div class="col-sm-3 text-center " style="margin-top:-15px; display:none">
+               <h5 class="">快速设置</h5>
+               <div class="btn-group-vertical">
+                 <button type="button" class="btn btn-white btn-small bg-blue">PING</button>
+                 <button type="button" class="btn btn-white btn-small bg-green">SSH</button>
+                 <button type="button" class="btn btn-white btn-small bg-blue">HTTP</button>
+                 <button type="button" class="btn btn-white btn-small bg-green">HTTPS</button>
+                 <button type="button" class="btn btn-white btn-small bg-blue">FTP</button>
+                 <button type="button" class="btn btn-white btn-small bg-green">GRE</button>
+                 <button type="button" class="btn btn-white btn-small bg-blue">PPTP</button>
+                 <button type="button" class="btn btn-white btn-small bg-green">ipip</button>
+               </div>
+             </div>
+           </div>
+           <div class="form-actions">
+             <div class="pull-right">
+               <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+               <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保存</button>
+             </div>
+           </div>
+         </form>
+       </div>
+     </div>
+   </div>
+</div>
+<!--modal-->
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+    var obj_select=$("#formCluster1");
+    var asterisk=$(".asterisk");
+    obj_select.change(function(){
+        var protol=$(this).children('option:selected').val();
+        if(protol=='ip' || protol=='icmp'){
+            asterisk.html('')
+        }else{
+            asterisk.html('*')
+        }
+    })
+})
+</script>
+{% endblock %}

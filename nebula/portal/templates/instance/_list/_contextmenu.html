@@ -1,0 +1,74 @@
+<!--右键菜单-->
+<div id="contextMenu" class="rightMenu">
+  <ul>
+    <li>
+      <a href="#" data-x-target="destroy"><i class="fa fa-trash-o"></i>&nbsp;销毁</a>
+    </li>
+    <li>
+      <a href="#" data-x-target="action:force-reboot"><i class="fa fa-forward"></i>&nbsp;强制重启</a>
+    </li>
+    <li>
+      <a href="#" data-x-target="action:pause-resume"><i class="fa fa-caret-square-o-right"></i>&nbsp;暂停恢复</a>
+    </li>
+    <li>
+      <a href="#" data-x-target="action:suspend-resume"><i class="fa fa-caret-square-o-up"></i>&nbsp;挂起恢复</a>
+    </li>
+    <li>
+      <a href="#" data-x-target="action:create-backup" name="#newBackUp"><i class="fa fa-copy"></i>&nbsp;新建备份</a>
+    </li>
+    <li>
+      <a href="#" data-x-target="modify"><i class="fa fa-pencil"></i>&nbsp;修改</a>
+    </li>
+    <li class="vm-list">
+      <i class="fa fa-hdd-o"></i>&nbsp;数据卷<i class="fa fa-caret-right pull-right vm-list-right"></i>
+      <ul class="vm-dropdown-menu">
+        <li>
+          <a href="#" data-x-target="action:attach-volume"></i>&nbsp;挂载数据卷</a>
+        </li>
+        <li>
+          <a href="#" data-x-target="action:detach-volume"></i>&nbsp;卸载数据卷</a>
+        </li>
+      </ul>
+    </li>
+    <li class="vm-list">
+      <i class="fa fa-sitemap"></i>&nbsp;网卡<i class="fa fa-caret-right pull-right vm-list-right"></i>
+      <ul class="vm-dropdown-menu">
+        <li>
+          <a href="#" data-x-target="action:attach-port" data-url="/instance/ports/{id}/attach/"></i>&nbsp;挂载网卡</a>
+        </li>
+        <li>
+          <a href="#" data-x-target="action:detach-port" data-url="/instance/ports/{id}/detach/"></i>&nbsp;卸载网卡</a>
+        </li>
+      </ul>
+    </li>
+    <li class="vm-list">
+      <i class="fa fa-bolt"></i>&nbsp;虚拟防火墙<i class="fa fa-caret-right pull-right vm-list-right"></i>
+      <ul class="vm-dropdown-menu">
+        <li>
+          <a href="#" data-x-target="action:attach-securitygroup" data-url="/instance/security_group/{id}/apply/" 
+          	data-rule="securityGroupApply"></i>&nbsp;应用虚拟防火墙</a>
+        </li>
+        <li>
+          <a href="#" data-x-target="action:detach-securitygroup" 
+          data-url="/instance/security_group/{id}/delete/"></i>&nbsp;卸载虚拟防火墙</a>
+        </li>
+      </ul>
+    </li>
+    <li class="vm-list">
+      <i class="fa fa-cog"></i>&nbsp;高级设置<i class="fa fa-caret-right pull-right vm-list-right"></i>
+      <ul class="vm-dropdown-menu">
+        <li>
+          <a href="#" data-x-target="action:change-iops"></i>&nbsp;设置系统盘IOPS</a>
+        </li>
+        <li>
+          <a href="#" data-x-target="action:change-admin-password">&nbsp;设置密码</a>
+        </li>
+
+        <li>
+          <a href="#" data-x-target="action:change-flavor"><i class="fa fa-cog"></i>&nbsp;更改配置</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<!--右键出现的菜单-->

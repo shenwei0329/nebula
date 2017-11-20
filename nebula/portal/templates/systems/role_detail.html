@@ -1,0 +1,106 @@
+{% extends "layout/base.html" %}
+{% block title %}角色详情{% endblock %}
+{% block style %}
+<link href="/static/plugins/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="/static/plugins/ios-switch/ios7-switch.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="/static/plugins/form-multiselect/css/multi-select.css" rel="stylesheet" type="text/css" media="screen"/>
+{% endblock %}
+
+
+{% block extend_js %}
+<script src="/static/plugins/bootstrap3-editable/js/bootstrap-editable.min.js" type="text/javascript"></script>
+<script src="/static/plugins/ios-switch/ios7-switch.js" type="text/javascript"></script>
+<script src="/static/plugins/form-multiselect/js/jquery.multi-select.min.js" type="text/javascript"></script>
+<script src="/static/js/systems/role_detail.js" type="text/javascript"></script>
+<script src="/static/plugins/jquery.quicksearch.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block container %}
+<div class="page-content">
+<div class="content">
+      <!--title-->
+      <div class="page-title">
+        <h3>角色详情</h3>
+      </div>
+      <!--title-->
+      <div class="row nouse-up">
+            <div class="col-md-4">
+        <div class="grid simple ">
+          <div class="grid-body no-border">
+
+             <h4>角色管理</h4>
+             
+				<form action="{{ url_for('portal.role_update', id=role.id)}}" method="POST">
+					<table class="table table-info">
+					  <tbody>
+					    <tr>
+					      <td width="30%">名称<i class="fa fa-pencil m-l-10"></i></td>
+					      <td class="editInput editable editable-click">{{ role.name }}</td>
+					      <td></td>
+					    </tr>
+					
+					    <tr>
+					      <td>是否启用</td>
+					      <td>
+					          <div class="slide-primary">
+					              <input type="checkbox" name="switch" value="{{ role.active | lower }}"
+					              	 class="ios" {%if role.active == True %}checked="checked"{% endif %} />
+					          </div>
+					      </td>
+					      <td></td>
+					    </tr>
+					  </tbody>
+					</table>
+					<input type="hidden" value="{{ role.id }}" name="role_id" />
+              		<input type="hidden" value="{{ role.name }}" name="name" id="form_role_name" />
+					<p class="m-t-10 clearfix">
+               			<button type="button" name="saverole" class="btn btn-primary btn-cons pull-right">保存</button>
+		      		</p>
+              </form>
+            </div>
+
+             <div class="clearfix"></div>
+          </div>
+
+        </div>
+         <!--col-md-12-->
+          <div class="col-md-8">
+        <div class="grid simple ">
+          <div class="grid-body no-border">
+            <h4 class="p-t-10">权限</h4>
+              <form action="{{ url_for('portal.role_update_permissions', id=role.id)}}" method="POST">
+              <input type="hidden" value="{{ role.id}}" name="role_id"/>
+              <select multiple="multiple" id="multi-select1" style="position: absolute; left: -9999px;" name="permissions">
+                {% for item in permissions %}
+                <option value="{{ item.id }}" {% if item.selected == True %}selected="selected"{% endif %}> {{ item.name | translate }}</option>
+                {% endfor %}
+              </select>
+              <p class="m-t-10">
+                <button type="button" name="savepermission" class="btn btn-primary btn-cons pull-right">保存</button>
+			  </p>
+              </form>
+              <br>
+              <h4 class="p-t-10">用户</h4>
+              <form action="{{ url_for('portal.role_update_users', id=role.id)}}" method="POST">
+              <input type="hidden" value="{{ role.id }}" name="role_id" />
+              <select multiple="multiple" id="multi-select2" style="position: absolute; left: -9999px;" name="users">
+                {% for item in users %}
+                <option value="{{ item.id }}" {% if item.selected == True %}selected="selected"{% endif %}> {{ item.username }}</option>
+                {% endfor %}
+              </select>
+              <p class="clearfix p-t-10">
+                <button type="button" name="saveuser" class="btn btn-primary btn-cons pull-right">保存</button>
+              </p>
+              </form>
+            </div>
+
+             <div class="clearfix"></div>
+          </div>
+
+        </div>
+         <!--col-md-12-->
+      </div>
+      <!--row-->
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+<!-- Modal -->
+<div class="modal fade" id="myModal-update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">修改虚拟防火墙-<span class="text-success">{{ security_group.name }}</span></h4>
+      </div>
+      <div class="modal-body">
+        <form class=" form-horizontal" action="{{ url_for('portal.security_group_update',
+        id=security_group.id) }}" method="POST">
+        <input type="hidden" name="id">
+          <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right">名 称：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8">
+              <input type="text" class="form-control" name="name" value="{{ security_group.name }}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-sm-3 col-xs-3 control-label text-right">描 述：</label>
+            <div class="col-md-8 col-sm-8 col-xs-8">
+              <input type="text" class="form-control" name="description"
+                     value="{{ security_group.description }}">
+            </div>
+          </div>
+          <div class="form-actions">
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+                <button type="submit" class="btn btn-primary">保 存</button>
+              </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.modal -->

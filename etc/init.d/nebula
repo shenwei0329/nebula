@@ -1,0 +1,83 @@
+#!/bin/bash
+#
+# init script for the Nebula.
+#
+
+### BEGIN INIT INFO
+# Provides: cloudera-scm-agent
+# Required-Start: $local_fs $network $syslog
+# Should-Start:
+# Required-Stop:
+# Default-Start: 3 4 5
+# Default-Stop: 0 1 2 6
+# Short-Description: Cloudera SCM Agent
+# Description: Cloudera SCM Agent
+### END INIT INFO
+
+start() {
+
+  echo -n $"Starting $prog: "
+
+  /usr/local/bin/python2.7 /root/nebula/run_test_server.py 2>&1 </dev/null &
+  agent_pid=$!
+  echo $agent_pid > /tmp/nebula.pid
+  RETVAL='OK'
+  echo
+  return $RETVAL
+}
+
+local_killproc() {
+  local local_pidfile="$1"
+  local pid=`cat $local_pidfile`
+
+  #/bin/kill -9 $pid
+  /usr/bin/killall /usr/local/bin/python
+
+  return 0
+}
+
+local_stop() {
+
+  echo -n "Stopping $local_prog: "
+
+  local_killproc /tmp/nebula.pid
+  RETVAL=$?
+  return $RETVAL
+}
+
+# Stop the given process and remove the pidfile if the process has been stopped
+# Return 0 if operation succeeds, 1 otherwise.
+stop() {
+  local_stop $prog $binary $pidfile
+  if [ $? = 0 ]; then
+    rm -f ${pidfile}
+    return 0
+  else
+    return 1
+  fi
+}
+
+restart() {
+  stop
+  if [ $? != 0 ]; then
+    return 1
+  fi
+  start
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  *)
+    echo $"Usage: $prog {start|stop|restart}"
+    RETVAL=3
+esac
+
+exit $RETVAL

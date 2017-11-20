@@ -1,0 +1,654 @@
+{% set label_class = "col-sm-3 control-label" %}
+{% set control_class = "form-control" %}
+
+<div class="modal fade" id="newVM" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width:900px;">
+<div class="modal-content">
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">新建虚拟机</h4>
+</div>
+<div class="modal-body">
+<!--row-->
+<form class="form-horizontal" id="createInstance" action="{{ url_for('portal.instance_create') }}" method="post">
+
+{% if not has_enable_hosts %}
+<div class="alert alert-error row">
+    <span>未发现可用主机.</span>
+</div>
+{% endif %}
+
+<div class="row newVM"  id="rootwizard">
+<div class="col-sm-2 no-margin no-padding">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#one" name="#one" data-toggle="tab">
+            <label class="label m-r-10">1</label>
+            选择镜像</a></li>
+        <li><a href="#two" name="#two" data-toggle="tab">
+            <label class="label m-r-10">2</label>
+            选择配置</a></li>
+        <li><a href="#three" name="#three" data-toggle="tab">
+            <label class="label m-r-10">3</label>
+            网络设置</a></li>
+        <li><a href="#four" name="#four" data-toggle="tab">
+            <label class="label m-r-10">4</label>
+            基本设置</a></li>
+    </ul>
+</div>
+<!--col-sm-3-->
+<div class="col-sm-7">
+<!-- Tab panes -->
+<div class="tab-content">
+<div class="tab-pane active" id="one">
+    <input type="hidden" class="imagevalue" name="imagevalue" /><!-- 默认选项默认值 -->
+    <h4>第一步 选择镜像</h4>
+    <div id="image_select_subPage" class="newVMContent"> <br>
+        <a class="label label-success" href="#" name="system">系统</a>
+        <a class="label" name="self" href="#">自有</a>
+        <div class="form-group" name="system" style="margin:15px 2px; overflow:auto; height:330px;">
+        	<table class="table no-more-tables">
+		      <thead>
+		        <tr>
+		          <th style="width:0.5%"></th>
+		          <th>镜像名称</th>
+		          <th>系统盘大小</th>
+		          <th>镜像格式</th>
+		        </tr>
+		      </thead>
+		      <tbody>
+		      	{%- for image in public_images %}
+		      	<tr>
+		      		<td class="radio radio-primary" >
+	                    <input id="image-{{ image.id }}" type="radio" name="image_uuid_radio" value="{{ image.image_uuid }}" 
+	                    	data-type="{{ image.architecture }}"{%- if loop.index == 1 %} checked{%- endif %}
+	                    	class="{{ image.disk_format }}" />
+	                    	<label for="image-{{ image.id }}" class="text-info"></label>
+                    </td>
+                    <td>
+                   	<label class="text-info  fa fa-{{ image.architecture |lower }}" ></label>&nbsp;
+                     {{ image.name }}
+                    </td>
+                    <td><span class="td-disk">{{image.min_disk}}</span>G </td>
+                    <td class="td-format">{{ image.disk_format }}</td>
+                </tr>
+            	{%- endfor %}
+		        
+		      </tbody>
+		    </table>
+        </div>
+ 		<input type="hidden"  name="image_uuid" value="0" />
+        <div class="form-group" name="self" style="display:none ;margin:15px 2px; overflow:auto; height:330px;">
+        <table class="table no-more-tables">
+		      <thead>
+		        <tr>
+		          <th style="width:0.5%"></th>
+		          <th>镜像名称</th>
+		          <th>系统盘大小</th>
+		          <th>镜像格式</th>
+		        </tr>
+		      </thead>
+		      <tbody>
+            {%- for image in oneself_image %}
+				<tr>
+		      		<td class="radio radio-primary" >
+	                    <input id="image-{{ image.id }}" type="radio" name="image_uuid_radio" value="{{ image.image_uuid }}" 
+	                    	data-type="{{ image.architecture }}"
+	                    	class="{{ image.disk_format }}" />
+	                    	<label for="image-{{ image.id }}" class="text-info"></label>
+                    </td>
+                    <td>
+                    <label class="text-info  fa fa-{{ image.architecture |lower }}" ></label>&nbsp;
+                     {{ image.name }}
+                    </td>
+                    <td><span class="td-disk">{{image.min_disk}}</span>G </td>
+                    <td class="td-format">{{image.disk_format}}</td>
+                </tr>
+             {%- endfor %}
+              </tbody>
+		    </table>
+        </div>
+        <!--form-group-->
+      	<div id="volumeDiv" class="form-group" >
+	     	<div class="alert alert-info alertMsg "><button class="close" data-dismiss="alert"></button>ISO镜像需指定系统卷，请选择</div>
+            <label for="" class="col-sm-3 control-label" style="padding-left: 0px;padding-right: 0;">
+            	<span class="text-danger">*</span>虚拟机系统卷：</label>
+            <div class="col-sm-9 input-validation right">
+              <select name="volume_uuid" id="volume_id" class="select2 form-control">
+              {% for volume in oneself_volumes %}
+                 <option value="{{volume.volume_uuid}}" data-volume="{{volume.size}}">{{volume.name}} ({{volume.size}}G)</option>
+              {% endfor %}
+              </select>
+            </div>
+     	</div>
+    </div>
+    
+    <!--newVMContent-->
+    <ul class=" wizard wizard-actions text-right">
+        <li > <button  type="button" class="previous_tab btn">&nbsp;&nbsp;上一步&nbsp;&nbsp;</button></li>
+        <li ><button type="button" class="btn btn-primary next_tab" >&nbsp;&nbsp;下一步&nbsp;&nbsp;</button></li>
+    </ul>
+</div>
+<div class="tab-pane" id="two">
+    <h4>第二步 选择配置</h4>
+    <div class="newVMContent"> <br/>
+        <div class="form-group">
+            <button type="button" class="btn btn-success btn-cons cpu-check{% if (quota_cores.limit - quota_cores.usages.total < 1) or (quota_ram.limit - quota_ram.usages.total < 1024) %} disabled {% endif %}" data-cpu="1" data-mem="1">1核1G</button>
+            <button type="button" class="btn btn-white btn-cons cpu-check{% if (quota_cores.limit - quota_cores.usages.total < 1) or (quota_ram.limit - quota_ram.usages.total < 2024) %} disabled {% endif %}" data-cpu="1" data-mem="2">1核2G</button>
+            <button type="button" class="btn btn-white btn-cons cpu-check{% if (quota_cores.limit - quota_cores.usages.total < 1) or (quota_ram.limit - quota_ram.usages.total < 4096) %} disabled {% endif %}" data-cpu="1" data-mem="4">1核4G</button>
+            <button type="button" class="btn btn-white btn-cons cpu-check{% if (quota_cores.limit - quota_cores.usages.total < 2) or (quota_ram.limit - quota_ram.usages.total < 2024) %} disabled {% endif %}" data-cpu="2" data-mem="2">2核2G</button>
+            <button type="button" class="btn btn-white btn-cons cpu-check{% if (quota_cores.limit - quota_cores.usages.total < 2) or (quota_ram.limit - quota_ram.usages.total < 4096) %} disabled {% endif %}" data-cpu="2" data-mem="4">2核4G</button>
+            <button type="button" class="btn btn-white btn-cons cpu-check{% if (quota_cores.limit - quota_cores.usages.total < 2) or (quota_ram.limit - quota_ram.usages.total < 8192) %} disabled {% endif %}" data-cpu="2" data-mem="8">2核8G</button>
+            <button type="button" class="btn btn-white btn-cons cpu-check{% if (quota_cores.limit - quota_cores.usages.total < 4) or (quota_ram.limit - quota_ram.usages.total < 4096) %} disabled {% endif %}" data-cpu="4" data-mem="4">4核4G</button>
+            <button type="button" class="btn btn-white btn-cons cpu-check{% if (quota_cores.limit - quota_cores.usages.total < 4) or (quota_ram.limit - quota_ram.usages.total < 8192) %} disabled {% endif %}" data-cpu="4" data-mem="8">4核8G</button>
+            <button type="button" class="btn btn-white btn-cons cpu-check{% if (quota_cores.limit - quota_cores.usages.total < 4) or (quota_ram.limit - quota_ram.usages.total < 16384) %} disabled {% endif %}" data-cpu="4" data-mem="16">4核16G</button>
+        </div>
+        <!--form-group-->
+
+        <div class="form-group">
+            <label for="" class="col-sm-2 control-label">CPU(核)</label>
+            <div class=" slider primary col-sm-4">
+                <input name="" type="text" class="slider-1 form-control" value=""  data-slider-value="1"
+                 data-slider-step="1" data-slider-max="{{ quota_cores.limit - quota_cores.usages.total }}" 
+                 data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="hide" />
+            </div>
+            <!--输入框-->
+            <input name="vcpus" type="text" class="form-control inline pull-left m-l-10" id="sliderValue-1" readonly placeholder="" value="1" 
+            	style="width:50px; padding-right: 3px !important;margin-left:35px;margin-right:5px;" max="{{ quota_cores.limit - quota_cores.usages.total }}" min="1" />
+            <!--输入框-->
+        </div>
+        <!--form-group-->
+        <div class="form-group">
+            <label for="" class="col-sm-2 control-label">内存(GB)</label>
+            <div class=" slider primary col-sm-4">
+                <input name="_ram" type="text" class="slider-2 form-control" value=""  data-slider-value="1" data-slider-step="1" 
+                	data-slider-max="{{ ((quota_ram.limit - quota_ram.usages.total)/1024)|int }}" data-slider-orientation="horizontal" 
+                	data-slider-selection="after" data-slider-tooltip="hide" />
+            </div>
+            <!--输入框-->
+            <input name="ram" type="text" class="form-control inline pull-left m-l-10" id="sliderValue-2" placeholder="" readonly value="1" 
+            	style="width:50px; padding-right: 3px !important;margin-left:35px;margin-right:5px;" max="{{ ((quota_ram.limit - quota_ram.usages.total)/1024)|int }}" min="1" />
+            <!--输入框-->
+        </div>
+        <!--form-group-->
+    </div>
+    <!--newVMContent-->
+    <ul class=" wizard wizard-actions text-right">
+        <li > <button  type="button" class="previous_tab btn">&nbsp;&nbsp;上一步&nbsp;&nbsp;</button></li>
+        <li ><button type="button" class="btn btn-primary next_tab" >&nbsp;&nbsp;下一步&nbsp;&nbsp;</button></li>
+    </ul>
+</div>
+<div class="tab-pane" id="three">
+    <h4>第三步 网络设置</h4>
+    <div class="newVMContent"> <br/>
+        <div class="form-group">
+            <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>子网</label>
+            <div class="col-sm-9">
+                <select name="{{ form.subnet_uuid.id }}" id="{{ form.subnet_uuid.id }}" class="select2 form-control subnet">
+					 <option value>请选择网络 </option>                
+                    {%- for network in networks %}
+                        <optgroup label="{{ network.name }}">
+                            {%- for subnet in network.get_subnets() %}
+                            <option value="{{ subnet.subnet_uuid }}" data-firstip="{{subnet.cidr | first_ip }}" data-netType="{{ network.network_type }}"
+                            	data-lastip="{{subnet.cidr | last_ip }}">
+                                {{ subnet.name }}（{{subnet.cidr}}）
+                            </option>
+                            {%- endfor %}
+                        </optgroup>
+                    {%- endfor %}
+                </select>
+                <label class="control-label"> <a href="{{ url_for('portal.private_network_list') }}"><i class="fa fa-plus m-r-10"></i>新建子网</a></label>
+            </div>
+        </div>
+        <!--form-group-->
+
+        <h5 class=" m-l-20">高级<a class="m-l-10 advanceSetting-2" href="#"><i class="fa fa-caret-right  "></i></a></h5>
+        <div class="advanceSettingInfo-2 dispaly-none">
+            <div class="form-group ">
+                <label for="" class="col-sm-3 control-label">IP地址</label>
+                <div class="col-sm-9">
+                    <input type="text" name="ip_address" id="ip_address" class="form-control">
+                </div>
+            </div>
+            <!--form-group-->
+            <div class="form-group ">
+                <label for="" class="col-sm-3 control-label">MAC地址</label>
+                <div class="col-sm-9">
+                    <input type="text" name="mac_address" id="mac_address" class="form-control">
+                </div>
+            </div>
+            <!--form-group-->
+            <div class="form-group">
+                <label for="" class="col-sm-3 control-label">虚拟防火墙</label>
+                <div class="col-sm-9">
+                    <select name="security_group_uuid" id="security_group_uuid" class="select2 form-control firewall-group">
+                        <option value="" selected="selected"></option>
+                        {%- for security_group in security_groups %}
+                            <option value="{{ security_group.security_group_uuid }}">{{ security_group.name }}</option>
+                        {%- endfor %}
+                    </select>
+                </div>
+            </div>
+            <!--form-group-->
+            <div class="form-group">
+                <label for="" class="col-sm-3 control-label">上行限速</label>
+                <div class="col-sm-6">
+                    <input type="text" name="bandwidth_tx" id="bandwidth_tx" class="form-control firewall-group" value="100000">
+                </div>
+                <span class="pull-left p-l-10 p-t-10">KB/s</span> </div>
+            <!--form-group-->
+            <div class="form-group">
+                <label for="" class="col-sm-3 control-label">下行限速</label>
+                <div class="col-sm-6">
+                    <input type="text" name="bandwidth_rx" id="bandwidth_rx" class="form-control firewall-group" value="100000">
+                </div>
+                <span class="pull-left p-l-10 p-t-10">KB/s</span>
+            </div>
+            <!--form-group-->
+        </div>
+        <!--advanceSettingInfo -->
+
+    </div>
+    <!--newVMContent-->
+    <ul class=" wizard wizard-actions text-right">
+        <li > <button  type="button" class="previous_tab btn">&nbsp;&nbsp;上一步&nbsp;&nbsp;</button></li>
+        <li ><button type="button" class="btn btn-primary next_tab" id="wizard_next">&nbsp;&nbsp;下一步&nbsp;&nbsp;</button></li>
+    </ul>
+</div>
+<div class="tab-pane" id="four">
+    <h4>第四步 基本配置</h4>
+    <div class="newVMContent"> <br/>
+        <div class="form-group">
+            <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>虚拟机名称</label>
+            <div class="col-sm-8 input-validation right">
+                <input type="text" name="display_name" id="display_name" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-sm-3 control-label">选择可用域</label>
+            <div class="col-sm-8">
+                <select name="zone" id="zone" class="select2 form-control"  >
+                    <option value="">请选择</option>
+                    {% for az in zones %}
+       					{% if az.zoneState['available'] !=false %}
+                    		{% if az.zoneName !='internal' %}
+                   				{% if az.zoneName in vmware_info  %}    
+                   					<option vmware value="{{ az.zoneName }}">{{ az.zoneName }}</option>
+                   				{% else %}
+                    				<option value="{{ az.zoneName }}">{{ az.zoneName }}</option>
+                    			{% endif %}
+                    		{% endif %}
+                    	{% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <span class=" text-info formNameInfo  inline" data-toggle="tooltip" data-placement="top" 
+            	title="用指定可用域创建虚拟机时，需要确认该可用域包含的计算节点支持所用镜像的虚拟化类型，否则将不能创建成功。">
+               	<span class="fa fa-question-circle m-t-10"></span>
+            </span> 
+                
+        </div>
+        <!--form-group-->
+        <!--
+        <div class="form-group">
+            <label for="" class="col-sm-4 control-label">数量</label>
+            <div class="col-sm-8 input-validation right">
+                <input type="text" name="" id="" class="form-control">
+            </div>
+        </div>
+        -->
+        <!--form-group-->
+        <div class="form-group">
+            <label for="" class="col-sm-3 control-label">用户名</label>
+            <div class="col-sm-8 input-validation right">
+                <input type="text" name="os_username" id="os_username" class="form-control" value="root" disabled>
+            </div>
+        </div>
+        <!--form-group-->
+        <!--
+        <div class="form-group">
+            <label for="" class="col-sm-4 control-label">密码</label>
+            <div class="col-sm-8 input-validation right">
+                <input type="text" name="os_password" id="os_password" class="form-control">
+            </div>
+        </div>
+        -->
+        <!--form-group-->
+        <div class="form-group">
+            <label for="" class="col-sm-3 control-label">描述</label>
+            <div class="col-sm-8 input-validation right">
+                <textarea name="display_description" id="display_description" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+        <!--form-group-->
+         <div class="form-group">
+            <label for="" class="col-sm-3 control-label">批量创建</label>
+            <div class="col-sm-2 input-validation right checkbox" style="padding:3px 16px">
+                <input type="checkbox" name="multi" id="cbox_multi" class="form-control" />
+                <label for="cbox_multi"></label>
+            </div>
+	            <span class=" text-info formNameInfo  inline" data-toggle="tooltip" data-placement="top" 
+	            	title="批量创建虚拟机时,ip、mac地址将由系统自动分配。">
+	               	<span class="fa fa-question-circle m-t-10"></span>
+	            </span> 
+        </div>
+        <!--form-group-->
+        <div class="form-group" style="display:none" id="instance-multi-div">
+            <label for="" class="col-sm-3 control-label">创建个数</label>
+            <div class="slider primary col-sm-4" style="margin:0px 8px">
+                <input id="mutli_slider" name="" type="text" class="slider-multi form-control" value="" 
+                	data-slider-value="1" 
+                	data-slider-step="1" 
+                	data-slider-min="1" 
+                	data-slider-max="{{ quota_instances.limit - quota_instances.usages.total }}" 
+                	data-slider-orientation="horizontal" 
+                	data-slider-selection="after" 
+                	data-slider-tooltip="hide" />
+            </div>
+            <!--输入框-->
+            <input name="instance_batches" type="text" class="form-control inline pull-left m-l-10" id="slider-multi-value" value="1" disabled
+            	style="width:50px; padding-right: 3px !important;margin-left:35px;margin-right:5px;" 
+            	max="{{ quota_instances.limit - quota_instances.usages.total }}" min="1"/>
+            <!--输入框-->
+         </div>
+    </div>
+    <!--newVMContent-->
+    <ul class=" wizard wizard-actions newVMPage">
+        <li> <button type="button" class="btn previous_tab">&nbsp;&nbsp;上一步&nbsp;&nbsp;</button></li>
+        <li>
+            <button class="btn btn-primary last_tab" type="submit"  {% if not has_enable_hosts %}disabled="disabled" {% endif %}>&nbsp;&nbsp;完成&nbsp;&nbsp;</button>
+        </li>
+    </ul>
+</div>
+</div>
+</div>
+<!--col-sm-3-->
+<div class="col-sm-3 newVMInfo">
+    <p class="text-info">可用配额</p>
+    <table class="table ">
+        <tbody>
+        <tr >
+            <td>CPU</td>
+            <td><span class="text-success m-r-10">{{ quota_cores.limit - quota_cores.usages.total }}</span>核</td>
+        </tr>
+        <tr>
+            <td>内存</td>
+            <td><span class="text-success m-r-10">{{ quota_ram.limit - quota_ram.usages.total }}</span>M</td>
+        </tr>
+        <tr>
+            <td>虚拟机</td>
+            <td><span class="text-success m-r-10">{{ quota_instances.limit - quota_instances.usages.total }}</span>个</td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="clearfix"></div>
+    <p class="text-info">配置信息</p>
+    <table class="table ">
+        <tbody>
+        <tr >
+            <td>操作系统</td>
+            <td class="text-success type">LINUX</td>
+        </tr>
+        <tr >
+            <td>CPU</td>
+            <td><span class="text-success m-r-10 cpu">1</span>核</td>
+        </tr>
+        <tr>
+            <td>内存</td>
+            <td><span class="text-success m-r-10 mem">1</span>G</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!--col-sm-3-->
+
+</div>
+<!--row-->
+</form>
+</div>
+</div>
+</div>
+</div>
+<script>
+    $(function(){
+        createTabEvent();
+        $(".cpu-check").click(function(){
+            $(".cpu-check").removeClass("btn-success");
+            $(".cpu-check").addClass("btn-white");
+            $(this).removeClass("btn-white");
+            $(this).addClass("btn-success");
+        });
+        $(".memory-check").click(function(){
+            $(".memory-check").removeClass("btn-success");
+            $(".memory-check").addClass("btn-white");
+            $(this).removeClass("btn-white");
+            $(this).addClass("btn-success");
+        });
+        var memcount=Math.floor({{ quota_ram.limit - quota_ram.usages.total }}/1024);
+       	var cpucount={{ quota_cores.limit - quota_cores.usages.total }};
+        var instances_count ={{ quota_instances.limit - quota_instances.usages.total }};
+       	if(memcount<=0||cpucount<=0||instances_count<=0){
+       		$(".last_tab").attr("disabled","disabled");
+       		var error_div = $('<div class="alert alert-error row"><span>cup核数、虚拟机个数或者内存为零，不能创建</span></div>');
+       		$("#createInstance").prepend(error_div);
+       	}
+       	
+       	// var hosts_count = '';
+       	// if(hosts_count<=0){
+       	//   	$(".last_tab").attr("disabled","disabled");
+       	//	var error_div = $('<div class="alert alert-error row"><span> 没有可用主机，无法创建 </span></div>');
+       	//	$("#createInstance").prepend(error_div);
+       	// }
+       	
+        $("input[name=_ram]").attr("data-slider-max",memcount);
+        $("#slider-2").attr("max",memcount);
+        //更改配置-虚拟机slider
+        $('.slider-1').slider().on("slide",function(e){
+            $("#sliderValue-1").val(e.value );
+            $(".table .cpu").html(e.value);
+            resetMultiPane() ;
+        });
+        $('.slider-2').slider().on("slide",function(e){
+            $("#sliderValue-2").val(e.value );
+            $(".table .mem").html(e.value);
+            resetMultiPane() ;
+        });
+        $('.slider-multi').slider().on("slide",function(e){
+            $("#slider-multi-value").val(e.value );
+        });
+        
+	    $("#slider-multi-value").on("blur",function(){
+		    $('.slider-1').slider('setValue', this.value);
+	    })
+        
+        $("#cbox_multi").on("click",function(){
+        	if(this.checked == true){
+        		$("#instance-multi-div").show();
+        		$("#slider-multi-value").attr("disabled",false);
+        		var maxIns = maxInstanceByQuota() ;
+        		$("#slider-multi-value").attr("max",maxIns );
+        	}else{
+        		resetMultiSlider();
+        	}
+        });
+        
+        function resetMultiSlider(){
+       		$("#instance-multi-div").hide();
+       		$("#slider-multi-value").val(1 );
+       		$('.slider-multi').slider('setValue', 1);
+       		$("#slider-multi-value").attr("disabled",true);
+        }
+        
+        function resetMultiPane(){
+        	 if($("#cbox_multi").attr("checked") === "checked"){
+             	$("#cbox_multi").attr("checked",false);
+             	resetMultiSlider();
+             }
+        }
+
+        //可搜索的下拉框
+        $(".select2").select2();
+        $(".advanceSetting-2").click(function(){
+            $(".advanceSettingInfo-2").fadeToggle();
+        });
+        
+        //问号提示
+        $('.formNameInfo').tooltip('toggle');
+        $('.formNameInfo').tooltip('hide');
+
+        $("a[name=system]").click(function(evt){
+            evt.preventDefault();
+            $(this).addClass("label-success");
+            $("a[name=self]").removeClass("label-success");
+            $("div[name=self]").hide();
+            $("div[name=system]").show();
+            $("div[name=system] input:checked").click();
+        });
+        $("a[name=self]").click(function(evt){
+            evt.preventDefault();
+            $(this).addClass("label-success");
+            $("a[name=system]").removeClass("label-success");
+            $("div[name=self]").show();
+            $("div[name=system]").hide();
+            $("div[name=self] input:checked").click();
+        });
+
+        $("input[name^=optionyes]").click(function(){
+            var val=$(this).attr("data-type");
+            $("input.imagevalue").val(val);
+            $(".table .type").html(val);
+        });
+
+        $("button.cpu-check").click(function(){
+            var cpu=$(this).attr("data-cpu");
+            var mem=$(this).attr("data-mem");
+            $('.slider-1').slider('setValue', cpu);
+            $("#sliderValue-1").val(cpu );
+            $('.slider-2').slider('setValue', mem);
+            $("#sliderValue-2").val(mem );
+            $(".table .cpu").html(cpu);
+            $(".table .mem").html(mem);
+            
+            resetMultiPane() ;
+        });
+
+        $("div[name=system] input:checked").click();
+        $("input[name=image_uuid]").val($("input[name=image_uuid_radio]:checked").val());
+        $(".radio label").click(function(){
+        	var id=$(this).attr("for");
+        	 $("input[name=image_uuid]").val($("#"+id).val());
+        });
+        
+        var $imgDiv = $("#image_select_subPage");
+        var $volumeDiv = $("#volumeDiv");
+       
+        //在点击镜像时，根据镜像类型进行动态展示镜像文件选择框。
+        $imgDiv.find("tr").on("click",function(e){
+            e.stopPropagation();
+            if( e.target.nodeName == "INPUT"){
+                return ;
+            }
+            var $this = $(this);
+            $this.find(".radio label").click();
+            $imgDiv.find("tr").removeClass('row_selected');
+            $this.addClass('row_selected');
+        });
+        $imgDiv.find(".radio label").on("click",function(e){
+        	e.stopPropagation();
+        	//var isIso = $("#"+$(this).attr("for")).attr("class").toLowerCase().indexOf("iso");
+        	var $this = $(this);
+        	var isIso = $this.closest("tr").find(".td-format").text().toLowerCase().indexOf("iso");
+        	var isVmdk = $this.closest("tr").find(".td-format").text().toLowerCase().indexOf("vmdk");
+        	var minDisk = parseInt( $this.closest("tr").find("span.td-disk").text() );
+       		var $currForm = $this.closest(".form-group[name]");
+        	if(isIso >= 0 ){
+        		disable_muliti();
+        		filterDisk(minDisk);
+        		$imgDiv.find(".form-group[name]").animate({ 
+        			margin:"15px 2px",
+        		    height: "200px",
+        		    scrollTop: $this.offset().top
+        		  }, 550 ,function(){
+	        		//$volumeDiv.slideDown("fast","linear"); 事实上动画方案会导致validator将它识别为必填项
+        			  $("#image_select_subPage").append( $volumeDiv );
+	        	}).css('overflow', 'auto');
+				$("#zone").find("option[vmware]").attr("disabled",true);
+        	}else{
+        		enable_muliti();
+        		$imgDiv.find(".form-group[name]").stop(true,true);
+        		$volumeDiv.detach();
+        		$imgDiv.find(".form-group[name]").animate({ 
+        			margin:"15px 2px",
+        		    height: "330px",
+        		    scrollTop: $currForm.scrollTop()
+        		  }, 550 ).css('overflow', 'auto');
+        		$("#zone").find("option[vmware]").attr("disabled",false);
+        	}
+
+        	if( isVmdk >= 0 ){
+        		$("#subnet_uuid").find("option[data-netType!=flat]:gt(0)").attr("disabled",true);
+        		$(".firewall-group").attr("disabled",true);
+        	}else{
+        		$("#subnet_uuid").find("option[data-netType]").removeAttr("disabled");
+        		$(".firewall-group").removeAttr("disabled");
+        	}
+        	$("#subnet_uuid").removeAttr("value");
+
+        });
+
+        //点开创建虚拟机页面时，初始化因为镜像类型设置引起的网络，数据卷类型菜单状态
+        $volumeDiv.detach();
+        if( $("#one").find(":radio[checked]").length > 0 &&
+        		$("#one").find(":radio[checked]").attr("class").toLowerCase().indexOf("iso") >= 0 ){
+        	
+        	$("#image_select_subPage").append( $volumeDiv );
+        	$("#image_select_subPage").find(".form-group[name]").css({"height":"200px"})
+        	$("#zone").find("option[vmware]").attr("disabled",true);
+        	disable_muliti();
+        }else if( $("#one").find(":radio[checked]").length > 0 &&
+        		$("#one").find(":radio[checked]").attr("class").toLowerCase().indexOf("vmdk") >= 0 ){
+        	
+        	$("#subnet_uuid").find("option[data-netType!=flat]:gt(0)").attr("disabled",true);
+        	$(".firewall-group").attr("disabled",true);
+        }
+        
+        function filterDisk(minDisk){
+        	$.each(	$volumeDiv.find("select option[data-volume]") ,function(){
+        		if( parseInt($(this).attr("data-volume") ) < minDisk ){
+        			$(this).attr("disabled",true);
+        		}else{
+        			$(this).attr("disabled",false);
+        		}
+        	});
+        }
+        
+        function maxInstanceByQuota(){
+        	var $infoDiv = $(".newVMInfo");
+        	var quotaCpu = $infoDiv.find("table:first tr:first td:eq(1) span").text();
+        	var quotaMem = $infoDiv.find("table:first tr:eq(1) td:eq(1) span").text() / 1024 ;
+        	var quotaIns = $infoDiv.find("table:first tr:eq(2) td:eq(1) span").text();
+
+        	var cpuCount = $infoDiv.find("table:eq(1) tr:eq(1) td:eq(1) span").text();
+        	var memCount = $infoDiv.find("table:eq(1) tr:eq(2) td:eq(1) span").text();
+        	
+        	var num1 = (quotaCpu / cpuCount) < (quotaMem / memCount ) ? (quotaCpu / cpuCount) : (quotaMem / memCount ) ;
+        	var nu = num1 > quotaIns ? quotaIns : num1 ;
+        	
+        	return Math.floor(nu);
+        }
+        
+        function disable_muliti(){
+        	$("#cbox_multi").closest(".form-group").hide();
+        	$("#cbox_multi").closest(".form-group").next().hide();
+        	$("#cbox_multi").attr("checked",false);
+        	$("#slider-multi-value").attr("disabled",true).val(1);
+        }
+        
+        function enable_muliti(){
+        	$("#cbox_multi").closest(".form-group").show();
+        	if($("#cbox_multi").attr("checked")){
+        		$("#cbox_multi").closest(".form-group").next().show();
+        	}
+        	$("#slider-multi-value").attr("disabled",false);
+        }
+    });
+</script>

@@ -1,0 +1,13 @@
+{% from 'layout/pagination.html' import render_pagination with context %}
+
+                  {% for alert in pagination.items %}
+                  <tr>
+                    <td class="text-info"><i class="fa fa-user m-r-10"></i>{{alert.name}}</td>
+                    <td class="text-info"><i class="fa fa-user m-r-10"></i>{{alert.prioritykey}}</td>
+                    <td class="text-info"><i class="fa fa-user m-r-10"></i>{{alert.ip}}</td>
+                    <td class="text-info"><i class="fa fa-user m-r-10"></i>{{alert.key2}}</td>
+                    <td class="text-info"><i class="fa fa-user m-r-10"></i>{{alert.value}}</td>
+                    <td class="text-info"><i class="fa fa-user m-r-10"></i>{{alert.descriptor}}</td>
+                    <td class="text-info"><i class="fa fa-user m-r-10"></i>{{alert.time}}</td>
+                  </tr>
+                  {% endfor %}

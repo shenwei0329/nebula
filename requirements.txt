@@ -1,0 +1,72 @@
+# SQLAlchemy migration tool
+alembic>=0.6.5
+# Python Build Reasonableness!
+pbr>=0.6,!=0.7,<1.0
+
+# coroutine
+#gevent>=1.0
+
+# Redis
+#redis>=2.10.0
+
+# HTTP
+httplib2>=0.8
+
+# Template engine
+Jinja2>=2.7.1,<2.8.0
+# Escape dangerous html tags
+MarkupSafe>=0.18
+# A WSGI library
+Werkzeug>=0.9.6
+# crypto related
+itsdangerous>=0.23
+
+# Micro webframework
+Flask>=0.10,<1.0
+Flask-WTF>=0.10.0
+Flask-Babel>=0.9
+Flask-DebugToolbar>=0.9.0
+
+# MySQL client, in pure python (NEED REVIEW, may buggy)
+PyMySQL>=0.6.1
+# Python ORM
+SQLAlchemy>=0.8.0,<0.10.0
+
+# Fast, simple object-to-object and broadcast signaling
+blinker>=1.3,<1.4
+
+# OpenStack related clients
+python-neutronclient>=2.3.0,<2.4.0
+python-novaclient>=2.17.0,<2.18.0
+python-glanceclient>=0.12.0,<0.13.0
+python-cinderclient>=1.0.0,<1.1.0
+python-ceilometerclient>=1.0.6
+python-keystoneclient>=0.11.2
+
+# Pythonic manipulation of IPv4, IPv6, CIDR, EUI and MAC network addresses
+netaddr>=0.7.0,<0.8.0
+
+# Pythonic datetime
+arrow>=0.4.2
+
+oslo.config>=1.2.0
+kombu>=3.0.15,<4.0
+taskflow>=0.3,<0.4
+celery>=3.0,<3.2
+flower>=0.7.1
+eventlet>=0.14.0
+six>=1.6.0
+futures>=2.1.0
+
+# Command line tools
+invoke>=0.7.0,<0.8.0
+click>=2.0,<3.0
+
+# Internationalization utilities
+Babel>=1.3
+
+# RPC and notifier support
+#oslo.messaging>=1.3.0
+
+# Generate fake data
+fake-factory

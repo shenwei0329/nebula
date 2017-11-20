@@ -1,0 +1,40 @@
+<!-- 卸载网卡Modal -->
+<div class="modal fade" id="uninstallNIC" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">卸载网卡 - {{instance.display_name}}</h4>
+      </div>
+      <div class="modal-body">
+        <!--form-group-->
+        <form id="form_traditional_validation" action="{{ url_for("portal.ports_detach_submit") }}" class="form-horizontal row" method="post">
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>选择卸载的网卡</label>
+            <div class="col-sm-7">
+              <select name="port_id" id="port_id" class="select2 form-control"  >
+                {% for port in ports %}
+                    <option value="{{port.id}}">{{port.fixed_ips[0]["ip_address"]}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <!--form-group-->
+
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>确 认</button>
+              <input type="hidden" name="instance_id" value="{{ instance.id }}" >
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--卸载网卡Modal-->
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

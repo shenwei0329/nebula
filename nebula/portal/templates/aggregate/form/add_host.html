@@ -1,0 +1,40 @@
+<!-- 集群-添加主机Modal -->
+<div class="modal fade" id="clusterAddHost" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">添加主机-<span class="text-success">{{ aggregate.name }}</span></h4>
+      </div>
+      <div class="modal-body">
+        <p class="p-b-10">该集群已添加主机&nbsp;<span class="text-success">{{ added_hosts_count }}</span>&nbsp;台</p>
+        <form id="form_traditional_validation" action="{{ url_for('portal.aggregate_add_host', id=aggregate.id) }}" class="form-horizontal" method="POST">
+          <input type="hidden" name="aggregate_id" value="{{ aggregate.id }}" />
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">请选择主机</label>
+            <div class="col-sm-7 input-validation right">
+              <select name="host_id" id="host_id" class="select2 form-control"  >
+                {%- for host in hosts %}
+                <option value="{{ host.id }}">{{ host.hostname }} - {{ host.host_ip }}</option>
+                {%- endfor %}
+              </select>
+            </div>
+          </div>
+          <!--form-group-->
+
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保 存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 集群-添加主机Modal -->
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

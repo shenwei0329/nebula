@@ -1,0 +1,30 @@
+from distutils.core import setup
+
+setup(
+    name='nebula-mini',
+    version='',
+    packages=['doc.source._themes.sphinx_rtd_theme', 'src.flask-uploads-master.tests',
+              'src.flask-uploads-master.flask_uploads', 'tasks', 'nebula', 'nebula.core', 'nebula.core.db',
+              'nebula.core.forms', 'nebula.core.views', 'nebula.core.common', 'nebula.core.common.openstack',
+              'nebula.core.models', 'nebula.core.mission', 'nebula.core.mission.flows',
+              'nebula.core.mission.flows.hosts', 'nebula.core.mission.flows.alarms', 'nebula.core.mission.flows.images',
+              'nebula.core.mission.flows.volumes', 'nebula.core.mission.flows.networks',
+              'nebula.core.mission.flows.aggregate', 'nebula.core.mission.flows.instances',
+              'nebula.core.mission.flows.instance_backup', 'nebula.core.mission.listeners', 'nebula.core.managers',
+              'nebula.core.subscribers', 'nebula.core.resource_monitor', 'nebula.utils', 'nebula.utils.tools',
+              'nebula.portal', 'nebula.portal.utils', 'nebula.portal.views', 'nebula.portal.views.portal',
+              'nebula.portal.views.portal.ae2', 'nebula.portal.views.portal.iaas', 'nebula.portal.views.portal.empty',
+              'nebula.portal.views.portal.users', 'nebula.portal.views.portal.hadoop',
+              'nebula.portal.views.portal.webapp', 'nebula.portal.views.portal.systems',
+              'nebula.portal.views.portal.etltools', 'nebula.portal.jinja_ext', 'nebula.portal.jinja_ext.filters',
+              'nebula.portal.jinja_ext.functions', 'nebula.portal.decorators', 'nebula.chameleon',
+              'nebula.chameleon.central', 'nebula.chameleon.central.pollsters', 'nebula.chameleon.notifications',
+              'nebula.chameleon.notifications.nova', 'nebula.chameleon.notifications.cinder',
+              'nebula.chameleon.notifications.glance', 'nebula.openstack', 'nebula.openstack.common',
+              'nebula.openstack.common.config', 'nebula.mission_control', 'nebula.mission_control.tasks'],
+    url='',
+    license='',
+    author='shenwei',
+    author_email='',
+    description=''
+)

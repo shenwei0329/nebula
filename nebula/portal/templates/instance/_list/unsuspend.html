@@ -1,0 +1,25 @@
+<!-- suspend modal -->
+<div class="modal fade" id="unsuspend-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <!--提示-->
+                <form action="/instance/instances/{id}/" method="POST">
+                    <input type="hidden" name="id">
+                    <input type="hidden" name="action" value="unsuspend">
+                    <div class="alert alert-block alert-info fade in">
+                        <h4 class="alert-heading">提示！</h4>
+                        <p>确定恢复&nbsp;"虚拟机"&nbsp;!</p>
+                        <div class="button-set text-right">
+                            <input type="hidden" name="id">
+                            <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">取消</button>
+                            <button class="btn btn-success btn-cons" type=submit >确定</button>
+                        </div>
+                    </div>
+                </form>
+                <!--提示-->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- supend modal end -->

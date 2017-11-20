@@ -1,0 +1,39 @@
+<!--
+  2015.7.11 by shenwei @Chengdu
+
+  用 iframe 方式 嵌入 CDH 5 管理页面
+
+  TODO
+    需要利用配置文件来定义 CDH 5 的URL
+
+-->
+{% extends 'layout/base.html' %}
+
+{% block title %}集群-{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block container %}
+
+    <!--div class="page-content"-->
+    <div class="page-content" xmlns="http://www.w3.org/1999/html">
+        <!-- 页面内容从此处开始-->
+        <div class="content">
+            <div id="huaxi">
+                <iframe src="http://huaxi:10080/bdcoreNew/" style="background-color=transparent" marginheight="0" marginwidth="0" frameborder="0" scrolling="auto" width=100% onLoad="this.height=document.body.scrollHeight" ></iframe>
+            </div>
+        </div>
+    </div>
+    <!--content-->
+    <!-- 页面内容到此结束-->
+<!--/div-->
+{% endblock %}
+
+{% block modal %}
+
+<!--右键出现的菜单开始-->
+
+<!--右键出现的菜单结束-->
+
+{% endblock %}

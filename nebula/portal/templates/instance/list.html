@@ -1,0 +1,46 @@
+{% extends "layout/base.html" %}
+
+{% block title %}虚拟机列表{% endblock %}
+
+{% block container %}
+    <div class="page-content">
+        <div class="content">
+            <div class="page-title">
+                <h3>虚拟机
+                    <span class="title-question"><i class="fa fa-question-circle text-info"></i></span>
+                </h3>
+
+                <p class="title-content">虚拟机是一台配置好了的服务器，它包括您期望的硬件配置、操作系统和网络配置。通常情况下，您的请求可以在10秒到60秒的时间之内 完成，所以您完全可以动态地、按需使用计算能力。</p>
+            </div>
+            <div id="instance-list" class="row">
+                {% include 'instance/_list/_list.html' %}
+            </div>
+            <!--others-info-->
+            <div class="row  others-info dispaly-none">
+                <div class="col-md-4  listleft" data-url="/sub/jobs/?resource_type=Instance&resource_id="></div>
+                <div class="col-md-8  listright" data-url="/volume/instance/data-volumes/?resource_id="></div>
+            </div>
+            <!--others-info-->
+        </div>
+    </div>
+    {#% include 'instance/_list/_contextmenu.html' %#}
+{% endblock %}
+
+{% block modal %}
+
+    {% include 'instance/_list/start.html' %}
+    {% include 'instance/_list/stop.html' %}
+    {% include 'instance/_list/pause.html' %}
+    {% include 'instance/_list/suspend.html' %}
+    {% include 'instance/_list/delete.html' %}
+    {% include 'instance/_list/unpause.html' %}
+    {% include 'instance/_list/reboot.html' %}
+    {% include 'instance/_list/unsuspend.html' %}
+
+
+{% endblock %}
+
+{% block extend_js %}
+    <script src="/static/js/list.js" type="text/javascript"></script>
+    <script src="/static/js/instance/instances.js" type="text/javascript"></script>
+{% endblock %}

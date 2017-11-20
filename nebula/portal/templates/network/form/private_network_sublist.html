@@ -1,0 +1,21 @@
+{% from 'network/segment/sub_private_network_list.html' import build_private_subnet_sublist with context %}
+<div class="grid simple">
+  <div class="grid-title no-border">
+    <h4>网络列表</h4>
+    <div class="tools"> <a href="javascript:;" class="reload"></a></div>
+  </div>
+  <div class="grid-body no-border" style="overflow: hidden; display: block;">
+  {% if pagination %}
+    {{ build_private_subnet_sublist(pagination) }}
+  {% endif %}
+  </div>
+</div>
+<script>
+	$(function(){
+		$("a[name=break]").click(function(evt){
+			evt.preventDefault();
+			var $this=$(this);
+			createDynamicDivAjax($this.attr("href"),{},0,{});
+		});
+	});
+</script>

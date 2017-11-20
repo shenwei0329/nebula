@@ -1,0 +1,35 @@
+<div class="modal fade" id="myModal-update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">修改虚拟机-<span class="text-success">{{ instance.display_name }}</span></h4>
+      </div>
+      <div class="modal-body">
+        <form id="form_traditional_validation" action="{{ url_for('portal.instance_modify', id=instance.id)}}" class="form-horizontal" method="POST">
+          <input type="hidden" name="action" value="modify">
+          <input type="hidden" name="resource_id" value="{{instance.id}}">
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">名称</label>
+            <div class="col-sm-7 input-validation right">
+              <input type="text" name="display_name" id="display_name" class="form-control" value="{{ instance.display_name }}">
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">描述</label>
+            <div class="col-sm-7 input-validation right">
+              <textarea class="form-control" rows="3" name="display_description">{{instance.display_description}}</textarea>
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

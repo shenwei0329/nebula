@@ -1,0 +1,81 @@
+{% extends "layout/base.html" %}
+
+{% block title %}我的日志{% endblock %}
+
+{% block container %}
+<div class="page-content">
+   <div class="content">
+      <!--title-->
+      <div class="page-title">
+        <h3>我的日志</h3>
+      </div>
+      <!--title-->
+      <div class="grid simple">
+        <div class="grid-body no-border ">
+        <br/>
+         <div class="btn-group m-r-10"> <a class="btn btn-white dropdown-toggle btn-demo-space" data-toggle="dropdown" href="#"> 资源类型 <span class="caret"></span> </a>
+                <ul class="dropdown-menu">
+                  <li><a href="#"><i class="fa fa-desktop"></i>&nbsp;虚拟机</a></li>
+                  <li><a href="#"><i class="fa fa-sitemap"></i>&nbsp;网络</a></li>
+                  <li><a href="#"><i class="fa fa-database"></i>&nbsp;数据卷</a></li>
+                </ul>
+              </div>
+              <div class="btn-group m-r-10"> <a class="btn btn-white dropdown-toggle btn-demo-space" data-toggle="dropdown" href="#"> 状态 <span class="caret"></span> </a>
+                <ul class="dropdown-menu">
+                  <li><a href="#"><i class="fa fa-check"></i>&nbsp;成功</a></li>
+                  <li><a href="#"><i class="fa fa-times"></i>&nbsp;失败</a></li>
+                  <li><a href="#"><i class="fa fa-ellipsis-h"></i>&nbsp;运行中</a></li>
+                </ul>
+              </div>
+              <!--data picker-->
+              <div class="btn-group m-r-40" >
+                <div class="input-append date" style="width:100px;">
+                  <input type="text" class="form-control" value="起始日期">
+                  <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> </div>
+              </div>
+              <!--data picker-->
+              <!--data picker-->
+              <div class="btn-group m-r-40">
+                <div class="input-append date" style="width:100px;">
+                  <input type="text" class="form-control" value="结束日期">
+                  <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> </div>
+              </div>
+              <!--data picker-->
+              <button type="button" class="btn btn-success btn-cons "><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</button>
+              {% from 'layout/pagination.html' import render_pagination with context %}
+              <table class="table table-bordered ">
+                <thead>
+                  <tr>
+                    <th>资源名称</th>
+                    <th>操作</th>
+                    <th>状态</th>
+                    <th>操作者</th>
+                    <th>操作时长</th>
+                    <th>操作时间</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in pagination.items %}
+                  <tr>
+                    <td><a href="#"><i class="fa fa-desktop m-r-10"></i>{{ item.resource_type }}</a></td>
+                    <td class="text-info">{{ item.state_desc }}</td>
+                    <td class="text-success"><i class="fa fa-check m-r-10"></i>{{ item.state }}</td>
+                    <td>{{ item.creator.username }}</td>
+                    <td>5秒</td>
+                    <td>{{ item.created_at }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              {% if pagination.items %}
+              {{ render_pagination(pagination, 'portal.user_logs', '') }}
+              {% else %}
+              <p class=""><em>该列表中暂时没有数据。</em></p>
+              {% endif %}
+         </div>
+        <!--grid-->
+      </div>
+      <!--grid-body -->
+    </div>
+</div>
+{% endblock %}

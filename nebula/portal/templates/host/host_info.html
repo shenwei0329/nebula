@@ -1,0 +1,410 @@
+{% from 'layout/operate_log.html' import render_operatelog %}
+{% extends 'layout/base.html' %}
+{% block title %}主机详情-{% endblock %}
+{% block style %}
+<!-- BEGIN PLUGIN CSS -->
+<link rel="stylesheet" href="/static/plugins/jquery-morris-chart/css/morris.css" type="text/css" media="screen">
+{% endblock %}
+
+{% block container %}
+
+  <!-- BEGIN PAGE CONTAINER-->
+  <div class="page-content" >
+    <!-- 页面内容从此处开始-->
+    <div class="content">
+      <div class="page-title" >
+        <!--面包屑-->
+        <ul class="breadcrumb " >
+          <li>
+            <p>您在这儿</p>
+          </li>
+          <li><a href="{{ url_for('portal.host_list') }}" class="">主机</a></li>
+          <li><a href="#" class="active text-success" style="font-size:18px">主机详情</a></li>
+        </ul>
+
+      </div>
+      <!--基本信息-->
+      <div class="row">
+        <div class="col-md-4" id="basic-info">
+          <div class="grid simple">
+            <div class="grid-title no-border">
+              <h4>基本信息</h4>
+              <div class="tools"> <a href="#grid-config" class="dropdown-toggle config" data-toggle="dropdown"></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#" name="#updateHost"
+                         data-rule="updateHostRule"
+                         data-url="{{ url_for('portal.host_update_form', id=host.id) }}">
+                      <i class="fa fa-pencil"></i>&nbsp;&nbsp;修改</a></li>
+                </ul>
+              </div>
+            </div>
+            <!--grid-title-->
+            <div class="grid-body no-border">
+              <table class="table table-info">
+                <tbody>
+                  <tr>
+                    <td>ID</td>
+                    <td>{{ host.id }}</td>
+                  </tr>
+                  <tr>
+                    <td width="33%">名称</td>
+                    <td class="text-info">{{ host.hostname}}</td>
+                  </tr>
+                  <tr>
+                    <td title="操作系统账户:如（root）">系统用户</td>
+                    <td class="text-info">{{ host.os_user}}</td>
+                  </tr>
+                  <tr>
+                    <td title="操作系统账户密码">登录密码</td>
+                    <td class="text-info">{{ host.os_user_pwd}} </td>
+                  </tr>
+                  <tr>
+                      <td>状态</td>
+                      <td>
+                        {% if host.status == 'adding'  %}
+                        <span class=" text-success"><i class="fa typing_loader"></i> {{ host.status}}</span>
+                        {% elif host.status == 'active' %}
+                        <span class=" text-success"><i class="fa fa-check"></i> {{ host.status}}</span>
+                        {% elif host.status == 'maintenance' %}
+                        <span class=" text-info"><i class="fa fa-wrench"></i> {{ host.status}}</span>
+                        {% elif host.status == 'error' %}
+                        <span class=" text-error"><i class="fa fa-times"></i> {{ host.status}}</span>
+                        {% endif %}
+                      </td>
+                  </tr>
+                  <tr>
+                    <td>管理IP</td>
+                    <td class="text-info">{{ host.host_ip}}</td>
+                  </tr>
+                  <tr>
+                    <td>所属集群</td>
+                    <td class="text-info">{{ host.aggregate.name}}</td>
+                  </tr>
+                  <tr>
+                    <td>创建时间</td>
+                    <td class="text-info">{{ host.created_at | datetime }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!--grid-body-->
+            <div class="grid-title no-border">
+              <h4>配置信息</h4>
+            </div>
+            <!--grid-title-->
+            <div class="grid-body no-border">
+              <table class="table table-info">
+                <tbody>
+                  <tr>
+                    <td>CPU厂商/型号</td>
+                    <td class="text-info">{{ host.cpu_info.vendor}}</td>
+                  </tr>
+                  <tr>
+                    <td>CPU核数</td>
+                    <td class="text-info">{{ host.cpu_info['cores']}}核</td>
+                  </tr>
+                  <tr>
+                    <td>内存</td>
+                    <td class="text-info">{{ host.memory_mb}} MB</td>
+                  </tr>
+                  <tr>
+                    <td>硬盘</td>
+                    <td class="text-info">{{ host.local_gb}} GB</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!--grid-body-->
+            <div class="grid-title no-border">
+              <h4>统计信息</h4>
+            </div>
+            <!--grid-title-->
+            <div class="grid-body no-border">
+              <!--统计图-->
+              <div class="row">
+                <div class="mini-chart-wrapper col-md-4" style="width:auto">
+                  <div class="chart-details-wrapper ">
+                    <div class="chartname"> 运行虚拟机 </div>
+                    <div class="chart-value text-success large-text bold"><i class="fa fa-check"></i> {{ host.servers_statistic["run_server"] }} </div>
+                  </div>
+                </div>
+                <!--mini-chart-wrapper-->
+                <div class="mini-chart-wrapper col-md-4"  style="width:auto">
+                  <div class="chart-details-wrapper">
+                    <div class="chartname"> 停止虚拟机 </div>
+                    <div class="chart-value text-info large-text bold"><i class="fa fa-pause"></i> {{ host.servers_statistic["stop_server"] }}</div>
+                  </div>
+                </div>
+                <!--mini-chart-wrapper-->
+                <div class="mini-chart-wrapper col-md-4"  style="width:auto">
+                  <div class="chart-details-wrapper">
+                    <div class="chartname"> 异常虚拟机 </div>
+                    <div class="chart-value text-error large-text bold"><i class="fa fa-times"></i> {{ host.servers_statistic["error_server"] }} </div>
+                  </div>
+                </div>
+                <!--mini-chart-wrapper-->
+                <div class="mini-chart-wrapper col-md-4" style="width:auto">
+                  <div class="chart-details-wrapper ">
+                    <div class="chartname"> 其它虚拟机 </div>
+                    <div class="chart-value text-success large-text bold"><i class="fa"></i> {{ host.servers_statistic["other_server"] }} </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <!--grid-body-->
+            <div class="others-info">
+              <div class="listleft" data-url="/sub/jobs/?resource_type=ComputeNode&resource_id={{ host.id }}"></div>
+            </div>
+          </div>
+          <!--grid-->
+        </div>
+        <!--col-md-4-->
+        <div class="col-md-8">
+          <div class="grid simple">
+            <div class="grid-title no-border">
+              <h4>实时数据</h4>
+              <div class="tools"> <a href="javascript:;" class="reload"></a> <a class="fullscreen"><i class="fa fa-expand fullscreen-on"></i></a><a class="fullscreen" style="display:none;"><i class="fa fa-compress fullscreen-off"></i></a></div>
+            </div>
+            <!--grid-title-->
+            <div class="grid-body no-border">
+              <div class="row ">
+                <div class="col-md-4  p-b-20 text-center">
+                  <h6>CPU使用率</h6>
+                  <div id="g1"></div>
+                </div>
+                <!--col-md-6-->
+                <div class="col-md-4  p-b-20 text-center">
+                  <h6>内存使用率</h6>
+                  <div id="g2"></div>
+                </div>
+                <!--col-md-6-->
+                <div class="col-md-4  p-b-20 text-center">
+                  <h6>磁盘使用率</h6>
+                  <div id="g3"></div>
+                </div>
+                <!--col-md-6-->
+                 <div class="col-md-6 m-b-20">
+                    <h4>磁盘读速率
+                     <div class="m-l-30 text-success bold m-r-20 inline"  >
+                        <span id="r-disk_read_bytes_rate">0</span>
+                     </div>
+                     <span class="text-muted font-size-12">B/s</span>
+                    </h4>
+                 </div>
+                <!--col-md-6-->
+                  <div class="col-md-6 m-b-20">
+                     <h4>磁盘写速率
+                     <div class="m-l-30 text-success bold m-r-20 inline"  >
+                        <span id="r-disk_write_bytes_rate">0</span>
+                     </div>
+                     <span class="text-muted font-size-12">B/s</span>
+                    </h4>
+                  </div>
+                <!--col-md-6-->
+                  <div class="col-md-6 m-b-40">
+                     <h4>网卡上速率
+                     <div class="m-l-30 text-success bold m-r-20 inline"  >
+                        <span id="r-network_outgoing_bytes_rate">0</span>
+                     </div>
+                     <span class="text-muted font-size-12">B/s</span>
+                    </h4>
+                  </div>
+                <!--col-md-6-->
+                  <div class="col-md-6 m-b-40">
+                     <h4>网卡下速率
+                     <div class="m-l-30 text-success bold m-r-20 inline"  >
+                        <span id="r-network_incoming_bytes_rate">0</span>
+                     </div>
+                     <span class="text-muted font-size-12">B/s</span>
+                    </h4>
+                  </div>
+
+                <!--col-md-12-->
+                <div class="col-md-12">
+                  <h4 id="m_cpu" name="m_cpu">CPU使用率</h4>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="0" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="0" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="0" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="0" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-0"> </div>
+                </div>
+                <!--col-md-12-->
+                <div class="col-md-12">
+                  <h4 id="m_mem" name="m_mem">内存使用率</h4>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="1" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="1" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="1" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="1" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-1"> </div>
+                </div>
+                <!--col-md-12-->
+                <div class="col-md-12">
+                  <h4 id="m_r_disk" name="m_disk">磁盘读速率</h4>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="2" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="2" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="2" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="2" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-2"> </div>
+                </div>
+                <!--col-md-12-->
+                <div class="col-md-12">
+                <h4 id="m_w_disk" name="m_disk">磁盘写速率</h4>
+                  <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="3" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="3" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="3" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="3" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-3"> </div>
+                </div>
+                <!--col-md-12-->
+                <div class="col-md-12">
+                  <h4 id = "nics-omom"  name="nics-mom">网卡上行流量</h4>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="4" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="4" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="4" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="4" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-4"> </div>
+                </div>
+                <!--col-md-12-->
+                <div class="col-md-12">
+                  <h4 id = "nics-mom"  name="nics-mom">网卡下行流量</h4>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary btn-sm" meter="5" pre_num="1">最近10分钟</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="5" pre_num="2">最近1小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="5" pre_num="3">最近6小时</button>
+                      <button type="button" class="btn btn-default btn-sm" meter="5" pre_num="4">最近一天</button>
+                    </div></br>
+                  　<div id="line-5"> </div>
+                </div>
+                <!--col-md-12-->
+              </div>
+              <!--row-->
+            </div>
+            <!--grid-body-->
+
+          </div>
+          <!--grid-->
+        </div>
+        <!--col-md-8-->
+
+      </div>
+      <!--row-->
+      <!--基本信息-->
+
+    </div>
+    <!--content-->
+    <!-- 页面内容到此结束-->
+  </div>
+
+{% endblock %}
+
+
+{% block extend_js %}
+<!-- BEGIN PAGE LEVEL JS -->
+<script src="/static/plugins/jquery-sparkline/jquery-sparkline.js"></script>
+<script src="/static/js/info.js" type="text/javascript"></script>
+<script src="/static/js/detail.js" type="text/javascript"></script>
+
+<script src="/static/plugins/raphael-min.js" type="text/javascript"></script>
+<script src="/static/plugins/jquery-morris-chart/js/morris.min.js"></script>
+<script src="/static/plugins/jquery-sparkline/jquery-sparkline.js"></script>
+<script src="/static/plugins/justgage/js/justgage.1.0.1.min.js"></script>
+<script src="/static/plugins/jquery-numberAnimate/jquery.animateNumber.min.js" type="text/javascript"></script>
+
+<script src="/static/js/host/host_info.js" type="text/javascript"></script>
+<script>
+    var g1, g2, g3;
+
+    var host_monitor = function(){
+          //cpu ,内存，磁盘实时使用情况
+        var comma_separator_number_step = $.animateNumber.numberStepFactories.separator(',')
+        $.get("{{ url_for('portal.host_monitor', id=host.id) }}",{},function(ret){
+            if(ret&&ret!=null){
+                g1.refresh(ret.monitor_data.cpu_useage);
+                g2.refresh(ret.monitor_data.mem_useage);
+                g3.refresh(ret.monitor_data.disk_useage);
+                $('#r-disk_read_bytes_rate').animateNumber({number: ret.monitor_data.disk_read_bytes_rate});
+                $('#r-disk_write_bytes_rate').animateNumber({number: ret.monitor_data.disk_write_bytes_rate});
+                $('#r-network_outgoing_bytes_rate').animateNumber({number: ret.monitor_data.network_outgoing_bytes_rate});
+                $('#r-network_incoming_bytes_rate').animateNumber({number: ret.monitor_data.network_incoming_bytes_rate});
+            }
+        },"json");
+    }
+    var m_obj = [];
+    var monitor  = function(type,pre){
+        var resource_id = "{{ host.id }}";
+
+        $.ajax({
+            url: "/host/"+resource_id+"/monitor-history/"+ type +"/"+pre,
+            success: function (outEvoVal) {
+                var p_data = parseData(outEvoVal)
+                if(p_data == undefined){
+                    $("#line-"+type).html("<span style='padding-left: 20px;height:60px'>暂无数据</span>");
+                    return
+                }
+                if(m_obj[type] != undefined){
+                    //存在就直接更新
+                    m_obj[type].setData(p_data);
+                    return
+                }
+                if (p_data.length >=1) {
+                    m_obj[type] = Morris.Area({
+                        element: 'line-' + type,
+                        data: p_data,
+                        behaveLikeLine: true,
+                        resize: true,
+                        height: 200,
+                        xkey: 'y',
+                        units: '('+ outEvoVal.monitor_data[0].unit+')',
+                        ykeys: ['b','a','c'],
+                        labels: ['MAX','AVG','MIN'],
+                        lineColors: ['rgba(0,144,217,0.51)', '#7fb054', '#cecece'],//, '#cecece'
+                        lineWidth: 3
+                    });
+                }else{
+                     $("#line-"+type).html("<span style='padding-left: 20px;height:60px'>暂无数据</span>");
+                }
+            },
+            error: function(e) {
+                 $("#line-"+type).html("<span style='padding-left: 20px;height:60px'>暂无数据</span>");
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $(".btn-sm").click(function(){
+
+            $(this).parent().children('.btn-sm').removeClass('btn-primary');
+            $(this).addClass("btn-primary");
+            var m = $(this).attr("meter");
+            var p = $(this).attr("pre_num");
+            monitor(m,p);
+        });
+        g1 = new JustGage({id: "g1",value: 0,min: 0,max: 100,title: "CPU",label: "%"});
+        g2 = new JustGage({id: "g2",value: 0,min: 0,max: 100,title: "内存",label: "%"});
+        g3 = new JustGage({id: "g3",value:0,min: 0,max: 100,title: "磁盘",label: "%"});
+        host_monitor();
+        monitor(0,1);
+        monitor(1,1);
+        monitor(2,1);
+        monitor(3,1);
+        monitor(4,1);
+        monitor(5,1);
+        /* 网卡实时监控图*/
+        setInterval(function() {
+            host_monitor();
+        },36000);
+    });
+
+</script>
+{% endblock %}

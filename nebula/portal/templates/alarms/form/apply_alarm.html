@@ -1,0 +1,51 @@
+<!-- 绑定监控策略Modal -->
+<div class="modal fade" id="bindMonitor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">绑定监控策略- <span class="text-success">{{ resource_name }}</span></h4>
+      </div>
+      <div class="modal-body">
+
+        {% if binding %}
+        <div class="alert alert-info"> {{ resource_name }} 已经绑定了监控规则了! </div>
+         <form action="/" class="form-horizontal row" method="">
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+            </div>
+          </div>
+        </form>
+        {% else %}
+        <div class="alert alert-info">请选择一个监控告警策略，点击保存即可生效</div>
+        <form action="/alarms/binding/" class="form-horizontal row" method="POST">
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">策略名称</label>
+            <div class="col-sm-7">
+         		  <select name="alarm_tmpl_id" class="select2 form-control" >
+                      <option value="">请选择监控策略</option>
+                      {% for alarm in alarms %}
+                        <option value="{{ alarm.id }}">{{ alarm.name }}</option>
+                      {% endfor %}
+                  </select>
+            </div>
+            <input type="hidden" name="instance_id" value="{{ resource }}">
+            <input type="hidden" name="type" value="{{ type }}">
+          </div>
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保 存</button>
+            </div>
+          </div>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<!--绑定监控策略Modal--> 
+

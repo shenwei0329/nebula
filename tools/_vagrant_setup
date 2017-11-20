@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+backup() {
+    cp $1{,$(date +%Y%m%d_%H%M%S)}
+}
+
+backup /etc/apt/sources.list
+
+cat > /etc/apt/sources.list <<EOF
+deb http://mirrors.aliyun.com/ubuntu/ precise main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ precise-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ precise-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ precise-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ precise-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ precise main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ precise-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ precise-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ precise-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ precise-backports main restricted universe multiverse
+
+deb http://ppa.launchpad.net/chris-lea/redis-server/ubuntu precise main
+deb-src http://ppa.launchpad.net/chris-lea/redis-server/ubuntu precise main
+EOF
+
+apt-get update
+
+# git
+apt-get install -y git
+
+# python dev
+apt-get install -y python-software-properties
+apt-get install -y build-essential libffi-dev libssl-dev
+apt-get install -y libbz2-dev
+apt-get install -y libxml2-dev libxslt-dev
+apt-get install -y libncurses5-dev
+apt-get install -y python-dev
+apt-get install -y python-pip
+apt-get install -y python-virtualenv
+# redis
+apt-get install -y redis-server
+
+# pip
+mkdir -p /home/vagrant/.pip
+cat > /home/vagrant/.pip/pip.conf <<EOF
+[global]
+index-url = http://mirrors.aliyun.com/pypi/simple
+EOF
+
+chown -R vagrant:vagrant /home/vagrant/.pip

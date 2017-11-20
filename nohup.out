@@ -1,0 +1,386 @@
+/root/nebula/nebula/portal/views/portal/webapp/webapp.py:115: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  filename = FileField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:53: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:54: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  desc = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:55: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  url = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:59: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  filename = FileField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:60: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:61: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  desc = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:65: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:66: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  mod = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:67: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  server = StringField(u'���������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:71: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:72: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  mod = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:73: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  server = StringField(u'���������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:74: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  schedule = StringField(u'���������������M��� H��� D��� m��� d���', validators=[Required()])
+ * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+ * Restarting with stat
+/root/nebula/nebula/portal/views/portal/webapp/webapp.py:115: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  filename = FileField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:53: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:54: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  desc = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:55: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  url = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:59: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  filename = FileField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:60: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:61: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  desc = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:65: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:66: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  mod = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:67: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  server = StringField(u'���������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:71: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:72: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  mod = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:73: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  server = StringField(u'���������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:74: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  schedule = StringField(u'���������������M��� H��� D��� m��� d���', validators=[Required()])
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /cdh/ HTTP/1.1" 200 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/bootstrap-responsive.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/style.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/img/logo.png HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /cdh/img/avatar.jpg HTTP/1.1" 404 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/style-responsive.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery-1.9.1.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery-ui-1.10.0.custom.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/modernizr.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.cookie.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.dataTables.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.flot.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.flot.stack.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.chosen.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.cleditor.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.elfinder.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.iphone.toggle.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.gritter.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.masonry.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.sparkline.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/retina.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery-migrate-1.0.0.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/bootstrap.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/excanvas.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.flot.resize.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.noty.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.uploadify-3.1.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.knob.modified.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/custom.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/fullcalendar.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.uniform.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.imagesloaded.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.ui.touch-punch.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.raty.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/jquery.flot.pie.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/js/counter.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/jquery-ui-1.8.21.custom.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/chosen.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/fullcalendar.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/jquery.cleditor.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/uniform.default.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/jquery.noty.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/noty_theme_default.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/elfinder.theme.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/elfinder.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/jquery.gritter.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/font-awesome.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/glyphicons.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/halflings.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/jquery.iphone.toggle.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/uploadify.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/font-awesome-ie7.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/css/style-forms.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:58] "GET /static/img/glyphicons_halflings-white.svg HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:47:59] "GET /static/font/fontawesome-webfont-62877.woff HTTP/1.1" 304 -
+/root/nebula/nebula/portal/views/portal/webapp/webapp.py:115: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  filename = FileField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:53: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:54: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  desc = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:55: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  url = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:59: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  filename = FileField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:60: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:61: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  desc = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:65: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:66: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  mod = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:67: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  server = StringField(u'���������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:71: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:72: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  mod = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:73: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  server = StringField(u'���������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:74: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  schedule = StringField(u'���������������M��� H��� D��� m��� d���', validators=[Required()])
+ * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+[1;37mpython run_test_server.py[0m
+
+#################################################
+
+    Welcome! 2015-09-23
+
+#################################################
+
+Traceback (most recent call last):
+  File "run_test_server.py", line 12, in <module>
+    app.run(host=CONF.portal.address, port=CONF.portal.port)
+  File "/usr/lib/python2.6/site-packages/flask/app.py", line 772, in run
+    run_simple(host, port, self, **options)
+  File "/usr/lib/python2.6/site-packages/werkzeug/serving.py", line 618, in run_simple
+    test_socket.bind((hostname, port))
+  File "<string>", line 1, in bind
+socket.error: [Errno 98] Address already in use
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /cdh/ HTTP/1.1" 200 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/style.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/bootstrap-responsive.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/style-responsive.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/img/logo.png HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /cdh/img/avatar.jpg HTTP/1.1" 404 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/js/jquery-1.9.1.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/js/jquery-migrate-1.0.0.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/js/jquery-ui-1.10.0.custom.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/jquery-ui-1.8.21.custom.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/chosen.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/jquery.cleditor.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/noty_theme_default.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/elfinder.theme.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/uploadify.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/font-awesome.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/glyphicons.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/style-forms.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/uniform.default.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/elfinder.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/jquery.gritter.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/halflings.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/jquery.noty.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/font-awesome-ie7.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/jquery.iphone.toggle.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/css/fullcalendar.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/js/modernizr.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:25] "GET /static/js/jquery.cookie.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.dataTables.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.flot.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.flot.stack.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.chosen.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.cleditor.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.elfinder.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.iphone.toggle.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.gritter.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.masonry.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.sparkline.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/retina.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.ui.touch-punch.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/fullcalendar.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.flot.pie.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.uniform.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.raty.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.imagesloaded.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/counter.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/bootstrap.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.flot.resize.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.uploadify-3.1.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/custom.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.noty.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/excanvas.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/js/jquery.knob.modified.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/img/glyphicons_halflings-white.svg HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 22:48:26] "GET /static/font/fontawesome-webfont-62877.woff HTTP/1.1" 304 -
+/root/nebula/nebula/portal/views/portal/webapp/webapp.py:115: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  filename = FileField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:53: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:54: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  desc = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:55: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  url = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:59: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  filename = FileField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:60: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:61: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  desc = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:65: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:66: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  mod = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:67: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  server = StringField(u'���������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:71: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:72: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  mod = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:73: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  server = StringField(u'���������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:74: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  schedule = StringField(u'���������������M��� H��� D��� m��� d���', validators=[Required()])
+ * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+[1;37mpython run_test_server.py[0m
+
+#################################################
+
+    Welcome! 2015-09-23
+
+#################################################
+
+Traceback (most recent call last):
+  File "run_test_server.py", line 12, in <module>
+    app.run(host=CONF.portal.address, port=CONF.portal.port)
+  File "/usr/lib/python2.6/site-packages/flask/app.py", line 772, in run
+    run_simple(host, port, self, **options)
+  File "/usr/lib/python2.6/site-packages/werkzeug/serving.py", line 618, in run_simple
+    test_socket.bind((hostname, port))
+  File "<string>", line 1, in bind
+socket.error: [Errno 98] Address already in use
+/root/nebula/nebula/portal/views/portal/webapp/webapp.py:115: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  filename = FileField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:53: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:54: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  desc = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:55: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  url = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:59: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  filename = FileField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:60: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:61: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  desc = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:65: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:66: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  mod = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:67: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  server = StringField(u'���������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:71: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:72: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  mod = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:73: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  server = StringField(u'���������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:74: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  schedule = StringField(u'���������������M��� H��� D��� m��� d���', validators=[Required()])
+ * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+ * Restarting with stat
+/root/nebula/nebula/portal/views/portal/webapp/webapp.py:115: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  filename = FileField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:53: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:54: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  desc = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:55: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  url = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:59: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  filename = FileField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:60: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:61: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  desc = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:65: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:66: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  mod = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:67: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  server = StringField(u'���������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:71: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  name = StringField(u'������������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:72: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  mod = StringField(u'������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:73: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  server = StringField(u'���������', validators=[Required()])
+/root/nebula/nebula/portal/views/portal/etltools/etltools.py:74: DeprecationWarning: Required is going away in WTForms 3.0, use DataRequired
+  schedule = StringField(u'���������������M��� H��� D��� m��� d���', validators=[Required()])
+192.168.1.108 - - [18/Oct/2015 23:05:59] "GET /cdh/ HTTP/1.1" 200 -
+192.168.1.108 - - [18/Oct/2015 23:05:59] "GET /cdh/img/avatar.jpg HTTP/1.1" 404 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /cdh/ HTTP/1.1" 200 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/bootstrap-responsive.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/style.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/style-responsive.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /cdh/img/avatar.jpg HTTP/1.1" 404 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/img/logo.png HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery-1.9.1.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery-ui-1.10.0.custom.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/modernizr.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery.cookie.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery-migrate-1.0.0.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/excanvas.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/jquery-ui-1.8.21.custom.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/fullcalendar.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/uniform.default.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/jquery.noty.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/elfinder.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/jquery.iphone.toggle.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/jquery.gritter.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/font-awesome-ie7.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/halflings.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/chosen.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/noty_theme_default.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/uploadify.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/glyphicons.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/jquery.cleditor.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/font-awesome.min.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/elfinder.theme.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/css/style-forms.css HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery.flot.stack.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery.cleditor.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery.chosen.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery.elfinder.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery.iphone.toggle.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery.gritter.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery.masonry.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery.sparkline.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/retina.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery.ui.touch-punch.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/fullcalendar.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery.flot.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:03] "GET /static/js/jquery.flot.resize.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/js/jquery.noty.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/js/jquery.uploadify-3.1.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/js/jquery.knob.modified.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/js/custom.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/js/jquery.dataTables.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/js/jquery.uniform.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/js/jquery.imagesloaded.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/js/bootstrap.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/js/jquery.raty.min.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/js/jquery.flot.pie.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/js/counter.js HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/img/glyphicons_halflings-white.svg HTTP/1.1" 304 -
+192.168.1.108 - - [18/Oct/2015 23:06:04] "GET /static/font/fontawesome-webfont-62877.woff HTTP/1.1" 304 -
+[1;37mpython run_test_server.py[0m
+
+#################################################
+
+    Welcome! 2015-09-23
+
+#################################################
+

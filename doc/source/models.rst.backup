@@ -1,0 +1,115 @@
+模型设计
+---------
+
+Permission(权限)
+~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.permission.Permission
+
+
+Role(角色)
+~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.role.Role
+
+
+User(用户)
+~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.user.User
+
+UserRole(用户角色)
+~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.user_role.UserRole
+
+
+RolePermission(权限角色)
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.role_permission.RolePermission
+
+
+ComputeNode(计算节点)
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.compute_nodes.ComputeNode
+
+
+Image(镜像)
+~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.image.Image
+
+
+Flavor(规格)
+~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.flavor.Flavor
+
+
+Instance(虚拟机)
+~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.instance.Instance
+
+Network(网络)
+~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.network.Network
+
+Subnet(子网)
+~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.subnet.Subnet
+
+Port(网卡)
+~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.port.Port
+
+Virtualrouter(虚拟路由器)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.virtualrouter.Virtualrouter
+
+VritualRouterNat(虚拟路由器网络映射)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.virtualrouter_nat.VirtualrouterNat
+
+VritualRouterNetwork(虚拟路由器网络绑定)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.virtualrouter_network.VirtualrouterNetwork
+
+VritualRouterNetwork(虚拟路由器公网IP绑定)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.virtualrouter_publicip.VirtualrouterPublicIP
+
+LbPool(虚拟负责均衡器)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.lb_pool.LbPool
+
+LbPoolStatistic(虚拟负责均衡统计信息)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.lb_pool_statistics.LbPoolStatistic
+
+LbMember(负责均衡后端成员)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.lb_member.LbMember
+
+LbVip(负责均衡虚拟IP)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.lb_vip.LbVip
+
+Volume(数据卷)
+~~~~~~~~~~~~~~~~
+
+.. autoclass:: nebula.core.models.Volume
+

@@ -1,0 +1,128 @@
+<!-- 应用虚拟防火墙Modal -->
+<div class="modal fade" id="userSecurityGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">应用虚拟防火墙- <span class="text-success">{{instance.display_name}}</span></h4>
+      </div>
+      <div class="modal-body">
+        <form id="form_traditional_validation" action="{{url_for('portal.security_group_apply', id=instance.id)}}" class="form-horizontal row" method="post">
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>虚拟防火墙</label>
+            <div class="col-sm-7">
+              <select name="sgroup_id" id="sgroup_id" class="select2 form-control"  >
+                <option value="">选择虚拟防火墙</option>
+                {% for item in security_groups %}
+                <option value="{{item.id}}">{{ item.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-group">
+            <label for="" class="col-sm-3 control-label">网卡</label>
+            <div class="col-sm-7">
+              <div class="form-table">
+                <table class="table table-bordered table-hover no-more-tables security">
+                  <thead>
+                    <tr>
+                      <th style="width:1%"> <div class="checkbox check-default">
+                          <input id="checkbox_n" type="checkbox" value="1" class="checkall">
+                          <label for="checkbox_n"></label>
+                        </div>
+                      </th>
+                      <th>网络</th>
+                      <th>IP地址</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for port in ports %}
+                    <tr>
+                      <td class="v-align-middle">
+                          <div class="checkbox check-default" style="margin-top:-10px;">
+                              <input id="checkbox_{{port.id}}" type="checkbox" name="check" value="{{port.id}}">
+                              <label for="checkbox_{{port.id}}"></label>
+                          </div>
+                          <span style="display:none" class="port_fires">
+	                        {% for security_group in port.get_security_groups() %}{{ security_group.id }},{% endfor %}
+                          </span>
+                      </td>
+                      <td>{{port.network.name}}</td>
+                      <td>{{port.fixed_ips[0]["ip_address"]}}</td>
+                    </tr>
+                    {% endfor %}
+                    <input type="hidden" name="port_id"></input>
+                  </tbody>
+                </table>
+              </div>
+              <!--form-table-->
+            </div>
+          </div>
+          <!--form-group-->
+          <div class="form-actions">
+            <div class="pull-right">
+              <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关 闭</button>
+              <button type="submit" class="btn btn-primary btn-cons"><i class="icon-ok"></i>保 存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+	$(".checkall").click(function(){
+		var checked=$(this).attr("checked");
+		if(checked=="checked"){
+			$("input[name=check]").attr("checked","checked");
+		}else{
+			$("input[name=check]").removeAttr("checked");
+		}
+		getValues();
+	});
+	$(".security tbody input[type=checkbox]").click(function(){
+		getValues();
+	});
+	$("#sgroup_id").on("change",function(){
+		var current_sel_val = $(this).val() ;
+		console.log(current_sel_val);
+		$(".form-table table.security tbody tr").show();
+		$(".form-table table.security tbody tr").each(function(){
+			$tr = $(this);
+			var port_used_walls = $.trim( $tr.find("span.port_fires").text() );
+			if( port_used_walls.length == 0 ){
+				return ;
+			}
+			var array_walls = port_used_walls.split(",");
+			console.log(array_walls);
+			for ( var i = 0 ; i < array_walls.length ; i++ ){
+				if( array_walls[i] == current_sel_val ){
+					$tr.hide();
+					break ;
+				}
+			}
+		});
+	});
+	
+});
+
+function getValues(){
+	var s="";
+
+	$("input[name=port_id]").val("");
+	$("input[name=check]:checked").each(function(){
+		s+=$(this).val()+",";
+	});
+	if(s!=""){
+		s=s.substring(0,s.length-1);
+	}
+	$("input[name=port_id]").val(s);
+}
+</script>
+<!--应用虚拟防火墙Modal-->
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}

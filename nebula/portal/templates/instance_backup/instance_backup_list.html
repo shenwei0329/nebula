@@ -1,0 +1,78 @@
+{% extends 'layout/base.html' %}
+{% block title %}虚拟机备份-{% endblock %}
+{% block style %}
+{% endblock %}
+
+{% block resource_type %}InstanceBackup{% endblock %}
+
+{% block container %}
+<div class="page-content">
+<!-- 页面内容从此处开始-->
+<div class="content">
+<div class="page-title">
+    <h3><span class="title-question">备份<i class="fa fa-question-circle text-info"></i></span></h3>
+
+    <p style="display: none;" class="title-content">
+        备份 (Backup) 用于在块设备级别 (block device level) 上进行虚拟硬盘的备份与恢复，可以对正在运行的主机做在线备份；备份恢复时，现有的硬盘资料会被丢弃。</p>
+</div>
+<!--tab切换-->
+<div class="bs-example-tabs">
+<ul id="myTab" class="nav nav-tabs">
+    <li class="active"><a href="#">虚拟机备份</a></li>
+    <li><a href="{{ url_for('portal.volume_backup_list') }}">数据卷备份</a></li>
+</ul>
+<div id="myTabContent" class="tab-content">
+<!--公共备份-->
+<div class="tab-pane fade active in" id="home" style='min-height: 250px;'>
+    <div class="grid no-padding ">
+        {% include 'instance_backup/instance_backup_sub_list.html' %}
+    </div>
+</div>
+<!--公共备份-->
+</div>
+</div>
+<!--tab切换-->
+<!--日志操作-->
+<div class="row  others-info dispaly-none">
+  <div class="col-md-4  listleft" data-url="/sub/jobs/?resource_type=InstanceBackup&resource_id="></div>
+</div>
+<!--日志操作-->
+</div>
+<!--content-->
+<!-- 页面内容到此结束-->
+</div>
+{% endblock %}
+
+
+{% block extend_js %}
+<script src="/static/js/list.js" type="text/javascript"></script>
+<script>
+    $(function () {
+       
+    });
+</script>
+{% endblock %}
+
+{% block modal %}
+<div class="modal fade" id="deleteinstancebackup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body"> 
+        <!--提示-->
+        <form action="/instance/instance-backups-delete/{id}/" method="DELETE">
+              <div class="alert alert-block alert-info fade in">
+              <h4 class="alert-heading">提示！</h4>
+                <p>确定删除虚拟机备份&nbsp;<span class="resource-name"></span> ?</p>
+                <div class="button-set text-right">
+                  <input type="hidden" name="id">
+                  <button class="btn btn-white btn-cons" type="button" data-dismiss="modal">取消</button>
+                  <button class="btn btn-success btn-cons" type="submit" data-dismiss="modal">确定</button>
+                </div>
+              </div>
+          </form>
+        <!--提示--> 
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

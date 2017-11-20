@@ -1,0 +1,122 @@
+<!-- 新建网络映射Modal -->
+<div class="modal fade" id="newNetworkMapping" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">新建网络映射</h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">即网络地址转换（NAT，Network Address Translation）是将数据包头中的IP地址（或包括传输层端口）转换为另一个IP 地址（或包括传输层端口）的过程。在实际应用中，NAT 主要用于实现私有网络访问公共网络的功能</div>
+                <form id="form_traditional_validation"
+                      action="{{ url_for('portal.nat_create') }}"
+                      method="POST"
+                      class="form-horizontal">
+{#                    <div class="form-group">#}
+{#                        <label for="" class="col-sm-3 control-label">名称</label>#}
+{#                        <div class="col-sm-7 input-validation right">#}
+{#                            <input type="text" name="name"  class="form-control">#}
+{#                        </div>#}
+{#                    </div>#}
+                    <div class="form-group">
+                        <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>协议</label>
+                        <div class="col-sm-7 input-validation right">
+                            {{ form.proto(class="select2 form-control") }}
+                        </div>
+                        <span class="pull-left p-t-10 text-info formNameInfo inline" data-toggle="tooltip"
+                              data-placement="top" title="网络协议"><i class="fa fa-question-circle"></i></span>
+                    </div>
+                    <!--form-group-->
+                    <div class="form-group">
+                        <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>外部IP和端口</label>
+                        <div class="col-sm-7">
+                            <div class="row">
+                                <div class="col-sm-8 input-validation right">
+                                    <select name="virtualrouter_floatingip_id" id="virtualrouter_floatingip_id" class="select2 form-control">
+                                        <option value="">选择浮动IP</option>
+                                        {% if floatingips %}
+                                        {%- for floatingip in floatingips %}
+                                            <option value="{{ floatingip.id }}" class="form-option">{{ floatingip.floating_ip_address }}</option>
+                                        {%- endfor %}
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <span class=" pull-left p-t-10">:</span>
+                                <div class="col-sm-3">
+                                    {{ form.src_port(class="form-control", style="padding-right: 8px! important;") }}
+                                </div>
+                            </div>
+                            <!--row-->
+                        </div>
+                        <span class="pull-left p-t-10 text-info formNameInfo inline" data-toggle="tooltip"
+                              data-placement="top" title="映射外部IP和端口"><i class="fa fa-question-circle"></i></span>
+                    </div>
+                    <!--form-group-->
+                    <div class="form-group">
+                        <label for="" class="col-sm-3 control-label"><span class="text-danger">*</span>私有IP和端口</label>
+                        <div class="col-sm-7 ">
+                            <div class="row">
+                                <div class="col-sm-8 input-validation right">
+                                    {{ form.dest_ip(class="form-control") }}
+                                </div>
+                                <span class=" pull-left p-t-10">:</span>
+                                <div class="col-sm-3">
+                                    {{ form.dest_port(class="form-control", style="padding-right: 8px! important;") }}
+                                </div>
+                            </div>
+                            <!--row-->
+                        </div>
+                    </div>
+                    <!--form-group-->
+{#                    <div class="form-group">#}
+{#                        <label for="" class="col-sm-3 control-label">描述</label>#}
+{#                        <div class="col-sm-7 input-validation right">#}
+{#                            <textarea class="form-control" rows="3"></textarea>#}
+{#                        </div>#}
+{#                    </div>#}
+                    <!--form-group-->
+                    <div class="form-actions">
+                        <div class="pull-right">
+                            <input type="hidden" name="virtualrouter_id" value="{{ virtualrouter_id }}">
+                            <button type="button" class="btn btn-white btn-cons"  data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary btn-cons" onclick="get_virtualrouter_id_value()"><i class="icon-ok"></i>保存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--新建网络映射Modal-->
+<script type="text/javascript">
+$(function(){
+	$("#proto").change(function(){
+		var v=$(this).val();
+		$src_port = $("#src_port");
+		$dest_port = $("#dest_port");
+		if(v=="icmp"||v=="ip"){
+			$src_port.rules("remove","required");
+			$src_port.parent().removeClass("error-control");
+			$src_port.attr("disabed",true);
+            $src_port.attr("readonly",true);
+			
+			$dest_port.rules("remove","required");
+			$dest_port.parent().removeClass("error-control");
+			$dest_port.attr("disabed",true);
+            $dest_port.attr("readonly",true);
+		}else{
+			$src_port.rules("add",{required:true});
+			$dest_port.rules("add",{required:true});
+			
+			$src_port.attr("disabled",false);
+            $src_port.attr("readonly",false);
+			$dest_port.attr("disabled",false);
+            $dest_port.attr("readonly",false);
+		}
+	});
+});
+</script>
+
+{% block extend_js %}
+<script src="/static/js/form_style.js" type="text/javascript"></script>
+{% endblock %}
