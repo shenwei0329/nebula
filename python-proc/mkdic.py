@@ -20,6 +20,8 @@ TableDic = {
     'MEMBERALIAS':'member_alias_t',
     'CHECKON':'checkon_t',
     'PD_MANAGEMENT':'pd_management_t',
+    'PD_GROUP':'pd_group_t',
+    'PD_GROUP_MEMBER':'pd_group_member_t'
 }
 
 """设置字符集
