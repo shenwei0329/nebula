@@ -131,4 +131,28 @@ CREATE TABLE if not exists pd_management_t
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 #
+# 研发组定义
+#
+CREATE TABLE if not exists pd_group_t
+(
+	id integer primary key not null auto_increment,
+	GRP_NAME varchar(128) comment '组名',
+	GRP_STATE INTEGER comment '状态：1、有效；0、无效',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#
+# 研发组与人员关联
+#
+CREATE TABLE if not exists pd_management_t
+(
+	id integer primary key not null auto_increment,
+	P_ID INTEGER comment '员工ID',
+	G_ID INTEGER comment '组ID',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#
 #
