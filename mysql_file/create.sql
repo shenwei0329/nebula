@@ -145,11 +145,12 @@ CREATE TABLE if not exists pd_group_t
 #
 # 研发组与人员关联
 #
-CREATE TABLE if not exists pd_management_t
+CREATE TABLE if not exists pd_group_member_t
 (
 	id integer primary key not null auto_increment,
-	P_ID INTEGER comment '员工ID',
-	G_ID INTEGER comment '组ID',
+	MEMBER_NAME varchar(128) comment '员工名',
+	GROUP_NAME varchar(128) comment '组名',
+	FLG INTEGER comment '标识：0、无效；1、有效'
 	created_at datetime,
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
