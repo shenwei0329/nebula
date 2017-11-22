@@ -77,7 +77,7 @@ def calHour(_str):
     else:
         return None
 
-def _print(_str, title=False, title_lvl=0 ):
+def _print(_str, title=False, title_lvl=0, color=None ):
 
     global doc, Topic_lvl_number, Topic
 
@@ -89,7 +89,7 @@ def _print(_str, title=False, title_lvl=0 ):
             Topic_lvl_number += 1
         doc.addHead(_str, title_lvl)
     else:
-        doc.addText(_str)
+        doc.addText(_str, color=color)
     print(_str)
 
 def doSQLinsert(db,cur,_sql):
@@ -388,13 +388,16 @@ def getOprWorkTime(cur):
         if _n==0:
             continue
 
+        _color = None
         _s = "[员工：" + str(_row[0])+ "，工作 %d 工时" % _n
         if _n>workhours:
             _s = _s + "，加班 %d 工时" % (_n - workhours) + "，占比 %d %%" % ((_n-workhours)*10/4)
+            _color = (255,0,0)
         if _n<workhours:
             _s = _s + "，剩余 %d 工时" % (workhours - _n) + "，占比 %d %%" % ((workhours-_n)*10/4)
+            _color = (50, 100, 50)
         _s = _s + ']'
-        _print(_s)
+        _print(_s, color=_color)
         orgWT = orgWT + (_n,)
 
     if len(orgWT)>0:
@@ -423,14 +426,17 @@ def getGrpWorkTime(cur):
         _n = doSQLcount(cur,_sql)
         if _n is None:
             continue
+        _color = None
         _s = "● [%s：在岗人数 %d 人" % (str(_grp),_org_n) + "，总工作量 %d 工时" % _n
         _v = workhours * _org_n
         if _n>_v:
             _s = _s + "，加班 %d 工时" % (_n - _v) + "，占比 %d %%" % ((_n-_v)*100/_v)
+            _color = (255,0,0)
         elif _n<_v:
             _s = _s + "，剩余 %d 工时" % (_v - _n) + "，占比 %d %%" % ((_v-_n)*100/_v)
+            _color = (50, 100, 50)
         _s = _s + ']'
-        _print(_s)
+        _print(_s, color=_color)
 
 def getProjectWorkTime(cur):
     '''
@@ -643,7 +649,7 @@ def main():
             for _v in _r[3]:
                 _str = _str + str(_v[0]) + "：" + str(_v[1]) + "个，"
             _str = _str + '】'
-            _print(_str)
+            _print(_str, color=(255, 0, 0))
 
     db.close()
     doc.saveFile('week.docx')

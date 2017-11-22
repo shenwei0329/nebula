@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 #
+# 2017.11.22：在addText中增加color参数
+#
 
 from docx import Document
 from docx.shared import Pt
 from docx.shared import Inches
+from docx.shared import RGBColor
 from docx.oxml.ns import qn
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
@@ -20,15 +23,21 @@ class createWord:
         self.document.styles['Heading2'].font.name = u'微软黑体'
         self.document.styles['Heading3'].font.name = u'微软黑体'
 
+    """Paragraph：段落"""
     def addHead(self, info, lvl, align=WD_ALIGN_PARAGRAPH.LEFT):
         _style = 'Title' if lvl == 0 else 'Heading%d' % lvl
         _paragraph = self.document.add_paragraph(info, _style)
         _paragraph.paragraph_format.alignment = align
 
-    def addText(self, info, align=WD_ALIGN_PARAGRAPH.LEFT):
-        self.paragrap = self.document.add_paragraph(info)
+    def addText(self, info, align=WD_ALIGN_PARAGRAPH.LEFT, color=None):
+        self.paragrap = self.document.add_paragraph()
+        _run = self.paragrap.add_run()
         self.paragrap.paragraph_format.alignment = align
         self.paragrap.paragraph_format.first_line_indent = Inches(0.3)
+        if color is not None:
+            font = _run.font
+            font.color.rgb = RGBColor(color[0],color[1],color[2])
+        _run.add_text(info)
 
     def addPic(self, pic_path, sizeof=5):
         self.paragrap = self.document.add_paragraph()
