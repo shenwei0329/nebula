@@ -156,4 +156,17 @@ CREATE TABLE if not exists pd_group_member_t
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 #
+# 风险定义
+#
+CREATE TABLE if not exists risk_t
+(
+	id integer primary key not null auto_increment,
+	RISK_TITLE varchar(160) comment '风险标题',
+	RISK_DESC varchar(1024) comment '风险描述',
+	FLG INTEGER comment '标识：0、无效；1、有效',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#
 #
