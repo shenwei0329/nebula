@@ -209,7 +209,7 @@ def getEvent(cur):
     _res = doSQL(cur,_sql)
     _i = 1
     for _row in _res:
-        _print('%d、【%s】：%s，创建于%s' % (_i, str(_row[0]), str(_row[1]), str(_row[2])), color=(250, 0, 0))
+        _print('%d、【%s】：%s，创建于%s' % (_i, str(_row[0]), str(_row[1]), str(_row[2])))
         _i += 1
 
 def getPdList(cur):
