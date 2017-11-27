@@ -181,5 +181,18 @@ CREATE TABLE if not exists event_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+# 个人指标定义
+#
+#
+CREATE TABLE if not exists quota_t
+(
+	id integer primary key not null auto_increment,
+	QT_TITLE varchar(40) comment '标题',
+	MM_GH varchar(20) comment '工号',
+	QT_QUOTA DECIMAL(5,4) comment '指标值',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 #
 #
