@@ -186,6 +186,32 @@ def getSum(cur,_days):
         _total_record = _total_record + _n
     return _total_record
 
+def getRisk(cur):
+    """
+    获取 当前存在的 风险 情况
+    :param cur:
+    :return:
+    """
+    _sql = 'select RISK_TITLE, RISK_DESC, created_at from risk_t where FLG=1'
+    _res = doSQL(cur,_sql)
+    _i = 1
+    for _row in _res:
+        _print('%d、风险【%s】：%s，创建于%s' % (_i, str(_row[0]), str(_row[1]), str(_row[2])), color=(250, 0, 0))
+        _i += 1
+
+def getEvent(cur):
+    """
+    获取 当前存在的 事件 情况
+    :param cur:
+    :return:
+    """
+    _sql = 'select EVT_TITLE, EVT_DESC, created_at from event_t where FLG=1'
+    _res = doSQL(cur,_sql)
+    _i = 1
+    for _row in _res:
+        _print('%d、【%s】：%s，创建于%s' % (_i, str(_row[0]), str(_row[1]), str(_row[2])), color=(250, 0, 0))
+        _i += 1
+
 def getPdList(cur):
 
     global ProductList
@@ -599,6 +625,12 @@ def main():
 
     _print("在研产品情况", title=True, title_lvl=1)
     getPdingList(cur)
+
+    _print("风险情况", title=True, title_lvl=1)
+    getRisk(cur)
+
+    _print("本周事件", title=True, title_lvl=1)
+    getEvent(cur)
 
     _print("人力资源投入", title=True, title_lvl=1)
     getOprWorkTime(cur)

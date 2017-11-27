@@ -22,7 +22,8 @@ TableDic = {
     'PD_MANAGEMENT':'pd_management_t',
     'PD_GROUP':'pd_group_t',
     'PD_GROUP_MEMBER':'pd_group_member_t',
-    'RISK_MANAGEMENT':'risk_t'
+    'RISK_MANAGEMENT':'risk_t',
+    'EVENT': 'event_t'
 }
 
 """设置字符集
