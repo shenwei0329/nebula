@@ -18,10 +18,14 @@ sys.setdefaultencoding('utf-8')
 
 """定义时间区间
 """
-st_date = '2017-11-4'
-ed_date = '2017-11-6'
-numb_days = 20
-workhours = 160
+st_date = '2017-10-30'
+ed_date = '2017-12-3'
+numb_days = 25
+workhours = numb_days * 8
+
+"""指标标题
+"""
+QT_TITLE = '2017年11月份月报'
 
 """公司定义的 人力资源（预算）直接成本 1000元/人天，22天/月，128元/人时
 """
@@ -72,19 +76,25 @@ def calHour(_str):
     else:
         return None
 
-def _print(_str, title=False, title_lvl=0, color=None ):
+def _print(_str, title=False, title_lvl=0, color=None, align=None ):
 
     global doc, Topic_lvl_number, Topic
 
     _str = u"%s" % _str.replace('\r', '').replace('\n','')
 
     if title:
-        if title_lvl==1:
+        if title_lvl==2:
             _str = Topic[Topic_lvl_number] + _str
             Topic_lvl_number += 1
-        doc.addHead(_str, title_lvl)
+        if align is not None:
+            doc.addHead(_str, title_lvl, align=align)
+        else:
+            doc.addHead(_str, title_lvl)
     else:
-        doc.addText(_str, color=color)
+        if align is not None:
+            doc.addText(_str, color=color, align=align)
+        else:
+            doc.addText(_str, color=color)
     print(_str)
 
 def doSQLinsert(db,cur,_sql):
@@ -98,15 +108,17 @@ def doSQLinsert(db,cur,_sql):
 
 def doSQLcount(cur,_sql):
 
-    #print(">>>doSQLcount[%s]" % _sql)
+    print(">>>doSQLcount[%s]" % _sql)
     try:
         cur.execute(_sql)
         _result = cur.fetchone()
         _n = _result[0]
+        if _n is None:
+            _n = 0
     except:
         _n = 0
 
-    #print(">>>doSQLcount[%d]" % int(_n))
+    print(">>>doSQLcount[%d]" % int(_n))
     return _n
 
 def doSQL(cur,_sql):
@@ -547,9 +559,25 @@ def getChkOnPm(cur):
             _seq = _seq + (_h,)
     return _seq
 
+def statTask(db, cur):
+    """
+    统计非产品研发任务投入
+    :param cur:
+    :return:
+    """
+    _sql = 'select PJ_KEY,id from project_key_t'
+    _res = doSQL(cur,_sql)
+
+    if len(_res)>0:
+        for _row in _res:
+            _sql = 'select sum(TK_GZSJ) from task_t where TK_RWNR like "%%%s%%"' % str(_row[0])
+            _sum = doSQLcount(cur, _sql)
+            _sql = 'update project_key_t set PJ_COST=%d where id=%d' % (int(_sum), int(_row[1]))
+            doSQLinsert(db, cur, _sql)
+
 def main():
 
-    global TotalMember, orgWT, costProject, fd, st_date, ed_date, numb_days, doc, workhours
+    global Topic_lvl_number, TotalMember, orgWT, costProject, fd, st_date, ed_date, numb_days, doc, workhours
 
     if len(sys.argv) != 4:
         print("\n\tUsage: python %s start_date end_date numb_days\n" % sys.argv[0])
@@ -560,58 +588,48 @@ def main():
     numb_days = sys.argv[3]
     workhours = int(numb_days) * 8
 
+    db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
+    cur = db.cursor()
+
     """创建word文档实例
     """
     doc = crWord.createWord()
     """写入"主题"
     """
-    doc.addHead(u'产品研发中心周报', 0, align=WD_ALIGN_PARAGRAPH.CENTER)
+    doc.addHead(u'产品研发中心月报', 0, align=WD_ALIGN_PARAGRAPH.CENTER)
 
-    db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
-    cur = db.cursor()
+    _print('>>> 报告生成日期【%s】 <<<' % time.ctime(), align=WD_ALIGN_PARAGRAPH.CENTER)
 
-    _print('>>> 报告生成日期【%s】 <<<' % time.ctime())
-    _info = Load_json('info.json')
-    if _info is not None:
-        for k,v in sorted(_info.items()):
-            _k = k.split(',')
-            if len(_k)>1:
-                doc.addText(u'● %s：%s' % (_k[1],v))
-            else:
-                doc.addText(u'● %s：%s' % (k,v))
+    Topic_lvl_number = 0
+    _print("第一部分 数据统计", title=True, title_lvl=1)
+    _print("总体特征", title=True, title_lvl=2)
+    _print("工作分布", title=True, title_lvl=2)
+    _print("研发小组特征", title=True, title_lvl=2)
+    _print("个人特征", title=True, title_lvl=2)
 
-    """获取研发管理任务情况
+    Topic_lvl_number = 0
+    _print("第二部分 数据分析", title=True, title_lvl=1)
+    _print("出勤率", title=True, title_lvl=2)
+    _print("计划质量", title=True, title_lvl=2)
+    _print("资源投入", title=True, title_lvl=2)
+
+    Topic_lvl_number = 0
+    _print("第三部分 数据总结", title=True, title_lvl=1)
+    _print("团队", title=True, title_lvl=2)
+    _print("效率", title=True, title_lvl=2)
+    _print("研发投入趋势分析", title=True, title_lvl=2)
+    _print("问题与改进", title=True, title_lvl=2)
+
+    db.close()
+    doc.saveFile('month.docx')
+
+    return
+
+    """统计非产品类资源投入（成本）
     """
-    _doit = []
-    _plan = []
-    _sql = "select PDM_TASK from pd_management_t where PDM_STATE=1 and created_at between '%s' and '%s'" % (st_date, ed_date)
-    _res = doSQL(cur,_sql)
-    for _row in _res:
-        _doit.append(_row[0])
-    _sql = "select PDM_TASK, created_at from pd_management_t where PDM_STATE=0"
-    _res = doSQL(cur,_sql)
-    for _row in _res:
-        _plan.append((_row[0],_row[1]))
+    statTask(db, cur)
 
-    if len(_doit)>0:
-        doc.addText(u'● 研发管理已完成：')
-        _i = 1
-        for _it in _doit:
-            doc.addText(u'\t%d、%s' % (_i, str(_it)))
-            _i += 1
-
-    doc.addText(u'● 研发管理计划有：')
-    _i = 1
-    for _it in _plan:
-        doc.addText(u'\t%d、%s【任务创建于 %s】' % (_i, str(_it[0]), str(_it[1])))
-        _i += 1
-
-    """获取现有产品信息
-    """
-    getPdList(cur)
-
-    _print("总数据统计", title=True, title_lvl=1)
-    #_print("报告时段：%s 至 %s" % (st_date, ed_date))
+    _print("总体特征", title=True, title_lvl=1)
     doCount(db,cur)
     """计划：每周一做上一周的“周报”，故时间间隔 7 天
     """
@@ -679,6 +697,3 @@ def main():
                 _str = _str + str(_v[0]) + "：" + str(_v[1]) + "个，"
             _str = _str + '】'
             _print(_str, color=(255, 0, 0))
-
-    db.close()
-    doc.saveFile('week.docx')

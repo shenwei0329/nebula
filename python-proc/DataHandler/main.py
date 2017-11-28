@@ -77,19 +77,25 @@ def calHour(_str):
     else:
         return None
 
-def _print(_str, title=False, title_lvl=0, color=None ):
+def _print(_str, title=False, title_lvl=0, color=None, align=None ):
 
     global doc, Topic_lvl_number, Topic
 
     _str = u"%s" % _str.replace('\r', '').replace('\n','')
 
     if title:
-        if title_lvl==1:
+        if title_lvl==2:
             _str = Topic[Topic_lvl_number] + _str
             Topic_lvl_number += 1
-        doc.addHead(_str, title_lvl)
+        if align is not None:
+            doc.addHead(_str, title_lvl, align=align)
+        else:
+            doc.addHead(_str, title_lvl)
     else:
-        doc.addText(_str, color=color)
+        if align is not None:
+            doc.addText(_str, color=color, align=align)
+        else:
+            doc.addText(_str, color=color)
     print(_str)
 
 def doSQLinsert(db,cur,_sql):
@@ -157,15 +163,14 @@ def doCount(db,cur):
     _print("数据库表总数： %d" % _total_table)
     _print("数据记录总条数： %d" % _total_record)
 
-def getSum(cur,_days):
+def getSum(cur):
     """
     计算时间段内新增记录总条数
     :param cur:
-    :param _days:
     :return:
     """
 
-    global Tables
+    global Tables, st_date, ed_date
 
     _sql = 'show tables'
     _res = doSQL(cur,_sql)
@@ -179,7 +184,7 @@ def getSum(cur,_days):
         #print(">>>[%s]",_row[0])
         if _row[0] in Tables:
             continue
-        _sql = 'select count(*) from ' + str(_row[0]) + ' where date(created_at)>DATE_SUB(CURDATE(),INTERVAL %d DAY)' % _days
+        _sql = 'select count(*) from ' + str(_row[0]) + " where created_at between '%s' and '%s'" % (st_date, ed_date)
         _n = doSQLcount(cur,_sql)
         if _n is None:
             _n = 0
@@ -196,7 +201,7 @@ def getRisk(cur):
     _res = doSQL(cur,_sql)
     _i = 1
     for _row in _res:
-        _print('%d、风险【%s】：%s，创建于%s' % (_i, str(_row[0]), str(_row[1]), str(_row[2])), color=(250, 0, 0))
+        _print('%d、【%s】：%s，创建于%s' % (_i, str(_row[0]), str(_row[1]), str(_row[2])), color=(250, 0, 0))
         _i += 1
 
 def getEvent(cur):
@@ -575,7 +580,7 @@ def main():
     db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
     cur = db.cursor()
 
-    _print('>>> 报告生成日期【%s】 <<<' % time.ctime())
+    _print('>>> 报告生成日期【%s】 <<<' % time.ctime(), align=WD_ALIGN_PARAGRAPH.CENTER)
     _info = Load_json('info.json')
     if _info is not None:
         for k,v in sorted(_info.items()):
@@ -598,11 +603,13 @@ def main():
     for _row in _res:
         _plan.append((_row[0],_row[1]))
 
-    doc.addText(u'● 研发管理已完成：')
-    _i = 1
-    for _it in _doit:
-        doc.addText(u'\t%d、%s' % (_i, str(_it)))
-        _i += 1
+    if len(_doit)>0:
+        doc.addText(u'● 研发管理已完成：')
+        _i = 1
+        for _it in _doit:
+            doc.addText(u'\t%d、%s' % (_i, str(_it)))
+            _i += 1
+
     doc.addText(u'● 研发管理计划有：')
     _i = 1
     for _it in _plan:
@@ -618,7 +625,7 @@ def main():
     doCount(db,cur)
     """计划：每周一做上一周的“周报”，故时间间隔 7 天
     """
-    _print("本周新增记录数： %d" % getSum(cur,2))
+    _print("本周新增记录数： %d" % getSum(cur))
 
     _print("产品交付情况", title=True, title_lvl=1)
     getPdDeliverList(cur)
