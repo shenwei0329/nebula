@@ -194,5 +194,19 @@ CREATE TABLE if not exists quota_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+# 项目统计
+#
+#
+CREATE TABLE if not exists project_key_t
+(
+	id integer primary key not null auto_increment,
+	PJ_XMMC varchar(80) comment '项目名称',
+	PJ_XMBH varchar(20) comment '项目编号',
+	PJ_KEY varchar(80) comment '俗称',
+	PJ_COST DECIMAL(5,4) comment '成本',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 #
 #

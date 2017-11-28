@@ -23,7 +23,8 @@ TableDic = {
     'PD_GROUP':'pd_group_t',
     'PD_GROUP_MEMBER':'pd_group_member_t',
     'RISK_MANAGEMENT':'risk_t',
-    'EVENT': 'event_t'
+    'EVENT': 'event_t',
+    'PROJECT_KEY':'project_key_t'
 }
 
 """设置字符集
