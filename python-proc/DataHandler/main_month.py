@@ -108,7 +108,8 @@ def doSQLinsert(db,cur,_sql):
 
 def doSQLcount(cur,_sql):
 
-    print(">>>doSQLcount[%s]" % _sql)
+
+    #print(">>>doSQLcount[%s]" % _sql)
     try:
         cur.execute(_sql)
         _result = cur.fetchone()
@@ -118,7 +119,7 @@ def doSQLcount(cur,_sql):
     except:
         _n = 0
 
-    print(">>>doSQLcount[%d]" % int(_n))
+    #print(">>>doSQLcount[%d]" % int(_n))
     return _n
 
 def doSQL(cur,_sql):
@@ -591,6 +592,10 @@ def main():
     db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
     cur = db.cursor()
 
+    """统计非产品类资源投入（成本）
+    """
+    statTask(db, cur)
+
     """创建word文档实例
     """
     doc = crWord.createWord()
@@ -605,7 +610,18 @@ def main():
     _print("总体特征", title=True, title_lvl=2)
     _print("工作分布", title=True, title_lvl=2)
     _print("研发小组特征", title=True, title_lvl=2)
+
     _print("个人特征", title=True, title_lvl=2)
+    """创建一个表格 1 x 3"""
+    doc.addTable(1, 3)
+    _title = (('text',u'员工'),('text',u'个人评分'),('text',u'综合指标'))
+    doc.addRow(_title)
+
+    _pic = ('pic','pic/figure_1.png')
+    _text = ('text','Hello!')
+    _col =(_text,_text,_pic)
+    doc.addRow(_col)
+    doc.addRow(_col)
 
     Topic_lvl_number = 0
     _print("第二部分 数据分析", title=True, title_lvl=1)
@@ -622,78 +638,3 @@ def main():
 
     db.close()
     doc.saveFile('month.docx')
-
-    return
-
-    """统计非产品类资源投入（成本）
-    """
-    statTask(db, cur)
-
-    _print("总体特征", title=True, title_lvl=1)
-    doCount(db,cur)
-    """计划：每周一做上一周的“周报”，故时间间隔 7 天
-    """
-    _print("本周新增记录数： %d" % getSum(cur,2))
-
-    _print("产品交付情况", title=True, title_lvl=1)
-    getPdDeliverList(cur)
-
-    _print("在研产品情况", title=True, title_lvl=1)
-    getPdingList(cur)
-
-    _print("风险情况", title=True, title_lvl=1)
-    getRisk(cur)
-
-    _print("本周事件", title=True, title_lvl=1)
-    getEvent(cur)
-
-    _print("人力资源投入", title=True, title_lvl=1)
-    getOprWorkTime(cur)
-
-    _print("小组资源投入情况", title=True, title_lvl=1)
-    getGrpWorkTime(cur)
-
-    _print("各项目投入情况", title=True, title_lvl=1)
-    getProjectWorkTime(cur)
-
-    _print("各项目投入统计", title=True, title_lvl=1)
-    if len(costProject)>0:
-        _s, _fn = doPie.doProjectPie(costProject)
-        _s = _s.split('\n')
-        for __s in _s:
-            _print(__s)
-        doc.addPic(_fn, sizeof=4)
-        doc.addText(u"图5 项目投入比例", align=WD_ALIGN_PARAGRAPH.CENTER)
-
-    _print("测试内容统计", title=True, title_lvl=1)
-    _pd_ok, _pd_oking, _pd_err = getTstRcdSts(cur)
-
-    _print("1、已关闭的：", title=True, title_lvl=2)
-    for _r in _pd_ok:
-        _str = ("产品 %s %s 关闭的问题 %d 个，" % (_r[0], _r[1], _r[2]))
-        if len(_r[3])>0:
-            _str = _str + "分类统计【 "
-            for _v in _r[3]:
-                _str = _str + str(_v[0]) + "：" + str(_v[1]) + "个，"
-            _str = _str + '】'
-            _print(_str)
-
-    _print("2、已解决的：", title=True, title_lvl=2)
-    for _r in _pd_oking:
-        _str = ("产品 %s %s 已解决但未回归测试的问题 %d 个，" % (_r[0], _r[1], _r[2]))
-        if len(_r[3])>0:
-            _str = _str + "分类统计【 "
-            for _v in _r[3]:
-                _str = _str + str(_v[0]) + "：" + str(_v[1]) + "个，"
-            _str = _str + '】'
-            _print(_str)
-
-    _print("3、待解决的：", title=True, title_lvl=2)
-    for _r in _pd_err:
-        _str = ("产品 %s %s 仍存在问题 %d 个，" % (_r[0], _r[1], _r[2]))
-        if len(_r[3])>0:
-            _str = _str + "分类统计【 "
-            for _v in _r[3]:
-                _str = _str + str(_v[0]) + "：" + str(_v[1]) + "个，"
-            _str = _str + '】'
-            _print(_str, color=(255, 0, 0))

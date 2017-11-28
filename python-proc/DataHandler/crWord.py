@@ -9,6 +9,7 @@ from docx.shared import Inches
 from docx.shared import RGBColor
 from docx.oxml.ns import qn
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.table import WD_TABLE_ALIGNMENT
 
 class createWord:
 
@@ -45,12 +46,32 @@ class createWord:
         _run = self.paragrap.add_run()
         _run.add_picture(pic_path, width=Inches(sizeof))
 
-    def addTable(self, n_rows, n_cols, data):
-        _table = self.document.add_table(rows=n_rows, cols=n_cols)
-        for _idx in range(n_rows):
-            _hdr_cells = _table.rows[_idx].cells
-            for __idx in range(n_cols):
-                _hdr_cells[__idx].text = data[_idx][__idx]
+    def addTable(self, n_rows, n_cols):
+        self.table = self.document.add_table(rows=n_rows, cols=n_cols)
+        self.table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        self.table.style = 'MediumList1'
+        self.rows = n_rows
+        self.cols = n_cols
+        self._idx = 0
+
+    def addRow(self,data):
+        if self._idx < self.rows:
+            _hdr_cells = self.table.rows[self._idx].cells
+            for __idx in range(self.cols):
+                if data[__idx][0] is 'pic':
+                    _run = _hdr_cells[__idx].paragraphs[0].add_run()
+                    _run.add_picture(data[__idx][1], width=Inches(1.2))
+                else:
+                    _hdr_cells[__idx].text = data[__idx][1]
+        else:
+            _hdr_cells = self.table.add_row().cells
+            for __idx in range(self.cols):
+                if data[__idx][0] is 'pic':
+                    _run = _hdr_cells[__idx].paragraphs[0].add_run()
+                    _run.add_picture(data[__idx][1], width=Inches(1.2))
+                else:
+                    _hdr_cells[__idx].text = data[__idx][1]
+        self._idx += 1
 
     def addPageBreak(self):
         self.document.add_page_break()
