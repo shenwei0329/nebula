@@ -64,20 +64,32 @@ class createWord:
         if self._idx < self.rows:
             _hdr_cells = self.table.rows[self._idx].cells
             for __idx in range(self.cols):
+                _run = _hdr_cells[__idx].paragraphs[0].add_run()
                 if data[__idx][0] == 'pic':
-                    _run = _hdr_cells[__idx].paragraphs[0].add_run()
                     _run.add_picture(data[__idx][1], width=Inches(1.2))
                 else:
+                    _run.font.size = Pt(10)
                     _hdr_cells[__idx].text = data[__idx][1]
         else:
             _hdr_cells = self.table.add_row().cells
             for __idx in range(self.cols):
+                _run = _hdr_cells[__idx].paragraphs[0].add_run()
                 if data[__idx][0] == 'pic':
-                    _run = _hdr_cells[__idx].paragraphs[0].add_run()
                     _run.add_picture(data[__idx][1], width=Inches(data[__idx][2]))
                 else:
                     _hdr_cells[__idx].text = data[__idx][1]
         self._idx += 1
+
+    def setTableFont(self,ft):
+        for row in self.table.rows:
+            for cell in row.cells:
+                paragraphs = cell.paragraphs
+                for paragraph in paragraphs:
+                    paragraph.paragraph_format.space_before = Pt(2)
+                    paragraph.paragraph_format.space_after = Pt(2)
+                    for run in paragraph.runs:
+                        font = run.font
+                        font.size = Pt(ft)
 
     def addPageBreak(self):
         self.document.add_page_break()

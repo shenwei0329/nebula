@@ -8,8 +8,8 @@
 # 功能：基于库数据，生成月报内容。
 #
 
-import MySQLdb,sys,json, time
-import doPie, doHour
+import MySQLdb,sys,json,time,math
+import doPie, doHour, doCompScore
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import crWord
 
@@ -50,6 +50,8 @@ Topic = [u'一、',
          u'十一、',
          u'十二、',
          ]
+
+SpName = [u'杨飞', u'沈伟', u'谭颖卿', u'吴丹阳', u'吴昱珉']
 
 def Load_json(fn):
 
@@ -576,6 +578,269 @@ def statTask(db, cur):
             _sql = 'update project_key_t set PJ_COST=%d where id=%d' % (int(_sum), int(_row[1]))
             doSQLinsert(db, cur, _sql)
 
+def calChkOnQ(AvgWorkHour, A=1.38):
+    """
+    计算出勤指标
+    :param AvgWorkHour: 日均工作时间（小时）
+    :param A: 规定日工时参量，月为1.38 = log10(24)
+    :return:
+    """
+    if AvgWorkHour>=1:
+        return math.log10(AvgWorkHour)/A
+    else:
+        return 0.0
+
+def calTaskQ(sumPJ, sumOther):
+    """
+    计算执行任务的评分指标
+    :param sumPD: 产品研发类任务总数
+    :param sumPJ: 工程项目类任务总数
+    :param sumOther: 非计划类任务总数
+    :return: 评分
+    """
+    if sumOther>0 and sumPJ>0:
+        _v = math.log10(sumPJ + sumOther)
+        _b = math.log10(sumPJ)
+        return _b/_v
+    elif sumPJ>0 and sumOther==0:
+        return 0.8
+    elif sumOther>0:
+        return 0.75
+    return 0.0
+
+def calPlanQ(TotalWrokHour, AvgWordHour):
+    """
+    计算工作计划的质量指标
+    :param TotalWrokDay: 总工时
+    :param AvgWordDay: 任务的平均工时
+    :return: 指标
+    """
+    if AvgWordHour>=1:
+        return (math.log10(TotalWrokHour) - math.log10(AvgWordHour)) / math.log10(TotalWrokHour)
+    else:
+        return 1.0
+
+def calScore(vals, A=2.4178):
+    """
+    计算综合评分
+    :param vals: 考核参量数组 =（参量1，参量2，...）
+    :param A: 综合系数
+    :return: 评分
+    """
+    return int((vals[0]*1.2+vals[1]+vals[2]*0.8)*100/A)
+
+def getChkOnQGroup(cur, g_name):
+    """
+    获取 研发小组 考勤数据
+    :param cur: 数据源
+    :param g_name: 组名
+    :return:
+    """
+    _sql = 'select MEMBER_NAME from pd_group_member_t where GROUP_NAME="%s"' % g_name
+    _res = doSQL(cur,_sql)
+    _v = ()
+    for _m in _res:
+        _sql = 'select KQ_AM,KQ_PM from checkon_t where KQ_NAME="%s"' % _m[0] + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        __res = doSQL(cur, _sql)
+        for __v in __res:
+            _pm = calHour(__v[1])
+            _am = calHour(__v[0])
+            if (_pm is not None) and (_am is not None) and (_pm > _am):
+                _v += ((_pm - _am), )
+    return _v
+
+def getTaskQGroup(cur, g_name):
+    """
+    获取 研发小组 任务数据
+    :param cur: 数据源
+    :param g_name: 组名
+    :return:
+    """
+    _sql = 'select count(*) from task_t where TK_XMBH<>"#" and TK_SQR="%s"' % g_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _Pj = doSQLcount(cur, _sql)
+    _sql = 'select count(*) from task_t where TK_XMBH="#" and TK_SQR="%s"' % g_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _nonPj = doSQLcount(cur,_sql)
+    return float(_Pj), float(_nonPj)
+
+def getPlanQGroup(cur, g_name):
+    """
+    获取 研发小组 计划数据
+    :param cur: 数据源
+    :param g_name: 组名
+    :return:
+    """
+    _sql = 'select TK_GZSJ from task_t where TK_SQR="%s"' % g_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _res = doSQL(cur,_sql)
+    _v = ()
+    for __v in _res:
+        _v += (int(__v[0]),)
+    return _v
+
+def getChkOnQMember(cur, m_name):
+    """
+    获取 个人 考勤数据
+    :param cur: 数据源
+    :param m_name: 人名
+    :return:
+    """
+    _sql = 'select KQ_AM,KQ_PM from checkon_t where KQ_NAME="%s"' % m_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    __res = doSQL(cur, _sql)
+    _v = ()
+    for __v in __res:
+        _pm = calHour(__v[1])
+        _am = calHour(__v[0])
+        if (_pm is not None) and (_am is not None) and (_pm > _am):
+            _v += ((_pm - _am), )
+    return _v
+
+def getTaskQMember(cur, m_name):
+    """
+    获取 个人 任务数据
+    :param cur: 数据源
+    :param m_name: 人名
+    :return:
+    """
+    _sql = 'select count(*) from task_t where TK_XMBH<>"#" and TK_ZXR="%s"' % m_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _Pj = doSQLcount(cur, _sql)
+    _sql = 'select count(*) from task_t where TK_XMBH="#" and TK_ZXR="%s"' % m_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _nonPj = doSQLcount(cur,_sql)
+    return float(_Pj), float(_nonPj)
+
+def getPlanQMember(cur, m_name):
+    """
+    获取 个人 计划数据
+    :param cur: 数据源
+    :param m_name: 人名
+    :return:
+    """
+    _sql = 'select TK_GZSJ from task_t where TK_ZXR="%s"' % m_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _res = doSQL(cur,_sql)
+    _v = ()
+    for __v in _res:
+        _v += (int(__v[0]),)
+    return _v
+
+def statGroupInd(cur):
+    """创建一个表格 1 x 3"""
+
+    global workhours
+
+    doc.addTable(1, 4)
+    _title = (('text',u'研发小组'),('text',u'综合评分'),('text',u'综合指标'),('text',u'图示'))
+    doc.addRow(_title)
+    _print("注：综合指标图示的绿色区域为最佳范围：出勤为全勤、计划内任务占比80%、计划颗粒度2小时/任务。其中，ChkOnQ：出勤指标；TaskQ：任务指标；PlanQ：计划指标")
+
+    _sql = 'select GRP_NAME from pd_group_t'
+    _res = doSQL(cur, _sql)
+    for _g in _res:
+
+        if _g[0] == u'研发管理组':
+            continue
+
+        _name = ('text',_g[0])
+
+        """计算出勤指标"""
+        _v = getChkOnQGroup(cur, _g[0])
+        if len(_v)>0:
+            _chkonQ = calChkOnQ(sum(_v)/len(_v))
+        else:
+            _chkonQ = 0
+
+        """计算任务指标"""
+        _pd,_other = getTaskQGroup(cur, _g[0])
+        _taskQ = calTaskQ(_pd,_other)
+
+        """计算计划指标"""
+        _v = getPlanQGroup(cur, _g[0])
+        if len(_v)>0:
+            _planQ = calPlanQ(workhours, sum(_v)/len(_v))
+        else:
+            _planQ = 0
+        _score = ('text',str(calScore((_chkonQ,_taskQ,_planQ,))))
+        _pref =('text',u'出勤:%0.2f\n任务:%0.2f\n计划:%0.2f' % (_chkonQ, _taskQ, _planQ))
+        _pic = ('pic',doCompScore.doCompScore(['TaskQ','ChkOnQ','PlanQ'],(_taskQ, _chkonQ, _planQ,),(0.8,0.6544,0.8634,)),2)
+        _col =(_name,_score,_pref,_pic)
+        doc.addRow(_col)
+    doc.setTableFont(9)
+
+def statPersonalInd(cur):
+    """创建一个表格 1 x 3"""
+    doc.addTable(1, 4)
+    _title = (('text',u'员工'),('text',u'个人评分'),('text',u'综合指标'),('text',u'图示'))
+    doc.addRow(_title)
+    _print("注：综合指标图示的绿色区域为最佳范围：出勤为全勤、计划内任务占比80%、计划颗粒度2小时/任务。")
+
+    _sql = 'select MM_XM from member_t'
+    _res = doSQL(cur, _sql)
+    for _g in _res:
+
+        if _g[0] in SpName:
+            continue
+
+        _name = ('text',_g[0])
+
+        """计算出勤指标"""
+        _v = getChkOnQMember(cur, _g[0])
+        if len(_v)>0:
+            _chkonQ = calChkOnQ(sum(_v)/len(_v))
+        else:
+            _chkonQ = 0
+
+        """计算任务指标"""
+        _pd,_other = getTaskQMember(cur, _g[0])
+        _taskQ = calTaskQ(_pd,_other)
+
+        """计算计划指标"""
+        _v = getPlanQMember(cur, _g[0])
+        if len(_v)>0:
+            _planQ = calPlanQ(workhours, sum(_v)/len(_v))
+        else:
+            _planQ = 0
+        _score = ('text',str(calScore((_chkonQ,_taskQ,_planQ,))))
+        _pref =('text',u'出勤:%0.2f\n任务:%0.2f\n计划:%0.2f' % (_chkonQ, _taskQ, _planQ))
+        _pic = ('pic',doCompScore.doCompScore(['TaskQ','ChkOnQ','PlanQ'],(_taskQ, _chkonQ, _planQ,),(0.8,0.6544,0.8634,)),0.72)
+        _col =(_name,_score,_pref,_pic)
+        doc.addRow(_col)
+    doc.setTableFont(9)
+
+def addPDList(cur, doc):
+    """
+    填写【研发投入】表
+    :param cur: 数据源
+    :param doc: 文档
+    :return:
+    """
+    _sql = 'select PJ_XMBH,PJ_XMMC from project_t where PJ_XMXZ="产品研发"'
+    _res = doSQL(cur, _sql)
+    _sum = 0
+    for _pd in _res:
+        _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="%s"' % _pd[0] + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _v = doSQLcount(cur,_sql)
+        _item = (('text',_pd[0]),('text',_pd[1]),('text',str(_v)))
+        _sum += _v
+        doc.addRow(_item)
+    _item = (('text', u'合计'), ('text',''), ('text', str(_sum)))
+    doc.addRow(_item)
+    doc.setTableFont(9)
+
+def addNoPDList(cur, doc):
+    """
+    填写【非研发投入】表
+    :param cur: 数据源
+    :param doc: 文档
+    :return:
+    """
+    _sql = 'select PJ_XMMC,PJ_COST from project_key_t where PJ_COST+0.>0' + " and created_at between '%s' and '%s'" % (st_date, ed_date) + ' order by PJ_COST+0. desc'
+    _res = doSQL(cur, _sql)
+    _sum = 0
+    for _pd in _res:
+        _item = (('text',_pd[0]),('text',str(_pd[1])))
+        doc.addRow(_item)
+        _sum += _pd[1]
+    _item = (('text', u'合计'), ('text', str(_sum)))
+    doc.addRow(_item)
+    doc.setTableFont(9)
+
 def main():
 
     global Topic_lvl_number, TotalMember, orgWT, costProject, fd, st_date, ed_date, numb_days, doc, workhours
@@ -592,6 +857,15 @@ def main():
     db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
     cur = db.cursor()
 
+    """
+    _sql = 'select PJ_XMBH,PJ_XMMC from project_t'
+    _res = doSQL(cur,_sql)
+    for _r in _res:
+        _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="%s"' % _r[0]
+        print("%s %s %s") % (_r[1],_r[0],doSQLcount(cur,_sql))
+    return
+    """
+
     """统计非产品类资源投入（成本）
     """
     statTask(db, cur)
@@ -599,36 +873,81 @@ def main():
     """创建word文档实例
     """
     doc = crWord.createWord()
+
+    """
+    *** 封面 ***
+    """
     """写入"主题"
     """
     doc.addHead(u'产品研发中心月报', 0, align=WD_ALIGN_PARAGRAPH.CENTER)
 
     _print('>>> 报告生成日期【%s】 <<<' % time.ctime(), align=WD_ALIGN_PARAGRAPH.CENTER)
+    _print("")
+    _print("")
+    _print('目 录', align=WD_ALIGN_PARAGRAPH.CENTER)
+    _print("")
+    _print("\t\t第一部分 数据统计")
+    _print("\t\t第二部分 数据分析与评价")
+    _print("\t\t第三部分 数据总结")
 
+    doc.addPageBreak()
     Topic_lvl_number = 0
     _print("第一部分 数据统计", title=True, title_lvl=1)
-    _print("总体特征", title=True, title_lvl=2)
-    _print("工作分布", title=True, title_lvl=2)
-    _print("研发小组特征", title=True, title_lvl=2)
 
-    _print("个人特征", title=True, title_lvl=2)
-    """创建一个表格 1 x 3"""
+    _print("总体特征", title=True, title_lvl=2)
+    _print("1、任务特征", title=True, title_lvl=3)
+    _print("1）产品类投入")
+    _print("2）工程类投入")
+    _print("3）非计划类投入")
+    _print("2、出勤特征", title=True, title_lvl=3)
+    _print("1）总体特征")
+    _print("2）趋势特征")
+
+    _print("研发小组特征", title=True, title_lvl=2)
+    _print("1、任务特征", title=True, title_lvl=3)
+    _print("表：研发小组工作投入情况", align=WD_ALIGN_PARAGRAPH.CENTER)
     doc.addTable(1, 3)
-    _title = (('text',u'员工'),('text',u'个人评分'),('text',u'综合指标'))
+    _title = (('text',u'产品类'),('text',u'工程类'),('text',u'非计划类'))
     doc.addRow(_title)
 
-    _pic = ('pic','pic/figure_1.png')
-    _text = ('text','Hello!')
-    _col =(_text,_text,_pic)
-    doc.addRow(_col)
-    doc.addRow(_col)
+    _print("2、出勤特征", title=True, title_lvl=3)
+    _print("表：研发小组出勤情况", align=WD_ALIGN_PARAGRAPH.CENTER)
+    doc.addTable(1, 2)
+    _title = (('text',u'总体'),('text',u'趋势'))
+    doc.addRow(_title)
 
+    _print("个人特征", title=True, title_lvl=2)
+    _print("1、任务特征", title=True, title_lvl=3)
+    _print("表：个人工作投入情况", align=WD_ALIGN_PARAGRAPH.CENTER)
+    _print("2、出勤特征", title=True, title_lvl=3)
+    _print("表：个人出勤情况", align=WD_ALIGN_PARAGRAPH.CENTER)
+
+    doc.addPageBreak()
     Topic_lvl_number = 0
-    _print("第二部分 数据分析", title=True, title_lvl=1)
-    _print("出勤率", title=True, title_lvl=2)
-    _print("计划质量", title=True, title_lvl=2)
-    _print("资源投入", title=True, title_lvl=2)
+    _print("第二部分 数据分析与评价", title=True, title_lvl=1)
+    _print("资源投入情况", title=True, title_lvl=2)
+    _print("1、产品研发投入", title=True, title_lvl=3)
+    doc.addTable(1, 3)
+    _title = (('text',u'项目'),('text',u'名称'),('text',u'投入工时（小时）'))
+    doc.addRow(_title)
+    addPDList(cur, doc)
+    _print("")
 
+    _print("2、非产品研发投入", title=True, title_lvl=3)
+    doc.addTable(1, 2)
+    _title = (('text',u'项目名称'),('text',u'投入工时（小时）'))
+    doc.addRow(_title)
+    addNoPDList(cur, doc)
+    _print("")
+
+    _print("综合评价", title=True, title_lvl=2)
+    _print("1、研发小组", title=True, title_lvl=3)
+    statGroupInd(cur)
+    _print("")
+    _print("2、个人", title=True, title_lvl=3)
+    statPersonalInd(cur)
+
+    doc.addPageBreak()
     Topic_lvl_number = 0
     _print("第三部分 数据总结", title=True, title_lvl=1)
     _print("团队", title=True, title_lvl=2)
