@@ -11,9 +11,15 @@ from docx.oxml.ns import qn
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 class createWord:
 
     def __init__(self):
+
         self.document = Document()
         self.document.styles['Normal'].font.name = u'微软黑体'
         self.document.styles['Normal'].paragraph_format.space_before = Pt(10)
@@ -58,7 +64,7 @@ class createWord:
         if self._idx < self.rows:
             _hdr_cells = self.table.rows[self._idx].cells
             for __idx in range(self.cols):
-                if data[__idx][0] is 'pic':
+                if data[__idx][0] == 'pic':
                     _run = _hdr_cells[__idx].paragraphs[0].add_run()
                     _run.add_picture(data[__idx][1], width=Inches(1.2))
                 else:
@@ -66,9 +72,9 @@ class createWord:
         else:
             _hdr_cells = self.table.add_row().cells
             for __idx in range(self.cols):
-                if data[__idx][0] is 'pic':
+                if data[__idx][0] == 'pic':
                     _run = _hdr_cells[__idx].paragraphs[0].add_run()
-                    _run.add_picture(data[__idx][1], width=Inches(1.2))
+                    _run.add_picture(data[__idx][1], width=Inches(data[__idx][2]))
                 else:
                     _hdr_cells[__idx].text = data[__idx][1]
         self._idx += 1
