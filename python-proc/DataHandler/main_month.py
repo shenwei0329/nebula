@@ -627,7 +627,7 @@ def calScore(vals, A=2.4178):
     :param A: 综合系数
     :return: 评分
     """
-    return int((vals[0]*1.2+vals[1]+vals[2]*0.8)*100/A)
+    return int((vals[0]+vals[1]+vals[2])*100/A)
 
 def getChkOnQGroup(cur, g_name):
     """
@@ -646,7 +646,7 @@ def getChkOnQGroup(cur, g_name):
             _pm = calHour(__v[1])
             _am = calHour(__v[0])
             if (_pm is not None) and (_am is not None) and (_pm > _am):
-                _v += ((_pm - _am), )
+                _v += ((_pm - _am - 1.0), )
     return _v
 
 def getTaskQGroup(cur, g_name):
@@ -884,7 +884,7 @@ def main():
     _print('>>> 报告生成日期【%s】 <<<' % time.ctime(), align=WD_ALIGN_PARAGRAPH.CENTER)
     _print("")
     _print("")
-    _print('目 录', align=WD_ALIGN_PARAGRAPH.CENTER)
+    _print('主要内容', align=WD_ALIGN_PARAGRAPH.CENTER)
     _print("")
     _print("\t\t第一部分 数据统计")
     _print("\t\t第二部分 数据分析与评价")
