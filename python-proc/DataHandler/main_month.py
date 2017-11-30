@@ -9,7 +9,7 @@
 #
 
 import MySQLdb,sys,json,time,math
-import doPie, doHour, doCompScore
+import doPie, doHour, doCompScore, doBox
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import crWord
 
@@ -720,18 +720,54 @@ def getPlanQMember(cur, m_name):
         _v += (int(__v[0]),)
     return _v
 
+def getScoreDesc(chkonQ, taskQ, planQ):
+    _desc = ""
+    if chkonQ>0.65:
+        _desc += u"●出勤：超标"
+    elif chkonQ>0.63:
+        _desc += u"●出勤：正常"
+    else:
+        _desc += u"●出勤：不达标"
+    _desc += "\n"
+
+    if taskQ>0.85:
+        _desc += u"●任务：偏向计划类事务"
+    elif taskQ>0.73:
+        _desc += u"●任务：正常"
+    else:
+        _desc += u"●任务：偏向非计划类事务"
+    _desc += "\n"
+
+    if planQ>0.85:
+        _desc += u"●计划：优"
+    elif planQ>0.75:
+        _desc += u"●计划：良"
+    elif planQ > 0.55:
+        _desc += u"●计划：中"
+    elif planQ > 0.35:
+        _desc += u"●计划：弱"
+    else:
+        _desc += u"●计划：差"
+    return ('text',_desc)
+
 def statGroupInd(cur):
     """创建一个表格 1 x 3"""
 
     global workhours
 
-    doc.addTable(1, 4)
-    _title = (('text',u'研发小组'),('text',u'综合评分'),('text',u'综合指标'),('text',u'图示'))
+    _width = (4,1.8,1.8,2.4,8)
+    doc.addTable(1, 5, col_width=_width)
+    _title = (('text',u'研发小组'),('text',u'综合评分'),('text',u'综合指标'),('text',u'图示'),('text',u'解读'))
     doc.addRow(_title)
     _print("注：综合指标图示的绿色区域为最佳范围：出勤为全勤、计划内任务占比80%、计划颗粒度2小时/任务。其中，ChkOnQ：出勤指标；TaskQ：任务指标；PlanQ：计划指标")
 
     _sql = 'select GRP_NAME from pd_group_t'
     _res = doSQL(cur, _sql)
+
+    __chkonQ = 0
+    __planQ = 0
+    __taskQ = 0
+    _N = 0
     for _g in _res:
 
         if _g[0] == u'研发管理组':
@@ -756,17 +792,35 @@ def statGroupInd(cur):
             _planQ = calPlanQ(workhours, sum(_v)/len(_v))
         else:
             _planQ = 0
+
+        __chkonQ += _chkonQ
+        __planQ += _planQ
+        __taskQ += _taskQ
+        _N += 1
+
         _score = ('text',str(calScore((_chkonQ,_taskQ,_planQ,))))
         _pref =('text',u'出勤:%0.2f\n任务:%0.2f\n计划:%0.2f' % (_chkonQ, _taskQ, _planQ))
-        _pic = ('pic',doCompScore.doCompScore(['TaskQ','ChkOnQ','PlanQ'],(_taskQ, _chkonQ, _planQ,),(0.8,0.6544,0.8634,)),2)
-        _col =(_name,_score,_pref,_pic)
+        _pic = ('pic',doCompScore.doCompScore(['TaskQ','ChkOnQ','PlanQ'],(_taskQ, _chkonQ, _planQ,),(0.8,0.6544,0.8634,)),1.4)
+        _desc = getScoreDesc(_chkonQ, _taskQ, _planQ)
+        _col =(_name,_score,_pref,_pic,_desc)
         doc.addRow(_col)
-    doc.setTableFont(9)
+
+    __chkonQ = __chkonQ/_N
+    __taskQ = __taskQ/_N
+    __planQ = __planQ/_N
+    _score = ('text', str(calScore((__chkonQ, __taskQ, __planQ,))))
+    _pref = ('text', u'出勤:%0.2f\n任务:%0.2f\n计划:%0.2f' % (__chkonQ, __taskQ, __planQ))
+    _pic = ('pic', doCompScore.doCompScore(['TaskQ', 'ChkOnQ', 'PlanQ'], (__taskQ, __chkonQ, __planQ,), (0.8, 0.6544, 0.8634,)), 1.4)
+    _desc = getScoreDesc(__chkonQ, __taskQ, __planQ)
+    _col = (('test',u'综合'), _score, _pref, _pic, _desc)
+    doc.addRow(_col)
+    doc.setTableFont(8)
 
 def statPersonalInd(cur):
     """创建一个表格 1 x 3"""
-    doc.addTable(1, 4)
-    _title = (('text',u'员工'),('text',u'个人评分'),('text',u'综合指标'),('text',u'图示'))
+    _width = (4,1.8,1.8,2.4,8)
+    doc.addTable(1, 5, col_width=_width)
+    _title = (('text',u'员工'),('text',u'个人评分'),('text',u'综合指标'),('text',u'图示'),('text',u'解读'))
     doc.addRow(_title)
     _print("注：综合指标图示的绿色区域为最佳范围：出勤为全勤、计划内任务占比80%、计划颗粒度2小时/任务。")
 
@@ -799,9 +853,10 @@ def statPersonalInd(cur):
         _score = ('text',str(calScore((_chkonQ,_taskQ,_planQ,))))
         _pref =('text',u'出勤:%0.2f\n任务:%0.2f\n计划:%0.2f' % (_chkonQ, _taskQ, _planQ))
         _pic = ('pic',doCompScore.doCompScore(['TaskQ','ChkOnQ','PlanQ'],(_taskQ, _chkonQ, _planQ,),(0.8,0.6544,0.8634,)),0.72)
-        _col =(_name,_score,_pref,_pic)
+        _desc = getScoreDesc(_chkonQ, _taskQ, _planQ)
+        _col =(_name,_score,_pref,_pic, _desc)
         doc.addRow(_col)
-    doc.setTableFont(9)
+    doc.setTableFont(8)
 
 def addPDList(cur, doc):
     """
@@ -813,15 +868,23 @@ def addPDList(cur, doc):
     _sql = 'select PJ_XMBH,PJ_XMMC from project_t where PJ_XMXZ="产品研发"'
     _res = doSQL(cur, _sql)
     _sum = 0
+    _vv = []
+    _label = []
+    _i = 1
     for _pd in _res:
         _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="%s"' % _pd[0] + " and created_at between '%s' and '%s'" % (st_date, ed_date)
         _v = doSQLcount(cur,_sql)
-        _item = (('text',_pd[0]),('text',_pd[1]),('text',str(_v)))
+        _item = (('text',u'%d、'%_i+_pd[0]),('text',_pd[1]),('text',str(_v)))
         _sum += _v
+        _vv.append(int(_v))
+        _label.append('%d'%_i)
+        _i += 1
         doc.addRow(_item)
     _item = (('text', u'合计'), ('text',''), ('text', str(_sum)))
     doc.addRow(_item)
-    doc.setTableFont(9)
+    doc.setTableFont(8)
+    _fn = doBox.doBar('P&D','Hour',_label,_vv)
+    doc.addPic(_fn, sizeof=3)
 
 def addNoPDList(cur, doc):
     """
@@ -833,13 +896,22 @@ def addNoPDList(cur, doc):
     _sql = 'select PJ_XMMC,PJ_COST from project_key_t where PJ_COST+0.>0' + " and created_at between '%s' and '%s'" % (st_date, ed_date) + ' order by PJ_COST+0. desc'
     _res = doSQL(cur, _sql)
     _sum = 0
+    _vv = []
+    _label = []
+    _i = 1
     for _pd in _res:
-        _item = (('text',_pd[0]),('text',str(_pd[1])))
+        _item = (('text',u'%d、'%_i+_pd[0]),('text',str(_pd[1])))
         doc.addRow(_item)
-        _sum += _pd[1]
+        _d = int(_pd[1])
+        _vv.append(_d)
+        _label.append('%d' % _i)
+        _sum += _d
+        _i += 1
     _item = (('text', u'合计'), ('text', str(_sum)))
     doc.addRow(_item)
-    doc.setTableFont(9)
+    doc.setTableFont(8)
+    _fn = doBox.doBar('Non-Project','Hour',_label,_vv)
+    doc.addPic(_fn,sizeof=3)
 
 def main():
 
@@ -856,15 +928,6 @@ def main():
 
     db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
     cur = db.cursor()
-
-    """
-    _sql = 'select PJ_XMBH,PJ_XMMC from project_t'
-    _res = doSQL(cur,_sql)
-    for _r in _res:
-        _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="%s"' % _r[0]
-        print("%s %s %s") % (_r[1],_r[0],doSQLcount(cur,_sql))
-    return
-    """
 
     """统计非产品类资源投入（成本）
     """

@@ -52,13 +52,16 @@ class createWord:
         _run = self.paragrap.add_run()
         _run.add_picture(pic_path, width=Inches(sizeof))
 
-    def addTable(self, n_rows, n_cols):
+    def addTable(self, n_rows, n_cols, col_width=None):
         self.table = self.document.add_table(rows=n_rows, cols=n_cols)
         self.table.alignment = WD_TABLE_ALIGNMENT.CENTER
         self.table.style = 'MediumList1'
         self.rows = n_rows
         self.cols = n_cols
         self._idx = 0
+        if col_width is not None:
+            for _i in range(n_cols):
+                self.table.cell(0,_i).width = col_width[_i] * 914400
 
     def addRow(self,data):
         if self._idx < self.rows:
