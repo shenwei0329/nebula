@@ -37,17 +37,29 @@ def doBox(label,datas,y_line=None,y_limit=None,y_label=None,x_label=None):
         show()
     return _fn
 
-def doBar(title, y_label, x_label, datas):
+def doBar(title, y_label, x_label, datas, label=None, y_limit=None):
 
     plt.figure()
     ind = np.arange(len(x_label))  # the x locations for the groups
-    plt.bar(ind, datas, 0.35, color='#afafaf')
+    _i = 0
+    for _d in datas:
+        if label is not None:
+            plt.bar(ind, _d[0], 0.35, color=_d[1], label=label[_i])
+        else:
+            plt.bar(ind, _d[0], 0.35, color=_d[1])
+        _i += 1
+    if y_limit is not None:
+        ylim(0,y_limit)
     plt.ylabel(y_label)
     plt.title(title)
     plt.xticks(ind, x_label)
-    _fn = 'pic/%s-bar.png' % time.time()
-    savefig(_fn, dpi=75)
-    #show()
+    if label is not None:
+        plt.legend()
+    if not __test:
+        _fn = 'pic/%s-bar.png' % time.time()
+        savefig(_fn, dpi=75)
+    else:
+        show()
     return _fn
 
 def doBarH(title, y_label, x_label, datas):
@@ -58,9 +70,11 @@ def doBarH(title, y_label, x_label, datas):
     plt.xlabel(y_label)
     plt.title(title)
     plt.yticks(ind, x_label)
-    _fn = 'pic/%s-bar.png' % time.time()
-    savefig(_fn, dpi=75)
-    #show()
+    if not __test:
+        _fn = 'pic/%s-bar.png' % time.time()
+        savefig(_fn, dpi=75)
+    else:
+        show()
     return _fn
 
 if __name__ == '__main__':

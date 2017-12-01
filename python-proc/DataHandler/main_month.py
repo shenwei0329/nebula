@@ -479,7 +479,6 @@ def getProjectWorkTime(cur):
     :param cur:
     :return:
     '''
-
     global TotalMember, costProject
 
     _pd = 0
@@ -488,8 +487,6 @@ def getProjectWorkTime(cur):
 
     _sql = 'select PJ_XMBH,PJ_XMMC from project_t'
     _res = doSQL(cur,_sql)
-
-    _print(u"1、项目投入情况（含产品研发和工程项目）", title=True, title_lvl=2)
 
     _m = 0
     for _row in _res:
@@ -500,21 +497,15 @@ def getProjectWorkTime(cur):
         _m = _m + _n
         if 'PRD-' in str(_row[0]):
             _pd = _pd + _n
-            _print("● [在研产品：" + str(_row[1]) + '(' + str(_row[0]) + ")，耗时 %d 工时]" % _n)
         else:
             _pj = _pj + _n
-            _print("● [项目：" + str(_row[1]) + '('+str(_row[0])+ ")，耗时 %d 工时]" % _n)
-
-    _print(u"2、非项目投入情况", title=True, title_lvl=2)
 
     _sql = 'select sum(TK_GZSJ) from task_t' + " where created_at between '%s' and '%s'" % (st_date, ed_date)
     _total_workdays = doSQLcount(cur,_sql)
     if _total_workdays > _m:
-        _print("[其他（非立项事务）：总耗时 %d 工时]" % (_total_workdays-_m))
         _sql = "select TK_RWNR,TK_GZSJ from task_t where TK_XMBH='#' and created_at between '%s' and '%s' order by TK_GZSJ+0 desc" % (st_date, ed_date)
         _res = doSQL(cur,_sql)
         for _row in _res:
-            _print("● " + str(_row[0]) + " 耗时 " + str(_row[1]) + " 工时")
             _other = _other + int(_row[1])
     if (_pd+_pj+_other)>0:
         costProject = (_pd,_pj,_other,)
@@ -894,7 +885,7 @@ def addPDList(cur, doc):
     _item = (('text', u'合计'), ('text',''), ('text', str(_sum)))
     doc.addRow(_item)
     doc.setTableFont(8)
-    _fn = doBox.doBar('P&D','Hour',_label,_vv)
+    _fn = doBox.doBar('P&D','Hour',_label,[(_vv,'#afafaf')])
     doc.addPic(_fn, sizeof=3)
 
 def addNoPDList(cur, doc):
@@ -921,7 +912,7 @@ def addNoPDList(cur, doc):
     _item = (('text', u'合计'), ('text', str(_sum)))
     doc.addRow(_item)
     doc.setTableFont(8)
-    _fn = doBox.doBar('Non-Project','Hour',_label,_vv)
+    _fn = doBox.doBar('Non-Project','Hour',_label,[(_vv,'#afafaf')])
     doc.addPic(_fn,sizeof=3)
 
 def getPersonalChkOnData(cur, m_name):
@@ -1006,6 +997,27 @@ def getGroupChkOn(cur, doc):
         doc.addRow((_name,_fig))
     doc.setTableFont(8)
 
+def getTotalChkOn(cur, doc):
+    """
+    生成总体出勤情况
+    :param cur: 数据源
+    :param doc: 文档
+    :return:
+    """
+    _sql = 'select GRP_NAME from pd_group_t where GRP_STATE="1"'
+    _res = doSQL(cur, _sql)
+    _datas = [[(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),()]]
+    for _g in _res:
+        __datas = getGroupChkOnData(cur, _g[0])
+        for _i in range(8):
+            _datas[0][_i] += __datas[0][_i]
+            _datas[1][_i] += __datas[1][_i]
+
+    _fn = doBox.doBox(['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', 'Avg'], _datas, y_limit=(5., 24.), y_line=(9., 17.5,),
+                y_label='Time', x_label='Week')
+    doc.addPic(_fn,3)
+    _print("图例说明：横向分别列出本月周一至周日以及每日平均的出勤特征，纵向表示时间（包含9:00和17:30两个时间点的红虚线标记）。方框表示集中分布区域，方框内红线为中位线，两端横线分别为上下边缘，边缘外的点为异常点。")
+
 def getOnDutyPersonalCount(cur):
 
     _n = 0
@@ -1017,6 +1029,116 @@ def getOnDutyPersonalCount(cur):
         if _v > 0:
             _n += 1
     return _n
+
+def getTaskStat(cur):
+    """
+    统计 任务情况
+    :param cur: 数据源
+    :return: 产品类数量、工程类数量和非计划类数量
+    """
+    _sql = 'select count(*) from task_t where TK_XMBH like "%PRD%"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _pd = doSQLcount(cur, _sql)
+
+    _sql = 'select count(*) from task_t where TK_XMBH<>"#" and (TK_XMBH not like "%PRD%")' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _pj = doSQLcount(cur, _sql)
+
+    _sql = 'select count(*) from task_t where created_at between "%s" and "%s"' % (st_date, ed_date)
+    _other = doSQLcount(cur, _sql) - _pd - _pj
+
+    return _pd,_pj,_other
+
+def getWorkHourPerDay(cur):
+    """
+    统计 日均工作时间（小时）
+    :param cur: 数据源
+    :return: 日均工作时间
+    """
+    _hour = 0
+    _n = 0
+    _sql = "select KQ_AM, KQ_PM from checkon_t where created_at between '%s' and '%s'" % (st_date, ed_date)
+    _res = doSQL(cur, _sql)
+    for _v in _res:
+        if _v[0]=="#" or _v[1]=="#":
+            continue
+        if '次日' in _v[1]:
+            __v = _v[1][-5:]
+            _hour += ( 24.0 - calHour(_v[0]) + calHour(__v))
+        else:
+            _hour += (calHour(_v[1]) - calHour(_v[0]))
+        _n += 1
+    return _hour/_n
+
+def putGroupInfo(cur, doc):
+    _print("研发小组特征", title=True, title_lvl=2)
+    _print("1、任务特征", title=True, title_lvl=3)
+    _print("表：研发小组工作投入情况", align=WD_ALIGN_PARAGRAPH.CENTER)
+
+    doc.addTable(1, 3)
+    _title = (('text',u'产品类'),('text',u'工程类'),('text',u'非计划类'))
+    doc.addRow(_title)
+    _print("")
+
+    _print("2、出勤特征", title=True, title_lvl=3)
+    getGroupChkOn(cur, doc)
+    _print("")
+
+def getCostTrendDesc(PdCost,OtherCost):
+
+    _str_pd = u'产品研发投入趋势为：'
+    _str_other = u'非项目类事务的投入趋势为：'
+    _avg_pd = sum(PdCost)/(len(PdCost)+0.0)
+    _avg_other = sum(OtherCost)/(len(OtherCost)+0.0)
+    if abs((PdCost[-1]+0.0)-_avg_pd)<=0.15:
+        _str_pd += u'平稳'
+    elif ((PdCost[-1]+0.0)-_avg_pd)>0.15:
+        _str_pd += u'上升'
+    else:
+        _str_pd += u'下降'
+
+    if abs((OtherCost[-1]+0.0)-_avg_other)<=0.15:
+        _str_other += u'平稳'
+    elif ((OtherCost[-1]+0.0)-_avg_other)>0.15:
+        _str_other += u'上升'
+    else:
+        _str_other += u'下降'
+    return _str_pd,_str_other
+
+def statCostTrend(cur, doc):
+
+    _sql = "select date(created_at) from task_t where created_at between '%s' and '%s'" % (st_date, ed_date)
+    _res = doSQL(cur, _sql)
+    _date_at = []
+    _date = ""
+    for _v in _res:
+        if _date != str(_v[0]):
+            _date_at.append(str(_v[0]))
+            _date = str(_v[0])
+
+    _pd = []
+    _other = []
+
+    _i = 0
+    for _date in _date_at:
+        _i += 1
+        if _i < len(_date_at):
+            _sql = "select count(*) from task_t where TK_XMBH like '%%PRD%%' and created_at between '%s' and '%s'" % (_date, _date_at[_i])
+        else:
+            _sql = "select count(*) from task_t where TK_XMBH like '%%PRD%%' and created_at between '%s' and now()" % _date
+        _pd.append(doSQLcount(cur, _sql))
+        if _i < len(_date_at):
+            _sql = "select count(*) from task_t where TK_XMBH='#' and created_at between '%s' and '%s'" % (_date, _date_at[_i])
+        else:
+            _sql = "select count(*) from task_t where TK_XMBH='#' and created_at between '%s' and now()" % _date
+        _other.append(doSQLcount(cur, _sql))
+    print _pd,_other
+    _y_limit = max(_pd+_other)*1.2
+    _fn = doBox.doBar('Cost Trend','Number of task',_date_at,[(_pd,'#afafaf'),(_other,'#fafafa')],label=['Produce','Non project'],y_limit=_y_limit)
+    doc.addPic(_fn,3)
+
+    _pd,_other = getCostTrendDesc(_pd, _other)
+    _print(u'研发资源投入：')
+    _print(u'\t●  ' + _pd)
+    _print(u'\t●  ' + _other)
 
 def main():
 
@@ -1051,42 +1173,38 @@ def main():
 
     _print('>>> 报告生成日期【%s】 <<<' % time.ctime(), align=WD_ALIGN_PARAGRAPH.CENTER)
     _print("")
-    _print("")
-    _print('主要内容', align=WD_ALIGN_PARAGRAPH.CENTER)
-    _print("")
-    _print("\t\t第一部分 数据统计")
-    _print("\t\t第二部分 数据分析与评价")
-    _print("\t\t第三部分 数据总结")
 
-    doc.addPageBreak()
     Topic_lvl_number = 0
     _print("第一部分 数据统计", title=True, title_lvl=1)
     _print("总体特征", title=True, title_lvl=2)
-    _print("\t● 在岗人数：%d（人）" % getOnDutyPersonalCount(cur))
-    _print("1、任务特征", title=True, title_lvl=3)
-    _print("1）产品类投入")
-    _print("2）工程类投入")
-    _print("3）非计划类投入")
-    _print("2、出勤特征", title=True, title_lvl=3)
-    _print("1）总体特征")
-    _print("2）趋势特征")
 
-    _print("研发小组特征", title=True, title_lvl=2)
-    _print("1、任务特征", title=True, title_lvl=3)
-    _print("表：研发小组工作投入情况", align=WD_ALIGN_PARAGRAPH.CENTER)
+    _pd,_pj,_other = getTaskStat(cur)
+    _hour = getWorkHourPerDay(cur)
+    _print("本月在岗 %d 人，执行任务 %d 个（其中产品类 %d 个、工程类 %d 个和非项目类 %d 个），日均工作时间 %0.2f 小时。" % (getOnDutyPersonalCount(cur),(_pd+_pj+_other),_pd,_pj,_other,_hour))
 
-    doc.addTable(1, 3)
-    _title = (('text',u'产品类'),('text',u'工程类'),('text',u'非计划类'))
-    doc.addRow(_title)
-    _print("")
+    _print("1、任务执行情况", title=True, title_lvl=3)
+    getProjectWorkTime(cur)
+    if len(costProject)>0:
+        _s, _fn = doPie.doProjectPie(costProject)
+        _s = _s.split('\n')
+        for __s in _s:
+            _print(__s)
+        doc.addPic(_fn, sizeof=2.6)
+    _print("2、出勤情况", title=True, title_lvl=3)
+    getTotalChkOn(cur, doc)
 
-    _print("2、出勤特征", title=True, title_lvl=3)
-    getGroupChkOn(cur, doc)
-    _print("")
-
-    doc.addPageBreak()
+    #doc.addPageBreak()
     Topic_lvl_number = 0
     _print("第二部分 数据分析与评价", title=True, title_lvl=1)
+    _print("综合评价", title=True, title_lvl=2)
+    _print("1、研发投入趋势分析", title=True, title_lvl=3)
+    statCostTrend(cur, doc)
+    _print("2、研发小组综合评价", title=True, title_lvl=3)
+    statGroupInd(cur)
+    _print("")
+    _print("3、个人综合评价", title=True, title_lvl=3)
+    statPersonalInd(cur)
+
     _print("资源投入情况", title=True, title_lvl=2)
     _print("1、产品研发投入", title=True, title_lvl=3)
     doc.addTable(1, 3)
@@ -1101,21 +1219,6 @@ def main():
     doc.addRow(_title)
     addNoPDList(cur, doc)
     _print("")
-
-    _print("综合评价", title=True, title_lvl=2)
-    _print("1、研发小组", title=True, title_lvl=3)
-    statGroupInd(cur)
-    _print("")
-    _print("2、个人", title=True, title_lvl=3)
-    statPersonalInd(cur)
-
-    doc.addPageBreak()
-    Topic_lvl_number = 0
-    _print("第三部分 数据总结", title=True, title_lvl=1)
-    _print("团队", title=True, title_lvl=2)
-    _print("效率", title=True, title_lvl=2)
-    _print("研发投入趋势分析", title=True, title_lvl=2)
-    _print("问题与改进", title=True, title_lvl=2)
 
     db.close()
     doc.saveFile('month.docx')
