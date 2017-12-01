@@ -51,7 +51,7 @@ Topic = [u'一、',
          u'十二、',
          ]
 
-SpName = [u'杨飞', u'沈伟', u'谭颖卿', u'吴丹阳', u'吴昱珉']
+SpName = [u'杨飞', u'沈伟', u'谭颖卿', u'吴丹阳', u'吴昱珉', u'张志英']
 
 def Load_json(fn):
 
@@ -109,7 +109,6 @@ def doSQLinsert(db,cur,_sql):
         db.rollback()
 
 def doSQLcount(cur,_sql):
-
 
     #print(">>>doSQLcount[%s]" % _sql)
     try:
@@ -720,34 +719,46 @@ def getPlanQMember(cur, m_name):
         _v += (int(__v[0]),)
     return _v
 
+def getChkOnQDesc(Q):
+
+    if Q>0.65:
+        _desc = u"超标"
+    elif Q>0.63:
+        _desc = u"正常"
+    else:
+        _desc = u"不达标"
+    return _desc
+
+def getTaskQDesc(Q):
+    if Q>0.85:
+        _desc = u"偏向项目类事务"
+    elif Q>0.73:
+        _desc = u"适中"
+    else:
+        _desc = u"偏向非项目类事务"
+    return _desc
+
+def getPlanQDesc(Q):
+    if Q>0.85:
+        _desc = u"优"
+    elif Q>0.75:
+        _desc = u"良"
+    elif Q > 0.55:
+        _desc = u"中"
+    elif Q > 0.35:
+        _desc = u"弱"
+    else:
+        _desc = u"差"
+    return _desc
+
 def getScoreDesc(chkonQ, taskQ, planQ):
-    _desc = ""
-    if chkonQ>0.65:
-        _desc += u"●出勤：超标"
-    elif chkonQ>0.63:
-        _desc += u"●出勤：正常"
-    else:
-        _desc += u"●出勤：不达标"
+    _desc = u'●出勤：' + getChkOnQDesc(chkonQ)
     _desc += "\n"
 
-    if taskQ>0.85:
-        _desc += u"●任务：偏向计划类事务"
-    elif taskQ>0.73:
-        _desc += u"●任务：正常"
-    else:
-        _desc += u"●任务：偏向非计划类事务"
+    _desc += u'●任务：' + getTaskQDesc(taskQ)
     _desc += "\n"
 
-    if planQ>0.85:
-        _desc += u"●计划：优"
-    elif planQ>0.75:
-        _desc += u"●计划：良"
-    elif planQ > 0.55:
-        _desc += u"●计划：中"
-    elif planQ > 0.35:
-        _desc += u"●计划：弱"
-    else:
-        _desc += u"●计划：差"
+    _desc += u'●计划：' + getPlanQDesc(planQ)
     return ('text',_desc)
 
 def statGroupInd(cur):
@@ -755,7 +766,7 @@ def statGroupInd(cur):
 
     global workhours
 
-    _width = (4,1.8,1.8,2.4,8)
+    _width = (4,1.8,1.8,2,8)
     doc.addTable(1, 5, col_width=_width)
     _title = (('text',u'研发小组'),('text',u'综合评分'),('text',u'综合指标'),('text',u'图示'),('text',u'解读'))
     doc.addRow(_title)
@@ -818,7 +829,7 @@ def statGroupInd(cur):
 
 def statPersonalInd(cur):
     """创建一个表格 1 x 3"""
-    _width = (4,1.8,1.8,2.4,8)
+    _width = (4,1.8,1.8,2,8)
     doc.addTable(1, 5, col_width=_width)
     _title = (('text',u'员工'),('text',u'个人评分'),('text',u'综合指标'),('text',u'图示'),('text',u'解读'))
     doc.addRow(_title)
@@ -913,6 +924,100 @@ def addNoPDList(cur, doc):
     _fn = doBox.doBar('Non-Project','Hour',_label,_vv)
     doc.addPic(_fn,sizeof=3)
 
+def getPersonalChkOnData(cur, m_name):
+    """
+    获取 个人 出勤统计数据
+    :param cur:
+    :param m_name:
+    :return:
+    """
+    _data = []
+    _tot_am = ()
+    _tot_pm = ()
+    for _w in [u'星期一', u'星期二', u'星期三', u'星期四', u'星期五', u'星期六', u'星期日']:
+        _sql = 'select KQ_AM, KQ_PM from checkon_t where KQ_NAME="%s" and KQ_DATE like "%%%s%%"' % (m_name,_w) + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _chkon = doSQL(cur, _sql)
+        _am = ()
+        _pm = ()
+        for _v in _chkon:
+            if (_v is None) or (len(_v)==0):
+                continue
+            __v = calHour(_v[0])
+            if __v is not None:
+                _am += (__v,)
+            __v = calHour(_v[1])
+            if __v is not None:
+                _pm += (__v,)
+        _tot_am += _am
+        _tot_pm += _pm
+        _data.append((_am,_pm,))
+    _data.append((_tot_am,_tot_pm,))
+    return _data
+
+def getGroupChkOnData(cur, g_name):
+    """
+    获取 研发小组 的出勤数据
+    :param cur: 数据源
+    :param g_name: 组名
+    :return:
+    """
+    _datas = []
+    _sql = 'select MEMBER_NAME from pd_group_member_t where GROUP_NAME="%s"' % g_name
+    _res = doSQL(cur,_sql)
+    _data_am = [(),(),(),(),(),(),(),()]
+    _data_pm = [(),(),(),(),(),(),(),()]
+    for _member in _res:
+        _personal = getPersonalChkOnData(cur, _member[0])
+        _i = 0
+        _am = ()
+        _pm = ()
+        for _week in _personal:
+            _am += _week[0]
+            _pm += _week[1]
+
+            _data_am[_i] += _am
+            _data_pm[_i] += _pm
+            _i += 1
+
+    _datas.append(_data_am)
+    _datas.append(_data_pm)
+    return _datas
+
+def getGroupChkOn(cur, doc):
+    """
+    生成 研发小组的出勤情况
+    :param cur:
+    :param doc:
+    :return:
+    """
+    doc.addTable(1, 2)
+    _title = (('text',u'组名'),('text',u'出勤情况'))
+    doc.addRow(_title)
+
+    _sql = 'select GRP_NAME from pd_group_t where GRP_STATE="1"'
+    _res = doSQL(cur, _sql)
+    for _g in _res:
+
+        if _g[0] == '研发管理组':
+            continue
+        _name = ('text',_g[0])
+        _datas = getGroupChkOnData(cur, _g[0])
+        _fig = ('pic',doBox.doBox(['Mo','Tu','We','Th','Fr','Sa','Su','Avg'],_datas,y_limit=(5.,24.),y_line=(9.,17.5,),y_label='Time',x_label='Week'),2)
+        doc.addRow((_name,_fig))
+    doc.setTableFont(8)
+
+def getOnDutyPersonalCount(cur):
+
+    _n = 0
+    _sql = 'select MM_XM from member_t where MM_ZT=1'
+    _res = doSQL(cur, _sql)
+    for _m in _res:
+        _sql = 'select count(*) from checkon_t where KQ_NAME="%s"' % _m[0]
+        _v = doSQLcount(cur, _sql)
+        if _v > 0:
+            _n += 1
+    return _n
+
 def main():
 
     global Topic_lvl_number, TotalMember, orgWT, costProject, fd, st_date, ed_date, numb_days, doc, workhours
@@ -956,8 +1061,8 @@ def main():
     doc.addPageBreak()
     Topic_lvl_number = 0
     _print("第一部分 数据统计", title=True, title_lvl=1)
-
     _print("总体特征", title=True, title_lvl=2)
+    _print("\t● 在岗人数：%d（人）" % getOnDutyPersonalCount(cur))
     _print("1、任务特征", title=True, title_lvl=3)
     _print("1）产品类投入")
     _print("2）工程类投入")
@@ -969,21 +1074,15 @@ def main():
     _print("研发小组特征", title=True, title_lvl=2)
     _print("1、任务特征", title=True, title_lvl=3)
     _print("表：研发小组工作投入情况", align=WD_ALIGN_PARAGRAPH.CENTER)
+
     doc.addTable(1, 3)
     _title = (('text',u'产品类'),('text',u'工程类'),('text',u'非计划类'))
     doc.addRow(_title)
+    _print("")
 
     _print("2、出勤特征", title=True, title_lvl=3)
-    _print("表：研发小组出勤情况", align=WD_ALIGN_PARAGRAPH.CENTER)
-    doc.addTable(1, 2)
-    _title = (('text',u'总体'),('text',u'趋势'))
-    doc.addRow(_title)
-
-    _print("个人特征", title=True, title_lvl=2)
-    _print("1、任务特征", title=True, title_lvl=3)
-    _print("表：个人工作投入情况", align=WD_ALIGN_PARAGRAPH.CENTER)
-    _print("2、出勤特征", title=True, title_lvl=3)
-    _print("表：个人出勤情况", align=WD_ALIGN_PARAGRAPH.CENTER)
+    getGroupChkOn(cur, doc)
+    _print("")
 
     doc.addPageBreak()
     Topic_lvl_number = 0
