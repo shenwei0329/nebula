@@ -14,7 +14,7 @@ def doProjectPie(data):
     :return:
     """
 
-    labels = ['R&D', 'PJ', 'Other']
+    labels = ['产品项目', '工程项目', '非项目类']
     #plt.figure(figsize=(3, 4))
     plt.figure()
     colors = ['green','yellowgreen','lightskyblue']
@@ -26,4 +26,4 @@ def doProjectPie(data):
     _fn = 'pic/%s-project.png' % time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
     plt.savefig(_fn, dpi=75)
     #plt.show()
-    return "在研产品投入：%d【人时】\n产品的项目定制化投入：%d【人时】\n其它事务投入：%d【人时】" % (data[0], data[1], data[2]), _fn
+    return _fn

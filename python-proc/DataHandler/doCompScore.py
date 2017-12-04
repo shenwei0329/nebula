@@ -33,4 +33,4 @@ def doCompScore(Labels, act_data, pref_data):
 
 if __name__ == '__main__':
 
-    doCompScore(['TaskQ','ChkOnQ','PlanQ'],(0.5833,0.7035,0.6023),(0.8,0.6544,0.8634))
+    doCompScore(['任务指标','出勤指标','计划指标'],(0.5833,0.7035,0.6023),(0.8,0.6544,0.8634))

@@ -23,7 +23,7 @@ def doBox(label,datas,y_line=None,y_limit=None,y_label=None,x_label=None):
         ylim(y_limit[0], y_limit[1])
     if y_line is not None:
         for _l in y_line:
-            plt.axhline(y=_l,linestyle='-.', linewidth=1, color='red')
+            plt.axhline(y=_l,linestyle='-', linewidth=1, color='red')
     ax.set_xticklabels(label)
     if y_label is not None:
         plt.ylabel(y_label)
@@ -41,12 +41,15 @@ def doBar(title, y_label, x_label, datas, label=None, y_limit=None):
 
     plt.figure()
     ind = np.arange(len(x_label))  # the x locations for the groups
+    _b = np.zeros(len(x_label))     # the x locations for the groups
     _i = 0
     for _d in datas:
         if label is not None:
-            plt.bar(ind, _d[0], 0.35, color=_d[1], label=label[_i])
+            plt.bar(ind, _d[0], 0.35, color=_d[1], bottom=_b, label=label[_i])
         else:
-            plt.bar(ind, _d[0], 0.35, color=_d[1])
+            plt.bar(ind, _d[0], 0.35, bottom=_b, color=_d[1])
+        _b = _b + _d[0]
+        print _b
         _i += 1
     if y_limit is not None:
         ylim(0,y_limit)
