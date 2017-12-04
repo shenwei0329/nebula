@@ -21,6 +21,9 @@ import crWord
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+from pylab import mpl
+mpl.rcParams['font.sans-serif'] = ['SimHei']
+
 """定义时间区间
 """
 st_date = '2017-11-4'
@@ -650,10 +653,12 @@ def main():
 
     _print("各项目投入统计", title=True, title_lvl=1)
     if len(costProject)>0:
-        _s, _fn = doPie.doProjectPie(costProject)
-        _s = _s.split('\n')
-        for __s in _s:
-            _print(__s)
+        _fn = doPie.doProjectPie(costProject)
+        _print(u"产品项目投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[0], costProject[0]*125.0/10000.0))
+        _print(u"工程项目投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[1], costProject[1]*125.0/10000.0))
+        _print(u"非项目类事务投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[2], costProject[2]*125.0/10000.0))
+        _print("")
+        _print(u"总投入：%d【人时】，工时成本 %0.2f【万元】" % (sum(costProject), sum(costProject)*125.0/10000.0))
         doc.addPic(_fn, sizeof=4)
         doc.addText(u"图5 项目投入比例", align=WD_ALIGN_PARAGRAPH.CENTER)
 

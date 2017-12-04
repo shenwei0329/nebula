@@ -1220,7 +1220,7 @@ def getGroupTaskSummary(cur):
         _row.append(_col)
 
     _fn = doBarOnTable.doBarOnTable(_key,_group,_row)
-    return _fn,_project,_key
+    return _fn,_project,_key, _row
 
 def main():
 
@@ -1296,12 +1296,16 @@ def main():
     _print("")
 
     _print(u'研发组参与工程项目和非项目类任务的明细：')
-    _fn,_project,_key = getGroupTaskSummary(cur)
-    doc.addPic(_fn,sizeof=5)
+    _fn,_project,_key,_row = getGroupTaskSummary(cur)
+    doc.addPic(_fn,sizeof=6)
     _print(u'研发组投入工程项目和非项目类任务图', align=WD_ALIGN_PARAGRAPH.CENTER)
     _print(u'图例说明：')
+    _i = 0
     for _k in range(len(_key)):
-        _print(u"\t【%s】表示：%s" % (_key[_k], _project[_k]))
+        _sum = sum(_row[_i])
+        if _sum>0:
+            _print(u"\t【%s】表示：%s，投入：%d（人时）" % (_key[_k], _project[_k], _sum))
+        _i += 1
 
     _print("资源投入分类明细", title=True, title_lvl=2)
     _print("1、产品项目类资源投入情况", title=True, title_lvl=3)

@@ -42,7 +42,7 @@ def doBarOnTable( rows, columns, datas ):
     for row in range(n_rows):
         plt.bar(index, datas[_N-row], bar_width, bottom=y_offset, color=colors[row])
         y_offset = y_offset + datas[_N-row]
-        cell_text.append(datas[_N-row])
+        cell_text.append(['%d' % x for x in datas[_N-row]])
     # Reverse colors and text labels to display the last value at the top.
     colors = colors[::-1]
     cell_text.reverse()
@@ -53,7 +53,7 @@ def doBarOnTable( rows, columns, datas ):
     plt.table(cellText=cell_text,rowLabels=rows,rowColours=colors,colLabels=columns,loc='bottom')
 
     # Adjust layout to make room for the table:
-    plt.subplots_adjust(left=0.2, bottom=0.3)
+    plt.subplots_adjust(left=0.2, bottom=0.4)
 
     plt.ylabel(u"工时")
     #plt.yticks(values * value_increment, ['%d' % val for val in values])
