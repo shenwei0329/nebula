@@ -23,6 +23,7 @@ def doBarOnTable( rows, columns, datas ):
     :param datas: 二维数据组
     :return:
     """
+    index = np.arange(len(columns)) + 0.3
     plt.figure()
     rcParams.update({
     'font.family':'sans-serif',
@@ -37,27 +38,30 @@ def doBarOnTable( rows, columns, datas ):
     y_offset = np.zeros(len(columns))
     # Plot bars and create text labels for the table
     cell_text = []
+    _N = n_rows-1
     for row in range(n_rows):
-        plt.bar(index, datas[row], bar_width, bottom=y_offset, color=colors[row])
-        y_offset = y_offset + data[row]
-        cell_text.append(data[row])
+        plt.bar(index, datas[_N-row], bar_width, bottom=y_offset, color=colors[row])
+        y_offset = y_offset + datas[_N-row]
+        cell_text.append(datas[_N-row])
     # Reverse colors and text labels to display the last value at the top.
     colors = colors[::-1]
     cell_text.reverse()
+
+    print cell_text
 
     # Add a table at the bottom of the axes
     plt.table(cellText=cell_text,rowLabels=rows,rowColours=colors,colLabels=columns,loc='bottom')
 
     # Adjust layout to make room for the table:
-    plt.subplots_adjust(left=0.2, bottom=0.2)
+    plt.subplots_adjust(left=0.2, bottom=0.3)
 
     plt.ylabel(u"工时")
     #plt.yticks(values * value_increment, ['%d' % val for val in values])
     plt.xticks([])
     plt.title(u'资源投入')
 
+    _fn = 'pic/%s-barontable.png' % time.time()
     if not __test:
-        _fn = 'pic/%s-barontable.png' % time.time()
         plt.savefig(_fn, dpi=75)
     else:
         plt.show()
