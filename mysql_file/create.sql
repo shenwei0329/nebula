@@ -230,5 +230,25 @@ CREATE TABLE if not exists jira_task_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+# Project 任务计划表
+#
+#
+CREATE TABLE if not exists project_task_t
+(
+	id integer primary key not null auto_increment,
+	PJ_XMBH varchar(20),
+	PJ_XMMC varchar(80),
+	task_id integer comment '任务ID',
+	task_name varchar(80) comment '任务或子任务名称',
+	start_date varchar(32) comment '启动日期',
+	end_date varchar(32) comment '结束日期',
+	days varchar(32) comment '计划工日',
+	task_resources varchar(80) comment '任务分配人',
+	work_hour varchar(12) comment '计划工时',
+	task_level integer comment '任务层级',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 #
 #
