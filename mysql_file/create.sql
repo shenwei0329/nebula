@@ -208,5 +208,26 @@ CREATE TABLE if not exists project_key_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+# Jira 任务执行跟踪表
+#
+#
+CREATE TABLE if not exists jira_task_t
+(
+	id integer primary key not null auto_increment,
+	state varchar(12) comment '任务状态：ACTIVE,CLOSED',
+	summary varchar(160) comment '任务简述',
+    description varchar(1024) comment '任务描述',
+    sequence integer comment '序号',
+    stage_name varchar(160) comment '阶段名称',
+    users varchar(80) comment '任务执行人数组',
+    users_alias varchar(80) comment '任务执行人别名数组',
+    user_emails varchar(1024) comment '任务执行人电邮数组',
+	startDate varchar(48) comment '计划：启动日期',
+	endDate varchar(48) comment '计划：结束日期',
+	completeDate varchar(48) comment '实际：完成日期',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 #
 #
