@@ -237,7 +237,6 @@ CREATE TABLE if not exists project_task_t
 (
 	id integer primary key not null auto_increment,
 	PJ_XMBH varchar(20),
-	PJ_XMMC varchar(80),
 	task_id integer comment '任务ID',
 	task_name varchar(80) comment '任务或子任务名称',
 	start_date varchar(32) comment '启动日期',
