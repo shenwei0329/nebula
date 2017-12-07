@@ -65,7 +65,7 @@ def doBar(title, y_label, x_label, datas, label=None, y_limit=None):
         show()
     return _fn
 
-def doBarBase(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, dots=None):
+def doDotBase(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, dots=None):
 
     plt.figure()
     for _data in datas:
@@ -94,6 +94,82 @@ def doBarBase(title, y_label, x_label, datas, limit=None, label_pos=None, lines=
         plt.legend(loc=label_pos)
 
     _fn = 'pic/%s-bar.png' % time.time()
+    if not __test:
+        plt.savefig(_fn, dpi=75)
+    else:
+        plt.show()
+    return _fn
+
+def doStem(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, dots=None):
+
+    plt.figure()
+    for _data in datas:
+        _color = _data[1]
+        _dot = _data[2]
+        _label = _data[3]
+        markerline, stemlines, baseline = plt.stem(_data[0][0],_data[0][1],_dot, label=_label)
+        plt.setp(markerline, 'markerfacecolor', _color)
+        plt.setp(stemlines, 'color', _color, 'linewidth', 1)
+        plt.setp(baseline, 'color', 'k', 'linewidth', 1)
+
+    if limit is not None:
+        ylim(limit[0],limit[1])
+
+    if dots is not None:
+        for _dot in dots:
+            plt.scatter(_dot[0], _dot[1], marker=_dot[2], color=_dot[3], label=_dot[4])
+
+    if lines is not None:
+        for _line in lines:
+            plt.axvline(x=_line[0], linestyle=_line[1], linewidth=1, color=_line[2], label=_line[3])
+
+    plt.ylabel(y_label)
+    plt.xlabel(x_label)
+    plt.title(title)
+    if label_pos is None:
+        plt.legend()
+    else:
+        plt.legend(loc=label_pos)
+
+    _fn = 'pic/%s-stem.png' % time.time()
+    if not __test:
+        plt.savefig(_fn, dpi=75)
+    else:
+        plt.show()
+    return _fn
+
+def doLine(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, dots=None):
+
+    plt.figure()
+    for _data in datas:
+        _color = _data[1]
+        _dot = _data[2]
+        _label = _data[3]
+        _max = 0
+        for _i in _data[0][0]:
+            _max = _data[0][1][_i][1]+1
+            plt.plot([_i, _i], [_data[0][1][_i][0], _data[0][1][_i][1]], _dot, linewidth=3, color=_color)
+
+    plt.plot([_i, _i], [_data[0][1][_i][0], _data[0][1][_i][1]], _dot, linewidth=3, color=_color, label=_label)
+    ylim(-1, _max)
+
+    if dots is not None:
+        for _dot in dots:
+            plt.scatter(_dot[0], _dot[1], marker=_dot[2], color=_dot[3], label=_dot[4])
+
+    if lines is not None:
+        for _line in lines:
+            plt.axvline(x=_line[0], linestyle=_line[1], linewidth=1, color=_line[2], label=_line[3])
+
+    plt.ylabel(y_label)
+    plt.xlabel(x_label)
+    plt.title(title)
+    if label_pos is None:
+        plt.legend()
+    else:
+        plt.legend(loc=label_pos)
+
+    _fn = 'pic/%s-line.png' % time.time()
     if not __test:
         plt.savefig(_fn, dpi=75)
     else:
