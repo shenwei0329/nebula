@@ -290,19 +290,22 @@ def main():
 
     _print(u"资源投入计划与实际情况", title=True, title_lvl=2)
 
+    _ylines = []
+    _ylines.append([_plan_work_hour[_line_n][1], '--', 'k', u'计划投入%d个人时' % _plan_work_hour[_line_n][1]])
+    _ylines.append([_active_value[_line_n-1][1], '--', 'r', u'实际投入%d个人时' % _active_value[_line_n-1][1]])
     if _active_value[_line_n-1][1]>_plan_work_hour[_line_n][1]:
         _dlt = float((_active_value[_line_n-1][1] - _plan_work_hour[_line_n][1])*100)/float(_plan_work_hour[_line_n-1][1])
         _print(u'【风险提示】：当前本项目的实际资源投入（人时费用）已超过计划值（超出 %0.2f%%），'
-               u'提请研发团队提升工作效率并提升周报内容的准确性。' % _dlt,
+               u'提请研发团队提升工作效率及周报内容的准确性。' % _dlt,
                color=(250, 0, 0))
     else:
         _print(u'当前本项目的实际资源投入（人时费用）满足计划要求。')
 
     _data = []
-    _data.append([[range(len(_active_value)), _active_value], "r", "+", u"已投入"])
+    _data.append([[range(len(_active_value)), _active_value], "r", "-", u"已投入"])
     _data.append([[range(len(_plan_work_hour)), _plan_work_hour], "k", "-", u"计划投入"])
     _fn = doBox.doLine(u'投入分布图', u'Δ投入工时（人时）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
-                       _data, label_pos=4, lines=_lines)
+                       _data, label_pos=4, lines=_lines, ylines=_ylines)
     doc.addPic(_fn,sizeof=3.6)
     _print(u'【图例说明】：用以图示研发过程中资源（人时）计划投入情况。'
            u'通过图示，可大致了解该项目计划投入的资源和已投入的资源情况。'
@@ -333,6 +336,9 @@ def main():
 
     _print(u"本迭代周期内正在执行的任务有 %d 个。" % _n)
 
+    _ylines = []
+    _ylines.append([_total[_line_n+1], '--', 'k', u'计划完成%d个' % _total[_line_n+1]])
+    _ylines.append([_sum+_n, '--', 'r', u'实际完成%d个' % (_sum+_n)])
     if _total[_line_n+1]-(_sum+_n)>int(_total[_line_n+1]*0.1):
         _print(u'【风险提示】：本期迭代后，任务完成总量已“负偏离”计划量的10%，请在下一期迭代过程中修正。',
                color=(250, 0, 0))
@@ -340,7 +346,7 @@ def main():
     _dots = [[_line_n+1,_sum+_n,">",'r',u"预期"]]
 
     _fn = doBox.doDotBase(u'任务完成趋势图', u'Σ任务数量（个）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
-                          _data, label_pos=4, lines=_lines, dots=_dots)
+                          _data, label_pos=4, lines=_lines, ylines=_ylines, dots=_dots)
 
     doc.addPic(_fn,sizeof=4.6)
     _print(u'【图例说明】：用以图示该项目计划的完成状态。'

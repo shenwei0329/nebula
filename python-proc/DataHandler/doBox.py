@@ -65,7 +65,7 @@ def doBar(title, y_label, x_label, datas, label=None, y_limit=None):
         show()
     return _fn
 
-def doDotBase(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, dots=None):
+def doDotBase(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, ylines=None, dots=None):
 
     plt.figure()
     for _data in datas:
@@ -85,6 +85,10 @@ def doDotBase(title, y_label, x_label, datas, limit=None, label_pos=None, lines=
         for _line in lines:
             plt.axvline(x=_line[0], linestyle=_line[1], linewidth=2, color=_line[2], label=_line[3])
 
+    if ylines is not None:
+        for _line in ylines:
+            plt.axhline(y=_line[0], linestyle=_line[1], linewidth=1, color=_line[2], label=_line[3])
+
     plt.ylabel(y_label)
     plt.xlabel(x_label)
     plt.title(title)
@@ -100,7 +104,7 @@ def doDotBase(title, y_label, x_label, datas, limit=None, label_pos=None, lines=
         plt.show()
     return _fn
 
-def doStem(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, dots=None):
+def doStem(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, ylines=None, dots=None):
 
     plt.figure()
     for _data in datas:
@@ -123,6 +127,10 @@ def doStem(title, y_label, x_label, datas, limit=None, label_pos=None, lines=Non
         for _line in lines:
             plt.axvline(x=_line[0], linestyle=_line[1], linewidth=1, color=_line[2], label=_line[3])
 
+    if ylines is not None:
+        for _line in ylines:
+            plt.axhline(y=_line[0], linestyle=_line[1], linewidth=1, color=_line[2], label=_line[3])
+
     plt.ylabel(y_label)
     plt.xlabel(x_label)
     plt.title(title)
@@ -138,9 +146,10 @@ def doStem(title, y_label, x_label, datas, limit=None, label_pos=None, lines=Non
         plt.show()
     return _fn
 
-def doLine(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, dots=None):
+def doLine(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, ylines=None, dots=None):
 
     plt.figure()
+    _max = 0
     for _data in datas:
         _color = _data[1]
         _dot = _data[2]
@@ -151,7 +160,7 @@ def doLine(title, y_label, x_label, datas, limit=None, label_pos=None, lines=Non
             plt.plot([_i, _i], [_data[0][1][_i][0], _data[0][1][_i][1]], _dot, linewidth=3, color=_color)
         plt.plot([_i, _i], [_data[0][1][_i][0], _data[0][1][_i][1]], _dot, linewidth=3, color=_color, label=_label)
 
-    ylim(-1, _max+_max*0.1)
+    ylim(-1, _max+float(_max)*0.1)
 
     if dots is not None:
         for _dot in dots:
@@ -160,6 +169,10 @@ def doLine(title, y_label, x_label, datas, limit=None, label_pos=None, lines=Non
     if lines is not None:
         for _line in lines:
             plt.axvline(x=_line[0], linestyle=_line[1], linewidth=1, color=_line[2], label=_line[3])
+
+    if ylines is not None:
+        for _line in ylines:
+            plt.axhline(y=_line[0], linestyle=_line[1], linewidth=1, color=_line[2], label=_line[3])
 
     plt.ylabel(y_label)
     plt.xlabel(x_label)
