@@ -149,8 +149,8 @@ def doLine(title, y_label, x_label, datas, limit=None, label_pos=None, lines=Non
         for _i in _data[0][0]:
             _max = _data[0][1][_i][1]+1
             plt.plot([_i, _i], [_data[0][1][_i][0], _data[0][1][_i][1]], _dot, linewidth=3, color=_color)
+        plt.plot([_i, _i], [_data[0][1][_i][0], _data[0][1][_i][1]], _dot, linewidth=3, color=_color, label=_label)
 
-    plt.plot([_i, _i], [_data[0][1][_i][0], _data[0][1][_i][1]], _dot, linewidth=3, color=_color, label=_label)
     ylim(-1, _max+_max*0.1)
 
     if dots is not None:

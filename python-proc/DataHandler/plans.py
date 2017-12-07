@@ -179,6 +179,7 @@ def main():
     _plan_quta = []
     _plan_work_hour = []
     _active_quta = []
+    _active_value = []
 
     _sql = 'select end_date from project_task_t where task_resources<>"#" and PJ_XMBH="%s" order by end_date' % sys.argv[1]
     _res = doSQL(cur, _sql)
@@ -212,12 +213,15 @@ def main():
     _print(u'项目起止日期：%s 至 %s' % (_res[0][2], _res[0][3]))
     _print(u'项目功能简介：%s' % _res[0][4])
 
-    _print(u"计划指标", title=True, title_lvl=1)
+    _print(u"计划指标与实际情况", title=True, title_lvl=1)
     """计划
     """
     _print(u"任务数量分布情况", title=True, title_lvl=2)
     """当日完成任务的Σ工时
     """
+    _now = datetime.datetime.now()
+    _today = datetime.date(_now.year,_now.month,_now.day)
+
     _start_date = start_date
     _sum = 0
     while True:
@@ -230,6 +234,20 @@ def main():
 
         _start_date = _start_date + datetime.timedelta(days=1)
         if _start_date > end_date:
+            break
+
+    _start_date = start_date
+    _sum = 0
+    while True:
+        _date = _start_date.strftime("%Y-%m-%d")
+        _sql = 'select sum(TK_GZSJ) from task_t ' \
+               'where created_at BETWEEN "%s 00:00:00" AND "%s 23:59:59" and TK_XMBH="%s"' % (_date, _date, sys.argv[1])
+        _n = int(doSQLcount(cur,_sql))
+        _active_value.append([_sum, _sum+_n])
+        _sum += _n
+
+        _start_date = _start_date + datetime.timedelta(days=1)
+        if _start_date>_today:
             break
 
     _start_date = start_date
@@ -247,8 +265,6 @@ def main():
 
     _line_n = 0
     _start_date = start_date
-    _now = datetime.datetime.now()
-    _today = datetime.date(_now.year,_now.month,_now.day)
 
     while True:
         _date = _start_date.strftime(u"%Y-%m-%d")
@@ -272,14 +288,25 @@ def main():
            u'图中“红竖线”是当前日期，左边表示拟完成的任务量，右边表示计划中的任务量。'
            u'通过图示，可大致了解当前任务量的完成情况。')
 
-    _print(u"投入分布情况", title=True, title_lvl=2)
-    _data = [[[range(len(_plan_work_hour)), _plan_work_hour], "k", "-", u"投入量"]]
-    _fn = doBox.doLine(u'投入分布图', u'Δ投入工时', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
+    _print(u"资源投入计划与实际情况", title=True, title_lvl=2)
+
+    if _active_value[_line_n-1][1]>_plan_work_hour[_line_n][1]:
+        _dlt = float((_active_value[_line_n-1][1] - _plan_work_hour[_line_n][1])*100)/float(_plan_work_hour[_line_n-1][1])
+        _print(u'【风险提示】：当前本项目的实际资源投入（人时费用）已超过计划值（超出 %0.2f%%），'
+               u'提请研发团队提升工作效率并提升周报内容的准确性。' % _dlt,
+               color=(250, 0, 0))
+    else:
+        _print(u'当前本项目的实际资源投入（人时费用）满足计划要求。')
+
+    _data = []
+    _data.append([[range(len(_active_value)), _active_value], "r", "+", u"已投入"])
+    _data.append([[range(len(_plan_work_hour)), _plan_work_hour], "k", "-", u"计划投入"])
+    _fn = doBox.doLine(u'投入分布图', u'Δ投入工时（人时）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
                        _data, label_pos=4, lines=_lines)
     doc.addPic(_fn,sizeof=3.6)
     _print(u'【图例说明】：用以图示研发过程中资源（人时）计划投入情况。'
-           u'横坐标是时间进程（工作日），纵坐标是计划投入资源量（人时）。'
-           u'通过图示，可大致了解该项目已投入的和还需投入的资源情况。')
+           u'通过图示，可大致了解该项目计划投入的资源和已投入的资源情况。'
+           u'已投入资源的数据来源于“周报”中以本项目相关任务项数据的统计。')
 
     _print(u"计划跟踪", title=True, title_lvl=1)
 
