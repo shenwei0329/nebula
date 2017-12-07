@@ -33,7 +33,7 @@ def doSQL(cur,_sql):
     cur.execute(_sql)
     return cur.fetchall()
 
-def inputFASTtask(db, cur, jira):
+def inputFASTtask(db, cur, jira, project_alias='FAST', project_number=None):
     """
     从 JIRA 导入 FAST 任务数据
     :param cur: 数据库
@@ -41,7 +41,7 @@ def inputFASTtask(db, cur, jira):
     :return:
     """
     Task = {}
-    issues = jira.search_issues('project = FAST ORDER BY created DESC', maxResults=10000)
+    issues = jira.search_issues('project = %s ORDER BY created DESC' % project_alias, maxResults=10000)
     for issue in issues:
         watcher = jira.watchers(issue)
         # print("Issue has {} watcher(s)".format(watcher.watchCount))
@@ -70,24 +70,26 @@ def inputFASTtask(db, cur, jira):
         print _n
         print _sql
         if _n>0:
+            """记录已存在
+            """
             continue
         else:
-            _sql = 'insert into jira_task_t(issue_id,summary,description,state,sequence,' \
+            _sql = 'insert into jira_task_t(project_alias,issue_id,summary,description,state,sequence,' \
                    'stage_name,users,users_alias,user_emails,startDate,endDate,completeDate) ' \
-                   'values(%s,"%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s")' % (
-                Task[_v][0],
-                Task[_v][1],
-                Task[_v][2],
-                Task[_v][3]['state'],
-                Task[_v][3]['sequence'],
-                Task[_v][3]['name'],
-                Task[_v][4]['name'],
-                Task[_v][4]['alias'],
-                Task[_v][4]['email'],
-                Task[_v][3]['startDate'],
-                Task[_v][3]['endDate'],
-                Task[_v][3]['completeDate']
-            )
+                   'values("%s",%s,"%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s")' % (
+                    project_alias,
+                    Task[_v][0],
+                    Task[_v][1],
+                    Task[_v][2],
+                    Task[_v][3]['state'],
+                    Task[_v][3]['sequence'],
+                    Task[_v][3]['name'],
+                    Task[_v][4]['name'],
+                    Task[_v][4]['alias'],
+                    Task[_v][4]['email'],
+                    Task[_v][3]['startDate'],
+                    Task[_v][3]['endDate'],
+                    Task[_v][3]['completeDate'])
             print _sql
             doSQLinsert(db, cur, _sql)
 
@@ -102,7 +104,7 @@ if __name__ == '__main__':
     db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
     cur = db.cursor()
 
-    Task = inputFASTtask(db, cur, jira)
+    Task = inputFASTtask(db, cur, jira, project_alias='FAST', project_number='PRD-2017-PROJ-00003')
 
     _keys = sorted(Task.keys(),reverse=True)
     for _v in _keys:
