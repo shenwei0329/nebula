@@ -8,7 +8,7 @@
 #
 
 import MySQLdb,sys,json, time
-import datetime
+import datetime,types
 import doPie, doHour, doBox
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import crWord
@@ -18,6 +18,10 @@ sys.setdefaultencoding('utf-8')
 
 from pylab import mpl
 mpl.rcParams['font.sans-serif'] = ['SimHei']
+
+ProjectAlias = {
+    "PRD-2017-PROJ-00003": "FAST",
+}
 
 doc = None
 Topic_lvl_number = 0
@@ -97,6 +101,10 @@ def doSQLcount(cur,_sql):
         cur.execute(_sql)
         _result = cur.fetchone()
         _n = _result[0]
+        if _n is None:
+            _n = 0
+        if type(_n) is types.NoneType:
+            _n = 0
     except:
         _n = 0
 
@@ -148,7 +156,7 @@ def doCount(db,cur):
 
 def main():
 
-    global doc
+    global doc,ProjectAlias
 
     if len(sys.argv) != 2:
         print("\n\tUsage: python %s project_name\n" % sys.argv[0])
@@ -214,7 +222,7 @@ def main():
     _sum = 0
     while True:
         _date = _start_date.strftime(u"%Y年%m月%d日").replace(u'年0', u'年').replace(u'月0', u'月')
-        _sql = 'select count(*) from project_task_t ' \
+        _sql = 'select sum(work_hour) from project_task_t ' \
                'where end_date like "%%%s%%" and task_resources<>"#" and PJ_XMBH="%s" order by task_id' % (_date,sys.argv[1])
         _n = int(doSQLcount(cur,_sql))
         _plan_work_hour.append([_sum, _sum+_n])
@@ -227,7 +235,7 @@ def main():
     _start_date = start_date
     while True:
         _date = _start_date.strftime(u"%Y年%m月%d日").replace(u'年0', u'年').replace(u'月0', u'月')
-        _sql = 'select count(work_hour) from project_task_t ' \
+        _sql = 'select count(*) from project_task_t ' \
                'where end_date like "%%%s%%" and task_resources<>"#" and PJ_XMBH="%s" order by task_id' % (_date,sys.argv[1])
         _n = int(doSQLcount(cur,_sql))
         _plan_date.append(_start_date)
@@ -245,7 +253,8 @@ def main():
     while True:
         _date = _start_date.strftime(u"%Y-%m-%d")
         _sql = 'select count(*) from jira_task_t ' \
-               'where completeDate like "%%%s%%" and state="CLOSED" order by id' % _date
+               'where project_alias="%s" and completeDate like "%%%s%%" and state="CLOSED" order by id' %\
+               (ProjectAlias[sys.argv[1]],_date)
         _n = int(doSQLcount(cur,_sql))
         _active_quta.append(_n)
 
@@ -257,7 +266,7 @@ def main():
     _lines = [[_line_n, '-', 'red', u'当前日期']]
     _data = [[[range(len(_plan_quta)), _plan_quta], "b", "-", u"当天完成任务数"]]
     _fn = doBox.doStem(u'计划的任务量分布图', u'Δ任务完成数量（个）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]), _data, lines=_lines)
-    doc.addPic(_fn,sizeof=3)
+    doc.addPic(_fn,sizeof=3.6)
     _print(u'【图例说明】：用以图示研发计划中任务的分配情况。'
            u'横坐标是时间进程（工作日），纵坐标是计划完成的任务个数。'
            u'图中“红竖线”是当前日期，左边表示拟完成的任务量，右边表示计划中的任务量。'
@@ -266,8 +275,8 @@ def main():
     _print(u"投入分布情况", title=True, title_lvl=2)
     _data = [[[range(len(_plan_work_hour)), _plan_work_hour], "k", "-", u"投入量"]]
     _fn = doBox.doLine(u'投入分布图', u'Δ投入工时', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
-                       _data, lines = _lines, limit=[-1,10000])
-    doc.addPic(_fn,sizeof=3)
+                       _data, label_pos=4, lines=_lines)
+    doc.addPic(_fn,sizeof=3.6)
     _print(u'【图例说明】：用以图示研发过程中资源（人时）计划投入情况。'
            u'横坐标是时间进程（工作日），纵坐标是计划投入资源量（人时）。'
            u'通过图示，可大致了解该项目已投入的和还需投入的资源情况。')
@@ -306,7 +315,7 @@ def main():
     _fn = doBox.doDotBase(u'任务完成趋势图', u'Σ任务数量（个）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
                           _data, label_pos=4, lines=_lines, dots=_dots)
 
-    doc.addPic(_fn,sizeof=4.2)
+    doc.addPic(_fn,sizeof=4.6)
     _print(u'【图例说明】：用以图示该项目计划的完成状态。'
            u'图中包括计划要求；实际执行情况及预期（本迭代周期）将达到的水平。'
            u'通过本图可直观了解该项目的计划与执行是否存在+/-偏差，以及偏差大小。')
