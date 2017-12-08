@@ -33,7 +33,7 @@ def doSQL(cur,_sql):
     cur.execute(_sql)
     return cur.fetchall()
 
-def inputFASTtask(db, cur, jira, project_alias='FAST', project_number=None):
+def inputFASTtask(db, cur, jira, project_alias='FAST'):
     """
     从 JIRA 导入 FAST 任务数据
     :param cur: 数据库
@@ -65,15 +65,31 @@ def inputFASTtask(db, cur, jira, project_alias='FAST', project_number=None):
 
     _keys = sorted(Task.keys(), reverse=True)
     for _v in _keys:
-        _sql = 'select count(*) from jira_task_t where issue_id=%s' % Task[_v][0]
+        _sql = 'select count(*) from jira_task_t where issue_id=%s and project_alias="%s"' % \
+               (Task[_v][0],project_alias)
         _n = doSQLcount(cur, _sql)
-        print _n
-        print _sql
         if _n>0:
-            """记录已存在
+            """记录已存在：判断记录的“state、completeDate”是否变化
             """
-            continue
+            _sql = 'select state,completeDate from jira_task_t where issue_id=%s' % Task[_v][0]
+            _res = doSQL(cur, _sql)
+            for _r in _res:
+                _sql = None
+                if _r[0]!=Task[_v][3]['state']:
+                    _sql = 'update jira_task_t set state="%s"' % Task[_v][3]['state']
+                if _r[1]!=Task[_v][3]['completeDate']:
+                    if _sql is None:
+                        _sql = 'update jira_task_t set completeDate="%s"' % Task[_v][3]['completeDate']
+                    else:
+                        _sql += ',completeDate="%s"' % Task[_v][3]['completeDate']
+                if _sql is None:
+                    # print("[%s]: No change!<%s,%s>" % (Task[_v][0],_r[0],_r[1]))
+                    continue
+                _sql += ' where issue_id=%s and project_alias="%s"' % (Task[_v][0],project_alias)
+                print _sql
         else:
+            """添加新记录
+            """
             _sql = 'insert into jira_task_t(project_alias,issue_id,summary,description,state,sequence,' \
                    'stage_name,users,users_alias,user_emails,startDate,endDate,completeDate) ' \
                    'values("%s",%s,"%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s")' % (
@@ -104,12 +120,16 @@ if __name__ == '__main__':
     db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
     cur = db.cursor()
 
-    Task = inputFASTtask(db, cur, jira, project_alias='FAST', project_number='PRD-2017-PROJ-00003')
+    Task = inputFASTtask(db, cur, jira, project_alias='FAST')
 
     _keys = sorted(Task.keys(),reverse=True)
+    """
     for _v in _keys:
         print("\t%s, %s" % (Task[_v][1],Task[_v][2]))
         for _k in sorted(Task[_v][3].keys(),reverse=True):
             print("\t%s = %s" % (_k,Task[_v][3][_k]))
         print("\tUser: %s, Alias: %s, eMail: %s" % (Task[_v][4]['name'],Task[_v][4]['alias'],Task[_v][4]['email']))
         print("=" * 8)
+    """
+    print(".done")
+
