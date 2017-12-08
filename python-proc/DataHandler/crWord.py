@@ -35,9 +35,21 @@ class createWord:
         _style = 'Title' if lvl == 0 else 'Heading%d' % lvl
         _paragraph = self.document.add_paragraph(info, _style)
         _paragraph.paragraph_format.alignment = align
+        return _paragraph
 
     def addText(self, info, align=WD_ALIGN_PARAGRAPH.LEFT, color=None):
         self.paragrap = self.document.add_paragraph()
+        _run = self.paragrap.add_run()
+        self.paragrap.paragraph_format.alignment = align
+        self.paragrap.paragraph_format.first_line_indent = Inches(0.3)
+        if color is not None:
+            font = _run.font
+            font.color.rgb = RGBColor(color[0],color[1],color[2])
+        _run.add_text(info)
+        return self.paragrap
+
+    def appendText(self, paragrap, info, align=WD_ALIGN_PARAGRAPH.LEFT, color=None):
+        self.paragrap = paragrap.insert_paragraph_before()
         _run = self.paragrap.add_run()
         self.paragrap.paragraph_format.alignment = align
         self.paragrap.paragraph_format.first_line_indent = Inches(0.3)

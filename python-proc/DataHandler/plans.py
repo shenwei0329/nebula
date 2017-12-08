@@ -64,26 +64,36 @@ def calHour(_str):
     else:
         return None
 
-def _print(_str, title=False, title_lvl=0, color=None, align=None ):
+def _print(_str, title=False, title_lvl=0, color=None, align=None, paragrap=None ):
 
     global doc, Topic_lvl_number, Topic
 
     _str = u"%s" % _str.replace('\r', '').replace('\n','')
+
+    _paragrap = None
 
     if title:
         if title_lvl==2:
             _str = Topic[Topic_lvl_number] + _str
             Topic_lvl_number += 1
         if align is not None:
-            doc.addHead(_str, title_lvl, align=align)
+            _paragrap = doc.addHead(_str, title_lvl, align=align)
         else:
-            doc.addHead(_str, title_lvl)
+            _paragrap = doc.addHead(_str, title_lvl)
     else:
         if align is not None:
-            doc.addText(_str, color=color, align=align)
+            if paragrap is None:
+                _paragrap = doc.addText(_str, color=color, align=align)
+            else:
+                doc.appendText(paragrap, _str, color=color, align=align)
         else:
-            doc.addText(_str, color=color)
+            if paragrap is None:
+                _paragrap = doc.addText(_str, color=color)
+            else:
+                doc.appendText(paragrap, _str, color=color)
     print(_str)
+
+    return _paragrap
 
 def doSQLinsert(db,cur,_sql):
 
@@ -175,11 +185,23 @@ def main():
 
     _print('>>> 报告生成日期【%s】 <<<' % time.ctime(), align=WD_ALIGN_PARAGRAPH.CENTER)
 
+    """计划期限"""
     _plan_date = []
+
+    """计划拟完成任务量"""
     _plan_quta = []
+
+    """计划投入工时"""
     _plan_work_hour = []
+
+    """实际完成任务量"""
     _active_quta = []
+
+    """实际投入工时"""
     _active_value = []
+
+    """报告结论"""
+    _results = []
 
     _sql = 'select end_date from project_task_t where task_resources<>"#" and PJ_XMBH="%s" order by end_date' % sys.argv[1]
     _res = doSQL(cur, _sql)
@@ -213,7 +235,7 @@ def main():
     _print(u'项目起止日期：%s 至 %s' % (_res[0][2], _res[0][3]))
     _print(u'项目功能简介：%s' % _res[0][4])
 
-    _print(u"计划指标与实际情况", title=True, title_lvl=1)
+    _paragrap = _print(u"计划指标与实际情况", title=True, title_lvl=1)
     """计划
     """
     _print(u"任务数量分布情况", title=True, title_lvl=2)
@@ -295,11 +317,14 @@ def main():
     _ylines.append([_active_value[_line_n-1][1], '--', 'r', u'实际投入%d个人时' % _active_value[_line_n-1][1]])
     if _active_value[_line_n-1][1]>_plan_work_hour[_line_n][1]:
         _dlt = float((_active_value[_line_n-1][1] - _plan_work_hour[_line_n][1])*100)/float(_plan_work_hour[_line_n-1][1])
-        _print(u'【风险提示】：当前本项目的实际资源投入（人时费用）已超过计划值（超出 %0.2f%%），'
-               u'提请研发团队提升工作效率及周报内容的准确性。' % _dlt,
+        _print(u'【风险提示】：本期项目的实际资源投入（人时费用）已超过计划预期。'
+               u'本期计划投入%d个人时，实际投入%d个人时，超出%0.2f%%），'
+               u'提请研发团队提升工作效率及周报内容的准确性。' % (_plan_work_hour[_line_n][1], _active_value[_line_n-1][1], _dlt),
                color=(250, 0, 0))
+        _results.append([u'● 资源投入量超出计划%0.2f%%。' % _dlt, (255,0,0)])
     else:
         _print(u'当前本项目的实际资源投入（人时费用）满足计划要求。')
+        _results.append([u'● 资源投入量满足计划预期要求。', None])
 
     _data = []
     _data.append([[range(len(_active_value)), _active_value], "r", "-", u"已投入"])
@@ -339,9 +364,13 @@ def main():
     _ylines = []
     _ylines.append([_total[_line_n+1], '--', 'k', u'计划完成%d个' % _total[_line_n+1]])
     _ylines.append([_sum+_n, '--', 'r', u'实际完成%d个' % (_sum+_n)])
+    _dlt = float((_total[_line_n + 1] - (_sum + _n)) * 100) / float(_total[_line_n + 1])
     if _total[_line_n+1]-(_sum+_n)>int(_total[_line_n+1]*0.1):
-        _print(u'【风险提示】：本期迭代后，任务完成总量已“负偏离”计划量的10%，请在下一期迭代过程中修正。',
+        _print(u'【风险提示】：本期实际完成的任务总量已“负偏离”计划量（偏离%0.2f%%），请在下一期迭代过程中修正。' % _dlt,
                color=(250, 0, 0))
+        _results.append([u'● 任务完成情况未达到计划要求，负偏离%0.2f%%。' % _dlt,(255,0,0)])
+    else:
+        _results.append([u'● 任务完成情况满足计划要求。',None])
 
     _dots = [[_line_n+1,_sum+_n,">",'r',u"预期"]]
 
@@ -352,6 +381,10 @@ def main():
     _print(u'【图例说明】：用以图示该项目计划的完成状态。'
            u'图中包括计划要求；实际执行情况及预期（本迭代周期）将达到的水平。'
            u'通过本图可直观了解该项目的计划与执行是否存在+/-偏差，以及偏差大小。')
+
+    _print(u'本期项目状态：', paragrap=_paragrap)
+    for _r in _results:
+        _print(_r[0], paragrap=_paragrap, color=_r[1])
 
     db.close()
     doc.saveFile('%s-proj.docx' % sys.argv[1])
