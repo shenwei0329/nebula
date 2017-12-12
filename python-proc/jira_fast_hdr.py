@@ -40,6 +40,11 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
     :param jira: Jira
     :return:
     """
+
+    _insert_n = 0
+    _update_n = 0
+    _non_op_n = 0
+
     Task = {}
     issues = jira.search_issues('project = %s ORDER BY created DESC' % project_alias, maxResults=10000)
     for issue in issues:
@@ -84,9 +89,12 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
                         _sql += ',completeDate="%s"' % Task[_v][3]['completeDate']
                 if _sql is None:
                     # print("[%s]: No change!<%s,%s>" % (Task[_v][0],_r[0],_r[1]))
+                    _non_op_n += 1
                     continue
                 _sql += ' where issue_id=%s and project_alias="%s"' % (Task[_v][0],project_alias)
                 print _sql
+                doSQL(cur, _sql)
+                _update_n += 1
         else:
             """添加新记录
             """
@@ -108,8 +116,9 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
                     Task[_v][3]['completeDate'])
             print _sql
             doSQLinsert(db, cur, _sql)
+            _insert_n += 1
 
-    return Task
+    return Task, [_update_n, _insert_n, _non_op_n]
 
 if __name__ == '__main__':
 
@@ -120,10 +129,12 @@ if __name__ == '__main__':
     db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
     cur = db.cursor()
 
-    Task = inputFASTtask(db, cur, jira, project_alias='FAST')
+    Task,Quta = inputFASTtask(db, cur, jira, project_alias='FAST')
+    """针对UPDATE的数据需要COMMIT"""
+    db.commit()
 
-    _keys = sorted(Task.keys(),reverse=True)
     """
+    _keys = sorted(Task.keys(),reverse=True)
     for _v in _keys:
         print("\t%s, %s" % (Task[_v][1],Task[_v][2]))
         for _k in sorted(Task[_v][3].keys(),reverse=True):
@@ -131,5 +142,7 @@ if __name__ == '__main__':
         print("\tUser: %s, Alias: %s, eMail: %s" % (Task[_v][4]['name'],Task[_v][4]['alias'],Task[_v][4]['email']))
         print("=" * 8)
     """
+    print(" number of be updated: %d" % Quta[0])
+    print(" number of be inserted: %d" % Quta[1])
+    print(" number of non-modified: %d" % Quta[2])
     print(".done")
-

@@ -6,7 +6,7 @@
 # 2017年12月8日@成都
 #
 #
-
+import sys
 from DataHandler import plans
 
 reload(sys)

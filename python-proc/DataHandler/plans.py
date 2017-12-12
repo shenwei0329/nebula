@@ -164,6 +164,41 @@ def doCount(db,cur):
     _print("数据库表总数： %d" % _total_table)
     _print("数据记录总条数： %d" % _total_record)
 
+def getQ(cur):
+    """
+    获取 数据质量 指标
+    :param cur: 数据源
+    :return: 指标
+    """
+    _sql = 'select count(*) from jira_task_t'
+    _m = doSQLcount(cur, _sql)
+
+    """计划的任务"""
+    _sql = 'select task_name,task_level from project_task_t where task_resources<>"#"'
+    _res = doSQL(cur, _sql)
+
+    _n = 0
+    _kv = {}
+    for _name in _res:
+        _level = _name[1][:-2]
+        _sql = 'select task_name from project_task_t where task_level="%s"' % _level
+        _topics = doSQL(cur, _sql)
+        for _topic in _topics:
+            """构建任务名称"""
+            _like_str = "%s-%s" % (_topic[0], _name[0])
+            #print _like_str
+            """在Jira中查找满足任务名称的项目"""
+            _sql = u'select issue_id,summary,users,state from jira_task_t where ' \
+                   u'summary like "%%%s%%"' % _like_str
+            _tasks = doSQL(cur, _sql)
+            for _task in _tasks:
+                if not _kv.has_key(_task[0]):
+                    _kv[_task[0]] = []
+                (_kv[_task[0]]).append([_like_str,_task[1],_task[2],_task[3]])
+                _n += 1
+
+    return _kv, _m, _n
+
 def main():
 
     global doc,ProjectAlias
@@ -234,6 +269,19 @@ def main():
     _print(u'项目负责人：%s' % _res[0][1])
     _print(u'项目起止日期：%s 至 %s' % (_res[0][2], _res[0][3]))
     _print(u'项目功能简介：%s' % _res[0][4])
+
+    _kv, _max_n, _act_n = getQ(cur)
+    _q = float(_act_n*100)/float(_max_n)
+    if _q < 75:
+        _print(u'任务分配数据质量：评定为【差】。已分配任务%d个，其中仅有%d个任务（占比%0.2f%%）的名称与计划匹配。'
+               u'【说明】若分配的任务名称与计划不一致，就无法准确跟踪任务执行情况及评估任务的测试质量。' %
+               (_max_n,_act_n,_q), color=(255,0,0))
+    elif _q < 85:
+            _print(u'任务分配数据质量：评定为【一般】。已分配任务%d个，其中有%d个任务（占比%0.2f%%）的名称与计划匹配。' %
+                   (_max_n, _act_n, _q), color=(255, 50, 50))
+    else:
+        _print(u'任务分配数据质量：评定为【好】。已分配任务%d个，其中有%d个任务（占比%0.2f%%）的名称与计划匹配。' %
+               (_max_n,_act_n,_q))
 
     _paragrap = _print(u"计划指标与实际情况", title=True, title_lvl=1)
     """计划
@@ -356,7 +404,8 @@ def main():
     _data.append([_total_complete, "#8f8f8f", "*", u"完成"])
 
     _date = _today.strftime(u"%Y-%m-%d")
-    _sql = 'select count(*) from jira_task_t where endDate>"%s" order by id' % _date
+    #_sql = 'select count(*) from jira_task_t where endDate>"%s" order by id' % _date
+    _sql = 'select count(*) from jira_task_t where state="ACTIVE" order by issue_id'
     _n = int(doSQLcount(cur, _sql))
 
     _print(u"本迭代周期内正在执行的任务有 %d 个。" % _n)
@@ -372,7 +421,7 @@ def main():
     else:
         _results.append([u'● 任务完成情况满足计划要求。',None])
 
-    _dots = [[_line_n+1,_sum+_n,">",'r',u"预期"]]
+    _dots = [[_line_n+1,_sum+_n,">",'r',u"预期（执行中）"]]
 
     _fn = doBox.doDotBase(u'任务完成趋势图', u'Σ任务数量（个）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
                           _data, label_pos=4, lines=_lines, ylines=_ylines, dots=_dots)

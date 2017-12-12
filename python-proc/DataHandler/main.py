@@ -87,7 +87,7 @@ def _print(_str, title=False, title_lvl=0, color=None, align=None ):
     _str = u"%s" % _str.replace('\r', '').replace('\n','')
 
     if title:
-        if title_lvl==2:
+        if title_lvl==1:
             _str = Topic[Topic_lvl_number] + _str
             Topic_lvl_number += 1
         if align is not None:
@@ -219,6 +219,8 @@ def getEvent(cur):
     for _row in _res:
         _print('%d、【%s】：%s，创建于%s' % (_i, str(_row[0]), str(_row[1]), str(_row[2])))
         _i += 1
+    if _i == 1:
+        _print(u'无。')
 
 def getPdList(cur):
 
@@ -613,11 +615,12 @@ def main():
             doc.addText(u'\t%d、%s' % (_i, str(_it)))
             _i += 1
 
-    doc.addText(u'● 研发管理计划有：')
-    _i = 1
-    for _it in _plan:
-        doc.addText(u'\t%d、%s【任务创建于 %s】' % (_i, str(_it[0]), str(_it[1])))
-        _i += 1
+    if len(_plan)>0:
+        doc.addText(u'● 研发管理计划有：')
+        _i = 1
+        for _it in _plan:
+            doc.addText(u'\t%d、%s【任务创建于 %s】' % (_i, str(_it[0]), str(_it[1])))
+            _i += 1
 
     """获取现有产品信息
     """
@@ -630,9 +633,10 @@ def main():
     """
     _print("本周新增记录数： %d" % getSum(cur))
 
+    """
     _print("产品交付情况", title=True, title_lvl=1)
     getPdDeliverList(cur)
-
+    """
     _print("在研产品情况", title=True, title_lvl=1)
     getPdingList(cur)
 

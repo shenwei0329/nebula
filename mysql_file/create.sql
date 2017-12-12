@@ -245,7 +245,7 @@ CREATE TABLE if not exists project_task_t
 	days varchar(32) comment '计划工日',
 	task_resources varchar(80) comment '任务分配人',
 	work_hour varchar(12) comment '计划工时',
-	task_level integer comment '任务层级',
+	task_level varchar(12) comment '任务层级',
 	created_at datetime,
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
