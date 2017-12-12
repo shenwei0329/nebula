@@ -76,7 +76,7 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
         if _n>0:
             """记录已存在：判断记录的“state、completeDate”是否变化
             """
-            _sql = 'select state,completeDate from jira_task_t where issue_id=%s' % Task[_v][0]
+            _sql = 'select state,completeDate,startDate,endDate from jira_task_t where issue_id=%s' % Task[_v][0]
             _res = doSQL(cur, _sql)
             for _r in _res:
                 _sql = None
@@ -87,6 +87,16 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
                         _sql = 'update jira_task_t set completeDate="%s"' % Task[_v][3]['completeDate']
                     else:
                         _sql += ',completeDate="%s"' % Task[_v][3]['completeDate']
+                if _r[2]!=Task[_v][3]['startDate']:
+                    if _sql is None:
+                        _sql = 'update jira_task_t set startDate="%s"' % Task[_v][3]['startDate']
+                    else:
+                        _sql += ',startDate="%s"' % Task[_v][3]['startDate']
+                if _r[3]!=Task[_v][3]['endDate']:
+                    if _sql is None:
+                        _sql = 'update jira_task_t set endDate="%s"' % Task[_v][3]['endDate']
+                    else:
+                        _sql += ',completeDate="%s"' % Task[_v][3]['endDate']
                 if _sql is None:
                     # print("[%s]: No change!<%s,%s>" % (Task[_v][0],_r[0],_r[1]))
                     _non_op_n += 1

@@ -278,12 +278,14 @@ def main():
                (_max_n,_act_n,_q), color=(255,0,0))
     elif _q < 85:
             _print(u'任务分配数据质量：评定为【一般】。已分配任务%d个，其中有%d个任务（占比%0.2f%%）的名称与计划匹配。' %
-                   (_max_n, _act_n, _q), color=(255, 50, 50))
+                   (_max_n, _act_n, _q), color=(150, 0, 0))
     else:
         _print(u'任务分配数据质量：评定为【好】。已分配任务%d个，其中有%d个任务（占比%0.2f%%）的名称与计划匹配。' %
                (_max_n,_act_n,_q))
 
+    """需要在此插入语句"""
     _paragrap = _print(u"计划指标与实际情况", title=True, title_lvl=1)
+
     """计划
     """
     _print(u"任务数量分布情况", title=True, title_lvl=2)
@@ -353,10 +355,10 @@ def main():
     _data = [[[range(len(_plan_quta)), _plan_quta], "b", "-", u"当天完成任务数"]]
     _fn = doBox.doStem(u'计划的任务量分布图', u'Δ任务完成数量（个）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]), _data, lines=_lines)
     doc.addPic(_fn,sizeof=3.6)
-    _print(u'【图例说明】：用以图示研发计划中任务的分配情况。'
-           u'横坐标是时间进程（工作日），纵坐标是计划完成的任务个数。'
-           u'图中“红竖线”是当前日期，左边表示拟完成的任务量，右边表示计划中的任务量。'
-           u'通过图示，可大致了解当前任务量的完成情况。')
+    _print(u'【图例说明】：用以图示研发计划中任务数量的分配情况。'
+           u'横坐标是工作时间，纵坐标是计划当天要完成的任务个数，'
+           u'红竖线是当前位置。'
+           u'通过图示可大致了解当前是否处于任务的“密集区”。')
 
     _print(u"资源投入计划与实际情况", title=True, title_lvl=2)
 
@@ -380,9 +382,10 @@ def main():
     _fn = doBox.doLine(u'投入分布图', u'Δ投入工时（人时）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
                        _data, label_pos=4, lines=_lines, ylines=_ylines)
     doc.addPic(_fn,sizeof=3.6)
-    _print(u'【图例说明】：用以图示研发过程中资源（人时）计划投入情况。'
-           u'通过图示，可大致了解该项目计划投入的资源和已投入的资源情况。'
-           u'已投入资源的数据来源于“周报”中以本项目相关任务项数据的统计。')
+    _print(u'【图例说明】：用以图示研发过程中资源（人时）计划和实际投入情况。'
+           u'图中，黑纵线段为计划日工时量，红纵线段为实际投入工时量；'
+           u'黑横线为当天计划投入总量；红横线为实际投入总量。'
+           u'注：已投入的工时数据来源于“周报”。')
 
     _print(u"计划跟踪", title=True, title_lvl=1)
 
@@ -407,12 +410,22 @@ def main():
     #_sql = 'select count(*) from jira_task_t where endDate>"%s" order by id' % _date
     _sql = 'select count(*) from jira_task_t where state="ACTIVE" order by issue_id'
     _n = int(doSQLcount(cur, _sql))
+    _sql = 'select count(*) from jira_task_t where state="FUTURE" order by issue_id'
+    _m = int(doSQLcount(cur, _sql))
+    _sql = 'select count(*) from jira_task_t where state<>"CLOSED" and summary like "%入侵%" order by issue_id'
+    _r = int(doSQLcount(cur, _sql))
 
-    _print(u"本迭代周期内正在执行的任务有 %d 个。" % _n)
+    if _n>0:
+        _print(u"● 本迭代周期内正在执行的任务有【%d】个。" % _n)
+    if _m>0:
+        _print(u"● 本迭代周期内等待执行的任务有【%d】个。" % _m)
+    if _r>0:
+        _print(u"● 本迭代周期内非计划类的任务有【%d】个。" % _r,color=(150, 0, 0))
 
     _ylines = []
     _ylines.append([_total[_line_n+1], '--', 'k', u'计划完成%d个' % _total[_line_n+1]])
-    _ylines.append([_sum+_n, '--', 'r', u'实际完成%d个' % (_sum+_n)])
+    _ylines.append([_sum+_n, '--', 'r', u'即将完成%d个' % (_sum+_n)])
+    _ylines.append([_sum+_m, '--', 'g', u'等待完成%d个' % _m])
     _dlt = float((_total[_line_n + 1] - (_sum + _n)) * 100) / float(_total[_line_n + 1])
     if _total[_line_n+1]-(_sum+_n)>int(_total[_line_n+1]*0.1):
         _print(u'【风险提示】：本期实际完成的任务总量已“负偏离”计划量（偏离%0.2f%%），请在下一期迭代过程中修正。' % _dlt,
@@ -421,15 +434,18 @@ def main():
     else:
         _results.append([u'● 任务完成情况满足计划要求。',None])
 
-    _dots = [[_line_n+1,_sum+_n,">",'r',u"预期（执行中）"]]
+    _dots = []
+    _dots.append([_line_n+1,_sum+_n,">",'r',u"预期（执行中）"])
+    _dots.append([_line_n+1,_sum+_m,">",'g',u"预期（等待中）"])
 
     _fn = doBox.doDotBase(u'任务完成趋势图', u'Σ任务数量（个）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
                           _data, label_pos=4, lines=_lines, ylines=_ylines, dots=_dots)
 
     doc.addPic(_fn,sizeof=4.6)
     _print(u'【图例说明】：用以图示该项目计划的完成状态。'
-           u'图中包括计划要求；实际执行情况及预期（本迭代周期）将达到的水平。'
-           u'通过本图可直观了解该项目的计划与执行是否存在+/-偏差，以及偏差大小。')
+           u'图中包括计划的、已完成的及本期（本迭代周期）将达到的任务数量水平，'
+           u'以直观了解该项目的计划与执行是否存在+/-偏差，以及偏差大小。'
+           u'图中，黑线为当天计划的目标；红线为即将达到的目标；绿线为本期预定目标。')
 
     _print(u'本期项目状态：', paragrap=_paragrap)
     for _r in _results:
