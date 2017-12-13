@@ -839,7 +839,8 @@ def doRecordPersonKPI(cur, kpi):
     _m_gh = kpi[1]
     _date = "%s-%s" % (st_date[:-4], st_date[4:-2])
     for _kpi in kpi[2]:
-        _sql = 'insert into person_kpi_t(name,m_gh,kpi_date,kpi_name,kpi_val) values("%s","%s","%s","%s","%s")' % \
+        _sql = 'insert into person_kpi_t(name,m_gh,kpi_date,kpi_name,kpi_val,created_at,updated_at) ' \
+               'values("%s","%s","%s","%s","%s",now(),now())' % \
                (_user, _m_gh, _date, _kpi, str(kpi[2][_kpi]))
         #print _sql
         doSQLinsert(db,cur,_sql)
