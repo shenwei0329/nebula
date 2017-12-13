@@ -425,7 +425,7 @@ def main():
     _ylines = []
     _ylines.append([_total[_line_n+1], '--', 'k', u'计划完成%d个' % _total[_line_n+1]])
     _ylines.append([_sum+_n, '--', 'r', u'即将完成%d个' % (_sum+_n)])
-    _ylines.append([_sum+_m, '--', 'g', u'等待完成%d个' % _m])
+    _ylines.append([_sum+_n+_m, '--', 'g', u'等待完成%d个' % _m])
     _dlt = float((_total[_line_n + 1] - (_sum + _n)) * 100) / float(_total[_line_n + 1])
     if _total[_line_n+1]-(_sum+_n)>int(_total[_line_n+1]*0.1):
         _print(u'【风险提示】：本期实际完成的任务总量已“负偏离”计划量（偏离%0.2f%%），请在下一期迭代过程中修正。' % _dlt,
@@ -436,7 +436,7 @@ def main():
 
     _dots = []
     _dots.append([_line_n+1,_sum+_n,">",'r',u"预期（执行中）"])
-    _dots.append([_line_n+1,_sum+_m,">",'g',u"预期（等待中）"])
+    _dots.append([_line_n+1,_sum+_n+_m,">",'g',u"预期（等待中）"])
 
     _fn = doBox.doDotBase(u'任务完成趋势图', u'Σ任务数量（个）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
                           _data, label_pos=4, lines=_lines, ylines=_ylines, dots=_dots)
