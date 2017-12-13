@@ -19,6 +19,9 @@ sys.setdefaultencoding('utf-8')
 from pylab import mpl
 mpl.rcParams['font.sans-serif'] = ['SimHei']
 
+"""全局变量"""
+db = None
+
 """定义时间区间
 """
 st_date = '2017-10-30'
@@ -649,9 +652,11 @@ def getTaskQGroup(cur, g_name):
     :param g_name: 组名
     :return:
     """
-    _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH<>"#" and TK_SQR="%s"' % g_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH<>"#" and TK_SQR="%s"' % g_name + \
+           " and created_at between '%s' and '%s'" % (st_date, ed_date)
     _Pj = doSQLcount(cur, _sql)
-    _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="#" and TK_SQR="%s"' % g_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="#" and TK_SQR="%s"' % g_name + \
+           " and created_at between '%s' and '%s'" % (st_date, ed_date)
     _nonPj = doSQLcount(cur,_sql)
     return float(_Pj), float(_nonPj)
 
@@ -821,7 +826,30 @@ def statGroupInd(cur):
     doc.addRow(_col)
     doc.setTableFont(8)
 
+def doRecordPersonKPI(cur, kpi):
+    """
+    记录个人月考核数据
+    :param cur: 数据源
+    :param kpi: 个人考核指标
+    :return:
+    """
+    global st_date,db
+
+    _user = kpi[0][1]
+    _m_gh = kpi[1]
+    _date = "%s-%s" % (st_date[:-4], st_date[4:-2])
+    for _kpi in kpi[2]:
+        _sql = 'insert into person_kpi_t(name,m_gh,kpi_date,kpi_name,kpi_val) values("%s","%s","%s","%s","%s")' % \
+               (_user, _m_gh, _date, _kpi, str(kpi[2][_kpi]))
+        #print _sql
+        doSQLinsert(db,cur,_sql)
+
 def statPersonalInd(cur):
+    """
+    生成个人月考核指标内容
+    :param cur: 数据源
+    :return:
+    """
     """创建一个表格 1 x 3"""
     _width = (4,1.8,1.8,2,8)
     doc.addTable(1, 5, col_width=_width)
@@ -829,14 +857,15 @@ def statPersonalInd(cur):
     doc.addRow(_title)
     _print("注：综合指标图示的绿色区域为最佳范围：出勤为全勤、计划内任务占比80%、计划颗粒度2小时/任务。")
 
-    _sql = 'select MM_XM from member_t'
+    _sql = 'select MM_XM,MM_GH from member_t'
     _res = doSQL(cur, _sql)
     for _g in _res:
 
         if _g[0] in SpName:
             continue
 
-        _name = ('text',_g[0])
+        _name = ('text', _g[0])
+        _m_gh = str(_g[1])
 
         """计算出勤指标"""
         _v = getChkOnQMember(cur, _g[0])
@@ -861,6 +890,11 @@ def statPersonalInd(cur):
         _desc = getScoreDesc(_chkonQ, _taskQ, _planQ)
         _col =(_name,_score,_pref,_pic, _desc)
         doc.addRow(_col)
+
+        """记录个人月考核数据
+        """
+        doRecordPersonKPI(cur, (_name, _m_gh, {'考勤指标':_chkonQ, '任务指标':_taskQ, '计划指标':_planQ},))
+
     doc.setTableFont(8)
 
 def addPDList(cur, doc):
@@ -1224,7 +1258,7 @@ def getGroupTaskSummary(cur):
 
 def main():
 
-    global Topic_lvl_number, TotalMember, orgWT, costProject, fd, st_date, ed_date, numb_days, doc, workhours
+    global db, Topic_lvl_number, TotalMember, orgWT, costProject, fd, st_date, ed_date, numb_days, doc, workhours
 
     if len(sys.argv) != 4:
         print("\n\tUsage: python %s start_date end_date numb_days\n" % sys.argv[0])
