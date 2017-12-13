@@ -50,7 +50,7 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
     issues = jira.search_issues('project = %s ORDER BY created DESC' % project_alias, maxResults=10000)
     for issue in issues:
 
-        issue_id.append(str(issue))
+        issue_id.append(str(issue.id))
 
         watcher = jira.watchers(issue)
         # print("Issue has {} watcher(s)".format(watcher.watchCount))
@@ -74,13 +74,13 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
 
     _keys = sorted(Task.keys(), reverse=True)
     for _v in _keys:
-        _sql = 'select count(*) from jira_task_t where issue_id="%s" and project_alias="%s"' % \
+        _sql = 'select count(*) from jira_task_t where issue_id=%s and project_alias="%s"' % \
                (Task[_v][0],project_alias)
         _n = doSQLcount(cur, _sql)
         if _n>0:
             """记录已存在：判断记录的“state、completeDate”是否变化
             """
-            _sql = 'select state,completeDate,startDate,endDate from jira_task_t where issue_id="%s"' % Task[_v][0]
+            _sql = 'select state,completeDate,startDate,endDate from jira_task_t where issue_id=%s' % Task[_v][0]
             _res = doSQL(cur, _sql)
             for _r in _res:
                 _sql = None
@@ -105,7 +105,7 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
                     # print("[%s]: No change!<%s,%s>" % (Task[_v][0],_r[0],_r[1]))
                     _non_op_n += 1
                     continue
-                _sql += ' where issue_id="%s" and project_alias="%s"' % (Task[_v][0],project_alias)
+                _sql += ' where issue_id=%s and project_alias="%s"' % (Task[_v][0],project_alias)
                 print _sql
                 doSQL(cur, _sql)
                 _update_n += 1
@@ -147,20 +147,18 @@ if __name__ == '__main__':
     _sql = 'select issue_id from jira_task_t'
     _res = doSQL(cur, _sql)
     for _i in _res:
-        _issue_id.append(str(_i[0]))
+        _issue_id.append(_i[0])
 
     Task,Quta,Issue_id = inputFASTtask(db, cur, jira, project_alias='FAST')
     """针对UPDATE的数据需要COMMIT"""
     db.commit()
 
-    print Issue_id
-    print _issue_id
     _diff_issue_id = []
     for _i in _issue_id:
-        if _i in Issue_id:
+        if _i not in Issue_id:
             _diff_issue_id.append(_i)
     for _i in Issue_id:
-        if _i is not in _issue_id:
+        if _i not in _issue_id:
             _diff_issue_id.append(_i)
     if len(_diff_issue_id)>0:
         print("Diff issue_id:")
