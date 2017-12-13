@@ -250,5 +250,34 @@ CREATE TABLE if not exists project_task_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+# KPI考核项目定义
+#
+#
+CREATE TABLE if not exists kpi_t
+(
+	id integer primary key not null auto_increment,
+	name varchar(20) comment 'KPI名称',
+	weight varchar(16) comment 'KPI权重',
+	flg integer comment '启用标志，0：停用，1：在用',
+	summary varchar(80) comment '简述',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# 个人指标定义
+#
+#
+CREATE TABLE if not exists person_kpi_t
+(
+	id integer primary key not null auto_increment,
+	name varchar(20) comment '名称',
+	m_gh varchar(16) comment '员工号',
+	kpi_name varchar(24) comment '考核项名称',
+	kpi_val varchar(16) comment '考核分值',
+    kpi_date varchar(8) comment '考核日期（yyyy-mm)',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 #
 #

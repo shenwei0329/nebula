@@ -25,7 +25,8 @@ TableDic = {
     'RISK_MANAGEMENT':'risk_t',
     'EVENT': 'event_t',
     'PROJECT_KEY':'project_key_t',
-    'PROJECT_TASK':'project_task_t'
+    'PROJECT_TASK':'project_task_t',
+    'KPI':'kpi_t',
 }
 
 """设置字符集
