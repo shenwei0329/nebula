@@ -215,7 +215,7 @@ CREATE TABLE if not exists jira_task_t
 (
 	id integer primary key not null auto_increment,
 	project_alias varchar(80) comment '项目号',
-	issue_id integer comment '任务标识',
+	issue_id varchar(24) comment '任务标识',
 	state varchar(12) comment '任务状态：ACTIVE,CLOSED',
 	summary varchar(160) comment '任务简述',
     description varchar(1024) comment '任务描述',

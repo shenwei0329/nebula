@@ -45,9 +45,13 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
     _update_n = 0
     _non_op_n = 0
 
+    issue_id = []
     Task = {}
     issues = jira.search_issues('project = %s ORDER BY created DESC' % project_alias, maxResults=10000)
     for issue in issues:
+
+        issue_id.append(str(issue.id))
+
         watcher = jira.watchers(issue)
         # print("Issue has {} watcher(s)".format(watcher.watchCount))
         _user = {}
@@ -62,7 +66,7 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
             _s = _s.replace('[', '{"').replace(']', '"}').replace('=', '":"').replace(',', '","')
             _v = json.loads(_s)
 
-            Task[issue] = [issue.id,
+            Task[str(issue)] = [str(issue),
                            issue.fields.summary,
                            issue.fields.description.replace('\n', '').replace('\r', ''),
                            _v,
@@ -96,7 +100,7 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
                     if _sql is None:
                         _sql = 'update jira_task_t set endDate="%s"' % Task[_v][3]['endDate']
                     else:
-                        _sql += ',completeDate="%s"' % Task[_v][3]['endDate']
+                        _sql += ',endDate="%s"' % Task[_v][3]['endDate']
                 if _sql is None:
                     # print("[%s]: No change!<%s,%s>" % (Task[_v][0],_r[0],_r[1]))
                     _non_op_n += 1
@@ -110,7 +114,7 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
             """
             _sql = 'insert into jira_task_t(project_alias,issue_id,summary,description,state,sequence,' \
                    'stage_name,users,users_alias,user_emails,startDate,endDate,completeDate) ' \
-                   'values("%s",%s,"%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s")' % (
+                   'values("%s","%s","%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s")' % (
                     project_alias,
                     Task[_v][0],
                     Task[_v][1],
@@ -128,7 +132,7 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
             doSQLinsert(db, cur, _sql)
             _insert_n += 1
 
-    return Task, [_update_n, _insert_n, _non_op_n]
+    return Task, [_update_n, _insert_n, _non_op_n], issue_id
 
 if __name__ == '__main__':
 
@@ -139,9 +143,27 @@ if __name__ == '__main__':
     db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
     cur = db.cursor()
 
-    Task,Quta = inputFASTtask(db, cur, jira, project_alias='FAST')
+    _issue_id = []
+    _sql = 'select issue_id from jira_task_t'
+    _res = doSQL(cur, _sql)
+    for _i in _res:
+        _issue_id.append(_i[0])
+
+    Task,Quta,Issue_id = inputFASTtask(db, cur, jira, project_alias='FAST')
     """针对UPDATE的数据需要COMMIT"""
     db.commit()
+
+    _diff_issue_id = []
+    for _i in _issue_id:
+        if _i not in Issue_id:
+            _diff_issue_id.append(_i)
+    for _i in Issue_id:
+        if _i not in _issue_id:
+            _diff_issue_id.append(_i)
+    if len(_diff_issue_id)>0:
+        print("Diff issue_id:")
+        for _i in _diff_issue_id:
+            print("\t[%s]" % _i)
 
     """
     _keys = sorted(Task.keys(),reverse=True)
