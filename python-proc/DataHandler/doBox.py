@@ -8,6 +8,23 @@ from pylab import plot, show, savefig, xlim, figure, \
                 hold, ylim, legend, boxplot, setp, axes
 import time,random
 
+"""
+设置图例显示的位置
+label_pos:
+===========
+
+'best'         : 0, (only implemented for axes legends)(自适应方式)
+'upper right'  : 1,
+'upper left'   : 2,
+'lower left'   : 3,
+'lower right'  : 4,
+'right'        : 5,
+'center left'  : 6,
+'center right' : 7,
+'lower center' : 8,
+'upper center' : 9,
+'center'       : 10,
+"""
 __test = False
 
 def doBox(label,datas,y_line=None,y_limit=None,y_label=None,x_label=None):
@@ -154,9 +171,9 @@ def doLine(title, y_label, x_label, datas, limit=None, label_pos=None, lines=Non
         _color = _data[1]
         _dot = _data[2]
         _label = _data[3]
-        _max = 0
         for _i in _data[0][0]:
-            _max = _data[0][1][_i][1]+1
+            if _max < _data[0][1][_i][1]+1:
+                _max = _data[0][1][_i][1]+1
             plt.plot([_i, _i], [_data[0][1][_i][0], _data[0][1][_i][1]], _dot, linewidth=3, color=_color)
         plt.plot([_i, _i], [_data[0][1][_i][0], _data[0][1][_i][1]], _dot, linewidth=3, color=_color, label=_label)
 
