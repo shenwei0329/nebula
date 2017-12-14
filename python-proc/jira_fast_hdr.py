@@ -47,7 +47,7 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
 
     issue_id = []
     Task = {}
-    issues = jira.search_issues('project = %s ORDER BY created DESC' % project_alias, maxResults=10000)
+    issues = jira.search_issues('project = %s and issuetype = story ORDER BY created DESC' % project_alias, maxResults=10000)
     for issue in issues:
 
         issue_id.append(str(issue))
@@ -61,16 +61,13 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
                 _user['name'] = watcher.displayName
                 _user['email'] = watcher.emailAddress
 
-        if issue.fields.customfield_10501 is not None and len(issue.fields.customfield_10501) > 0:
-            _s = issue.fields.customfield_10501[0][issue.fields.customfield_10501[0].index('['):]
-            _s = _s.replace('[', '{"').replace(']', '"}').replace('=', '":"').replace(',', '","')
-            _v = json.loads(_s)
-
-            Task[str(issue)] = [str(issue),
-                           issue.fields.summary,
-                           issue.fields.description.replace('\n', '').replace('\r', ''),
-                           _v,
-                           _user]
+        Task[str(issue)] = [str(issue),
+                            issue.fields.summary,
+                            issue.fields.description.replace('\n', '').replace('\r', ''),
+                            _user,
+                            u'%s' % issue.fields.status,
+                            issue.fields.created,
+                            issue.fields.updated]
 
     _keys = sorted(Task.keys(), reverse=True)
     for _v in _keys:
@@ -80,27 +77,23 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
         if _n>0:
             """记录已存在：判断记录的“state、completeDate”是否变化
             """
-            _sql = 'select state,completeDate,startDate,endDate from jira_task_t where issue_id="%s"' % Task[_v][0]
+            _sql = 'select issue_status,startDate,endDate from jira_task_t where issue_id="%s"' % Task[_v][0]
             _res = doSQL(cur, _sql)
             for _r in _res:
                 _sql = None
-                if _r[0]!=Task[_v][3]['state']:
-                    _sql = 'update jira_task_t set state="%s"' % Task[_v][3]['state']
-                if _r[1]!=Task[_v][3]['completeDate']:
+                if str(_r[0]) != str(Task[_v][4]):
+                    _sql = u'update jira_task_t set issue_status="%s"' % Task[_v][4]
+                if str(_r[1]) != str(Task[_v][5]):
                     if _sql is None:
-                        _sql = 'update jira_task_t set completeDate="%s"' % Task[_v][3]['completeDate']
+                        _sql = 'update jira_task_t set startDate="%s"' % str(Task[_v][5])
                     else:
-                        _sql += ',completeDate="%s"' % Task[_v][3]['completeDate']
-                if _r[2]!=Task[_v][3]['startDate']:
+                        _sql += ',startDate="%s"' % str(Task[_v][5])
+                if str(_r[2]) != str(Task[_v][6]):
                     if _sql is None:
-                        _sql = 'update jira_task_t set startDate="%s"' % Task[_v][3]['startDate']
+                        _sql = 'update jira_task_t set endDate="%s"' % str(Task[_v][6])
                     else:
-                        _sql += ',startDate="%s"' % Task[_v][3]['startDate']
-                if _r[3]!=Task[_v][3]['endDate']:
-                    if _sql is None:
-                        _sql = 'update jira_task_t set endDate="%s"' % Task[_v][3]['endDate']
-                    else:
-                        _sql += ',endDate="%s"' % Task[_v][3]['endDate']
+                        _sql += ',endDate="%s"' % str(Task[_v][6])
+
                 if _sql is None:
                     # print("[%s]: No change!<%s,%s>" % (Task[_v][0],_r[0],_r[1]))
                     _non_op_n += 1
@@ -112,22 +105,19 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
         else:
             """添加新记录
             """
-            _sql = 'insert into jira_task_t(project_alias,issue_id,summary,description,state,sequence,' \
-                   'stage_name,users,users_alias,user_emails,startDate,endDate,completeDate) ' \
-                   'values("%s","%s","%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s")' % (
+            _sql = 'insert into jira_task_t(project_alias,issue_id,summary,description,' \
+                   'users,users_alias,user_emails,startDate,endDate,issue_status) ' \
+                   'values("%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")' % (
                     project_alias,
                     Task[_v][0],
                     Task[_v][1],
                     Task[_v][2],
-                    Task[_v][3]['state'],
-                    Task[_v][3]['sequence'],
-                    Task[_v][3]['name'],
-                    Task[_v][4]['name'],
-                    Task[_v][4]['alias'],
-                    Task[_v][4]['email'],
-                    Task[_v][3]['startDate'],
-                    Task[_v][3]['endDate'],
-                    Task[_v][3]['completeDate'])
+                    Task[_v][3]['name'].replace(' ', ''),
+                    Task[_v][3]['alias'].replace(' ', ''),
+                    Task[_v][3]['email'],
+                    Task[_v][5],
+                    Task[_v][6],
+                    Task[_v][4])
             print _sql
             doSQLinsert(db, cur, _sql)
             _insert_n += 1
@@ -156,6 +146,7 @@ if __name__ == '__main__':
     """
     _keys = sorted(Task.keys(),reverse=True)
     for _v in _keys:
+        print("=== %s ===" % _v)
         print("\t%s, %s" % (Task[_v][1],Task[_v][2]))
         for _k in sorted(Task[_v][3].keys(),reverse=True):
             print("\t%s = %s" % (_k,Task[_v][3][_k]))

@@ -188,7 +188,7 @@ def getQ(cur):
             _like_str = "%s-%s" % (_topic[0], _name[0])
             #print _like_str
             """在Jira中查找满足任务名称的项目"""
-            _sql = u'select issue_id,summary,users,state from jira_task_t where ' \
+            _sql = u'select issue_id,summary,users,issue_status from jira_task_t where ' \
                    u'summary like "%%%s%%"' % _like_str
             _tasks = doSQL(cur, _sql)
             for _task in _tasks:
@@ -231,6 +231,8 @@ def main():
 
     """实际完成任务量"""
     _active_quta = []
+    """修正后的实际完成任务量"""
+    _active_ing_quta = []
 
     """实际投入工时"""
     _active_value = []
@@ -238,12 +240,24 @@ def main():
     """报告结论"""
     _results = []
 
-    _sql = 'select end_date from project_task_t where task_resources<>"#" and PJ_XMBH="%s" order by end_date' % sys.argv[1]
+    """获取项目计划的起始时间"""
+    _sql = 'select start_date from project_task_t where task_level="1"'
+    _res = doSQL(cur, _sql)
+    _pj_start_date = _res[0][0].replace('年','-').replace('月','-').replace('日','-').split('-')
+
+    _year = int(_pj_start_date[0])
+    _month = int(_pj_start_date[1])
+    _day = int(_pj_start_date[2])
+
+    _pj_start_date = datetime.date(_year, _month, _day)
+
+    #_sql = 'select end_date from project_task_t where task_resources<>"#" and PJ_XMBH="%s" order by end_date' % sys.argv[1]
+    _sql = 'select PJ_KSSJ,PJ_JSSJ from project_t where PJ_XMBH="%s"' % sys.argv[1]
     _res = doSQL(cur, _sql)
 
-    _str_date = [ _res[0][0][:_res[0][0].index('日')+1],_res[-1][0][:_res[-1][0].index('日')+1]]
-    _start_date = _str_date[0].replace('年','-').replace('月','-').replace('日','').split('-')
-    _end_date = _str_date[1].replace('年','-').replace('月','-').replace('日','').split('-')
+    _str_date = _res[0]
+    _start_date = _res[0][0].replace('年','-').replace('月','-').replace('日','').split('-')
+    _end_date = _res[0][1].replace('年','-').replace('月','-').replace('日','').split('-')
 
     _year = int(_start_date[0])
     _month = int(_start_date[1])
@@ -273,15 +287,14 @@ def main():
     _kv, _max_n, _act_n = getQ(cur)
     _q = float(_act_n*100)/float(_max_n)
     if _q < 75:
-        _print(u'任务分配数据质量：评定为【差】。已分配任务%d个，其中仅有%d个任务（占比%0.2f%%）的名称与计划匹配。'
-               u'【说明】若分配的任务名称与计划不一致，就无法准确跟踪任务执行情况及评估任务的测试质量。' %
+        _print(u'任务分配数据质量：评定为【差】。在已分配的%d个任务中，仅有%d个（占比%0.2f%%）与计划匹配。' %
                (_max_n,_act_n,_q), color=(255,0,0))
     elif _q < 85:
-            _print(u'任务分配数据质量：评定为【一般】。已分配任务%d个，其中有%d个任务（占比%0.2f%%）的名称与计划匹配。' %
+            _print(u'任务分配数据质量：评定为【一般】。在已分配的%d个任务中，有%d个（占比%0.2f%%）与计划匹配。' %
                    (_max_n, _act_n, _q), color=(150, 0, 0))
     else:
-        _print(u'任务分配数据质量：评定为【好】。已分配任务%d个，其中有%d个任务（占比%0.2f%%）的名称与计划匹配。' %
-               (_max_n,_act_n,_q))
+        _print(u'任务分配数据质量：评定为【好】。已分配任务%d个，其中有%d个（占比%0.2f%%）与计划匹配。' %
+               (_max_n, _act_n, _q))
 
     """需要在此插入语句"""
     _paragrap = _print(u"计划指标与实际情况", title=True, title_lvl=1)
@@ -310,6 +323,8 @@ def main():
 
     _start_date = start_date
     _sum = 0
+    _sum_ing = 0
+    _pro_cost = 0
     while True:
         _date = _start_date.strftime("%Y-%m-%d")
         _sql = 'select sum(TK_GZSJ) from task_t ' \
@@ -318,7 +333,15 @@ def main():
         _active_value.append([_sum, _sum+_n])
         _sum += _n
 
+        if _start_date >= _pj_start_date:
+            _active_ing_quta.append([_sum_ing, _sum_ing + _n])
+            _sum_ing += _n
+        else:
+            _active_ing_quta.append([0, 0])
+
         _start_date = _start_date + datetime.timedelta(days=1)
+        if _start_date == _pj_start_date:
+            _pro_cost = _sum
         if _start_date>_today:
             break
 
@@ -337,11 +360,10 @@ def main():
 
     _line_n = 0
     _start_date = start_date
-
     while True:
         _date = _start_date.strftime(u"%Y-%m-%d")
         _sql = 'select count(*) from jira_task_t ' \
-               'where project_alias="%s" and completeDate like "%%%s%%" and state="CLOSED" order by id' %\
+               'where project_alias="%s" and endDate like "%%%s%%" and issue_status="完成" order by id' %\
                (ProjectAlias[sys.argv[1]],_date)
         _n = int(doSQLcount(cur,_sql))
         _active_quta.append(_n)
@@ -350,44 +372,6 @@ def main():
         _start_date = _start_date + datetime.timedelta(days=1)
         if _start_date>_today:
             break
-
-    _lines = [[_line_n, '-', 'red', u'当前日期']]
-    _data = [[[range(len(_plan_quta)), _plan_quta], "b", "-", u"当天完成任务数"]]
-    _fn = doBox.doStem(u'计划的任务量分布图', u'Δ任务完成数量（个）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]), _data, lines=_lines)
-    doc.addPic(_fn,sizeof=3.6)
-    _print(u'【图例说明】：用以图示研发计划中任务数量的分配情况。'
-           u'横坐标是工作时间，纵坐标是计划当天要完成的任务个数，'
-           u'红竖线是当前位置。'
-           u'通过图示可大致了解当前是否处于任务的“密集区”。')
-
-    _print(u"资源投入计划与实际情况", title=True, title_lvl=2)
-
-    _ylines = []
-    _ylines.append([_plan_work_hour[_line_n][1], '--', 'k', u'计划投入%d个人时' % _plan_work_hour[_line_n][1]])
-    _ylines.append([_active_value[_line_n-1][1], '--', 'r', u'实际投入%d个人时' % _active_value[_line_n-1][1]])
-    if _active_value[_line_n-1][1]>_plan_work_hour[_line_n][1]:
-        _dlt = float((_active_value[_line_n-1][1] - _plan_work_hour[_line_n][1])*100)/float(_plan_work_hour[_line_n-1][1])
-        _print(u'【风险提示】：本期项目的实际资源投入（人时费用）已超过计划预期。'
-               u'本期计划投入%d个人时，实际投入%d个人时，超出%0.2f%%），'
-               u'提请研发团队提升工作效率及周报内容的准确性。' % (_plan_work_hour[_line_n][1], _active_value[_line_n-1][1], _dlt),
-               color=(250, 0, 0))
-        _results.append([u'● 资源投入量超出计划%0.2f%%。' % _dlt, (255,0,0)])
-    else:
-        _print(u'当前本项目的实际资源投入（人时费用）满足计划要求。')
-        _results.append([u'● 资源投入量满足计划预期要求。', None])
-
-    _data = []
-    _data.append([[range(len(_active_value)), _active_value], "r", "-", u"已投入"])
-    _data.append([[range(len(_plan_work_hour)), _plan_work_hour], "k", "-", u"计划投入"])
-    _fn = doBox.doLine(u'投入分布图', u'Δ投入工时（人时）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
-                       _data, label_pos=4, lines=_lines, ylines=_ylines)
-    doc.addPic(_fn,sizeof=3.6)
-    _print(u'【图例说明】：用以图示研发过程中资源（人时）计划和实际投入情况。'
-           u'图中，黑纵线段为计划日工时量，红纵线段为实际投入工时量；'
-           u'黑横线为当天计划投入总量；红横线为实际投入总量。'
-           u'注：已投入的工时数据来源于“周报”。')
-
-    _print(u"计划跟踪", title=True, title_lvl=1)
 
     _data = []
     _total = []
@@ -404,45 +388,104 @@ def main():
         _sum += _v
         _total_complete.append(_sum)
 
+    """计算延期（天）"""
+    _plan_day = 0
+    for _day_quta in _total:
+        if _day_quta >= _sum:
+            break
+        _plan_day += 1
+    _delay_day = _line_n - _plan_day
+
+    _lines = [[_line_n, '-', 'red', u'当前日期']]
+    __data = [[[range(len(_plan_quta)), _plan_quta], "b", "-", u"当天完成任务数"]]
+    _fn = doBox.doStem(u'计划的任务量分布图', u'Δ任务完成数量（个）', u'日期【%s 至 %s】（天）'%
+                       (_str_date[0],_str_date[1]), __data, lines=_lines)
+    doc.addPic(_fn,sizeof=3.6)
+    _print(u'【图例说明】：图示研发计划中任务数量的分配情况。'
+           u'横坐标是工作时间，纵坐标是计划当天要完成的任务个数，'
+           u'红竖线是当前位置。'
+           u'通过图示可大致了解当前是否处于任务的“密集区”。')
+
+    _print(u"资源投入计划与实际情况", title=True, title_lvl=2)
+
+    _ylines = []
+    _ylines.append([_plan_work_hour[_line_n][1], '--', 'k', u'计划投入%d个人时' % _plan_work_hour[_line_n][1]])
+    _ylines.append([_active_value[_line_n-1][1], '--', 'r', u'实际投入%d个人时' % _active_value[_line_n-1][1]])
+    if _active_value[_line_n-1][1]>_plan_work_hour[_line_n][1]:
+        _dlt = float((_active_value[_line_n-1][1] - _plan_work_hour[_line_n][1])*100)/float(_plan_work_hour[_line_n-1][1])
+        _print(u'【风险提示】：本期项目的实际资源投入（人时费用）已超过计划预期。'
+               u'本期计划投入%d个人时，实际投入%d个人时，超出%0.2f%%）。' %
+               (_plan_work_hour[_line_n][1], _active_value[_line_n-1][1], _dlt),
+               color=(250, 0, 0))
+        _print(u'注：在项目立项和设计阶段已投入【%d】个人时。' % _pro_cost, color=(255, 0, 0))
+        _results.append([u'● 【风险提示】资源投入量超出计划%0.2f%%。在立项、设计阶段投入了【%d】个人时。' %
+                         (_dlt, _pro_cost), (255, 0, 0)])
+    else:
+        _print(u'当前本项目的实际资源投入（人时费用）满足计划要求。')
+        _results.append([u'● 资源投入量满足计划预期要求。', None])
+
+    __data = [[[range(len(_active_value)), _active_value], "r", "-", u"已投入"],
+             [[range(len(_active_ing_quta)), _active_ing_quta], "g", "-", u"阶段投入"],
+             [[range(len(_plan_work_hour)), _plan_work_hour], "k", "-", u"计划投入"]]
+    _fn = doBox.doLine(u'投入分布图', u'Δ投入工时（人时）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
+                       __data, label_pos=4, lines=_lines, ylines=_ylines)
+    doc.addPic(_fn,sizeof=3.6)
+    _print(u'【图例说明】：图示过程中资源（人时）计划和实际投入情况。'
+           u'图中，黑纵线段为计划的工时量，红纵线段为实际投入的工时量；绿纵线段为除去前期投入的参考量。'
+           u'黑横线为当天计划投入总量；红横线为实际投入总量；绿横线为参考量。')
+
+    _print(u"计划跟踪", title=True, title_lvl=1)
+
     _data.append([_total_complete, "#8f8f8f", "*", u"完成"])
 
-    _date = _today.strftime(u"%Y-%m-%d")
+    #_date = _today.strftime(u"%Y-%m-%d")
     #_sql = 'select count(*) from jira_task_t where endDate>"%s" order by id' % _date
-    _sql = 'select count(*) from jira_task_t where state="ACTIVE" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="处理中" order by issue_id'
     _n = int(doSQLcount(cur, _sql))
-    _sql = 'select count(*) from jira_task_t where state="FUTURE" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="待办" order by issue_id'
     _m = int(doSQLcount(cur, _sql))
-    _sql = 'select count(*) from jira_task_t where state<>"CLOSED" and summary like "%入侵%" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="处理中" and summary like "%入侵%" order by issue_id'
     _r = int(doSQLcount(cur, _sql))
+    _sql = 'select count(*) from jira_task_t where issue_status="完成" and summary like "%入侵%" order by issue_id'
+    _r_completed = int(doSQLcount(cur, _sql))
+    _sql = 'select count(*) from jira_task_t where issue_status="待办" and summary like "%入侵%" order by issue_id'
+    _r_waitting = int(doSQLcount(cur, _sql))
 
-    if _n>0:
+    _print(u"● 截至本迭代周期已完成任务有【%d】个。" % _sum)
+    if _n > 0:
         _print(u"● 本迭代周期内正在执行的任务有【%d】个。" % _n)
-    if _m>0:
+    if _m > 0:
         _print(u"● 本迭代周期内等待执行的任务有【%d】个。" % _m)
-    if _r>0:
-        _print(u"● 本迭代周期内非计划类的任务有【%d】个。" % _r,color=(150, 0, 0))
+    if _r+_r_completed+_r_waitting > 0:
+        _print(u"● 非计划类任务有【%d】个，其中已完成%d个、正在执行%d个和待执行%d个。" %
+               (_r+_r_completed+_r_waitting, _r_completed, _r, _r_waitting), color=(150, 0, 0))
 
     _ylines = []
     _ylines.append([_total[_line_n+1], '--', 'k', u'计划完成%d个' % _total[_line_n+1]])
     _ylines.append([_sum+_n, '--', 'r', u'即将完成%d个' % (_sum+_n)])
     _ylines.append([_sum+_n+_m, '--', 'g', u'等待完成%d个' % _m])
     _dlt = float((_total[_line_n + 1] - (_sum + _n)) * 100) / float(_total[_line_n + 1])
-    if _total[_line_n+1]-(_sum+_n)>int(_total[_line_n+1]*0.1):
-        _print(u'【风险提示】：本期实际完成的任务总量已“负偏离”计划量（偏离%0.2f%%），请在下一期迭代过程中修正。' % _dlt,
+    if _dlt > 5:
+        _print(u'【风险提示】：本期实际完成的任务总量已“负偏离”计划量（偏离%0.2f%%），估计延期%d个工作日。' %
+               (_dlt, _delay_day),
                color=(250, 0, 0))
-        _results.append([u'● 任务完成情况未达到计划要求，负偏离%0.2f%%。' % _dlt,(255,0,0)])
+        _results.append([u'● 【风险提示】完成任务未达到计划要求，负偏离%0.2f%%，估计延期%d个工作日。' %
+                         (_dlt, _delay_day), (255, 0, 0)])
     else:
-        _results.append([u'● 任务完成情况满足计划要求。',None])
+        _results.append([u'● 任务完成情况满足计划要求。', None])
 
-    _dots = []
-    _dots.append([_line_n+1,_sum+_n,">",'r',u"预期（执行中）"])
-    _dots.append([_line_n+1,_sum+_n+_m,">",'g',u"预期（等待中）"])
+    if _delay_day < 0:
+        _results.append([u'● 进度超前计划【%d】个工作日。' % _delay_day, (0, 200, 0)])
 
-    _fn = doBox.doDotBase(u'任务完成趋势图', u'Σ任务数量（个）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
+    _dots = [[_line_n + 1, _sum + _n, ">", 'r', u"预期（执行中）"],
+             [_line_n + 1, _sum + _n + _m, ">", 'g', u"预期（等待中）"]]
+
+    _fn = doBox.doDotBase(u'任务完成趋势图', u'Σ任务数量（个）', u'日期【%s 至 %s】（天）'%
+                          (_str_date[0], _str_date[1]),
                           _data, label_pos=4, lines=_lines, ylines=_ylines, dots=_dots)
 
     doc.addPic(_fn,sizeof=4.6)
-    _print(u'【图例说明】：用以图示该项目计划的完成状态。'
+    _print(u'【图例说明】：图示该项目计划的完成状态。'
            u'图中包括计划的、已完成的及本期（本迭代周期）将达到的任务数量水平，'
            u'以直观了解该项目的计划与执行是否存在+/-偏差，以及偏差大小。'
            u'图中，黑线为当天计划的目标；红线为即将达到的目标；绿线为本期预定目标。')
