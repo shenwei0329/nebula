@@ -373,20 +373,22 @@ def main():
         if _start_date>_today:
             break
 
+    """生成【计划】曲线（数据）"""
     _data = []
     _total = []
     _sum = 0
     for _v in _plan_quta:
         _sum += _v
         _total.append(_sum)
-
     _data.append([_total, "#1a1a1a", "^", u"计划"])
 
+    """生成【执行】曲线（数据）"""
     _total_complete = []
     _sum = 0
     for _v in _active_quta:
         _sum += _v
         _total_complete.append(_sum)
+    _data.append([_total_complete, "#8f8f8f", ".", u"完成"])
 
     """计算延期（天）"""
     _plan_day = 0
@@ -396,6 +398,7 @@ def main():
         _plan_day += 1
     _delay_day = _line_n - _plan_day
 
+    """形成【计划任务量分布说明】"""
     _lines = [[_line_n, '-', 'red', u'当前日期']]
     __data = [[[range(len(_plan_quta)), _plan_quta], "b", "-", u"当天完成任务数"]]
     _fn = doBox.doStem(u'计划的任务量分布图', u'Δ任务完成数量（个）', u'日期【%s 至 %s】（天）'%
@@ -411,6 +414,7 @@ def main():
     _ylines = []
     _ylines.append([_plan_work_hour[_line_n][1], '--', 'k', u'计划投入%d个人时' % _plan_work_hour[_line_n][1]])
     _ylines.append([_active_value[_line_n-1][1], '--', 'r', u'实际投入%d个人时' % _active_value[_line_n-1][1]])
+
     if _active_value[_line_n-1][1]>_plan_work_hour[_line_n][1]:
         _dlt = float((_active_value[_line_n-1][1] - _plan_work_hour[_line_n][1])*100)/float(_plan_work_hour[_line_n-1][1])
         _print(u'【风险提示】：本期项目的实际资源投入（人时费用）已超过计划预期。'
@@ -424,19 +428,17 @@ def main():
         _print(u'当前本项目的实际资源投入（人时费用）满足计划要求。')
         _results.append([u'● 资源投入量满足计划预期要求。', None])
 
+    # [[range(len(_active_ing_quta)), _active_ing_quta], "g", "-", u"阶段投入"],
     __data = [[[range(len(_active_value)), _active_value], "r", "-", u"已投入"],
-             [[range(len(_active_ing_quta)), _active_ing_quta], "g", "-", u"阶段投入"],
              [[range(len(_plan_work_hour)), _plan_work_hour], "k", "-", u"计划投入"]]
     _fn = doBox.doLine(u'投入分布图', u'Δ投入工时（人时）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
-                       __data, label_pos=4, lines=_lines, ylines=_ylines)
+                       __data, label_pos='upper left', lines=_lines, ylines=_ylines)
     doc.addPic(_fn,sizeof=3.6)
     _print(u'【图例说明】：图示过程中资源（人时）计划和实际投入情况。'
-           u'图中，黑纵线段为计划的工时量，红纵线段为实际投入的工时量；绿纵线段为除去前期投入的参考量。'
-           u'黑横线为当天计划投入总量；红横线为实际投入总量；绿横线为参考量。')
+           u'图中，黑纵线段为计划的工时量，红纵线段为实际投入的工时量。'
+           u'黑横线为当天计划投入总量；红横线为实际投入总量。')
 
     _print(u"计划跟踪", title=True, title_lvl=1)
-
-    _data.append([_total_complete, "#8f8f8f", "*", u"完成"])
 
     #_date = _today.strftime(u"%Y-%m-%d")
     #_sql = 'select count(*) from jira_task_t where endDate>"%s" order by id' % _date
@@ -482,7 +484,7 @@ def main():
 
     _fn = doBox.doDotBase(u'任务完成趋势图', u'Σ任务数量（个）', u'日期【%s 至 %s】（天）'%
                           (_str_date[0], _str_date[1]),
-                          _data, label_pos=4, lines=_lines, ylines=_ylines, dots=_dots)
+                          _data, label_pos='upper left', lines=_lines, ylines=_ylines, dots=_dots)
 
     doc.addPic(_fn,sizeof=4.6)
     _print(u'【图例说明】：图示该项目计划的完成状态。'
