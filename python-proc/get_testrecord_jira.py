@@ -1,54 +1,58 @@
 #!/usr/local/bin/python2.7
 # -*- coding: utf-8 -*-
 #
+# 导入“测试记录数据”
+# ====================
+# Created：2017.12.15 by shenwei @ ChengDu
+#
+#
+
+import MySQLdb, sys
 from jira import JIRA
-import types, json, sys
 
-jira = JIRA('http://172.16.60.13:8080',basic_auth=('shenwei','sw64419'))
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
-"""
-projects = jira.projects()
-for _proj in projects:
-    print _proj
+ReplaceTable = {
+    u"whitehole v1.0r1m1": "WhiteHole^1.0r1m1",
+    u"测试-Apollo": "Apollo^1.0",
+    u"hubble1.8": "Hubble^1.8",
+    u"FAST云平台测试": "FAST^3.0"
+}
 
-"""
-"""
-print dir(issue)
-['JIRA_BASE_URL', '_IssueFields', '_READABLE_IDS', '__class__', '__delattr__', '__dict__', '__doc__', '__eq__', 
-'__format__', '__getattr__', '__getattribute__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', 
-'__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_base_url', 
-'_default_headers', '_get_url', '_load', '_options', '_parse_raw', '_resource', '_session', 'add_field_value', 
-'delete', 'expand', 'fields', 'find', 'id', 'key', 'permalink', 'raw', 'self', 'update']
+def doSQLinsert(db, sql, cur):
+    """
+    添加记录
+    :param db: 数据库
+    :param cur: 当前光标
+    :param sql: SQL语句（INSERT）
+    :return:
+    """
 
-print dir(issue.fields)
-['__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', u'aggregateprogress', u'aggregatetimeestimate', u'aggregatetimeoriginalestimate', u'aggregatetimespent', u'assignee', u'components', u'created', u'creator', u'customfield_10200', u'customfield_10300', u'customfield_10301', u'customfield_10302', u'customfield_10303', u'customfield_10400', u'customfield_10500', u'customfield_10501', u'customfield_10502', u'
-customfield_10503', u'customfield_10504', u'customfield_10505', u'customfield_10506', u'customfield_10507', u'customfield_10508', u'customfield_10509', u'customfield_10510', u'customfield_10511', u'customfield_10800', u'customfield_11001', u'customfield_11002', u'customfield_11100', u'customfield_11200',
- u'customfield_11300', u'customfield_11304', u'customfield_11400', u'customfield_11402', u'customfield_11403', u'customfield_11404', u'customfield_11405', u'customfield_11406', u'customfield_11407', u'description', u'duedate', u'environment', u'fixVersions', u'issuelinks', u'issuetype', u'labels', u'last
-Viewed', u'priority', u'progress', u'project', u'reporter', u'resolution', u'resolutiondate', u'status', u'subtasks', u'summary', u'timeestimate', u'timeoriginalestimate', u'timespent', u'updated', u'versions', u'votes', u'watches', u'workratio']
+    try:
+        cur.execute(sql)
+        db.commit()
+    except:
+        print(">>>Err(mysql): %s" % sql)
+        db.rollback()
 
-_f = dir(issue.fields)
-
-for __f in _f:
-    if type(__f) is not types.NoneType:
-
-        print __f
-
-        _cmd = "if type(issue.fields.%s) is types.ListType: print issue.fields.%s" % (__f,__f)
-        exec(_cmd)
-
-        _cmd = "if type(issue.fields.%s) is types.IntType: print issue.fields.%s" % (__f, __f)
-        exec (_cmd)
-"""
-
-def getIssue(bg_date, ed_date):
-
-    Task = {}
+def getIssue(jira, bg_date, ed_date):
+    """
+    导入“测试记录数据”：
+    err_summary,err_key,err_id,err_type,err_state,err_pj_key,err_pj_name,err_level,err_result,err_opr,
+    err_rpr=#,err_cr_date,err_md_date,err_ed_date,err_version_ing,err_mod_1,err_desc,err_version_ed=#,err_mod_2=#
+    【注意】该过程与时间窗口相关，应在每周一上班时收集上一周“周一至周日”的数据。
+    :param jira: JIRA系统入口
+    :param bg_date: 起始日期
+    :param ed_date: 截止日期
+    :return:
+    """
+    """ 目前项目：HBLE, WHIT, FASTT, AP；问题类型：Improvement, Bug, 缺陷 """
     issues = jira.search_issues('project in (HBLE, WHIT, FASTT, AP) AND '
                                 'issuetype in (Improvement, Bug, 缺陷) AND updated >= %s AND updated <= %s' %
                                 (bg_date,ed_date), maxResults=10000)
-    _n = 0
+    _SQLcmd = []
     for issue in issues:
-
         watcher = jira.watchers(issue)
         _user = {}
         for watcher in watcher.watchers:
@@ -57,23 +61,76 @@ def getIssue(bg_date, ed_date):
                 _user['name'] = watcher.displayName
                 _user['email'] = watcher.emailAddress
 
-        print dir(issue.fields.project)
-        """
-['JIRA_BASE_URL', '_READABLE_IDS', '__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattr__', '__getattribute__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_b
-ase_url', '_default_headers', '_get_url', '_load', '_options', '_parse_raw', '_resource', '_session', 'avatarUrls', 'delete', 'find', 'id', 'key', 'name', 'raw', 'self', 'update']
-        """
-        print("[%s]-%s" % (str(issue),issue.fields.summary))
-        print(u'%s' % issue.fields.status)
-        print(u'%s.%s.%s' % (_user['name'], _user['alias'], _user['email']))
-        print(u'%s' % issue.fields.description)
-        print u'%s' % issue.fields.priority
-        print u'%s' % issue.fields.project.key
-        print u'%s' % issue.fields.project.name
-        print issue.fields.created
-        print issue.fields.updated
-        _n += 1
-        break
-    return _n
+        if len(issue.fields.versions)>0:
+            _versions = issue.fields.versions[0].name
+        else:
+            _versions = '#'
+        if len(issue.fields.components)>0:
+            _components = issue.fields.components[0].name
+        else:
+            _components = '#'
 
-_n = getIssue(sys.argv[1],sys.argv[2])
-print _n
+        if not ReplaceTable.has_key(issue.fields.project.name):
+            print u"%s" % issue.fields.project.name
+            ReplaceTable[issue.fields.project.name] = '#'
+
+        if issue.fields.resolution is None:
+            _resolution = '#'
+        else:
+            _resolution = issue.fields.resolution
+
+        _str = u'insert into testrecord_t(' \
+               u'err_summary,err_key,err_id,err_type,err_state,err_pj_key,err_pj_name,' \
+               u'err_level,err_result,err_opr,err_rpr,err_cr_date,err_md_date,err_ed_date,' \
+               u'err_version_ing,err_mod_1,err_desc,err_version_ed,err_mod_2,created_at,updated_at) ' \
+               u'values("%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","#","%s","%s","%s",' \
+               u'"%s","%s","%s","#","#",now(),now())' % \
+               (issue.fields.summary.replace('\r', '').replace('\n', ',').replace(' ', '').replace('"', "'"),
+                issue.key,
+                issue.id,
+                issue.fields.issuetype,
+                issue.fields.status,
+                issue.fields.project.key,
+                ReplaceTable[issue.fields.project.name],
+                issue.fields.priority,
+                _resolution,
+                _user['name'],
+                issue.fields.created,
+                issue.fields.updated,
+                issue.fields.resolutiondate,
+                _versions,
+                _components,
+                issue.fields.description.replace('\r', '').replace('\n', ',').replace(' ', '').replace('"', "'"))
+        #print _str
+        _SQLcmd.append(_str)
+
+    return _SQLcmd
+
+def doHandler():
+
+    _str = raw_input(unicode('> 时间范围（%s 至 %s）请确认[y/n]：' % (sys.argv[1], sys.argv[2]),'utf-8').encode('gbk'))
+    if _str not in ["y","Y","yes","YES","Yes"]:
+        return
+
+    """连接数据库"""
+    db = MySQLdb.connect(host="47.93.192.232", user="root", passwd="sw64419", db="nebula", charset='utf8')
+    cur = db.cursor()
+
+    """JIRA系统入口"""
+    jira = JIRA('http://172.16.60.13:8080', basic_auth=('shenwei', 'sw64419'))
+
+    _sqls = getIssue(jira, sys.argv[1], sys.argv[2])
+    print(u'>>> Total number of Issue: %d' % len(_sqls))
+    for _sql in _sqls:
+        doSQLinsert(db, _sql, cur)
+        #print _sql
+    print(u'.完成')
+
+    db.close()
+
+if __name__ == '__main__':
+
+    if len(sys.argv) != 3:
+        print("\n\tUsage: python %s start_date end_date\n" % sys.argv[0])
+    else:
+        doHandler()

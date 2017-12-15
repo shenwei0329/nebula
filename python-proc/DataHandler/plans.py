@@ -380,7 +380,7 @@ def main():
     for _v in _plan_quta:
         _sum += _v
         _total.append(_sum)
-    _data.append([_total, "#1a1a1a", "^", u"计划"])
+    _data.append([_total, "#8f8f8f", "^", u"计划"])
 
     """生成【执行】曲线（数据）"""
     _total_complete = []
@@ -388,7 +388,7 @@ def main():
     for _v in _active_quta:
         _sum += _v
         _total_complete.append(_sum)
-    _data.append([_total_complete, "#8f8f8f", ".", u"完成"])
+    _data.append([_total_complete, "#1a1a1a", ".", u"完成"])
 
     """计算延期（天）"""
     _plan_day = 0
