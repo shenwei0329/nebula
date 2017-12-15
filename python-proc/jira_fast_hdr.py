@@ -61,7 +61,7 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
                 _user['name'] = watcher.displayName
                 _user['email'] = watcher.emailAddress
 
-        Task[str(issue)] = [str(issue),
+        Task[issue.key] = [ issue.key,
                             issue.fields.summary,
                             issue.fields.description.replace('\n', '').replace('\r', ''),
                             _user,
@@ -75,9 +75,9 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
                (Task[_v][0],project_alias)
         _n = doSQLcount(cur, _sql)
         if _n>0:
-            """记录已存在：判断记录的“state、completeDate”是否变化
+            """记录已存在：判断记录的“summary、state、completeDate”是否变化
             """
-            _sql = 'select issue_status,startDate,endDate from jira_task_t where issue_id="%s"' % Task[_v][0]
+            _sql = 'select issue_status,startDate,endDate,summary from jira_task_t where issue_id="%s"' % Task[_v][0]
             _res = doSQL(cur, _sql)
             for _r in _res:
                 _sql = None
@@ -93,6 +93,11 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
                         _sql = 'update jira_task_t set endDate="%s"' % str(Task[_v][6])
                     else:
                         _sql += ',endDate="%s"' % str(Task[_v][6])
+                if str(_r[3]) != str(Task[_v][1]):
+                    if _sql is None:
+                        _sql = 'update jira_task_t set summary="%s"' % str(Task[_v][1])
+                    else:
+                        _sql += ',summary="%s"' % str(Task[_v][1])
 
                 if _sql is None:
                     # print("[%s]: No change!<%s,%s>" % (Task[_v][0],_r[0],_r[1]))
@@ -143,16 +148,6 @@ if __name__ == '__main__':
     """针对UPDATE的数据需要COMMIT"""
     db.commit()
 
-    """
-    _keys = sorted(Task.keys(),reverse=True)
-    for _v in _keys:
-        print("=== %s ===" % _v)
-        print("\t%s, %s" % (Task[_v][1],Task[_v][2]))
-        for _k in sorted(Task[_v][3].keys(),reverse=True):
-            print("\t%s = %s" % (_k,Task[_v][3][_k]))
-        print("\tUser: %s, Alias: %s, eMail: %s" % (Task[_v][4]['name'],Task[_v][4]['alias'],Task[_v][4]['email']))
-        print("=" * 8)
-    """
     print(" number of be updated: %d" % Quta[0])
     print(" number of be inserted: %d" % Quta[1])
     print(" number of non-modified: %d" % Quta[2])

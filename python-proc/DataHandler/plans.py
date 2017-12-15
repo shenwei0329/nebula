@@ -486,7 +486,7 @@ def main():
                           (_str_date[0], _str_date[1]),
                           _data, label_pos='upper left', lines=_lines, ylines=_ylines, dots=_dots)
 
-    doc.addPic(_fn,sizeof=4.6)
+    doc.addPic(_fn,sizeof=5)
     _print(u'【图例说明】：图示该项目计划的完成状态。'
            u'图中包括计划的、已完成的及本期（本迭代周期）将达到的任务数量水平，'
            u'以直观了解该项目的计划与执行是否存在+/-偏差，以及偏差大小。'
