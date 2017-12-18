@@ -276,5 +276,18 @@ CREATE TABLE if not exists person_kpi_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+# PRD定义
+#
+#
+CREATE TABLE if not exists prd_t
+(
+	id integer primary key not null auto_increment,
+	prd_level varchar(16) comment '层次',
+	prd_topic varchar(80) comment '标题',
+	PJ_XMBH varchar(32) comment '项目编号',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 #
 #
