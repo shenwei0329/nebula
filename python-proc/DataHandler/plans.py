@@ -19,6 +19,10 @@ sys.setdefaultencoding('utf-8')
 from pylab import mpl
 mpl.rcParams['font.sans-serif'] = ['SimHei']
 
+"""人天成本"""
+CostDay = 1000.
+CostHour = CostDay/8.
+
 ProjectAlias = {
     "PRD-2017-PROJ-00003": "FAST",
 }
@@ -271,7 +275,7 @@ def main():
 
     end_date = datetime.date(_year, _month, _day)
 
-    _sql = 'select PJ_XMMC,PJ_XMFZR,PJ_KSSJ,PJ_JSSJ,PJ_XMJJ from project_t where PJ_XMBH="%s"' % sys.argv[1]
+    _sql = 'select PJ_XMMC,PJ_XMFZR,PJ_KSSJ,PJ_JSSJ,PJ_XMJJ,PJ_XMYS from project_t where PJ_XMBH="%s"' % sys.argv[1]
     _res = doSQL(cur, _sql)
     if _res is None or len(_res)==0:
         print("\n\tErr: Invalid number of project: %s)" % sys.argv[1])
@@ -282,7 +286,10 @@ def main():
     _print(u'项目编号：%s' % sys.argv[1])
     _print(u'项目负责人：%s' % _res[0][1])
     _print(u'项目起止日期：%s 至 %s' % (_res[0][2], _res[0][3]))
+    _print(u'项目预算（工时成本）：%s 万元' % _res[0][5])
     _print(u'项目功能简介：%s' % _res[0][4])
+
+    _pre_cost = float(_res[0][5])
 
     _kv, _max_n, _act_n = getQ(cur)
     _q = float(_act_n*100)/float(_max_n)
@@ -422,8 +429,20 @@ def main():
                (_plan_work_hour[_line_n][1], _active_value[_line_n-1][1], _dlt),
                color=(250, 0, 0))
         _print(u'注：在项目立项和设计阶段已投入【%d】个人时。' % _pro_cost, color=(255, 0, 0))
-        _results.append([u'● 【风险提示】资源投入量超出计划%0.2f%%。本期计划投入%d个人时，实际投入%d个人时。' %
-                         (_dlt, _plan_work_hour[_line_n][1], _active_value[_line_n-1][1]), (255, 0, 0)])
+        _v = float(_active_value[_line_n - 1][1]) * CostHour / 10000.0
+        _results.append([u'● 【风险提示】资源投入量超出计划%0.2f%%。本期计划投入%d个人时（工时成本%0.2f 万元），'
+                         u'实际投入%d个人时（工时成本%0.2f 万元，占预算%0.2f%%）。' %
+                         (_dlt,
+                          _plan_work_hour[_line_n][1],
+                          float(_plan_work_hour[_line_n][1])*CostHour/10000.0,
+                          _active_value[_line_n-1][1],
+                          _v,
+                          _v/_pre_cost
+                          ),
+                         (255, 0, 0)])
+        if _v/_pre_cost > 1.0:
+            _results.append([u'● 【风险提示】资源投入已超预算（超%0.2f万元）。' % (_v - _pre_cost),
+                             (255, 0, 0)])
     else:
         _print(u'当前本项目的实际资源投入（人时费用）满足计划要求。')
         _results.append([u'● 资源投入量满足计划预期要求。', None])

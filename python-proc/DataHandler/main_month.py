@@ -33,9 +33,10 @@ workhours = numb_days * 8
 """
 QT_TITLE = '2017年11月份月报'
 
-"""公司定义的 人力资源（预算）直接成本 1000元/人天，22天/月，128元/人时
+"""公司定义的 人力资源（预算）直接成本 1000元/人天，22天/月，125元/人时
 """
-CostDay = 128
+CostDay = 1000.0
+CostHour = CostDay/8.0
 Tables = ['count_record_t',]
 TotalMember = 0
 GroupName = [u'产品设计组',u'云平台研发组',u'大数据研发组',u'系统组',u'测试组']
@@ -1307,11 +1308,11 @@ def main():
     getProjectWorkTime(cur)
     if len(costProject)>0:
         _fn = doPie.doProjectPie(costProject)
-        _print(u"产品项目投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[0], costProject[0]*125.0/10000.0))
-        _print(u"工程项目投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[1], costProject[1]*125.0/10000.0))
-        _print(u"非项目类事务投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[2], costProject[2]*125.0/10000.0))
+        _print(u"产品项目投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[0], costProject[0]*CostHour/10000.0))
+        _print(u"工程项目投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[1], costProject[1]*CostHour/10000.0))
+        _print(u"非项目类事务投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[2], costProject[2]*CostHour/10000.0))
         _print("")
-        _print(u"总投入：%d【人时】，工时成本 %0.2f【万元】" % (sum(costProject), sum(costProject)*125.0/10000.0))
+        _print(u"总投入：%d【人时】，工时成本 %0.2f【万元】" % (sum(costProject), sum(costProject)*CostHour/10000.0))
         doc.addPic(_fn, sizeof=2.8)
         _print(u'任务执行资源投入占比', align=WD_ALIGN_PARAGRAPH.CENTER)
     _print(u"2、出勤情况", title=True, title_lvl=3)
