@@ -73,7 +73,7 @@ def doOprHour(data):
      plt.axhline(y=_max, xmin=0, xmax=50, linestyle='--',linewidth=2, color='blue', label='Max:%d' % _max)
      plt.axhline(y=_avg, xmin=0, xmax=50, linestyle='-.',linewidth=2, color='green', label='Avg:%d' % _avg)
      plt.axhline(y=_min, xmin=0, xmax=50, linestyle=':',linewidth=2, color='red', label='Min:%d' % _min)
-     plt.legend()
+     plt.legend(loc=4)
      _fn = 'pic/%s-hour.png' % time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
      plt.savefig(_fn, dpi=75)
      #plt.show()

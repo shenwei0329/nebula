@@ -7,6 +7,11 @@ import matplotlib.pyplot as plt
 from pylab import plot, show, savefig, xlim, figure, \
                 hold, ylim, legend, boxplot, setp, axes
 import time,random
+import MySQLdb, math
+from numpy import mean, median, std
+
+from pylab import mpl
+mpl.rcParams['font.sans-serif'] = ['SimHei']
 
 """
 设置图例显示的位置
@@ -32,8 +37,11 @@ def doBox(label,datas,y_line=None,y_limit=None,y_label=None,x_label=None):
     ax = axes()
     hold(True)
 
+    _bx = []
     for _data in datas:
-        boxplot(_data, positions=range(1,len(label)+1), widths=0.6)
+        _x = boxplot(_data, positions=range(1, len(label)+1), widths=0.6)
+        _bx.append(_x)
+
     # set axes limits and labels
     xlim(0, len(label)+1)
     if y_limit is not None:
@@ -47,12 +55,12 @@ def doBox(label,datas,y_line=None,y_limit=None,y_label=None,x_label=None):
     if x_label is not None:
         plt.xlabel(x_label)
 
+    _fn = 'pic/%s-box.png' % time.time()
     if not __test:
-        _fn = 'pic/%s-box.png' % time.time()
         savefig(_fn, dpi=75)
     else:
         show()
-    return _fn
+    return _fn, _bx
 
 def doBar(title, y_label, x_label, datas, label=None, y_limit=None):
 
@@ -75,8 +83,8 @@ def doBar(title, y_label, x_label, datas, label=None, y_limit=None):
     plt.xticks(ind, x_label)
     if label is not None:
         plt.legend()
+    _fn = 'pic/%s-bar.png' % time.time()
     if not __test:
-        _fn = 'pic/%s-bar.png' % time.time()
         savefig(_fn, dpi=75)
     else:
         show()
@@ -214,12 +222,76 @@ def doBarH(title, y_label, x_label, datas):
     plt.xlabel(y_label)
     plt.title(title)
     plt.yticks(ind, x_label)
+    _fn = 'pic/%s-bar.png' % time.time()
     if not __test:
-        _fn = 'pic/%s-bar.png' % time.time()
         savefig(_fn, dpi=75)
     else:
         show()
     return _fn
+
+def doSQL(cur,_sql):
+
+    #print(">>>doSQL[%s]" % _sql)
+    cur.execute(_sql)
+    return cur.fetchall()
+
+def getPersonTaskQ(cur):
+    """
+    生成个人“任务执行指标”
+    :param cur: 数据源
+    :return: 指标
+    """
+
+    _name = []
+    datas = []
+    _data = []
+    _dd = ()
+
+    """获取员工名称"""
+    _sql = 'select MM_XM from member_t'
+    _oprs = doSQL(cur, _sql)
+
+    """获取每个人的任务投入指标"""
+    _max = 0
+    for _opr in _oprs:
+        _name.append(u'%s' % _opr[0])
+        _sql = 'select TK_GZSJ from task_t where TK_ZXR="%s"' % _opr[0]
+        _res = doSQL(cur, _sql)
+        _d = ()
+        for _v in _res:
+            _d += (int(_v[0]),)
+            _dd += (int(_v[0]),)
+        if len(_d) > 0 and _max < max(_d):
+            _max = max(_d)
+        _data.append(_d)
+        datas.append(_data)
+    
+    """绘制“总特征”并获取评分参数"""
+    _fn1, _bxs = doBox([u'总计'], [[_dd]], y_limit=(-5, _max+5))
+    
+    bx = _bxs[0]
+    _lvl = [bx["whiskers"][0].get_ydata()[0],   # 优
+            bx["medians"][0].get_ydata()[0],    # 良
+            bx["whiskers"][1].get_ydata()[0],   # 中
+            bx["whiskers"][1].get_ydata()[1]]   # 差
+
+    _lines = []
+    for _l in _lvl:
+        _lines.append(_l)
+
+    _fn2, _bxs = doBox(range(len(_name)), datas, y_line=_lines, y_limit=(-5, _max+5))
+
+    _kv = {}
+    _i = 0
+    for bx in _bxs:
+        _median = bx["medians"][_i].get_ydata()[0]
+        if math.isnan(_median):
+            _i += 1
+            continue
+        _kv[_name[_i]] = _median
+        _i += 1
+
+    return _fn1, _fn2, _lvl, _kv
 
 if __name__ == '__main__':
 
@@ -227,26 +299,8 @@ if __name__ == '__main__':
 
     __test = True
 
-    label = ['Mo','Tu','We','Th','Fr','Sa','Su','Avg']
-    datas = []
-    for _i in range(2): # Am & Pm
-        _data = []
-        for _j in range(len(label)):
-            _d = ()
-            for _k in range(10):
-                if _i == 0:
-                    _v = random.uniform(6, 12)
-                else:
-                    _v = random.uniform(12, 24)
-                _d += (_v,)
-            _data.append(_d)
-        datas.append(_data)
-    doBox(label,datas,y_limit=(5.,24.),y_line=(9.,17.5,))
-    """
-    _v = [714, 667, 372, 347, 61, 60, 54, 52, 47, 30, 14, 4]
-    _l = []
-    for i in range(12):
-        _l.append('%d' % (i+1))
+    db = MySQLdb.connect(host="47.93.192.232", user="root", passwd="sw64419", db="nebula", charset='utf8')
+    cur = db.cursor()
 
-    doBarH('test','val',_l,_v)
-    """
+    fn1, fn2, lvl, kv = getPersonTaskQ(cur)
+    print kv

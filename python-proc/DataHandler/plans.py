@@ -422,8 +422,8 @@ def main():
                (_plan_work_hour[_line_n][1], _active_value[_line_n-1][1], _dlt),
                color=(250, 0, 0))
         _print(u'注：在项目立项和设计阶段已投入【%d】个人时。' % _pro_cost, color=(255, 0, 0))
-        _results.append([u'● 【风险提示】资源投入量超出计划%0.2f%%。在立项、设计阶段投入了【%d】个人时。' %
-                         (_dlt, _pro_cost), (255, 0, 0)])
+        _results.append([u'● 【风险提示】资源投入量超出计划%0.2f%%。本期计划投入%d个人时，实际投入%d个人时。' %
+                         (_dlt, _plan_work_hour[_line_n][1], _active_value[_line_n-1][1]), (255, 0, 0)])
     else:
         _print(u'当前本项目的实际资源投入（人时费用）满足计划要求。')
         _results.append([u'● 资源投入量满足计划预期要求。', None])
