@@ -28,6 +28,7 @@ TableDic = {
     'PROJECT_TASK':'project_task_t',
     'KPI':'kpi_t',
     'PRD':'prd_t',
+    'SALE_PRICE':'sale_price_t',
 }
 
 """设置字符集

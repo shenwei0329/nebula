@@ -14,7 +14,13 @@ sys.setdefaultencoding('utf-8')
 
 if __name__ == '__main__':
 
-    plans.main()
+    if len(sys.argv) <= 2:
+        if len(sys.argv) == 2:
+            plans.main(project=sys.argv[1])
+        else:
+            plans.main()
+    else:
+        print("\n\tUsage: python %s project_name\n" % sys.argv[0])
 
 #
 # Eof

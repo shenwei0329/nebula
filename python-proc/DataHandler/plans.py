@@ -203,13 +203,9 @@ def getQ(cur):
 
     return _kv, _m, _n
 
-def main():
+def main(project="PRD-2017-PROJ-00003"):
 
     global doc,ProjectAlias
-
-    if len(sys.argv) != 2:
-        print("\n\tUsage: python %s project_name\n" % sys.argv[0])
-        return
 
     """创建word文档实例
     """
@@ -217,7 +213,7 @@ def main():
     """写入"主题"
     """
     doc.addHead(u'产品项目计划跟踪报告', 0, align=WD_ALIGN_PARAGRAPH.CENTER)
-    #doc.addHead(u'产品项目【%s】' % sys.argv[1], 1, align=WD_ALIGN_PARAGRAPH.CENTER)
+    #doc.addHead(u'产品项目【%s】' % project, 1, align=WD_ALIGN_PARAGRAPH.CENTER)
 
     db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
     cur = db.cursor()
@@ -255,8 +251,8 @@ def main():
 
     _pj_start_date = datetime.date(_year, _month, _day)
 
-    #_sql = 'select end_date from project_task_t where task_resources<>"#" and PJ_XMBH="%s" order by end_date' % sys.argv[1]
-    _sql = 'select PJ_KSSJ,PJ_JSSJ from project_t where PJ_XMBH="%s"' % sys.argv[1]
+    #_sql = 'select end_date from project_task_t where task_resources<>"#" and PJ_XMBH="%s" order by end_date' % project
+    _sql = 'select PJ_KSSJ,PJ_JSSJ from project_t where PJ_XMBH="%s"' % project
     _res = doSQL(cur, _sql)
 
     _str_date = _res[0]
@@ -275,15 +271,15 @@ def main():
 
     end_date = datetime.date(_year, _month, _day)
 
-    _sql = 'select PJ_XMMC,PJ_XMFZR,PJ_KSSJ,PJ_JSSJ,PJ_XMJJ,PJ_XMYS from project_t where PJ_XMBH="%s"' % sys.argv[1]
+    _sql = 'select PJ_XMMC,PJ_XMFZR,PJ_KSSJ,PJ_JSSJ,PJ_XMJJ,PJ_XMYS from project_t where PJ_XMBH="%s"' % project
     _res = doSQL(cur, _sql)
     if _res is None or len(_res)==0:
-        print("\n\tErr: Invalid number of project: %s)" % sys.argv[1])
+        print("\n\tErr: Invalid number of project: %s)" % project)
 
     _print(u"项目基本信息", title=True, title_lvl=1)
 
     _print(u'项目名称：%s' % _res[0][0])
-    _print(u'项目编号：%s' % sys.argv[1])
+    _print(u'项目编号：%s' % project)
     _print(u'项目负责人：%s' % _res[0][1])
     _print(u'项目起止日期：%s 至 %s' % (_res[0][2], _res[0][3]))
     _print(u'项目预算（工时成本）：%s 万元' % _res[0][5])
@@ -319,7 +315,7 @@ def main():
     while True:
         _date = _start_date.strftime(u"%Y年%m月%d日").replace(u'年0', u'年').replace(u'月0', u'月')
         _sql = 'select sum(work_hour) from project_task_t ' \
-               'where end_date like "%%%s%%" and task_resources<>"#" and PJ_XMBH="%s" order by task_id' % (_date,sys.argv[1])
+               'where end_date like "%%%s%%" and task_resources<>"#" and PJ_XMBH="%s" order by task_id' % (_date,project)
         _n = int(doSQLcount(cur,_sql))
         _plan_work_hour.append([_sum, _sum+_n])
         _sum += _n
@@ -335,7 +331,7 @@ def main():
     while True:
         _date = _start_date.strftime("%Y-%m-%d")
         _sql = 'select sum(TK_GZSJ) from task_t ' \
-               'where created_at BETWEEN "%s 00:00:00" AND "%s 23:59:59" and TK_XMBH="%s"' % (_date, _date, sys.argv[1])
+               'where created_at BETWEEN "%s 00:00:00" AND "%s 23:59:59" and TK_XMBH="%s"' % (_date, _date, project)
         _n = int(doSQLcount(cur,_sql))
         _active_value.append([_sum, _sum+_n])
         _sum += _n
@@ -356,7 +352,7 @@ def main():
     while True:
         _date = _start_date.strftime(u"%Y年%m月%d日").replace(u'年0', u'年').replace(u'月0', u'月')
         _sql = 'select count(*) from project_task_t ' \
-               'where end_date like "%%%s%%" and task_resources<>"#" and PJ_XMBH="%s" order by task_id' % (_date,sys.argv[1])
+               'where end_date like "%%%s%%" and task_resources<>"#" and PJ_XMBH="%s" order by task_id' % (_date,project)
         _n = int(doSQLcount(cur,_sql))
         _plan_date.append(_start_date)
         _plan_quta.append(_n)
@@ -371,7 +367,7 @@ def main():
         _date = _start_date.strftime(u"%Y-%m-%d")
         _sql = 'select count(*) from jira_task_t ' \
                'where project_alias="%s" and endDate like "%%%s%%" and issue_status="完成" order by id' %\
-               (ProjectAlias[sys.argv[1]],_date)
+               (ProjectAlias[project],_date)
         _n = int(doSQLcount(cur,_sql))
         _active_quta.append(_n)
 
@@ -437,7 +433,7 @@ def main():
                           float(_plan_work_hour[_line_n][1])*CostHour/10000.0,
                           _active_value[_line_n-1][1],
                           _v,
-                          _v/_pre_cost
+                          _v*100.0/_pre_cost
                           ),
                          (255, 0, 0)])
         if _v/_pre_cost > 1.0:
@@ -516,7 +512,7 @@ def main():
         _print(_r[0], paragrap=_paragrap, color=_r[1])
 
     db.close()
-    doc.saveFile('%s-proj.docx' % sys.argv[1])
+    doc.saveFile('%s-proj.docx' % project)
 
 if __name__ == '__main__':
 
