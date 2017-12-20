@@ -289,5 +289,19 @@ CREATE TABLE if not exists prd_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+# 产品销售报价
+#
+#
+CREATE TABLE if not exists sale_price_t
+(
+	id integer primary key not null auto_increment,
+	PD_BH varchar(24) comment '产品代号',
+	PD_BBH varchar(24) comment '版本',
+	PD_PRICE integer comment '销售价（元）',
+	PJ_XMBH varchar(32) comment '项目编号',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 #
 #

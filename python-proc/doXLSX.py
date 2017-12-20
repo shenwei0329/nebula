@@ -139,7 +139,7 @@ def getXlsxRow(table,i,nCol,lastRow):
             __row = __row.split('/')
             __row = u"%d年%d月%d日" % (int(__row[0]),int(__row[1]),int(__row[2]))
         elif __ctype == 2:
-            __row = int(__row)
+            __row = str(__row)
         elif __ctype == 5:
             __row = ''
         _row.append(__row)
