@@ -303,5 +303,36 @@ CREATE TABLE if not exists sale_price_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+# 钉钉-出库申请
+#
+#
+CREATE TABLE if not exists pd_output_req_t
+(
+	id integer primary key not null auto_increment,
+    TK_SN varchar(32) comment '序号',
+    TK_TITLE varchar(32) comment '标题',
+    TK_STATE varchar(16) comment '状态',
+    TK_RESULT varchar(16) comment '结论',
+    TK_START_DATE varchar(24) comment '申请日期',
+    TK_END_DATE varchar(24) comment '结束日期',
+    MM_GH varchar(16) comment '工号',
+    MM_XM varchar(32) comment '申请人',
+    TK_REQ_DPT varchar(80) comment '申请部门',
+    TK_APPROVER varchar(80) comment '批准人',
+    TK_RECORD varchar(2048) comment '申请记录',
+    TK_DELAY varchar(24) comment '用时',
+    PJ_XMMC varchar(80) comment '项目名称',
+    PJ_XMBH varchar(32) comment '项目编号',
+    PJ_XMFZR varchar(16) comment '负责人',
+    TK_PD_INFO varchar(80) comment '产品和版本',
+    TK_CONTENT varchar(80) comment '申请内容类型',
+    TK_LIST varchar(512) comment '内容列表',
+    TK_TYPE varchar(16) comment '用途类型：交付?',
+    TK_DESC varchar(1024) comment '任务说明',
+    TK_SITE varchar(80) comment '安装地址',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 #
 #
