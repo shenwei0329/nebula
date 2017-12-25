@@ -511,11 +511,14 @@ def getProjectWorkTime(cur):
     _sql = 'select sum(TK_GZSJ) from task_t' + " where created_at between '%s' and '%s'" % (st_date, ed_date)
     _total_workdays = doSQLcount(cur,_sql)
     if _total_workdays > _m:
-        _print("[其他（非立项事务）：总耗时 %d 工时]" % (_total_workdays-_m))
+        _print("[其他（非立项事务，前15个）：总耗时 %d 工时]" % (_total_workdays-_m))
         _sql = "select TK_RWNR,TK_GZSJ from task_t where TK_XMBH='#' and created_at between '%s' and '%s' order by TK_GZSJ+0 desc" % (st_date, ed_date)
         _res = doSQL(cur,_sql)
+        _i = 0
         for _row in _res:
-            _print("● " + str(_row[0]) + " 耗时 " + str(_row[1]) + " 工时")
+            if _i<15:
+                _print("● " + str(_row[0]) + " 耗时 " + str(_row[1]) + " 工时")
+                _i += 1
             _other = _other + int(_row[1])
     if (_pd+_pj+_other)>0:
         costProject = (_pd,_pj,_other,)
@@ -646,14 +649,8 @@ def main():
     _print("本周事件", title=True, title_lvl=1)
     getEvent(cur)
 
-    _print("人力资源投入", title=True, title_lvl=1)
-    getOprWorkTime(cur)
-
     _print("小组资源投入情况", title=True, title_lvl=1)
     getGrpWorkTime(cur)
-
-    _print("各项目投入情况", title=True, title_lvl=1)
-    getProjectWorkTime(cur)
 
     _print("各项目投入统计", title=True, title_lvl=1)
     if len(costProject)>0:
@@ -665,6 +662,12 @@ def main():
         _print(u"总投入：%d【人时】，工时成本 %0.2f【万元】" % (sum(costProject), sum(costProject)*125.0/10000.0))
         doc.addPic(_fn, sizeof=4)
         doc.addText(u"图5 项目投入比例", align=WD_ALIGN_PARAGRAPH.CENTER)
+
+    _print("人力资源投入", title=True, title_lvl=1)
+    getOprWorkTime(cur)
+
+    _print("各项目投入情况", title=True, title_lvl=1)
+    getProjectWorkTime(cur)
 
     _print("测试内容统计", title=True, title_lvl=1)
     _pd_ok, _pd_oking, _pd_err = getTstRcdSts(cur)
