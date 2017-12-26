@@ -29,9 +29,10 @@ def doBarOnTable( rows, columns, datas ):
     'font.family':'sans-serif',
     'font.sans-serif':[u'SimHei'],
     'axes.unicode_minus':False,
+    'font.size':8,
     })
     # Get some pastel shades for the colors
-    colors = plt.cm.BuPu(np.linspace(0, 0.5, len(rows)))
+    colors = plt.cm.BuPu(np.linspace(0, 0.7, len(rows)))
     n_rows = len(datas)
     bar_width = 0.4
     # Initialize the vertical-offset for the stacked bar chart.
@@ -53,22 +54,23 @@ def doBarOnTable( rows, columns, datas ):
     plt.table(cellText=cell_text,rowLabels=rows,rowColours=colors,colLabels=columns,loc='bottom')
 
     # Adjust layout to make room for the table:
-    plt.subplots_adjust(left=0.2, bottom=0.4)
+    plt.subplots_adjust(left=0.2, bottom=0.3, top=0.96)
 
-    plt.ylabel(u"工时")
+    plt.ylabel(u"工时",fontsize=10)
     #plt.yticks(values * value_increment, ['%d' % val for val in values])
     plt.xticks([])
-    plt.title(u'资源投入')
+    plt.title(u'资源投入',fontsize=10)
 
     _fn = 'pic/%s-barontable.png' % time.time()
     if not __test:
-        plt.savefig(_fn, dpi=75)
+        plt.savefig(_fn, dpi=120)
     else:
         plt.show()
     return _fn
 
 if __name__ == '__main__':
 
+    __test = True
     data = [[ 66386, 174296,  75131, 577908,  32015],
             [ 58230, 381139,  78045,  99308, 160454],
             [ 89135,  80552, 152558, 497981, 603535],
@@ -76,7 +78,7 @@ if __name__ == '__main__':
             [139361, 331509, 343164, 781380,  52269]]
 
     columns = (u'设计组', u'系统组', u'云平台研发组', u'大数据研发组', u'测试组')
-    rows = ['Hubble 1.8','Apollo 1.0','Fast 3.0','WhiteHole 1r1m1','Mir 1.5']
+    rows = ['Hubble 1.8','Apollo 1.0','Fast 3.0','WhiteHole 1r1m1',u'混合云']
 
     values = np.arange(0, 2500, 500)
     value_increment = 1000

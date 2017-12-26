@@ -7,7 +7,7 @@
 #
 #
 
-import MySQLdb,sys,json, time
+import MySQLdb,sys,json,time,os
 import datetime,types
 import doPie, doHour, doBox
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -189,7 +189,7 @@ def getQ(cur):
         _topics = doSQL(cur, _sql)
         for _topic in _topics:
             """构建任务名称"""
-            _like_str = "%s-%s" % (_topic[0], _name[0])
+            _like_str = "%s%%%s" % (_topic[0], _name[0])
             #print _like_str
             """在Jira中查找满足任务名称的项目"""
             _sql = u'select issue_id,summary,users,issue_status from jira_task_t where ' \
@@ -513,6 +513,10 @@ def main(project="PRD-2017-PROJ-00003"):
 
     db.close()
     doc.saveFile('%s-proj.docx' % project)
+
+    """删除过程文件"""
+    _cmd = 'del /Q pic\\*'
+    os.system(_cmd)
 
 if __name__ == '__main__':
 

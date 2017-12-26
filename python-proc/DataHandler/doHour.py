@@ -75,7 +75,7 @@ def doOprHour(data):
      plt.axhline(y=_min, xmin=0, xmax=50, linestyle=':',linewidth=2, color='red', label='Min:%d' % _min)
      plt.legend(loc=4)
      _fn = 'pic/%s-hour.png' % time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
-     plt.savefig(_fn, dpi=75)
+     plt.savefig(_fn, dpi=120)
      #plt.show()
      return _fn
 
@@ -102,7 +102,7 @@ def doChkOnHourAtAM(data):
 
      plt.legend()
      _fn = 'pic/%s-checkon_am.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
-     plt.savefig(_fn, dpi=75)
+     plt.savefig(_fn, dpi=120)
      return _fn
 
 def doChkOnHourAtPM(data):
@@ -141,7 +141,7 @@ def doChkOnHourAtPM(data):
      """
      plt.legend(loc=4)
      _fn = 'pic/%s-checkon_pm.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
-     plt.savefig(_fn, dpi=75)
+     plt.savefig(_fn, dpi=120)
      return _fn
 
 def doChkOnHour(data1,data2):
@@ -175,6 +175,6 @@ def doChkOnHour(data1,data2):
      plt.axhline(y=17.5, xmin=0, xmax=50, linestyle='-', linewidth=2, color='red', label='Normal_PM')
 
      _fn = 'pic/%s-checkon.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
-     plt.savefig(_fn, dpi=75)
+     plt.savefig(_fn, dpi=120)
      # plt.show()
      return _pic1, _pic2, _fn

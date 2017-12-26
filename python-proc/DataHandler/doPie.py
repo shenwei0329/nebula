@@ -24,6 +24,6 @@ def doProjectPie(data):
     plt.axis('equal')
     plt.legend()
     _fn = 'pic/%s-project.png' % time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
-    plt.savefig(_fn, dpi=75)
+    plt.savefig(_fn, dpi=120)
     #plt.show()
     return _fn

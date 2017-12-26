@@ -28,7 +28,7 @@ def doCompScore(Labels, act_data, pref_data):
 
     ax.grid(True)
     _fn = 'pic/%s-compscore.png' % time.time()
-    plt.savefig(_fn, dpi=75)
+    plt.savefig(_fn, dpi=120)
     return _fn
 
 if __name__ == '__main__':

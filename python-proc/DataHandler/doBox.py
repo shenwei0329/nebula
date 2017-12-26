@@ -57,7 +57,7 @@ def doBox(label,datas,y_line=None,y_limit=None,y_label=None,x_label=None):
 
     _fn = 'pic/%s-box.png' % time.time()
     if not __test:
-        savefig(_fn, dpi=75)
+        savefig(_fn, dpi=120)
     else:
         show()
     return _fn, _bx
@@ -85,7 +85,7 @@ def doBar(title, y_label, x_label, datas, label=None, y_limit=None):
         plt.legend()
     _fn = 'pic/%s-bar.png' % time.time()
     if not __test:
-        savefig(_fn, dpi=75)
+        savefig(_fn, dpi=120)
     else:
         show()
     return _fn
@@ -124,7 +124,7 @@ def doDotBase(title, y_label, x_label, datas, limit=None, label_pos=None, lines=
 
     _fn = 'pic/%s-bar.png' % time.time()
     if not __test:
-        plt.savefig(_fn, dpi=75)
+        plt.savefig(_fn, dpi=120)
     else:
         plt.show()
     return _fn
@@ -166,7 +166,7 @@ def doStem(title, y_label, x_label, datas, limit=None, label_pos=None, lines=Non
 
     _fn = 'pic/%s-stem.png' % time.time()
     if not __test:
-        plt.savefig(_fn, dpi=75)
+        plt.savefig(_fn, dpi=120)
     else:
         plt.show()
     return _fn
@@ -209,7 +209,7 @@ def doLine(title, y_label, x_label, datas, limit=None, label_pos=None, lines=Non
 
     _fn = 'pic/%s-line.png' % time.time()
     if not __test:
-        plt.savefig(_fn, dpi=75)
+        plt.savefig(_fn, dpi=120)
     else:
         plt.show()
     return _fn
@@ -224,7 +224,7 @@ def doBarH(title, y_label, x_label, datas):
     plt.yticks(ind, x_label)
     _fn = 'pic/%s-bar.png' % time.time()
     if not __test:
-        savefig(_fn, dpi=75)
+        savefig(_fn, dpi=120)
     else:
         show()
     return _fn
@@ -259,8 +259,8 @@ def getPersonTaskQ(cur):
         _res = doSQL(cur, _sql)
         _d = ()
         for _v in _res:
-            _d += (int(_v[0]),)
-            _dd += (int(_v[0]),)
+            _d += (int(float(_v[0])),)
+            _dd += (int(float(_v[0])),)
         if len(_d) > 0 and _max < max(_d):
             _max = max(_d)
         _data.append(_d)

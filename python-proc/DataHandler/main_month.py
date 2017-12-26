@@ -8,7 +8,7 @@
 # 功能：基于库数据，生成月报内容。
 #
 
-import MySQLdb,sys,json,time,math
+import MySQLdb,sys,json,time,math,types,os
 import doPie, doHour, doCompScore, doBox, doBarOnTable
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import crWord
@@ -513,7 +513,7 @@ def getProjectWorkTime(cur):
         _sql = "select TK_RWNR,TK_GZSJ from task_t where TK_XMBH='#' and created_at between '%s' and '%s' order by TK_GZSJ+0 desc" % (st_date, ed_date)
         _res = doSQL(cur,_sql)
         for _row in _res:
-            _other = _other + int(_row[1])
+            _other = _other + int(float(_row[1]))
     if (_pd+_pj+_other)>0:
         costProject = (_pd,_pj,_other,)
     else:
@@ -570,9 +570,12 @@ def statTask(db, cur):
 
     if len(_res)>0:
         for _row in _res:
-            _sql = 'select sum(TK_GZSJ) from task_t where TK_RWNR like "%%%s%%"' % str(_row[0])
+            _sql = 'select sum(TK_GZSJ) from task_t where TK_RWNR like "%%%s%%" and  ' \
+                   'created_at between "%s" and "%s"' % (str(_row[0]), st_date, ed_date)
             _sum = doSQLcount(cur, _sql)
-            _sql = 'update project_key_t set PJ_COST=%d where id=%d' % (int(_sum), int(_row[1]))
+            """修改created_at时标为“昨天”"""
+            _sql = 'update project_key_t set PJ_COST=%d, created_at=DATE_SUB(CURDATE(),INTERVAL 1 DAY) where id=%d' %\
+                   (int(_sum), int(_row[1]))
             doSQLinsert(db, cur, _sql)
 
 def calChkOnQ(AvgWorkHour, A=1.38):
@@ -672,7 +675,7 @@ def getPlanQGroup(cur, g_name):
     _res = doSQL(cur,_sql)
     _v = ()
     for __v in _res:
-        _v += (int(__v[0]),)
+        _v += (int(float(__v[0])),)
     return _v
 
 def getChkOnQMember(cur, m_name):
@@ -716,7 +719,7 @@ def getPlanQMember(cur, m_name):
     _res = doSQL(cur,_sql)
     _v = ()
     for __v in _res:
-        _v += (int(__v[0]),)
+        _v += (int(float(__v[0])),)
     return _v
 
 def getChkOnQDesc(Q):
@@ -925,7 +928,7 @@ def addPDList(cur, doc):
     doc.addRow(_item)
     doc.setTableFont(8)
     _fn = doBox.doBar(u'产品项目资源投入',u'工时',_label,[(_vv,'#afafaf')])
-    doc.addPic(_fn, sizeof=3)
+    doc.addPic(_fn, sizeof=5)
     _print(u"产品项目资源投入图", align=WD_ALIGN_PARAGRAPH.CENTER)
 
 def addNoPDList(cur, doc):
@@ -953,7 +956,7 @@ def addNoPDList(cur, doc):
     doc.addRow(_item)
     doc.setTableFont(8)
     _fn = doBox.doBar(u'工程项目和非项目类资源投入',u'工时',_label,[(_vv,'#afafaf')])
-    doc.addPic(_fn,sizeof=3)
+    doc.addPic(_fn,sizeof=5)
     _print(u"工程项目和非项目类资源投入图", align=WD_ALIGN_PARAGRAPH.CENTER)
 
 def getPersonalChkOnData(cur, m_name):
@@ -1054,9 +1057,9 @@ def getTotalChkOn(cur, doc):
             _datas[0][_i] += __datas[0][_i]
             _datas[1][_i] += __datas[1][_i]
 
-    _fn = doBox.doBox(['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', '日均'], _datas, y_limit=(5., 24.), y_line=(9., 17.5,),
+    _fn, __bx = doBox.doBox(['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', '日均'], _datas, y_limit=(5., 24.), y_line=(9., 17.5,),
                 y_label='时间', x_label='周')
-    doc.addPic(_fn,4)
+    doc.addPic(_fn,5)
     _print("图例说明：横向分别列出本月周一至周日以及每日平均的出勤特征，纵向表示时间（包含9:00和17:30两个时间点的红线标度）。方框表示集中分布区域，方框内红线为中位线，两端横线分别为上下边缘，边缘外的点为异常点。")
 
 def getOnDutyPersonalCount(cur):
@@ -1109,6 +1112,10 @@ def getWorkHourPerDay(cur):
     _sql = "select KQ_AM, KQ_PM from checkon_t where created_at between '%s' and '%s'" % (st_date, ed_date)
     _res = doSQL(cur, _sql)
     for _v in _res:
+        if type(_v[0]) == types.NoneType or type(_v[1]) == types.NoneType:
+            continue
+        if len(_v[0]) == 0 or len(_v[1]) == 0:
+            continue
         if _v[0]=="#" or _v[1]=="#":
             continue
         if '次日' in _v[1]:
@@ -1203,7 +1210,7 @@ def statCostTrend(cur, doc):
     _y_limit = _total*1.4
     _fn = doBox.doBar('研发资源投入趋势','工时',_date_at,[(_pd,'#afafaf'),(_pj,'#8a8a8a'),(_other,'#fafafa')],label=[u'产品项目',u'工程项目',u'非项目类'],y_limit=_y_limit)
     _print(u'本月研发资源处理事务的情况如图示：')
-    doc.addPic(_fn,3)
+    doc.addPic(_fn,5)
 
     _pd,_pj,_other = getCostTrendDesc(_pd, _pj, _other)
     _print(u'本月研发资源投入总趋势：')
@@ -1221,11 +1228,15 @@ def getNonProductInfo(cur):
     _project = []
     _sql = "select PJ_COST,PJ_KEY,PJ_XMMC from project_key_t order by PJ_COST+0. desc"
     _res = doSQL(cur,_sql)
+    _i = 0
     for _row in _res:
         if int(_row[0])==0:
             break
         _key.append(_row[1])
         _project.append(_row[2])
+        _i += 1
+        if _i > 10:
+            break
     return _key,_project
 
 def getGroupTaskSummary(cur):
@@ -1248,7 +1259,7 @@ def getGroupTaskSummary(cur):
     for _task_key in _key:
         _col = []
         for _g in _res:
-            if _g[0]==u'研发管理组':
+            if _g[0] == u'研发管理组':
                 continue
             _sql = 'select sum(TK_GZSJ) from task_t where TK_SQR="%s" and TK_RWNR like "%%%s%%" and created_at between "%s" and "%s"' % (_g[0],_task_key,st_date, ed_date)
             _n = doSQLcount(cur,_sql)
@@ -1293,8 +1304,6 @@ def main():
     doc.addHead(u'产品研发中心月报', 0, align=WD_ALIGN_PARAGRAPH.CENTER)
 
     _print(u'>>> 报告生成日期【%s】 <<<' % time.ctime(), align=WD_ALIGN_PARAGRAPH.CENTER)
-    _print("")
-    _print(u"【说明】产品研发管理的《月报》拟于每月发布一次，其主要目标是：基于研发管理基础数据如实标定研发资源基本特性，并在数据基础上给出研发资源的有效评价。")
 
     Topic_lvl_number = 0
     _print(u"数据统计", title=True, title_lvl=1)
@@ -1313,7 +1322,7 @@ def main():
         _print(u"非项目类事务投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[2], costProject[2]*CostHour/10000.0))
         _print("")
         _print(u"总投入：%d【人时】，工时成本 %0.2f【万元】" % (sum(costProject), sum(costProject)*CostHour/10000.0))
-        doc.addPic(_fn, sizeof=2.8)
+        doc.addPic(_fn, sizeof=4)
         _print(u'任务执行资源投入占比', align=WD_ALIGN_PARAGRAPH.CENTER)
     _print(u"2、出勤情况", title=True, title_lvl=3)
     getTotalChkOn(cur, doc)
@@ -1331,9 +1340,9 @@ def main():
     statCostTrend(cur, doc)
     _print("")
 
-    _print(u'研发组参与工程项目和非项目类任务的明细：')
+    _print(u'研发组参与工程项目和非项目类任务的明细（前10名）：')
     _fn,_project,_key,_row = getGroupTaskSummary(cur)
-    doc.addPic(_fn,sizeof=6)
+    doc.addPic(_fn,sizeof=6.4)
     _print(u'研发组投入工程项目和非项目类任务图', align=WD_ALIGN_PARAGRAPH.CENTER)
     _print(u'图例说明：')
     _i = 0
@@ -1367,3 +1376,7 @@ def main():
 
     db.close()
     doc.saveFile('month.docx')
+
+    """删除过程文件"""
+    _cmd = 'del /Q pic\\*'
+    os.system(_cmd)
