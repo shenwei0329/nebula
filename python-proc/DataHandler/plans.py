@@ -289,15 +289,9 @@ def main(project="PRD-2017-PROJ-00003"):
 
     _kv, _max_n, _act_n = getQ(cur)
     _q = float(_act_n*100)/float(_max_n)
-    if _q < 75:
-        _print(u'任务分配数据质量：评定为【差】。在已分配的%d个任务中，仅有%d个（占比%0.2f%%）与计划匹配。' %
-               (_max_n,_act_n,_q), color=(255,0,0))
-    elif _q < 85:
-            _print(u'任务分配数据质量：评定为【一般】。在已分配的%d个任务中，有%d个（占比%0.2f%%）与计划匹配。' %
-                   (_max_n, _act_n, _q), color=(150, 0, 0))
-    else:
-        _print(u'任务分配数据质量：评定为【好】。已分配任务%d个，其中有%d个（占比%0.2f%%）与计划匹配。' %
-               (_max_n, _act_n, _q))
+    if _q < 85:
+        _print(u'任务定义问题：在已分配的%d个任务中，仅有%d个（占比%0.2f%%）与计划匹配。' %
+               (_max_n,_act_n,_q), color=(255, 0, 0))
 
     """需要在此插入语句"""
     _paragrap = _print(u"计划指标与实际情况", title=True, title_lvl=1)
