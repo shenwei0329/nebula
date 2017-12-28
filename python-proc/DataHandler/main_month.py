@@ -608,15 +608,15 @@ def calTaskQ(sumPJ, sumOther):
         return 0.75
     return 0.0
 
-def calPlanQ(TotalWrokHour, AvgWordHour):
+def calPlanQ(TotalWorkHour, AvgWorkHour):
     """
     计算工作计划的质量指标
-    :param TotalWrokDay: 总工时
-    :param AvgWordDay: 任务的平均工时
+    :param TotalWorkDay: 总工时
+    :param AvgWorkDay: 任务的平均工时
     :return: 指标
     """
-    if AvgWordHour>=1:
-        return (math.log10(TotalWrokHour) - math.log10(AvgWordHour)) / math.log10(TotalWrokHour)
+    if AvgWorkHour >= 1:
+        return (math.log10(TotalWorkHour) - math.log10(AvgWorkHour)) / math.log10(TotalWorkHour)
     else:
         return 1.0
 

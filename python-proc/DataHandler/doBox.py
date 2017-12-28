@@ -235,6 +235,24 @@ def doSQL(cur,_sql):
     cur.execute(_sql)
     return cur.fetchall()
 
+def calLvl(lvl, val):
+    """
+    获取评价等级
+    :param lvl: 评级指标
+    :param val: 被评数据
+    :return:
+    """
+    if val <= lvl[0]:
+        return 5
+    elif val <= lvl[1]:
+        return 4
+    elif val <= lvl[2]:
+        return 3
+    elif val <= lvl[3]:
+        return 2
+    else:
+        return 1
+
 def getPersonTaskQ(cur):
     """
     生成个人“任务执行指标”
@@ -288,7 +306,7 @@ def getPersonTaskQ(cur):
         if math.isnan(_median):
             _i += 1
             continue
-        _kv[_name[_i]] = _median
+        _kv[_name[_i]] = (_median,calLvl(_lvl, _median,))
         _i += 1
 
     return _fn1, _fn2, _lvl, _kv
@@ -303,4 +321,5 @@ if __name__ == '__main__':
     cur = db.cursor()
 
     fn1, fn2, lvl, kv = getPersonTaskQ(cur)
-    print kv
+    for _k in kv:
+        print(u'%s: %s => %s' % (_k, kv[_k][0], kv[_k][1]))
