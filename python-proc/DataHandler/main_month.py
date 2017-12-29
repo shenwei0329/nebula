@@ -1016,7 +1016,7 @@ def statPersonalInd(cur):
         _planQ = getPlanQMemberByNormalDistribution(_g[0])
 
         _dir[_idx] = _taskQ+_planQ+_chkonQ
-        _data.append([(_chkonQ,_taskQ,_planQ,),_name])
+        _data.append([(_chkonQ,_taskQ,_planQ,), _name, _m_gh])
         _idx += 1
 
     for _key in sorted(_dir.iteritems(), key=lambda a: a[1], reverse=True):
@@ -1025,6 +1025,7 @@ def statPersonalInd(cur):
         _taskQ = _data[_i][0][1]
         _planQ = _data[_i][0][2]
         _name = _data[_i][1]
+        _m_gh = _data[_i][2]
         _score = ('text', '%0.2f' % calScore((_chkonQ,_taskQ,_planQ,)))
         _pref =('text',u'出勤:%0.2f\n任务:%0.2f\n计划:%0.2f' % (_chkonQ, _taskQ, _planQ))
         _pic = ('pic',doCompScore.doCompScore([u'任务指标',u'出勤指标',u'计划指标'],(_taskQ, _chkonQ, _planQ,),
