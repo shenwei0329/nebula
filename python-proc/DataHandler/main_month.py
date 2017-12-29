@@ -7,16 +7,21 @@
 #
 # 功能：基于库数据，生成月报内容。
 #
+# 2017.12.28：
+#  - 利用“正态分布”方法计算个人任务的计划指标项，
+#    引入doBox.getPersonalPlanQ()方法，
+#    获取每个人的标量和得分。用此方法替代原有的评价模型。
+#
 
 import MySQLdb,sys,json,time,math,types,os
 import doPie, doHour, doCompScore, doBox, doBarOnTable
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import crWord
+from pylab import mpl
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-from pylab import mpl
 mpl.rcParams['font.sans-serif'] = ['SimHei']
 
 """全局变量"""
@@ -31,7 +36,16 @@ workhours = numb_days * 8
 
 """指标标题
 """
-QT_TITLE = '2017年11月份月报'
+QT_TITLE = '2017年12月份月报'
+PjProportion_RD = 0.85
+NonPjProportion_RD = 0.15
+
+PjProportion_nRD = 0.5
+NonPjProportion_nRD = 0.5
+
+GroupName = [u'产品设计组',u'云平台研发组',u'大数据研发组',u'系统组',u'测试组']
+RdGroup = [u'云平台研发组', u'大数据研发组']
+RdGroupMember = []
 
 """公司定义的 人力资源（预算）直接成本 1000元/人天，22天/月，125元/人时
 """
@@ -39,11 +53,13 @@ CostDay = 1000.0
 CostHour = CostDay/8.0
 Tables = ['count_record_t',]
 TotalMember = 0
-GroupName = [u'产品设计组',u'云平台研发组',u'大数据研发组',u'系统组',u'测试组']
 costProject = ()
 ProductList = []
+TaskPlayQ = {}
 doc = None
 Topic_lvl_number = 0
+PersonalKPILevel = None
+
 Topic = [u'一、',
          u'二、',
          u'三、',
@@ -267,7 +283,8 @@ def getPdDeliverList(cur):
                 _print(u'\t·项目：%s（%s），状态：%s' % (str(_row[0]), str(_row[1]), str(_row[2])))
 
 def getTstRcdList(cur):
-    _sql = 'select err_summary,err_type,err_state,err_pj_name,err_level,err_rpr,err_mod_1 from testrecord_t' + " where created_at between '%s' and '%s'" % (st_date, ed_date)
+    _sql = 'select err_summary,err_type,err_state,err_pj_name,err_level,err_rpr,err_mod_1 from testrecord_t' +\
+           " where created_at between '%s' and '%s'" % (st_date, ed_date)
     _res = doSQL(cur,_sql)
     for _row in _res:
         _pd_v = _row[3].split('^')
@@ -313,7 +330,8 @@ def getTstRcdSts(cur):
     for _pd in ProductList:
         _str = "%s^%s" % (_pd[0],_pd[1])
         _sql = 'select count(*) from testrecord_t where err_pj_name="%s"' % _str
-        _sql = _sql + " and err_state<>'已解决' and err_state<>'已关闭' and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _sql = _sql + " and err_state<>'已解决' and err_state<>'已关闭' and created_at between '%s' and '%s'" %\
+                      (st_date, ed_date)
         _n = doSQLcount(cur,_sql)
         if _n>0:
             """级别统计
@@ -362,14 +380,15 @@ def getOprWorkTime(cur):
 
     global TotalMember, orgWT, doc
 
-    _sql = 'select MM_XM from member_t'
+    _sql = 'select MM_XM from member_t where MM_ZT<>"0"'
     _res = doSQL(cur,_sql)
 
     TotalMember = 0
     orgWT = ()
 
     for _row in _res:
-        _sql = 'select sum(TK_GZSJ) from task_t where TK_ZXR="' + str(_row[0]) + '"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_ZXR="' + str(_row[0]) + '"' +\
+               " and created_at between '%s' and '%s'" % (st_date, ed_date)
         _n = doSQLcount(cur,_sql)
         if _n is None:
             continue
@@ -378,7 +397,8 @@ def getOprWorkTime(cur):
 
     _print("在岗总人数：%d" % TotalMember)
 
-    _sql = 'select sum(TK_GZSJ) from task_t' + " where created_at between '%s' and '%s'" % (st_date, ed_date)
+    _sql = 'select sum(TK_GZSJ+0.) from task_t' +\
+           " where created_at between '%s' and '%s'" % (st_date, ed_date)
     _total_workdays = doSQLcount(cur, _sql)
     if _total_workdays is not None:
         _print("总工作量：%d （工时）" % _total_workdays)
@@ -410,20 +430,26 @@ def getOprWorkTime(cur):
         _print("【无“考勤”数据】")
 
     _print("2、最耗时的工作（前15名）：", title=True, title_lvl=2)
-    _sql = 'select TK_RW,TK_ZXR,TK_GZSJ,TK_XMBH from task_t' + " where created_at between '%s' and '%s' order by TK_GZSJ+0 desc" % (st_date, ed_date)
+    _sql = 'select TK_RW,TK_ZXR,TK_GZSJ,TK_XMBH from task_t' +\
+           " where created_at between '%s' and '%s' order by TK_GZSJ+0 desc" % (st_date, ed_date)
     _res = doSQL(cur,_sql)
     if len(_res)>0:
         for _i in range(15):
             if str(_res[_i][3]) != "#":
-                _print( '%d）'% (_i+1) + str(_res[_i][1]) + ' 执行【' +str(_res[_i][3]) + '，' + str(_res[_i][0]) + '】任务时，耗时 ' + str(_res[_i][2]) + ' 工时')
+                _print( '%d）'% (_i+1) + str(_res[_i][1]) +
+                        ' 执行【' +str(_res[_i][3]) + '，' + str(_res[_i][0]) +
+                        '】任务时，耗时 ' + str(_res[_i][2]) + ' 工时')
             else:
-                _print( '%d）'% (_i+1) + str(_res[_i][1]) + ' 执行【 非项目类：' + str(_res[_i][0]) + '】任务时，耗时 ' + str(_res[_i][2]) + ' 工时')
+                _print( '%d）'% (_i+1) + str(_res[_i][1]) +
+                        ' 执行【 非项目类：' + str(_res[_i][0]) + '】任务时，耗时 ' +
+                        str(_res[_i][2]) + ' 工时')
 
     _print("3、明细：", title=True, title_lvl=2)
-    _sql = 'select MM_XM from member_t'
+    _sql = 'select MM_XM from member_t where MM_ZT<>"0"'
     _res = doSQL(cur,_sql)
     for _row in _res:
-        _sql = 'select sum(TK_GZSJ) from task_t where TK_ZXR="' + str(_row[0]) + '"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_ZXR="' + str(_row[0]) +\
+               '"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
         _n = doSQLcount(cur,_sql)
         if _n is None:
             continue
@@ -454,7 +480,8 @@ def getGrpWorkTime(cur):
     for _grp in GroupName:
 
         _g_org = []
-        _sql = 'select TK_ZXR from task_t where TK_SQR="' + str(_grp) + '"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _sql = 'select TK_ZXR from task_t where TK_SQR="' + str(_grp) + '"' +\
+               " and created_at between '%s' and '%s'" % (st_date, ed_date)
         _res = doSQL(cur,_sql)
         for _row in _res:
             if _row[0] in _g_org:
@@ -464,7 +491,8 @@ def getGrpWorkTime(cur):
         _org_n = len(_g_org)
         if _org_n == 0:
             continue
-        _sql = 'select sum(TK_GZSJ) from task_t where TK_SQR="' + str(_grp) + '"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_SQR="' + str(_grp) + '"' +\
+               " and created_at between '%s' and '%s'" % (st_date, ed_date)
         _n = doSQLcount(cur,_sql)
         if _n is None:
             continue
@@ -486,7 +514,7 @@ def getProjectWorkTime(cur):
     :param cur:
     :return:
     '''
-    global TotalMember, costProject
+    global TotalMember, costProject, maxWorkHour, minWorkHour
 
     _pd = 0
     _pj = 0
@@ -497,7 +525,8 @@ def getProjectWorkTime(cur):
 
     _m = 0
     for _row in _res:
-        _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="' + str(_row[0]) + '"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="' + str(_row[0]) + '"' +\
+               " and created_at between '%s' and '%s'" % (st_date, ed_date)
         _n = doSQLcount(cur,_sql)
         if _n is None:
             continue
@@ -507,10 +536,11 @@ def getProjectWorkTime(cur):
         else:
             _pj = _pj + _n
 
-    _sql = 'select sum(TK_GZSJ) from task_t' + " where created_at between '%s' and '%s'" % (st_date, ed_date)
+    _sql = 'select sum(TK_GZSJ+0.) from task_t' + " where created_at between '%s' and '%s'" % (st_date, ed_date)
     _total_workdays = doSQLcount(cur,_sql)
     if _total_workdays > _m:
-        _sql = "select TK_RWNR,TK_GZSJ from task_t where TK_XMBH='#' and created_at between '%s' and '%s' order by TK_GZSJ+0 desc" % (st_date, ed_date)
+        _sql = "select TK_RWNR,TK_GZSJ from task_t where TK_XMBH='#' and " \
+               "created_at between '%s' and '%s' order by TK_GZSJ+0 desc" % (st_date, ed_date)
         _res = doSQL(cur,_sql)
         for _row in _res:
             _other = _other + int(float(_row[1]))
@@ -570,8 +600,9 @@ def statTask(db, cur):
 
     if len(_res)>0:
         for _row in _res:
-            _sql = 'select sum(TK_GZSJ) from task_t where TK_RWNR like "%%%s%%" and  ' \
-                   'created_at between "%s" and "%s"' % (str(_row[0]), st_date, ed_date)
+            _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_RWNR' \
+                   ' like "%%%s%%" and  created_at between "%s" and "%s"' %\
+                   (str(_row[0]), st_date, ed_date)
             _sum = doSQLcount(cur, _sql)
             """修改created_at时标为“昨天”"""
             _sql = 'update project_key_t set PJ_COST=%d, created_at=DATE_SUB(CURDATE(),INTERVAL 1 DAY) where id=%d' %\
@@ -590,14 +621,17 @@ def calChkOnQ(AvgWorkHour, A=1.38):
     else:
         return 0.0
 
-def calTaskQ(sumPJ, sumOther):
+def calTaskQ(sumPJ, sumOther, PjProportion, NonPjProportion):
     """
     计算执行任务的评分指标
     :param sumPD: 产品研发类任务总数
     :param sumPJ: 工程项目类任务总数
     :param sumOther: 非计划类任务总数
+    :param PjProportion: 项目类指标占比
+    :param NonPjProportion: 非项目类指标占比
     :return: 评分
     """
+    """按占比方法：
     if sumOther>0 and sumPJ>0:
         _v = math.log10(sumPJ + sumOther)
         _b = math.log10(sumPJ)
@@ -607,6 +641,21 @@ def calTaskQ(sumPJ, sumOther):
     elif sumOther>0:
         return 0.75
     return 0.0
+    """
+    global PersonalKPILevel
+
+    _val = (sumPJ * PjProportion + sumOther * NonPjProportion)
+
+    if _val >= PersonalKPILevel[3]:
+        return 1.
+    elif _val >= PersonalKPILevel[2]:
+        return 0.9 + (_val - PersonalKPILevel[2])/((PersonalKPILevel[3]-PersonalKPILevel[2])*10.)
+    elif _val >= PersonalKPILevel[1]:
+        return 0.8 + (_val - PersonalKPILevel[1])/((PersonalKPILevel[2]-PersonalKPILevel[1])*10.)
+    elif _val >= PersonalKPILevel[0]:
+        return 0.7 + (_val - PersonalKPILevel[0])/((PersonalKPILevel[1]-PersonalKPILevel[0])*10.)
+    else:
+        return 0.6 + _val/(PersonalKPILevel[0]*10.)
 
 def calPlanQ(TotalWorkHour, AvgWorkHour):
     """
@@ -620,14 +669,30 @@ def calPlanQ(TotalWorkHour, AvgWorkHour):
     else:
         return 1.0
 
-def calScore(vals, A=2.4178):
+def calScore(vals, A=2.78):
     """
     计算综合评分
     :param vals: 考核参量数组 =（参量1，参量2，...）
-    :param A: 综合系数
+    :param A: 综合系数（出勤指标的满分：12个工时/天）
     :return: 评分
     """
-    return int((vals[0]+vals[1]+vals[2])*100/A)
+    return (vals[0]+vals[1]+vals[2])*100./A
+
+def getRdGroupMember(cur):
+    """
+    获取研发类人员
+    :param cur: 数据源
+    :return:
+    """
+    _sql = 'select GRP_NAME from pd_group_t where GRP_STATE="1"'
+    _groups = doSQL(cur, _sql)
+    for _g in _groups:
+        if _g[0] in RdGroup:
+            _sql = 'select MEMBER_NAME from pd_group_member_t where GROUP_NAME="%s" and flg=1' % _g[0]
+            _res = doSQL(cur, _sql)
+            for _m in _res:
+                if _m[0] not in RdGroupMember:
+                    RdGroupMember.append(_m[0])
 
 def getChkOnQGroup(cur, g_name):
     """
@@ -636,11 +701,12 @@ def getChkOnQGroup(cur, g_name):
     :param g_name: 组名
     :return:
     """
-    _sql = 'select MEMBER_NAME from pd_group_member_t where GROUP_NAME="%s"' % g_name
+    _sql = 'select MEMBER_NAME from pd_group_member_t where GROUP_NAME="%s" and flg=1' % g_name
     _res = doSQL(cur,_sql)
     _v = ()
     for _m in _res:
-        _sql = 'select KQ_AM,KQ_PM from checkon_t where KQ_NAME="%s"' % _m[0] + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _sql = 'select KQ_AM,KQ_PM from checkon_t where KQ_NAME="%s"' % _m[0] +\
+               " and created_at between '%s' and '%s'" % (st_date, ed_date)
         __res = doSQL(cur, _sql)
         for __v in __res:
             _pm = calHour(__v[1])
@@ -651,18 +717,22 @@ def getChkOnQGroup(cur, g_name):
 
 def getTaskQGroup(cur, g_name):
     """
-    获取 研发小组 任务数据
+    获取 研发小组 任务数据【注：不按月计】
     :param cur: 数据源
     :param g_name: 组名
     :return:
     """
-    _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH<>"#" and TK_SQR="%s"' % g_name + \
+    """计算小组人数"""
+    _sql = 'select count(*) from pd_group_member_t where GROUP_NAME="%s" and flg=1' % g_name
+    _n = doSQLcount(cur, _sql)
+    _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH<>"#" and TK_SQR="%s"' % g_name +\
            " and created_at between '%s' and '%s'" % (st_date, ed_date)
     _Pj = doSQLcount(cur, _sql)
-    _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="#" and TK_SQR="%s"' % g_name + \
+    _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="#" and TK_SQR="%s"' % g_name +\
            " and created_at between '%s' and '%s'" % (st_date, ed_date)
     _nonPj = doSQLcount(cur,_sql)
-    return float(_Pj), float(_nonPj)
+    """返回平均值"""
+    return float(_Pj)/float(_n), float(_nonPj)/float(_n)
 
 def getPlanQGroup(cur, g_name):
     """
@@ -671,11 +741,31 @@ def getPlanQGroup(cur, g_name):
     :param g_name: 组名
     :return:
     """
-    _sql = 'select TK_GZSJ from task_t where TK_SQR="%s"' % g_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _sql = 'select TK_GZSJ from task_t where TK_SQR="%s"' % g_name +\
+           " and created_at between '%s' and '%s'" % (st_date, ed_date)
     _res = doSQL(cur,_sql)
     _v = ()
     for __v in _res:
         _v += (int(float(__v[0])),)
+    return _v
+
+def getPlanQGroupByNormalDistribution(cur, g_name):
+    """
+    获取 研发小组 计划数据
+    :param cur: 数据源
+    :param g_name: 组名
+    :return:
+    """
+    global TaskPlayQ
+
+    _sql = 'select MEMBER_NAME from pd_group_member_t where GROUP_NAME="%s" and flg=1' % g_name
+    _res = doSQL(cur, _sql)
+    _v = ()
+    for __v in _res:
+        if TaskPlayQ.has_key(__v[0]):
+            _v += (float(TaskPlayQ[__v[0]][1])/100.,)
+        else:
+            _v += (0.,)
     return _v
 
 def getChkOnQMember(cur, m_name):
@@ -685,7 +775,8 @@ def getChkOnQMember(cur, m_name):
     :param m_name: 人名
     :return:
     """
-    _sql = 'select KQ_AM,KQ_PM from checkon_t where KQ_NAME="%s"' % m_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _sql = 'select KQ_AM,KQ_PM from checkon_t where KQ_NAME="%s"' % m_name +\
+           " and created_at between '%s' and '%s'" % (st_date, ed_date)
     __res = doSQL(cur, _sql)
     _v = ()
     for __v in __res:
@@ -697,14 +788,16 @@ def getChkOnQMember(cur, m_name):
 
 def getTaskQMember(cur, m_name):
     """
-    获取 个人 任务数据
+    获取 个人 任务数据【注：不按月计】
     :param cur: 数据源
     :param m_name: 人名
     :return:
     """
-    _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH<>"#" and TK_ZXR="%s"' % m_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH<>"#" and TK_ZXR="%s"' % m_name +\
+           " and created_at between '%s' and '%s'" % (st_date, ed_date)
     _Pj = doSQLcount(cur, _sql)
-    _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="#" and TK_ZXR="%s"' % m_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="#" and TK_ZXR="%s"' % m_name +\
+           " and created_at between '%s' and '%s'" % (st_date, ed_date)
     _nonPj = doSQLcount(cur,_sql)
     return float(_Pj), float(_nonPj)
 
@@ -715,12 +808,23 @@ def getPlanQMember(cur, m_name):
     :param m_name: 人名
     :return:
     """
-    _sql = 'select TK_GZSJ from task_t where TK_ZXR="%s"' % m_name + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _sql = 'select TK_GZSJ from task_t where TK_ZXR="%s"' % m_name +\
+           " and created_at between '%s' and '%s'" % (st_date, ed_date)
     _res = doSQL(cur,_sql)
     _v = ()
     for __v in _res:
         _v += (int(float(__v[0])),)
     return _v
+
+def getPlanQMemberByNormalDistribution(m_name):
+    """
+    获取 个人 计划数据
+    :param m_name: 人名
+    :return:
+    """
+    if TaskPlayQ.has_key(m_name):
+        return float(TaskPlayQ[m_name][1])/100.0
+    return 0.
 
 def getChkOnQDesc(Q):
 
@@ -733,26 +837,18 @@ def getChkOnQDesc(Q):
     return _desc
 
 def getTaskQDesc(Q):
-    if Q>0.85:
-        _desc = u"偏向项目类事务"
-    elif Q>0.73:
-        _desc = u"适中"
+    if Q > 0.9:
+        _desc = u"优"
+    elif Q > 0.85:
+        _desc = u"良"
+    elif Q > 0.65:
+        _desc = u"中"
     else:
-        _desc = u"偏向非项目类事务"
+        _desc = u"弱"
     return _desc
 
 def getPlanQDesc(Q):
-    if Q>0.85:
-        _desc = u"优"
-    elif Q>0.75:
-        _desc = u"良"
-    elif Q > 0.55:
-        _desc = u"中"
-    elif Q > 0.35:
-        _desc = u"弱"
-    else:
-        _desc = u"差"
-    return _desc
+    return getTaskQDesc(Q)
 
 def getScoreDesc(chkonQ, taskQ, planQ):
     _desc = u'●出勤：' + getChkOnQDesc(chkonQ)
@@ -767,13 +863,15 @@ def getScoreDesc(chkonQ, taskQ, planQ):
 def statGroupInd(cur):
     """创建一个表格 1 x 3"""
 
-    global workhours
+    global workhours, TaskPlayQ
 
     _width = (4,1.8,1.8,2,8)
     doc.addTable(1, 5, col_width=_width)
     _title = (('text',u'研发小组'),('text',u'综合评分'),('text',u'综合指标'),('text',u'图示'),('text',u'解读'))
     doc.addRow(_title)
-    _print("注：综合指标图示的绿色区域为最佳范围：出勤为全勤、计划内任务占比80%、计划颗粒度2小时/任务。")
+    _print("注：综合指标图示的绿色区域为最佳范围。任务和计划指标按“正态分布”模型评定，"
+           "任务指标中项目与非项目类的占比为【研发岗位：%0.2f : %0.2f，系统、测试和设计岗位：%0.2f : %0.2f】。" %
+           (PjProportion_RD, NonPjProportion_RD, PjProportion_nRD, NonPjProportion_nRD))
 
     _sql = 'select GRP_NAME from pd_group_t'
     _res = doSQL(cur, _sql)
@@ -797,24 +895,37 @@ def statGroupInd(cur):
             _chkonQ = 0
 
         """计算任务指标"""
-        _pd,_other = getTaskQGroup(cur, _g[0])
-        _taskQ = calTaskQ(_pd,_other)
+        _pd, _other = getTaskQGroup(cur, _g[0])
+        if _g[0] in RdGroup:
+            _taskQ = calTaskQ(_pd,_other, PjProportion_RD, NonPjProportion_RD)
+        else:
+            _taskQ = calTaskQ(_pd, _other, PjProportion_nRD, NonPjProportion_nRD)
+        #print u'%s' % _g[0], _pd, _other, _taskQ
 
         """计算计划指标"""
+        """非“正态分布”模型：
         _v = getPlanQGroup(cur, _g[0])
         if len(_v)>0:
             _planQ = calPlanQ(workhours, sum(_v)/len(_v))
         else:
             _planQ = 0
+        """
+        _v = getPlanQGroupByNormalDistribution(cur, _g[0])
+        #print _v
+        if len(_v) > 0:
+            _planQ = sum(_v)/len(_v)
+        else:
+            _planQ = 0
 
         __chkonQ += _chkonQ
-        __planQ += _planQ
         __taskQ += _taskQ
+        __planQ += _planQ
         _N += 1
 
-        _score = ('text',str(calScore((_chkonQ,_taskQ,_planQ,))))
+        _score = ('text', '%0.2f' % calScore((_chkonQ,_taskQ,_planQ,)))
         _pref =('text',u'出勤:%0.2f\n任务:%0.2f\n计划:%0.2f' % (_chkonQ, _taskQ, _planQ))
-        _pic = ('pic',doCompScore.doCompScore([u'任务指标',u'出勤指标',u'计划指标'],(_taskQ, _chkonQ, _planQ,),(0.8,0.6544,0.8634,)),1.4)
+        _pic = ('pic',doCompScore.doCompScore([u'任务指标',u'出勤指标',u'计划指标'],(_taskQ, _chkonQ, _planQ,),
+                                              (1., 0.65, 1.,)),1.4)
         _desc = getScoreDesc(_chkonQ, _taskQ, _planQ)
         _col =(_name,_score,_pref,_pic,_desc)
         doc.addRow(_col)
@@ -822,9 +933,11 @@ def statGroupInd(cur):
     __chkonQ = __chkonQ/_N
     __taskQ = __taskQ/_N
     __planQ = __planQ/_N
-    _score = ('text', str(calScore((__chkonQ, __taskQ, __planQ,))))
+
+    _score = ('text', '%0.2f' % calScore((__chkonQ, __taskQ, __planQ,)))
     _pref = ('text', u'出勤:%0.2f\n任务:%0.2f\n计划:%0.2f' % (__chkonQ, __taskQ, __planQ))
-    _pic = ('pic', doCompScore.doCompScore([u'任务指标',u'出勤指标',u'计划指标'], (__taskQ, __chkonQ, __planQ,), (0.8, 0.6544, 0.8634,)), 1.4)
+    _pic = ('pic', doCompScore.doCompScore([u'任务指标',u'出勤指标',u'计划指标'], (__taskQ, __chkonQ, __planQ,),
+                                           (1., 0.65, 1.,)), 1.4)
     _desc = getScoreDesc(__chkonQ, __taskQ, __planQ)
     _col = (('test',u'综合'), _score, _pref, _pic, _desc)
     doc.addRow(_col)
@@ -856,14 +969,19 @@ def statPersonalInd(cur):
     :return:
     """
     """创建一个表格 1 x 3"""
-    _width = (4,1.8,1.8,2,8)
+    _width = (4, 1.8, 1.8, 2, 8)
     doc.addTable(1, 5, col_width=_width)
     _title = (('text',u'员工'),('text',u'个人评分'),('text',u'综合指标'),('text',u'图示'),('text',u'解读'))
     doc.addRow(_title)
-    _print("注：综合指标图示的绿色区域为最佳范围：出勤为全勤、计划内任务占比80%、计划颗粒度2小时/任务。")
+    _print("注：综合指标图示的绿色区域为最佳范围。任务和计划指标按“正态分布”模型评定，"
+           "任务指标中项目与非项目类的占比为【研发岗位：%0.2f : %0.2f，系统、测试和设计岗位：%0.2f : %0.2f】。" %
+           (PjProportion_RD, NonPjProportion_RD, PjProportion_nRD, NonPjProportion_nRD))
 
-    _sql = 'select MM_XM,MM_GH from member_t'
+    _sql = 'select MM_XM,MM_GH from member_t where MM_ZT<>"0"'
     _res = doSQL(cur, _sql)
+    _idx = 0
+    _dir = {}
+    _data = []
     for _g in _res:
 
         if _g[0] in SpName:
@@ -880,18 +998,37 @@ def statPersonalInd(cur):
             _chkonQ = 0
 
         """计算任务指标"""
-        _pd,_other = getTaskQMember(cur, _g[0])
-        _taskQ = calTaskQ(_pd,_other)
+        _pd, _other = getTaskQMember(cur, _g[0])
+        if _g[0] in RdGroupMember:
+            _taskQ = calTaskQ(_pd,_other, PjProportion_RD, NonPjProportion_RD)
+        else:
+            _taskQ = calTaskQ(_pd, _other, PjProportion_nRD, NonPjProportion_nRD)
+        #print u'%s' % _g[0], _pd, _other, _taskQ
 
         """计算计划指标"""
+        """非“正态分布”模型
         _v = getPlanQMember(cur, _g[0])
         if len(_v)>0:
             _planQ = calPlanQ(workhours, sum(_v)/len(_v))
         else:
             _planQ = 0
-        _score = ('text',str(calScore((_chkonQ,_taskQ,_planQ,))))
+        """
+        _planQ = getPlanQMemberByNormalDistribution(_g[0])
+
+        _dir[_idx] = _taskQ+_planQ+_chkonQ
+        _data.append([(_chkonQ,_taskQ,_planQ,),_name])
+        _idx += 1
+
+    for _key in sorted(_dir.iteritems(), key=lambda a: a[1], reverse=True):
+        _i = _key[0]
+        _chkonQ = _data[_i][0][0]
+        _taskQ = _data[_i][0][1]
+        _planQ = _data[_i][0][2]
+        _name = _data[_i][1]
+        _score = ('text', '%0.2f' % calScore((_chkonQ,_taskQ,_planQ,)))
         _pref =('text',u'出勤:%0.2f\n任务:%0.2f\n计划:%0.2f' % (_chkonQ, _taskQ, _planQ))
-        _pic = ('pic',doCompScore.doCompScore([u'任务指标',u'出勤指标',u'计划指标'],(_taskQ, _chkonQ, _planQ,),(0.8,0.6544,0.8634,)),0.72)
+        _pic = ('pic',doCompScore.doCompScore([u'任务指标',u'出勤指标',u'计划指标'],(_taskQ, _chkonQ, _planQ,),
+                                              (1., 0.65, 1.,)), 0.6)
         _desc = getScoreDesc(_chkonQ, _taskQ, _planQ)
         _col =(_name,_score,_pref,_pic, _desc)
         doc.addRow(_col)
@@ -916,7 +1053,8 @@ def addPDList(cur, doc):
     _label = []
     _i = 1
     for _pd in _res:
-        _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="%s"' % _pd[0] + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="%s"' % _pd[0] +\
+               " and created_at between '%s' and '%s'" % (st_date, ed_date)
         _v = doSQLcount(cur,_sql)
         _item = (('text',u'%d、'%_i+_pd[0]),('text',_pd[1]),('text',str(_v)))
         _sum += _v
@@ -938,7 +1076,7 @@ def addNoPDList(cur, doc):
     :param doc: 文档
     :return:
     """
-    _sql = 'select PJ_XMMC,PJ_COST from project_key_t where PJ_COST+0.>0' + " and created_at between '%s' and '%s'" % (st_date, ed_date) + ' order by PJ_COST+0. desc'
+    _sql = 'select PJ_XMMC,PJ_COST from project_key_t where PJ_COST+0.>0 order by PJ_COST+0. desc'
     _res = doSQL(cur, _sql)
     _sum = 0
     _vv = []
@@ -970,7 +1108,8 @@ def getPersonalChkOnData(cur, m_name):
     _tot_am = ()
     _tot_pm = ()
     for _w in [u'星期一', u'星期二', u'星期三', u'星期四', u'星期五', u'星期六', u'星期日']:
-        _sql = 'select KQ_AM, KQ_PM from checkon_t where KQ_NAME="%s" and KQ_DATE like "%%%s%%"' % (m_name,_w) + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _sql = 'select KQ_AM, KQ_PM from checkon_t where KQ_NAME="%s" and KQ_DATE like "%%%s%%"' % (m_name,_w) +\
+               " and created_at between '%s' and '%s'" % (st_date, ed_date)
         _chkon = doSQL(cur, _sql)
         _am = ()
         _pm = ()
@@ -997,7 +1136,7 @@ def getGroupChkOnData(cur, g_name):
     :return:
     """
     _datas = []
-    _sql = 'select MEMBER_NAME from pd_group_member_t where GROUP_NAME="%s"' % g_name
+    _sql = 'select MEMBER_NAME from pd_group_member_t where GROUP_NAME="%s" and flg=1' % g_name
     _res = doSQL(cur,_sql)
     _data_am = [(),(),(),(),(),(),(),()]
     _data_pm = [(),(),(),(),(),(),(),()]
@@ -1037,7 +1176,9 @@ def getGroupChkOn(cur, doc):
             continue
         _name = ('text',_g[0])
         _datas = getGroupChkOnData(cur, _g[0])
-        _fig = ('pic',doBox.doBox(['Mo','Tu','We','Th','Fr','Sa','Su','Avg'],_datas,y_limit=(5.,24.),y_line=(9.,17.5,),y_label='Time',x_label='Week'),2)
+        _fig = ('pic',doBox.doBox(['Mo','Tu','We','Th','Fr','Sa','Su','Avg'],
+                                  _datas,y_limit=(5.,24.),y_line=(9.,17.5,),
+                                  y_label='Time',x_label='Week'),2)
         doc.addRow((_name,_fig))
     doc.setTableFont(8)
 
@@ -1057,18 +1198,22 @@ def getTotalChkOn(cur, doc):
             _datas[0][_i] += __datas[0][_i]
             _datas[1][_i] += __datas[1][_i]
 
-    _fn, __bx = doBox.doBox(['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', '日均'], _datas, y_limit=(5., 24.), y_line=(9., 17.5,),
+    _fn, __bx = doBox.doBox(['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', '日均'],
+                            _datas, y_limit=(5., 24.), y_line=(9., 17.5,),
                 y_label='时间', x_label='周')
     doc.addPic(_fn,5)
-    _print("图例说明：横向分别列出本月周一至周日以及每日平均的出勤特征，纵向表示时间（包含9:00和17:30两个时间点的红线标度）。方框表示集中分布区域，方框内红线为中位线，两端横线分别为上下边缘，边缘外的点为异常点。")
+    _print("图例说明：横向分别列出本月周一至周日以及每日平均的出勤特征，"
+           "纵向表示时间（包含9:00和17:30两个时间点的红线标度）。"
+           "方框表示集中分布区域，方框内红线为中位线，两端横线分别为上下边缘，边缘外的点为异常点。")
 
 def getOnDutyPersonalCount(cur):
 
     _n = 0
-    _sql = 'select MM_XM from member_t where MM_ZT=1'
+    _sql = 'select MM_XM from member_t where MM_ZT<>"0"'
     _res = doSQL(cur, _sql)
     for _m in _res:
-        _sql = 'select count(*) from checkon_t where KQ_AM<>"#" and KQ_PM<>"#" and KQ_NAME="%s"  and created_at between "%s" and "%s"' % (_m[0],st_date, ed_date)
+        _sql = 'select count(*) from checkon_t where KQ_AM<>"#" and KQ_PM<>"#" and KQ_NAME="%s"  ' \
+               'and created_at between "%s" and "%s"' % (_m[0],st_date, ed_date)
         _v = doSQLcount(cur, _sql)
         if _v > 0:
             _n += 1
@@ -1090,13 +1235,15 @@ def getTaskStat(cur):
     _sql = 'select count(*) from task_t where created_at between "%s" and "%s"' % (st_date, ed_date)
     _other = doSQLcount(cur, _sql) - _pd - _pj
     """
-    _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH like "%PRD%"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH like "%PRD%"' +\
+           " and created_at between '%s' and '%s'" % (st_date, ed_date)
     _pd = doSQLcount(cur, _sql)
 
-    _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH<>"#" and (TK_XMBH not like "%PRD%")' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+    _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH<>"#" and (TK_XMBH not like "%PRD%")' +\
+           " and created_at between '%s' and '%s'" % (st_date, ed_date)
     _pj = doSQLcount(cur, _sql)
 
-    _sql = 'select sum(TK_GZSJ) from task_t where created_at between "%s" and "%s"' % (st_date, ed_date)
+    _sql = 'select sum(TK_GZSJ+0.) from task_t where created_at between "%s" and "%s"' % (st_date, ed_date)
     _other = doSQLcount(cur, _sql) - _pd - _pj
 
     return _pd,_pj,_other
@@ -1189,26 +1336,36 @@ def statCostTrend(cur, doc):
     for _date in _date_at:
         _i += 1
         if _i < len(_date_at):
-            _sql = "select sum(TK_GZSJ) from task_t where TK_XMBH like '%%PRD%%' and created_at between '%s' and '%s'" % (_date, _date_at[_i])
+            _sql = "select sum(TK_GZSJ+0.) from task_t where " \
+                   "TK_XMBH like '%%PRD%%' and created_at between '%s' and '%s'" % (_date, _date_at[_i])
         else:
-            _sql = "select sum(TK_GZSJ) from task_t where TK_XMBH like '%%PRD%%' and created_at between '%s' and now()" % _date
+            _sql = "select sum(TK_GZSJ+0.) from task_t where " \
+                   "TK_XMBH like '%%PRD%%' and created_at between '%s' and now()" % _date
         __pd = doSQLcount(cur, _sql)
         _pd.append(__pd)
         if _i < len(_date_at):
-            _sql = "select sum(TK_GZSJ) from task_t where TK_XMBH='#' and created_at between '%s' and '%s'" % (_date, _date_at[_i])
+            _sql = "select sum(TK_GZSJ+0.) from task_t where " \
+                   "TK_XMBH='#' and created_at between '%s' and '%s'" % (_date, _date_at[_i])
         else:
-            _sql = "select sum(TK_GZSJ) from task_t where TK_XMBH='#' and created_at between '%s' and now()" % _date
+            _sql = "select sum(TK_GZSJ+0.) from task_t where " \
+                   "TK_XMBH='#' and created_at between '%s' and now()" % _date
         __other = doSQLcount(cur, _sql)
         _other.append(__other)
         if _i < len(_date_at):
-            _sql = "select sum(TK_GZSJ) from task_t where created_at between '%s' and '%s'" % (_date, _date_at[_i])
+            _sql = "select sum(TK_GZSJ+0.) from task_t where " \
+                   "created_at between '%s' and '%s'" % (_date, _date_at[_i])
         else:
-            _sql = "select sum(TK_GZSJ) from task_t where created_at between '%s' and now()" % _date
+            _sql = "select sum(TK_GZSJ+0.) from task_t where " \
+                   "created_at between '%s' and now()" % _date
         _total = doSQLcount(cur, _sql)
         _pj.append(_total- __pd - __other)
 
     _y_limit = _total*1.4
-    _fn = doBox.doBar('研发资源投入趋势','工时',_date_at,[(_pd,'#afafaf'),(_pj,'#8a8a8a'),(_other,'#fafafa')],label=[u'产品项目',u'工程项目',u'非项目类'],y_limit=_y_limit)
+    _fn = doBox.doBar('研发资源投入趋势','工时',_date_at,
+                      [(_pd,'#afafaf'),(_pj,'#8a8a8a'),(_other,'#fafafa')],
+                      label=[u'产品项目',u'工程项目',u'非项目类'],
+                      y_limit=_y_limit)
+
     _print(u'本月研发资源处理事务的情况如图示：')
     doc.addPic(_fn,5)
 
@@ -1261,7 +1418,9 @@ def getGroupTaskSummary(cur):
         for _g in _res:
             if _g[0] == u'研发管理组':
                 continue
-            _sql = 'select sum(TK_GZSJ) from task_t where TK_SQR="%s" and TK_RWNR like "%%%s%%" and created_at between "%s" and "%s"' % (_g[0],_task_key,st_date, ed_date)
+            _sql = 'select sum(TK_GZSJ+0.) from task_t where ' \
+                   'TK_SQR="%s" and TK_RWNR like "%%%s%%" and created_at between "%s" and "%s"' %\
+                   (_g[0],_task_key,st_date, ed_date)
             _n = doSQLcount(cur,_sql)
             _col.append(_n)
         _row.append(_col)
@@ -1271,7 +1430,8 @@ def getGroupTaskSummary(cur):
 
 def main():
 
-    global db, Topic_lvl_number, TotalMember, orgWT, costProject, fd, st_date, ed_date, numb_days, doc, workhours
+    global db, Topic_lvl_number, TotalMember, orgWT, costProject, fd, st_date, ed_date,\
+        numb_days, doc, workhours, TaskPlayQ, PersonalKPILevel
 
     if len(sys.argv) != 4:
         print("\n\tUsage: python %s start_date end_date numb_days\n" % sys.argv[0])
@@ -1309,9 +1469,11 @@ def main():
     _print(u"数据统计", title=True, title_lvl=1)
     _print(u"总体特征", title=True, title_lvl=2)
 
+    _personal = getOnDutyPersonalCount(cur)
     _pd,_pj,_other = getTaskStat(cur)
     _hour = getWorkHourPerDay(cur)
-    _print(u"本月在岗 %d 人，执行任务 %d 个（产品类 %d 个、工程类 %d 个和非项目类 %d 个），日均工作时间 %0.2f 小时。" % (getOnDutyPersonalCount(cur),(_pd+_pj+_other),_pd,_pj,_other,_hour))
+    _print(u"本月在岗 %d 人，执行任务 %d 个（产品类 %d 个、工程类 %d 个和非项目类 %d 个），日均工作时间 %0.2f 小时。"
+           % (_personal,(_pd+_pj+_other),_pd,_pj,_other,_hour))
 
     _print(u"1、任务执行情况", title=True, title_lvl=3)
     getProjectWorkTime(cur)
@@ -1324,6 +1486,35 @@ def main():
         _print(u"总投入：%d【人时】，工时成本 %0.2f【万元】" % (sum(costProject), sum(costProject)*CostHour/10000.0))
         doc.addPic(_fn, sizeof=4)
         _print(u'任务执行资源投入占比', align=WD_ALIGN_PARAGRAPH.CENTER)
+
+    """计算工作量指标【注：不按月计】"""
+    getRdGroupMember(cur)
+    _sql = 'select MM_XM,MM_GH from member_t where MM_ZT<>"0"'
+    _res = doSQL(cur, _sql)
+    _data = ()
+    for _m in _res:
+        if _m[0] in SpName:
+            continue
+        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH<>"#" and TK_ZXR="%s"' % _m[0]
+        _sql += " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _v1 = doSQLcount(cur, _sql)
+        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="#" and TK_ZXR="%s"' % _m[0]
+        _sql += " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _v2 = doSQLcount(cur, _sql)
+        if _m[0] in RdGroupMember:
+            _data += (float(_v1)*PjProportion_RD+float(_v2)*NonPjProportion_RD,)
+        else:
+            _data += (float(_v1) * PjProportion_nRD + float(_v2) * NonPjProportion_nRD,)
+
+    """获取评分参数"""
+    __fn, _bxs = doBox.doBox([u'评分参数'], [[_data]], y_limit=(-5, max(_data) + 5))
+    bx = _bxs[0]
+    PersonalKPILevel = [
+        int(bx["whiskers"][0].get_ydata()[0]),  # 优
+        int(bx["medians"][0].get_ydata()[0]),  # 良
+        int(bx["whiskers"][1].get_ydata()[0]),  # 中
+        int(bx["whiskers"][1].get_ydata()[1])]  # 差
+
     _print(u"2、出勤情况", title=True, title_lvl=3)
     getTotalChkOn(cur, doc)
 
@@ -1367,10 +1558,15 @@ def main():
     _print("")
 
     _print("团队、个人综合评价", title=True, title_lvl=2)
+
+    """2017.12.28：利用“正太分布”方法模型"""
+    _plan_fn_1, _plan_fn_2, _lvl, TaskPlayQ = doBox.getPersonalPlanQ(cur)
+
     _print("1、团队综合评价", title=True, title_lvl=3)
     statGroupInd(cur)
     _print("")
     _print("2、个人综合评价", title=True, title_lvl=3)
+    #print PersonalKPILevel
     statPersonalInd(cur)
     _print("")
 

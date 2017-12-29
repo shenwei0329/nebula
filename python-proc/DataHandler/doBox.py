@@ -235,27 +235,43 @@ def doSQL(cur,_sql):
     cur.execute(_sql)
     return cur.fetchall()
 
-def calLvl(lvl, val):
+def calLvl(lvl, val, max_v):
     """
     获取评价等级
     :param lvl: 评级指标
     :param val: 被评数据
+    :param max_v: 最大值
     :return:
     """
     if val <= lvl[0]:
-        return 5
+        if lvl[0] > 0:
+            return 90. + (val/lvl[0])*10.
+        else:
+            return 98.
     elif val <= lvl[1]:
-        return 4
+        if lvl[1] > lvl[0]:
+            return 80. + ((val - lvl[0])/(lvl[1]-lvl[0]))*10.
+        else:
+            return 88.
     elif val <= lvl[2]:
-        return 3
+        if lvl[2] > lvl[1]:
+            return 70. + ((val - lvl[1])/(lvl[2]-lvl[1]))*10.
+        else:
+            return 78.
     elif val <= lvl[3]:
-        return 2
+        if lvl[3] > lvl[2]:
+            return 60. + ((val - lvl[2])/(lvl[3]-lvl[2]))*10.
+        else:
+            return 68.
     else:
-        return 1
+        if lvl[3] < max_v:
+            return 50. + ((val - lvl[3])/(max_v - lvl[3]))*10.
+        else:
+            return 58.
 
-def getPersonTaskQ(cur):
+def getPersonalPlanQ(cur):
     """
-    生成个人“任务执行指标”
+    生成个人“任务计划指标”
     :param cur: 数据源
     :return: 指标
     """
@@ -283,21 +299,21 @@ def getPersonTaskQ(cur):
             _max = max(_d)
         _data.append(_d)
         datas.append(_data)
-    
+
     """绘制“总特征”并获取评分参数"""
-    _fn1, _bxs = doBox([u'总计'], [[_dd]], y_limit=(-5, _max+5))
-    
+    _fn1, _bxs = doBox([u'总计'], [[_dd]], y_limit=(-5, _max + 5))
+
     bx = _bxs[0]
-    _lvl = [bx["whiskers"][0].get_ydata()[0],   # 优
-            bx["medians"][0].get_ydata()[0],    # 良
-            bx["whiskers"][1].get_ydata()[0],   # 中
-            bx["whiskers"][1].get_ydata()[1]]   # 差
+    _lvl = [bx["whiskers"][0].get_ydata()[0],  # 优
+            bx["medians"][0].get_ydata()[0],  # 良
+            bx["whiskers"][1].get_ydata()[0],  # 中
+            bx["whiskers"][1].get_ydata()[1]]  # 差
 
     _lines = []
     for _l in _lvl:
         _lines.append(_l)
 
-    _fn2, _bxs = doBox(range(len(_name)), datas, y_line=_lines, y_limit=(-5, _max+5))
+    _fn2, _bxs = doBox(range(len(_name)), datas, y_line=_lines, y_limit=(-5, _max + 5))
 
     _kv = {}
     _i = 0
@@ -306,7 +322,7 @@ def getPersonTaskQ(cur):
         if math.isnan(_median):
             _i += 1
             continue
-        _kv[_name[_i]] = (_median,calLvl(_lvl, _median,))
+        _kv[_name[_i]] = (_median, calLvl(_lvl, _median, _max))
         _i += 1
 
     return _fn1, _fn2, _lvl, _kv
@@ -320,6 +336,6 @@ if __name__ == '__main__':
     db = MySQLdb.connect(host="47.93.192.232", user="root", passwd="sw64419", db="nebula", charset='utf8')
     cur = db.cursor()
 
-    fn1, fn2, lvl, kv = getPersonTaskQ(cur)
+    fn1, fn2, lvl, kv = getPersonalPlanQ(cur)
     for _k in kv:
         print(u'%s: %s => %s' % (_k, kv[_k][0], kv[_k][1]))
