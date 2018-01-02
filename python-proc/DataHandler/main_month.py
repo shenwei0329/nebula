@@ -543,6 +543,8 @@ def getProjectWorkTime(cur):
                "created_at between '%s' and '%s' order by TK_GZSJ+0 desc" % (st_date, ed_date)
         _res = doSQL(cur,_sql)
         for _row in _res:
+            if _row[1] == "#":
+                continue
             _other = _other + int(float(_row[1]))
     if (_pd+_pj+_other)>0:
         costProject = (_pd,_pj,_other,)
@@ -1294,6 +1296,7 @@ def getCostTrendDesc(PdCost, PjCost, OtherCost):
     _str_pj = u'工程项目投入表现出'
     _str_other = u'非项目类事务的投入表现出'
     _avg_pd = sum(PdCost)/(len(PdCost)+0.0)
+    _avg_pj = sum(PjCost)/(len(PjCost)+0.0)
     _avg_other = sum(OtherCost)/(len(OtherCost)+0.0)
     if abs((PdCost[-1]+0.0)-_avg_pd)<=0.15:
         _str_pd += u'【平稳】趋势。'
@@ -1302,9 +1305,9 @@ def getCostTrendDesc(PdCost, PjCost, OtherCost):
     else:
         _str_pd += u'【下降】趋势。'
 
-    if abs((PjCost[-1]+0.0)-_avg_other)<=0.15:
+    if abs((PjCost[-1]+0.0)-_avg_pj )<=0.15:
         _str_pj += u'【平稳】趋势。'
-    elif ((PjCost[-1]+0.0)-_avg_other)>0.15:
+    elif ((PjCost[-1]+0.0)-_avg_pj)>0.15:
         _str_pj += u'【上升】趋势。'
     else:
         _str_pj += u'【下降】趋势。'

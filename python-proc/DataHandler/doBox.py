@@ -293,6 +293,8 @@ def getPersonalPlanQ(cur):
         _res = doSQL(cur, _sql)
         _d = ()
         for _v in _res:
+            if _v[0] == "#":
+                continue
             _d += (int(float(_v[0])),)
             _dd += (int(float(_v[0])),)
         if len(_d) > 0 and _max < max(_d):

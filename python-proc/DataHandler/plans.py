@@ -468,7 +468,7 @@ def main(project="PRD-2017-PROJ-00003"):
     if _m > 0:
         _print(u"● 本迭代周期内等待执行的任务有【%d】个。" % _m)
     if _r+_r_completed+_r_waitting > 0:
-        _print(u"● 非计划类任务有【%d】个，其中已完成%d个、正在执行%d个和待执行%d个。" %
+        _print(u"● “入侵”的非计划任务有【%d】个，其中已完成%d个、正在执行%d个和待执行%d个。" %
                (_r+_r_completed+_r_waitting, _r_completed, _r, _r_waitting), color=(150, 0, 0))
 
     _ylines = []
