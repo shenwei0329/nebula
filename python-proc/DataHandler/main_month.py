@@ -253,6 +253,18 @@ def getPdList(cur):
     for _row in _res:
         ProductList.append(_row)
 
+def getPdedList(cur):
+    """
+    获取 货架 产品的状态
+    :param cur:
+    :return:
+    """
+    _print(u'产品货架包含：')
+    _sql = 'select PD_MC,PD_DH,PD_BBH from product_t where PD_LX="产品"'
+    _res = doSQL(cur,_sql)
+    for _row in _res:
+        _print("√ %s（%s），版本%s" % (_row[0], _row[1], _row[2]))
+
 def getPdingList(cur):
     """
     获取 在研 产品的状态
@@ -1522,9 +1534,11 @@ def main():
     _print(u"2、出勤情况", title=True, title_lvl=3)
     getTotalChkOn(cur, doc)
 
-    _print(u"3、在研产品情况", title=True, title_lvl=3)
+    _print(u"3、产品货架情况", title=True, title_lvl=3)
+    getPdedList(cur)
+    _print(u"4、在研产品情况", title=True, title_lvl=3)
     getPdingList(cur)
-    _print(u"4、产品交付情况", title=True, title_lvl=3)
+    _print(u"5、产品交付情况", title=True, title_lvl=3)
     getPdDeliverList(cur)
 
     #doc.addPageBreak()

@@ -206,6 +206,8 @@ def getRisk(cur):
     for _row in _res:
         _print('%d、【%s】：%s，创建于%s' % (_i, str(_row[0]), str(_row[1]), str(_row[2])), color=(250, 0, 0))
         _i += 1
+    if _i == 1:
+        _print(u'无。')
 
 def getEvent(cur):
     """
