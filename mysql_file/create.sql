@@ -334,5 +334,22 @@ CREATE TABLE if not exists pd_output_req_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+# Jinkins记录
+#
+#
+CREATE TABLE if not exists jinkins_rec_t
+(
+	id integer primary key not null auto_increment,
+	job_name varchar(120) comment '名称',
+	job_timestamp datetime comment '时间戳',
+	job_queueId varchar(24) comment '队列ID',
+	job_result varchar(24) comment '执行结果',
+	job_description varchar(1024) comment '描述',
+	job_duration integer comment '执行时间（毫秒）',
+	job_estimatedDuration integer comment '建立时间（毫秒）',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 #
 #
