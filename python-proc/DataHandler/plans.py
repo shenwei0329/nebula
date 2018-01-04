@@ -11,7 +11,7 @@ import MySQLdb,sys,json,time,os
 import datetime,types
 import doPie, doHour, doBox
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-import crWord
+import crWord, showJinkinsRec
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -400,7 +400,7 @@ def main(project="PRD-2017-PROJ-00003"):
     __data = [[[range(len(_plan_quta)), _plan_quta], "b", "-", u"当天完成任务数"]]
     _fn = doBox.doStem(u'计划的任务量分布图', u'Δ任务完成数量（个）', u'日期【%s 至 %s】（天）'%
                        (_str_date[0],_str_date[1]), __data, lines=_lines)
-    doc.addPic(_fn,sizeof=3.6)
+    doc.addPic(_fn,sizeof=3.2)
     _print(u'【图例说明】：图示研发计划中任务数量的分配情况。'
            u'横坐标是工作时间，纵坐标是计划当天要完成的任务个数，'
            u'红竖线是当前位置。'
@@ -442,10 +442,16 @@ def main(project="PRD-2017-PROJ-00003"):
              [[range(len(_plan_work_hour)), _plan_work_hour], "k", "-", u"计划投入"]]
     _fn = doBox.doLine(u'投入分布图', u'Δ投入工时（人时）', u'日期【%s 至 %s】（天）'%(_str_date[0],_str_date[1]),
                        __data, label_pos='upper left', lines=_lines, ylines=_ylines)
-    doc.addPic(_fn,sizeof=3.6)
+    doc.addPic(_fn,sizeof=3.2)
     _print(u'【图例说明】：图示过程中资源（人时）计划和实际投入情况。'
            u'图中，黑纵线段为计划的工时量，红纵线段为实际投入的工时量。'
            u'黑横线为当天计划投入总量；红横线为实际投入总量。')
+
+    _print(u"过程情况", title=True, title_lvl=1)
+    _print(u'单元测试情况：')
+    _fn = showJinkinsRec.doJinkinsRec(cur)
+    doc.addPic(_fn, sizeof=5.2)
+    _print(u'【图例说明】：数据采自Jenkins系统，以展示项目中每个模块的单元测试情况。')
 
     _print(u"计划跟踪", title=True, title_lvl=1)
 

@@ -37,6 +37,11 @@ def doSQLcount(cur,_sql):
         _n = 0
     return _n
 
+def doSQL(cur,_sql):
+
+    cur.execute(_sql)
+    return cur.fetchall()
+
 def doIT(db, cur, url):
 
     server = jenkins.Jenkins(url)
@@ -44,6 +49,7 @@ def doIT(db, cur, url):
 
     _total = 0
     _insert = 0
+    _update = 0
 
     jobs = server.get_all_jobs(folder_depth=2)
     for _job in jobs:
@@ -60,13 +66,41 @@ def doIT(db, cur, url):
                 unit = server.get_build_info(_job['name'], _i)
                 _time = float(unit['timestamp'])/1000
 
-                _sql = 'select count(*) from jinkins_rec_t where job_name="%s" and job_timestamp="%s"' % \
+                _sql = 'select job_result,job_duration,job_estimatedDuration from jinkins_rec_t ' \
+                       'where job_name="%s" and job_timestamp="%s"' % \
                        (unit['fullDisplayName'],
                         time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(_time)))
-                _n = doSQLcount(cur, _sql)
+                _res = doSQL(cur, _sql)
 
                 _total += 1
-                if _n >0:
+
+                if len(_res) > 0:
+                    for _rec in _res:
+                        if _rec[0] != unit['result']:
+                            _sql = 'update jinkins_rec_t set job_result="%s" ' \
+                                   'where job_name="%s" and job_timestamp="%s"' % (unit['result'],unit['fullDisplayName'],
+                                    time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(_time)))
+                            #print _sql
+                            doSQL(cur, _sql)
+                            _update += 1
+                    if _rec[1] != unit['duration']:
+                        _sql = 'update jinkins_rec_t set job_duration="%s" ' \
+                               'where job_name="%s" and job_timestamp="%s"' % (unit['duration'],
+                                                                              unit['fullDisplayName'],
+                                                                              time.strftime('%Y-%m-%d %H:%M:%S',
+                                                                                             time.localtime(_time)))
+                        # print _sql
+                        doSQL(cur, _sql)
+                        _update += 1
+                    if _rec[2] != unit['estimatedDuration']:
+                        _sql = 'update jinkins_rec_t set job_estimatedDuration="%s" ' \
+                               'where job_name="%s" and job_timestamp="%s"' % (unit['estimatedDuration'],
+                                                                               unit['fullDisplayName'],
+                                                                               time.strftime('%Y-%m-%d %H:%M:%S',
+                                                                                             time.localtime(_time)))
+                        # print _sql
+                        doSQL(cur, _sql)
+                        _update += 1
                     continue
 
                 _insert += 1
@@ -86,8 +120,10 @@ def doIT(db, cur, url):
                 #print _sql
                 doSQLinsert(db, cur, _sql)
     print(": Total number: %d" % _total)
-    if _insert>0:
+    if _insert > 0:
         print(": Inserted number: %d" % _insert)
+    if _update > 0:
+        print(": Updated number: %d" % _update)
 
 if __name__ == '__main__':
 
@@ -96,4 +132,5 @@ if __name__ == '__main__':
 
     doIT(db, cur, 'http://172.16.74.169:32766')
 
+    db.commit()
     db.close()
