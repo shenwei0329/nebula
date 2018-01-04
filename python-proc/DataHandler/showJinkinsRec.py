@@ -39,13 +39,19 @@ def doJinkinsRec(cur):
     _dots = []
     _lables = []
     _y = 1
+    _max = 0
+    _lines = []
     for _key in _jobs:
         for _task in _jobs[_key]:
             if _task[2]=="SUCCESS":
                 _dots.append([_task[1], _y, '^', 'k'])
             else:
                 _dots.append([_task[1], _y, 'o', 'r'])
-        _lables.append("%s:%d" % (_key,len(_jobs[_key])))
+        _len = len(_jobs[_key])
+        _lables.append("%s:%d" % (_key, _len))
+        _lines.append(_len)
+        if _len > _max:
+            _max = _len
         _y += 1
 
     """作图"""
@@ -57,13 +63,22 @@ def doJinkinsRec(cur):
     })
     autodates = AutoDateLocator()
     yearsFmt = DateFormatter('%Y-%m-%d %H:%M:%S')
-    fig = figure(figsize=[8,12])
-    ax = axes()
+    fig = figure(figsize=[8, 12])
+
+    ax = fig.add_subplot(111)
+    ax_twiny = ax.twiny()
+    ax_twiny.set_xticks(range(_max*3))
+    ax_twiny.grid(False)
+    ax_twiny.set_xticks([])
+    ax_twiny.set_ylim(0,len(_lables)+1)
+    ax_twiny.set_xlim(0,_max*10)
+    ax_twiny.barh(range(1,len(_lines)+1), _lines, 0.65, 0.5, align='center', color='#eaea1a', edgecolor='#eaea5a')
+
     fig.autofmt_xdate()                         # 设置x轴时间外观  
     ax.xaxis.set_major_locator(autodates)       # 设置时间间隔  
     ax.xaxis.set_major_formatter(yearsFmt)      # 设置时间显示格式  
     ax.set_xticks(pd.date_range(start='2017-12-01 00:00:00', end='2018-01-31 23:59:59', freq='3D'))
-    ax.set_xlim("2017-12-20 00:00:00","2018-01-20 00:00:00")
+    ax.set_xlim("2017-12-20 00:00:00", "2018-01-20 00:00:00")
     ax.set_yticks(range(1,len(_lables)+1))
     ax.set_yticklabels(_lables,)
     ax.set_ylim(0,len(_lables)+1)
@@ -76,14 +91,15 @@ def doJinkinsRec(cur):
             _k_dots.append(__dot)
         else:
             _r_dots.append(__dot)
-    plt.xlabel(u'日期', fontsize=11)
-    plt.ylabel(u'模块:测试次数', fontsize=11)
-    plt.title(u'单元测试情况', fontsize=12)
+    ax.set_xlabel(u'日期', fontsize=11)
+    ax.set_ylabel(u'模块:测试次数', fontsize=11)
+    ax.legend([_k_dots[0], _r_dots[0]], [u"通过", u"未通过"])
     ax.grid(True)
-    plt.legend([_k_dots[0], _r_dots[0]], [u"通过", u"未通过"])
+
+    plt.title(u'单元测试情况', fontsize=12)
     plt.subplots_adjust(left=0.28, bottom=0.09, top=0.96)
 
-    _fn = 'pic/%s-compscore.png' % time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
+    _fn = 'pic/%s-compscore.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     if not _test_mod:
         plt.savefig(_fn, dpi=120)
     else:
