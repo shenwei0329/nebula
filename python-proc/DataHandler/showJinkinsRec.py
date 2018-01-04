@@ -7,6 +7,8 @@ from pylab import figure, axes
 import MySQLdb, sys, time
 import pandas as pd
 
+_test_mod = False
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -82,11 +84,15 @@ def doJinkinsRec(cur):
     plt.subplots_adjust(left=0.28, bottom=0.09, top=0.96)
 
     _fn = 'pic/%s-compscore.png' % time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
-    plt.savefig(_fn, dpi=120)
-    #plt.show()
+    if not _test_mod:
+        plt.savefig(_fn, dpi=120)
+    else:
+        plt.show()
     return _fn
 
 if __name__ == '__main__':
+
+    _test_mod = True
 
     db = MySQLdb.connect(host="47.93.192.232", user="root", passwd="sw64419", db="nebula", charset='utf8')
     cur = db.cursor()
