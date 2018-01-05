@@ -11,7 +11,7 @@ import MySQLdb,sys,json,time,os
 import datetime,types
 import doPie, doHour, doBox
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-import crWord, showJinkinsRec
+import crWord, showJinkinsRec, showJinkinsCoverage
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -448,10 +448,14 @@ def main(project="PRD-2017-PROJ-00003"):
            u'黑横线为当天计划投入总量；红横线为实际投入总量。')
 
     _print(u"过程情况", title=True, title_lvl=1)
-    _print(u'单元测试情况：')
+    _print(u'1）单元测试情况：')
     _fn = showJinkinsRec.doJinkinsRec(cur)
     doc.addPic(_fn, sizeof=5.2)
     _print(u'【图例说明】：数据采自Jenkins系统，以展示项目中每个模块的单元测试情况。')
+    _print(u'2）单元测试覆盖率：')
+    _fn = showJinkinsCoverage.doJinkinsCoverage(cur)
+    doc.addPic(_fn, sizeof=5.8)
+    _print(u'【图例说明】：数据采自Jenkins系统，以展示项目中每个模块的单元测试覆盖率。')
 
     _print(u"计划跟踪", title=True, title_lvl=1)
 
