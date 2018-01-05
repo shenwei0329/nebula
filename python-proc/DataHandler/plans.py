@@ -518,6 +518,10 @@ def main(project="PRD-2017-PROJ-00003"):
     _cmd = 'del /Q pic\\*'
     os.system(_cmd)
 
+    _cmd = 'python doc2pdf.py %s-proj.docx %s-proj-%s.pdf' % \
+           (project, project, time.strftime('%Y%m%d', time.localtime(time.time())))
+    os.system(_cmd)
+
 if __name__ == '__main__':
 
     main()

@@ -1590,6 +1590,8 @@ def main():
 
     db.close()
     doc.saveFile('month.docx')
+    _cmd = 'python doc2pdf.py month.docx 月报-%s.pdf' % time.strftime('%Y%m%d', time.localtime(time.time()))
+    os.system(_cmd)
 
     """删除过程文件"""
     _cmd = 'del /Q pic\\*'

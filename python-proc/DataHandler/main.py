@@ -707,6 +707,8 @@ def main():
 
     db.close()
     doc.saveFile('week.docx')
+    _cmd = 'python doc2pdf.py week.docx 周报-%s.pdf' % time.strftime('%Y%m%d', time.localtime(time.time()))
+    os.system(_cmd)
 
     """删除过程文件"""
     _cmd = 'del /Q pic\\*'
