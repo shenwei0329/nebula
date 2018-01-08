@@ -334,7 +334,7 @@ CREATE TABLE if not exists pd_output_req_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-# Jinkins记录
+# Jenkins记录
 #
 #
 CREATE TABLE if not exists jinkins_rec_t
@@ -347,6 +347,21 @@ CREATE TABLE if not exists jinkins_rec_t
 	job_description varchar(1024) comment '描述',
 	job_duration integer comment '执行时间（毫秒）',
 	job_estimatedDuration integer comment '建立时间（毫秒）',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# Jenkins代码覆盖记录
+#
+#
+CREATE TABLE if not exists jenkins_coverage_t
+(
+	id integer primary key not null auto_increment,
+	class_name varchar(120) comment '代码类名',
+	filename varchar(120) comment '文件名',
+	line_rate varchar(24) comment '代码行覆盖率',
+	branch_rate varchar(24) comment '代码分支覆盖率',
+	complexity varchar(24) comment '代码复杂度',
 	created_at datetime,
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

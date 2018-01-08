@@ -55,7 +55,7 @@ def getTime(f):
      _m = int(_s[1])*60/100
      return ("%02d : %02d" % (_h, _m))
 
-def doOprHour(data):
+def doOprHour(data, nWorkHours):
 
      plt.figure()
      x = range(len(data))
@@ -69,7 +69,7 @@ def doOprHour(data):
 
      plt.xlim(-1, len(data)+1)
      plt.ylim(6, _max+1)
-     plt.axhline(y=40, xmin=0, xmax=50, linestyle='-',linewidth=2, color='red', label='Normal')
+     plt.axhline(y=nWorkHours, xmin=0, xmax=50, linestyle='-',linewidth=2, color='red', label='Normal')
      plt.axhline(y=_max, xmin=0, xmax=50, linestyle='--',linewidth=2, color='blue', label='Max:%d' % _max)
      plt.axhline(y=_avg, xmin=0, xmax=50, linestyle='-.',linewidth=2, color='green', label='Avg:%d' % _avg)
      plt.axhline(y=_min, xmin=0, xmax=50, linestyle=':',linewidth=2, color='red', label='Min:%d' % _min)

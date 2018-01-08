@@ -379,14 +379,14 @@ def getOprWorkTime(cur):
     if _total_workdays is not None:
         _print("总工作量：%d （工时）" % _total_workdays)
         if _total_workdays > 0:
-            _a = TotalMember * 80 * 5
+            _a = TotalMember * 80 * float(numb_days)
             _b = _total_workdays*1000
             _c = int(_b/_a)
             _s = "工作效率：%d %%" % _c
             if _c > 100:
-                _s = _s + "，超标 %0.2f 倍" % float(int(_c)/100.)
+                _s = _s + "，超标 %0.2f%%" % float(int(_c)/100.)
             if _c < 100:
-                _s = _s + "，剩余 %0.2f 倍" % (1.-float(int(_c)/100.))
+                _s = _s + "，剩余 %d%%" % (100-int(_c))
     else:
         _s = "工作效率：0%"
     _print(_s)
@@ -412,8 +412,10 @@ def getOprWorkTime(cur):
         for _i in range(15):
             if str(_res[_i][3]) != "#":
                 _print( '%d）'% (_i+1) + str(_res[_i][1]) + ' 执行【' +str(_res[_i][3]) + '，' + str(_res[_i][0]) + '】任务时，耗时 ' + str(_res[_i][2]) + ' 工时')
-            else:
+            elif str(_res[_i][0] != "#"):
                 _print( '%d）'% (_i+1) + str(_res[_i][1]) + ' 执行【 非项目类：' + str(_res[_i][0]) + '】任务时，耗时 ' + str(_res[_i][2]) + ' 工时')
+            else:
+                _print( '%d）'% (_i+1) + str(_res[_i][1]) + ' 执行【 非项目类】任务时，耗时 ' + str(_res[_i][2]) + ' 工时')
 
     _print("3、明细：", title=True, title_lvl=2)
     _sql = 'select MM_XM from member_t'
@@ -439,7 +441,7 @@ def getOprWorkTime(cur):
         orgWT = orgWT + (_n,)
 
     if len(orgWT)>0:
-        _fn = doHour.doOprHour(orgWT)
+        _fn = doHour.doOprHour(orgWT, workhours)
         doc.addPic(_fn)
         doc.addText(u"图4 本周“人-工时”分布情况", align=WD_ALIGN_PARAGRAPH.CENTER)
 
@@ -496,7 +498,8 @@ def getProjectWorkTime(cur):
 
     _m = 0
     for _row in _res:
-        _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="' + str(_row[0]) + '"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
+        _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="' + str(_row[0]) + '"' + \
+               " and created_at between '%s' and '%s'" % (st_date, ed_date)
         _n = doSQLcount(cur,_sql)
         if _n is None:
             continue
@@ -514,15 +517,18 @@ def getProjectWorkTime(cur):
     _total_workdays = doSQLcount(cur,_sql)
     if _total_workdays > _m:
         _print("[其他（非立项事务）：总耗时 %d 工时]" % (_total_workdays-_m))
-        _sql = "select TK_RWNR,TK_GZSJ from task_t where TK_XMBH='#' and created_at between '%s' and '%s' order by TK_GZSJ+0 desc" % (st_date, ed_date)
+        _sql = "select TK_RWNR,TK_GZSJ from task_t where TK_XMBH='#' and created_at " \
+               "between '%s' and '%s' order by TK_GZSJ+0 desc" % (st_date, ed_date)
         _res = doSQL(cur,_sql)
         _i = 0
         _print(u"非立项事务明细（前20个）：")
         for _row in _res:
-            if _i < 20:
+            if (_row[1] == "#"):
+                continue
+            if (_i < 20) and (u'假' not in _row[0]):
                 _i += 1
                 _print("● " + str(_row[0]) + " 耗时 " + str(_row[1]) + " 工时")
-            _other = _other + int(float(_row[1]))
+        _other = _total_workdays-_m
     if (_pd+_pj+_other)>0:
         costProject = (_pd,_pj,_other,)
     else:
@@ -707,7 +713,7 @@ def main():
 
     db.close()
     doc.saveFile('week.docx')
-    _cmd = 'python doc2pdf.py week.docx 周报-%s.pdf' % time.strftime('%Y%m%d', time.localtime(time.time()))
+    _cmd = 'python doc2pdf.py week.docx weekly-%s.pdf' % time.strftime('%Y%m%d',time.localtime(time.time()))
     os.system(_cmd)
 
     """删除过程文件"""

@@ -6,6 +6,9 @@
 import sys, os
 from win32com.client import Dispatch, constants, gencache
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 def doc2pdf(input, output):
     w = Dispatch("Word.Application")
     try:

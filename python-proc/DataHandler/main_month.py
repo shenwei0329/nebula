@@ -74,7 +74,7 @@ Topic = [u'一、',
          u'十二、',
          ]
 
-SpName = [u'杨飞', u'沈伟', u'谭颖卿', u'吴丹阳', u'吴昱珉', u'张志英']
+SpName = [u'杨飞', u'沈伟', u'谭颖卿', u'吴丹阳', u'吴昱珉', u'查明']
 
 def Load_json(fn):
 
@@ -1590,7 +1590,8 @@ def main():
 
     db.close()
     doc.saveFile('month.docx')
-    _cmd = 'python doc2pdf.py month.docx 月报-%s.pdf' % time.strftime('%Y%m%d', time.localtime(time.time()))
+    _cmd = 'python doc2pdf.py month.docx monthly-%s.pdf' % \
+           time.strftime('%Y%m%d', time.localtime(time.time()))
     os.system(_cmd)
 
     """删除过程文件"""
