@@ -88,7 +88,7 @@ def doJinkinsCoverage(cur):
     ax.grid(True)
 
     plt.title(u'单元测试覆盖率', fontsize=12)
-    plt.subplots_adjust(left=0.06, right=0.98, bottom=0.36, top=0.9)
+    plt.subplots_adjust(left=0.06, right=0.98, bottom=0.41, top=0.9)
 
     _fn = 'pic/%s-coverage.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     if not _test_mod:

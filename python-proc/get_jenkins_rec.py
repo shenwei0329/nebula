@@ -44,7 +44,7 @@ def doSQL(cur,_sql):
 
 def doIT(db, cur, url):
 
-    server = jenkins.Jenkins(url)
+    server = jenkins.Jenkins(url, username='manager', password='8RP-KnN-V5s-BzA')
     print('> Jenkins version: %s' % server.get_version())
 
     _total = 0
@@ -62,8 +62,11 @@ def doIT(db, cur, url):
             _last = int(_last['number'])
         if type(_first) is not types.NoneType:
             for _i in range(_first,_last+1):
-
-                unit = server.get_build_info(_job['name'], _i)
+                #print _job,_i
+                try:
+                    unit = server.get_build_info(_job['name'], _i)
+                except:
+                    continue
                 _time = float(unit['timestamp'])/1000
 
                 _sql = 'select job_result,job_duration,job_estimatedDuration from jinkins_rec_t ' \
@@ -78,16 +81,18 @@ def doIT(db, cur, url):
                     for _rec in _res:
                         if _rec[0] != unit['result']:
                             _sql = 'update jinkins_rec_t set job_result="%s" ' \
-                                   'where job_name="%s" and job_timestamp="%s"' % (unit['result'],unit['fullDisplayName'],
-                                    time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(_time)))
+                                   'where job_name="%s" and job_timestamp="%s"' % (unit['result'],
+                                                                                   unit['fullDisplayName'],
+                                                                                   time.strftime('%Y-%m-%d %H:%M:%S',
+                                                                                                 time.localtime(_time)))
                             #print _sql
                             doSQL(cur, _sql)
                             _update += 1
                     if _rec[1] != unit['duration']:
                         _sql = 'update jinkins_rec_t set job_duration="%s" ' \
                                'where job_name="%s" and job_timestamp="%s"' % (unit['duration'],
-                                                                              unit['fullDisplayName'],
-                                                                              time.strftime('%Y-%m-%d %H:%M:%S',
+                                                                               unit['fullDisplayName'],
+                                                                               time.strftime('%Y-%m-%d %H:%M:%S',
                                                                                              time.localtime(_time)))
                         # print _sql
                         doSQL(cur, _sql)

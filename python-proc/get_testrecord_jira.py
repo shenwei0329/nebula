@@ -7,7 +7,7 @@
 #
 #
 
-import MySQLdb, sys
+import MySQLdb, sys, datetime
 from jira import JIRA
 
 reload(sys)
@@ -106,11 +106,9 @@ def getIssue(jira, bg_date, ed_date):
 
     return _SQLcmd
 
-def doHandler():
+def doHandler(befDay, edDay):
 
-    _str = raw_input(unicode('> 时间范围（%s 至 %s）请确认[y/n]：' % (sys.argv[1], sys.argv[2]),'utf-8').encode('gbk'))
-    if _str not in ["y","Y","yes","YES","Yes"]:
-        return
+    print(">>> from %s to %s <<<" % (befDay, edDay))
 
     """连接数据库"""
     db = MySQLdb.connect(host="47.93.192.232", user="root", passwd="sw64419", db="nebula", charset='utf8')
@@ -119,7 +117,7 @@ def doHandler():
     """JIRA系统入口"""
     jira = JIRA('http://172.16.60.13:8080', basic_auth=('shenwei', 'sw64419'))
 
-    _sqls = getIssue(jira, sys.argv[1], sys.argv[2])
+    _sqls = getIssue(jira, befDay, edDay)
     print(u'>>> Total number of Issue: %d' % len(_sqls))
     for _sql in _sqls:
         doSQLinsert(db, _sql, cur)
@@ -130,7 +128,10 @@ def doHandler():
 
 if __name__ == '__main__':
 
-    if len(sys.argv) != 3:
-        print("\n\tUsage: python %s start_date end_date\n" % sys.argv[0])
-    else:
-        doHandler()
+    now = datetime.datetime.now()
+    if now.isoweekday() == 1:
+        """每周一执行，收集上一周的测试记录数据
+        """
+        befDay = (datetime.datetime.now() - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
+        edDay = datetime.datetime.now().strftime("%Y-%m-%d")
+        doHandler(befDay, edDay)

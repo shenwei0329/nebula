@@ -431,10 +431,10 @@ def getOprWorkTime(cur):
         _color = None
         _s = "[员工：" + str(_row[0])+ "，工作 %d 工时" % _n
         if _n>workhours:
-            _s = _s + "，加班 %d 工时" % (_n - workhours) + "，占比 %d %%" % ((_n-workhours)*10/4)
+            _s = _s + "，加班 %d 工时" % (_n - workhours) + "，占比 %d %%" % ((_n-workhours)*100/workhours)
             _color = (255,0,0)
         if _n<workhours:
-            _s = _s + "，剩余 %d 工时" % (workhours - _n) + "，占比 %d %%" % ((workhours-_n)*10/4)
+            _s = _s + "，剩余 %d 工时" % (workhours - _n) + "，占比 %d %%" % ((workhours-_n)*100/workhours)
             _color = (50, 100, 50)
         _s = _s + ']'
         _print(_s, color=_color)
