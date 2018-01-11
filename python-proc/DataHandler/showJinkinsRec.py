@@ -116,7 +116,7 @@ def doJinkinsRec(cur):
     ax.grid(True)
 
     plt.title(u'单元测试情况', fontsize=12)
-    plt.subplots_adjust(left=0.32, right=0.92, bottom=0.09, top=0.96)
+    plt.subplots_adjust(left=0.35, right=0.92, bottom=0.09, top=0.96)
 
     _fn = 'pic/%s-compscore.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     if not _test_mod:

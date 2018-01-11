@@ -52,7 +52,8 @@ def doJinkinsCoverage(cur):
 
     _max = 0.
     for _r in _res:
-        _filename.append(_r[0][_r[0].rfind('/')+1:])
+        _fn = _r[0][_r[0].rfind('/')+1:]
+        _filename.append(_fn)
         _line_rate += (float(_r[1]),)
         _branch_rate += (-float(_r[2]),)
         __complexity += (float(_r[3]),)
@@ -82,8 +83,8 @@ def doJinkinsCoverage(cur):
     ax.set_xticklabels(_filename,rotation='vertical', fontsize=11)
     ax.legend()
 
-    plt.xlim(-1, len(_line_rate)+1)
-    plt.ylim(-1.5, 1.5)
+    plt.xlim(0, len(_line_rate)+1)
+    plt.ylim(-1.3, 1.3)
 
     ax.grid(True)
 
