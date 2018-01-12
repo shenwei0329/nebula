@@ -1,5 +1,10 @@
 #!/usr/local/bin/python2.7
 # -*- coding: utf-8 -*-
+#
+#   根据Jenkins记录数据生成测试活动示意图
+#   =====================================
+#
+
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from matplotlib.dates import AutoDateLocator, DateFormatter
@@ -25,13 +30,18 @@ def doJinkinsRec(cur):
     """
     """准备数据"""
     _jobs = {}
+
+    """获取数据"""
     #_sql = 'select job_name,date_format(job_timestamp,"%Y-%m-%d %H:%I:%S"),job_result,' \
     _sql = 'select job_name,job_timestamp,job_result,' \
            'job_duration,job_estimatedDuration from ' \
            'jinkins_rec_t order by job_timestamp'
     _res = doSQL(cur, _sql)
+
     for _rec in _res:
         _key = _rec[0].split(' ')
+        if "validate" in _key[0]:
+            continue
         if not _jobs.has_key(_key[0]):
             _jobs[_key[0]] = []
         _jobs[_key[0]].append([_key[1], _rec[1], _rec[2], _rec[3]])
@@ -99,7 +109,7 @@ def doJinkinsRec(cur):
     ax.set_xlim("2017-12-20 00:00:00", "2018-01-20 00:00:00")
     ax.set_yticks(range(1,len(_lables)+1))
     ax.set_yticklabels(_lables,)
-    ax.set_ylim(0,len(_lables)+1)
+    ax.set_ylim(0,len(_lables)+4)
     _k_dots = []
     _r_dots = []
     for _dot in _dots:
@@ -116,7 +126,7 @@ def doJinkinsRec(cur):
     ax.grid(True)
 
     plt.title(u'单元测试情况', fontsize=12)
-    plt.subplots_adjust(left=0.35, right=0.92, bottom=0.09, top=0.96)
+    plt.subplots_adjust(left=0.35, right=0.98, bottom=0.09, top=0.96)
 
     _fn = 'pic/%s-compscore.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     if not _test_mod:

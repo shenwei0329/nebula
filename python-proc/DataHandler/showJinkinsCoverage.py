@@ -1,29 +1,16 @@
 #!/usr/local/bin/python2.7
 # -*- coding: utf-8 -*-
+#
+#   根据jenkins记录数据生成测试覆盖率示意图
+#   =======================================
+#
+
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from matplotlib.dates import AutoDateLocator, DateFormatter
 from pylab import figure, axes
 import MySQLdb, sys, time
 import matplotlib.pyplot as plt
-
-"""
-temp = zip(x, y2)
-# 在柱状图上显示具体数值, ha水平对齐, va垂直对齐
-for x, y in zip(x, y1):
-    plt.text(x + 0.05, y + 0.1, '%.2f' % y, ha = 'center', va = 'bottom')
-
-for x, y in temp:
-    plt.text(x + 0.05, -y - 0.1, '%.2f' % y, ha = 'center', va = 'bottom')
-
-# 设置坐标轴范围
-plt.xlim(-1, n)
-plt.ylim(-1.5, 1.5)
-# 去除坐标轴
-plt.xticks(())
-plt.yticks(())
-plt.show()
-"""
 
 _test_mod = False
 
@@ -46,6 +33,8 @@ def doJinkinsCoverage(cur):
     _line_rate = ()
     _branch_rate = ()
     __complexity = ()
+
+    """条件获取数据"""
     _sql = 'select filename,line_rate,branch_rate,complexity from jenkins_coverage_t ' \
            'where filename<>"#" and filename like "%Controller.java%"'
     _res = doSQL(cur, _sql)
@@ -60,6 +49,7 @@ def doJinkinsCoverage(cur):
         if float(_r[3]) > _max:
             _max = float(_r[3])
 
+    """调整显示比例"""
     _complexity = ()
     for _c in __complexity:
         _complexity += (_c*1.2 / _max, )
@@ -72,6 +62,7 @@ def doJinkinsCoverage(cur):
     'font.size':8,
     })
 
+    """按比例作图"""
     fig = figure(figsize=[10, 8])
 
     ax = fig.add_subplot(111)
@@ -84,7 +75,7 @@ def doJinkinsCoverage(cur):
     ax.legend()
 
     plt.xlim(0, len(_line_rate)+1)
-    plt.ylim(-1.3, 1.3)
+    plt.ylim(-1.1, 1.6)
 
     ax.grid(True)
 
