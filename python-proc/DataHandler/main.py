@@ -14,7 +14,7 @@
 #
 
 import MySQLdb,sys,json,time,os
-import doPie, doHour, doBarOnTable
+import doPie, doHour
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import crWord
 
@@ -664,12 +664,6 @@ def main():
     _print("小组资源投入情况", title=True, title_lvl=1)
     getGrpWorkTime(cur)
 
-    _pd_fn, _pj_fn = doBarOnTable.doWorkHourbyGroup(cur)
-    doc.addPic(_pd_fn, sizeof=5.2)
-    doc.addText(u"图5-1 各组在产品研发上的投入", align=WD_ALIGN_PARAGRAPH.CENTER)
-    doc.addPic(_pj_fn, sizeof=4.6)
-    doc.addText(u"图5-2 各组在工程项目和非项目上的投入", align=WD_ALIGN_PARAGRAPH.CENTER)
-
     _print("各项目投入情况", title=True, title_lvl=1)
     getProjectWorkTime(cur)
 
@@ -682,7 +676,7 @@ def main():
         _print("")
         _print(u"总投入：%d【人时】，工时成本 %0.2f【万元】" % (sum(costProject), sum(costProject)*125.0/10000.0))
         doc.addPic(_fn, sizeof=4)
-        doc.addText(u"图6 项目投入比例", align=WD_ALIGN_PARAGRAPH.CENTER)
+        doc.addText(u"图5 项目投入比例", align=WD_ALIGN_PARAGRAPH.CENTER)
 
     _print("测试内容统计", title=True, title_lvl=1)
     _pd_ok, _pd_oking, _pd_err = getTstRcdSts(cur)
