@@ -10,12 +10,43 @@ Demo of table function to display a table within a plot.
 """
 import numpy as np
 import matplotlib.pyplot as plt
-import time
+import MySQLdb, time, sys, types
 from matplotlib import rcParams
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+from pylab import mpl
+mpl.rcParams['font.sans-serif'] = ['SimHei']
 
 __test = False
 
-def doBarOnTable( rows, columns, datas ):
+sp_group = [u'研发管理组']
+
+def doSQL(cur,_sql):
+
+    #print(">>>doSQL[%s]" % _sql)
+    cur.execute(_sql)
+    return cur.fetchall()
+
+def doSQLcount(cur,_sql):
+
+    #print(">>>doSQLcount[%s]" % _sql)
+    try:
+        cur.execute(_sql)
+        _result = cur.fetchone()
+        _n = _result[0]
+        if _n is None:
+            _n = 0
+        if type(_n) is types.NoneType:
+            _n = 0
+    except:
+        _n = 0
+
+    #print(">>>doSQLcount[%d]" % int(_n))
+    return _n
+
+def doBarOnTable( rows, columns, datas, figsize=(7,5), left=0.3, right=0.97, bottom=0.28, top=0.96, fontsize=8 ):
     """
     组合 柱状图 和 表格 显示图示
     :param rows: 列 标签（如 产品、任务）
@@ -24,12 +55,12 @@ def doBarOnTable( rows, columns, datas ):
     :return:
     """
     index = np.arange(len(columns)) + 0.3
-    plt.figure()
+    plt.figure(figsize=figsize, dpi=120)
     rcParams.update({
     'font.family':'sans-serif',
     'font.sans-serif':[u'SimHei'],
     'axes.unicode_minus':False,
-    'font.size':8,
+    'font.size':fontsize,
     })
     # Get some pastel shades for the colors
     colors = plt.cm.BuPu(np.linspace(0, 0.7, len(rows)))
@@ -54,7 +85,7 @@ def doBarOnTable( rows, columns, datas ):
     plt.table(cellText=cell_text,rowLabels=rows,rowColours=colors,colLabels=columns,loc='bottom')
 
     # Adjust layout to make room for the table:
-    plt.subplots_adjust(left=0.2, bottom=0.3, top=0.96)
+    plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top)
 
     plt.ylabel(u"工时",fontsize=10)
     #plt.yticks(values * value_increment, ['%d' % val for val in values])
@@ -68,17 +99,122 @@ def doBarOnTable( rows, columns, datas ):
         plt.show()
     return _fn
 
+def getMemberbyGroup(cur):
+    """
+    获取 {组：组员} 字典
+    :param cur: 数据源
+    :return: 字典
+    """
+
+    _sql = 'select GRP_NAME from pd_group_t where GRP_STATE=1'
+    _groups = doSQL(cur, _sql)
+
+    _members = {}
+    for _g in _groups:
+
+        if _g[0] in sp_group:
+            continue
+
+        _member = []
+        _sql = 'select MEMBER_NAME from pd_group_member_t where FLG=1'
+        _res = doSQL(cur, _sql)
+        for _m in _res:
+            _member.append(_m[0])
+        _members[_g[0]] = _member
+    return _members
+
+def getPdProject(cur):
+    """
+    获取 在研 产品项目信息
+    :param cur: 数据源
+    :return: 在研产品项目列表
+    """
+
+    _products = {}
+    _sql = 'select PJ_XMBH,PJ_XMMC from project_t where PJ_XMXZ="产品研发"'
+    _res = doSQL(cur, _sql)
+    for _pd in _res:
+        _products[_pd[0]] = _pd[1]
+    return _products
+
+def getProject(cur):
+    """
+    获取 工程交付 项目信息
+    :param cur: 数据源
+    :return: 工程交付项目列表
+    """
+    _projects = {}
+    _sql = 'select PJ_XMBH,PJ_XMMC from project_t where PJ_XMXZ="工程交付"'
+    _res = doSQL(cur, _sql)
+    for _pd in _res:
+        _projects[_pd[0]] = _pd[1]
+    return _projects
+
+def doWorkHourbyGroup(cur):
+
+    _member_group = getMemberbyGroup(cur)
+    _products = getPdProject(cur)
+    _projects = getProject(cur)
+
+    """生成 各组 投入 在研产品 的工时"""
+    _pd_col = ()
+    _pd_row = []
+    _pd_data = []
+    for _g in _member_group:
+        _pd_col += (_g,)
+    for _pd in _products:
+        _pd_row.append(_products[_pd])
+        _data = []
+        for _g in _pd_col:
+            _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="%s" and TK_SQR="%s"' % (_pd, _g)
+            _cnt = doSQLcount(cur, _sql)
+            _data.append(_cnt)
+        _pd_data.append(_data)
+
+    _pd_fn = doBarOnTable(_pd_row, _pd_col, _pd_data, figsize=(8,5), left=0.35, bottom=0.16, fontsize=10)
+
+    """生成 各组 投入 在项目与非项目 的工时"""
+    _pd_row = [u'工程项目', u'非项目']
+    _pd_data = []
+    _data = []
+    for _g in _pd_col:
+        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH not like "%%PRD-%%" and TK_SQR="%s"' % _g
+        _cnt = doSQLcount(cur, _sql)
+        _data.append(_cnt)
+    _pd_data.append(_data)
+    _data = []
+    for _g in _pd_col:
+        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="#" and TK_SQR="%s"' % _g
+        _cnt = doSQLcount(cur, _sql)
+        _data.append(_cnt)
+    _pd_data.append(_data)
+
+    _pj_fn = doBarOnTable(_pd_row, _pd_col, _pd_data, figsize=(7,5), left=0.12, bottom=0.12, top=0.92, fontsize=10)
+
+    return _pd_fn, _pj_fn
+
 if __name__ == '__main__':
 
     __test = True
+
+    db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
+    cur = db.cursor()
+
+    doWorkHourbyGroup(cur)
+
     data = [[ 66386, 174296,  75131, 577908,  32015],
             [ 58230, 381139,  78045,  99308, 160454],
+            [ 58230, 381139,  78045,  99308, 160454],
+            [ 89135,  80552, 152558, 497981, 603535],
+            [ 78415,  81858, 150656, 193263,  69638],
+            [ 89135,  80552, 152558, 497981, 603535],
+            [ 78415,  81858, 150656, 193263,  69638],
             [ 89135,  80552, 152558, 497981, 603535],
             [ 78415,  81858, 150656, 193263,  69638],
             [139361, 331509, 343164, 781380,  52269]]
 
     columns = (u'设计组', u'系统组', u'云平台研发组', u'大数据研发组', u'测试组')
-    rows = ['Hubble 1.8','Apollo 1.0','Fast 3.0','WhiteHole 1r1m1',u'混合云']
+    rows = ['Hubble 1.8','Apollo 1.0','Fast 3.0','WhiteHole 1r1m1',u'混合云',u'a-1',u'a-2',u'a-3',u'a-4',u'a-5']
 
     values = np.arange(0, 2500, 500)
     value_increment = 1000
