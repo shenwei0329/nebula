@@ -42,9 +42,12 @@ def upload():
         filename = upload.filename
 
         print filename
-        
+
         upload.save(os.path.join('downloads', filename))
         app.logger.debug('File is saved as %s', filename)
+
+    return {"message": "OK"}
+
 
 api.add_resource(TodoSimple, '/<string:todo_id>')
 
