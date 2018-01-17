@@ -27,7 +27,7 @@ def upload():
             q = ipc.MessageQueue(19640419001, ipc.IPC_CREAT | ipc.IPC_EXCL)
         except:
             q = ipc.MessageQueue(19640419001)
-        q.send('downloads/%s' % filename, block=False)
+        q.send('/home/shenwei/nebula/python-proc/downloads/%s' % filename, block=False)
         return "Done"
 
     return "Error"
