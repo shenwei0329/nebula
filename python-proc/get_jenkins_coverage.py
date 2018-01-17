@@ -74,7 +74,8 @@ def getJenkinsCoverage(db, cur, server):
     _fns = []
     for job in jobs:
         """同步coverage文件"""
-        _cmd = 'curl %s/ws/target/site/cobertura/coverage.xml --user %s:%s > %s-coverage.xml' % (job['url'],'manager','8RP-KnN-V5s-BzA', job['name'])
+        _cmd = 'curl %s/ws/target/site/cobertura/coverage.xml --user %s:%s > %s-coverage.xml' % (
+            job['url'],'manager','8RP-KnN-V5s-BzA', job['name'])
         print _cmd
         os.system(_cmd)
 
