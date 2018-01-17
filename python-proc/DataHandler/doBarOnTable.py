@@ -87,10 +87,10 @@ def doBarOnTable( rows, columns, datas, figsize=(7,5), left=0.3, right=0.97, bot
     # Adjust layout to make room for the table:
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top)
 
-    plt.ylabel(u"工时",fontsize=10)
+    plt.ylabel(u"工时",fontsize=fontsize)
     #plt.yticks(values * value_increment, ['%d' % val for val in values])
     plt.xticks([])
-    plt.title(u'资源投入',fontsize=10)
+    plt.title(u'资源投入',fontsize=fontsize)
 
     _fn = 'pic/%s-barontable.png' % time.time()
     if not __test:
@@ -150,7 +150,7 @@ def getProject(cur):
         _projects[_pd[0]] = _pd[1]
     return _projects
 
-def doWorkHourbyGroup(cur):
+def doWorkHourbyGroup(cur, begin_date=None, end_date=None):
 
     _member_group = getMemberbyGroup(cur)
     _products = getPdProject(cur)
@@ -166,30 +166,48 @@ def doWorkHourbyGroup(cur):
         _pd_row.append(_products[_pd])
         _data = []
         for _g in _pd_col:
-            _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="%s" and TK_SQR="%s"' % (_pd, _g)
+            if (begin_date is None) or (end_date is None):
+                _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="%s" and TK_SQR="%s"' % (_pd, _g)
+            else:
+                _sql = 'select sum(TK_GZSJ+0.) from task_t where ' \
+                       'TK_XMBH="%s" and TK_SQR="%s" and created_at between "%s" and "%s"' % (
+                            _pd, _g, begin_date, end_date)
             _cnt = doSQLcount(cur, _sql)
             _data.append(_cnt)
         _pd_data.append(_data)
 
-    _pd_fn = doBarOnTable(_pd_row, _pd_col, _pd_data, figsize=(8,5), left=0.35, bottom=0.16, fontsize=10)
+    _pd_fn = doBarOnTable(_pd_row, _pd_col, _pd_data, figsize=(9,5), left=0.34, right=0.99,
+                          bottom=0.16, top=0.94, fontsize=11)
 
     """生成 各组 投入 在项目与非项目 的工时"""
     _pd_row = [u'工程项目', u'非项目']
     _pd_data = []
     _data = []
     for _g in _pd_col:
-        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH not like "%%PRD-%%" and TK_SQR="%s"' % _g
+        if (begin_date is None) or (end_date is None):
+            _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH<>"#" and ' \
+                   'TK_XMBH not like "%%PRD-%%" and TK_SQR="%s"' % _g
+        else:
+            _sql = 'select sum(TK_GZSJ+0.) from task_t where ' \
+                   'TK_XMBH<>"#" and TK_XMBH not like "%%PRD-%%" and ' \
+                   'TK_SQR="%s" and created_at between "%s" and "%s"' % (
+                        _g, begin_date, end_date)
         _cnt = doSQLcount(cur, _sql)
         _data.append(_cnt)
     _pd_data.append(_data)
     _data = []
     for _g in _pd_col:
-        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="#" and TK_SQR="%s"' % _g
+        if (begin_date is None) or (end_date is None):
+            _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="#" and TK_SQR="%s"' % _g
+        else:
+            _sql = 'select sum(TK_GZSJ+0.) from task_t where ' \
+                   'TK_XMBH="#" and TK_SQR="%s" and created_at between "%s" and "%s"' % (
+                        _g, begin_date, end_date)
         _cnt = doSQLcount(cur, _sql)
         _data.append(_cnt)
     _pd_data.append(_data)
 
-    _pj_fn = doBarOnTable(_pd_row, _pd_col, _pd_data, figsize=(7,5), left=0.12, bottom=0.12, top=0.92, fontsize=10)
+    _pj_fn = doBarOnTable(_pd_row, _pd_col, _pd_data, figsize=(7,5), left=0.12, bottom=0.12, top=0.92, fontsize=11)
 
     return _pd_fn, _pj_fn
 
