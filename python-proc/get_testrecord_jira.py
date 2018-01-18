@@ -17,7 +17,8 @@ ReplaceTable = {
     u"whitehole v1.0r1m1": "WhiteHole^1.0r1m1",
     u"测试-Apollo": "Apollo^1.0",
     u"hubble1.8": "Hubble^1.8",
-    u"FAST云平台测试": "FAST^3.0"
+    u"FAST云平台测试": "FAST^3.0",
+    u"应用支撑云平台FASTV3.0": "FAST^3.0",
 }
 
 def doSQLinsert(db, sql, cur):
@@ -48,7 +49,7 @@ def getIssue(jira, bg_date, ed_date):
     :return:
     """
     """ 目前项目：HBLE, WHIT, FASTT, AP；问题类型：Improvement, Bug, 缺陷 """
-    issues = jira.search_issues('project in (HBLE, WHIT, FASTT, AP) AND '
+    issues = jira.search_issues('project in (HBLE, WHIT, FASTT, FAST, AP) AND '
                                 'issuetype in (Improvement, Bug, 缺陷) AND updated >= %s AND updated <= %s' %
                                 (bg_date,ed_date), maxResults=10000)
     _SQLcmd = []

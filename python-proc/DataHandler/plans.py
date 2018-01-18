@@ -450,7 +450,7 @@ def main(project="PRD-2017-PROJ-00003"):
     _print(u"过程情况", title=True, title_lvl=1)
     _print(u'1）单元测试情况：')
     _fn = showJinkinsRec.doJinkinsRec(cur)
-    doc.addPic(_fn, sizeof=5.2)
+    doc.addPic(_fn, sizeof=6.2)
     _print(u'【图例说明】：数据采自Jenkins系统，以展示项目中每个模块的单元测试情况。')
     _print(u'2）单元测试覆盖率：')
     _fn = showJinkinsCoverage.doJinkinsCoverage(cur)

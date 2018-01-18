@@ -88,7 +88,7 @@ def doJinkinsRec(cur):
     })
     autodates = AutoDateLocator()
     yearsFmt = DateFormatter('%Y-%m-%d %H:%M:%S')
-    fig = figure(figsize=[8, 12])
+    fig = figure(figsize=[10, 12], dpi=120)
 
     ax = fig.add_subplot(111)
     ax_twiny = ax.twiny()
@@ -105,8 +105,8 @@ def doJinkinsRec(cur):
     fig.autofmt_xdate()                         # 设置x轴时间外观  
     ax.xaxis.set_major_locator(autodates)       # 设置时间间隔  
     ax.xaxis.set_major_formatter(yearsFmt)      # 设置时间显示格式  
-    ax.set_xticks(pd.date_range(start='2017-12-01 00:00:00', end='2018-01-31 23:59:59', freq='3D'))
-    ax.set_xlim("2017-12-20 00:00:00", "2018-01-20 00:00:00")
+    ax.set_xticks(pd.date_range(start='2017-12-01 00:00:00', end='2018-03-31 23:59:59', freq='3D'))
+    ax.set_xlim("2017-12-20 00:00:00", "2018-02-15 00:00:00")
     ax.set_yticks(range(1,len(_lables)+1))
     ax.set_yticklabels(_lables,)
     ax.set_ylim(0,len(_lables)+4)
@@ -126,7 +126,7 @@ def doJinkinsRec(cur):
     ax.grid(True)
 
     plt.title(u'单元测试情况', fontsize=12)
-    plt.subplots_adjust(left=0.35, right=0.98, bottom=0.09, top=0.96)
+    plt.subplots_adjust(left=0.22, right=0.98, bottom=0.11, top=0.96)
 
     _fn = 'pic/%s-compscore.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     if not _test_mod:
