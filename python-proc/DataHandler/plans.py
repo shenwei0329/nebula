@@ -478,13 +478,20 @@ def main(project="PRD-2017-PROJ-00003"):
     if _m > 0:
         _print(u"● 本迭代周期内等待执行的任务有【%d】个。" % _m)
     if _r+_r_completed+_r_waitting > 0:
-        _print(u"● “入侵”的非计划任务有【%d】个，其中已完成%d个、正在执行%d个和待执行%d个。" %
+        _print(u"● “入侵”的任务有【%d】个，其中已完成%d个、正在执行%d个和待执行%d个。" %
                (_r+_r_completed+_r_waitting, _r_completed, _r, _r_waitting), color=(150, 0, 0))
 
     _ylines = []
     _ylines.append([_total[_line_n+1], '--', 'k', u'计划完成%d个' % _total[_line_n+1]])
     _ylines.append([_sum+_n, '--', 'r', u'即将完成%d个' % (_sum+_n)])
     _ylines.append([_sum+_n+_m, '--', 'g', u'等待完成%d个' % _m])
+
+    _dlt = (float(_sum + _n + _m - _total[-1])*100.)/float(_total[-1])
+    print ">>>", _dlt
+    if _dlt > 5. :
+        _print(u'【风险提示】：实际制定的任务量已超出计划量%0.2f%%，须调整计划。' % _dlt, color=(250, 0, 0))
+        _results.append([u'● 【风险提示】实际制定的任务量已超出计划量%0.2f%%，须调整计划。' % _dlt, (250, 0, 0)])
+
     _dlt = float((_total[_line_n + 1] - (_sum + _n)) * 100) / float(_total[_line_n + 1])
     if _dlt > 5:
         _print(u'【风险提示】：本期实际完成的任务总量已“负偏离”计划量（偏离%0.2f%%），估计延期%d个工作日。' %

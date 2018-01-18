@@ -18,7 +18,7 @@ ReplaceTable = {
     u"测试-Apollo": "Apollo^1.0",
     u"hubble1.8": "Hubble^1.8",
     u"FAST云平台测试": "FAST^3.0",
-    u"应用支撑云平台FASTV3.0": "FAST^3.0",
+    u"应用支撑云平台 FAST V3.0": "FAST^3.0",
 }
 
 def doSQLinsert(db, sql, cur):
