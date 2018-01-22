@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from matplotlib.dates import AutoDateLocator, DateFormatter
 from pylab import figure, axes
-import MySQLdb, sys, time
+import MySQLdb, sys, time, datetime
 import pandas as pd
 
 _test_mod = False
@@ -54,7 +54,9 @@ def doJinkinsRec(cur):
     _lines = []
     _line_durations = []
     _line_errors = []
-    for _key in _jobs:
+
+    """按测试次数排序构建数据"""
+    for _key in sorted(_jobs, key=lambda x: -len(_jobs[x])):
         _duration = 0
         _error = 0
         for _task in _jobs[_key]:
@@ -106,7 +108,9 @@ def doJinkinsRec(cur):
     ax.xaxis.set_major_locator(autodates)       # 设置时间间隔  
     ax.xaxis.set_major_formatter(yearsFmt)      # 设置时间显示格式  
     ax.set_xticks(pd.date_range(start='2017-12-01 00:00:00', end='2018-03-31 23:59:59', freq='3D'))
-    ax.set_xlim("2017-12-20 00:00:00", "2018-02-15 00:00:00")
+    """设定显示的时间段"""
+    _end_date = datetime.date.today().replace(day=datetime.date.today().day+3)
+    ax.set_xlim("2017-12-20 00:00:00", "%s 00:00:00" % _end_date)
     ax.set_yticks(range(1,len(_lables)+1))
     ax.set_yticklabels(_lables,)
     ax.set_ylim(0,len(_lables)+4)
@@ -130,7 +134,7 @@ def doJinkinsRec(cur):
 
     _fn = 'pic/%s-compscore.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     if not _test_mod:
-        plt.savefig(_fn, dpi=120)
+        plt.savefig(_fn, dpi=1200)
     else:
         plt.show()
     return _fn
