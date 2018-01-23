@@ -366,5 +366,37 @@ CREATE TABLE if not exists jenkins_coverage_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+# 专利管理
+#
+#
+CREATE TABLE if not exists patent_management_t
+(
+	id integer primary key not null auto_increment,
+	PT_NAME varchar(120)        comment '专利名称',
+	PT_DESC varchar(1024)       comment '描述',
+	PT_PERSONS varchar(32)      comment '发明人',
+	PT_DATE varchar(32)         comment '受理日期',
+	PT_NUMBER varchar(32)       comment '专利号',
+	PT_TYPE_NUMBER varchar(32)  comment '国际专利主分类号',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# 著作权登记管理
+#
+#
+CREATE TABLE if not exists copyright_management_t
+(
+	id integer primary key not null auto_increment,
+	CR_TITLE varchar(120)               comment '标题',
+	CR_PRODUCT varchar(64)              comment '产品',
+	CR_VERSION varchar(32)              comment '版本',
+	CR_DATE varchar(32)                 comment '授权日期',
+	CR_REGISTRATION_NUMBER varchar(32)  comment '注册号',
+	CR_SCOPE varchar(32)                comment '范围',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 #
 #

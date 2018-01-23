@@ -384,9 +384,9 @@ def getOprWorkTime(cur):
             _c = int(_b/_a)
             _s = "工作效率：%d %%" % _c
             if _c > 100:
-                _s = _s + "，超标 %0.2f%%" % float(int(_c)/100.)
+                _s = _s + "，超标 %0.2f%%" % (_c - 100.)
             if _c < 100:
-                _s = _s + "，剩余 %d%%" % (100-int(_c))
+                _s = _s + "，剩余 %0.2f%%" % (100.- _c)
     else:
         _s = "工作效率：0%"
     _print(_s)

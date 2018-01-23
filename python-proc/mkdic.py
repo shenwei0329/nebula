@@ -29,7 +29,9 @@ TableDic = {
     'KPI':'kpi_t',
     'PRD':'prd_t',
     'SALE_PRICE':'sale_price_t',
-    'PD_OUTPUT_REQ': 'pd_output_req_t',
+    'PD_OUTPUT_REQ':'pd_output_req_t',
+    'COPYRIGHT_MANAGEMENT':'copyright_management_t',
+    'PATENT_MANAGEMENT':'patent_management_t',
 }
 
 """设置字符集

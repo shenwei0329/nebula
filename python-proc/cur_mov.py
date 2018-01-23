@@ -12,6 +12,8 @@
 from curses_modules import basic,obj
 import time, random, sys
 
+obj_pattern = ['.', '-', '=', '+', '#', 'x', '*', 'o', 'O']
+
 def main():
 
     random.seed(time.clock())
@@ -25,7 +27,7 @@ def main():
 
         dot = []
         for _i in range(5):
-            dot.append(obj.Obj("%d" % _i, 0, 0, 'o', _i+1))
+            dot.append(obj.Obj("%d" % _i, 0, 0, obj_pattern[_i], _i+1))
         while True:
             for _d in dot:
                 _d.move()
