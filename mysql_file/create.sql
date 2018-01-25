@@ -376,6 +376,7 @@ CREATE TABLE if not exists patent_management_t
 	PT_DESC varchar(1024)       comment '描述',
 	PT_PERSONS varchar(32)      comment '发明人',
 	PT_DATE varchar(32)         comment '受理日期',
+	PT_ACCEPT_DATE varchar(32)  comment '确认日期',
 	PT_NUMBER varchar(32)       comment '专利号',
 	PT_TYPE_NUMBER varchar(32)  comment '国际专利主分类号',
 	created_at datetime,
