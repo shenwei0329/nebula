@@ -208,26 +208,6 @@ CREATE TABLE if not exists project_key_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-# Jira 任务执行跟踪表
-#
-#
-CREATE TABLE if not exists jira_task_t
-(
-	id integer primary key not null auto_increment,
-	project_alias varchar(80) comment '项目号',
-	issue_id varchar(24) comment '任务标识',
-	issue_status varchar(24) comment '状态（中文）',
-	summary varchar(160) comment '任务简述',
-    description varchar(1024) comment '任务描述',
-    users varchar(80) comment '任务执行人数组',
-    users_alias varchar(80) comment '任务执行人别名数组',
-    user_emails varchar(1024) comment '任务执行人电邮数组',
-	startDate varchar(48) comment '计划：启动日期',
-	endDate varchar(48) comment '计划：完成日期',
-	created_at datetime,
-	updated_at datetime
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 # Project 任务计划表
 #
 #
@@ -395,6 +375,40 @@ CREATE TABLE if not exists copyright_management_t
 	CR_DATE varchar(32)                 comment '授权日期',
 	CR_REGISTRATION_NUMBER varchar(32)  comment '注册号',
 	CR_SCOPE varchar(32)                comment '范围',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# Jira 任务执行跟踪表
+#   用于存储Issue的基本信息
+#
+CREATE TABLE if not exists jira_task_t
+(
+	id integer primary key not null auto_increment,
+	project_alias varchar(80)   comment '项目号',
+	issue_id varchar(24)        comment '任务标识',
+	issue_type varchar(24)      comment '类型',
+	issue_status varchar(24)    comment '状态（中文）',
+	summary varchar(160)        comment '任务简述',
+    description varchar(1024)   comment '任务描述',
+    users varchar(80)           comment '任务执行人数组',
+    users_alias varchar(80)     comment '任务执行人别名数组',
+    user_emails varchar(1024)   comment '任务执行人电邮数组',
+	startDate varchar(48)       comment '计划：启动日期',
+	endDate varchar(48)         comment '计划：完成日期',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# Jira系统的Issue记录
+#   因系统处于调整过程（多变），所以采用key-value方式存储
+#
+CREATE TABLE if not exists jira_issue_t
+(
+	id integer primary key not null auto_increment,
+	issue_id varchar(24)    comment '标识',
+	issue_key varchar(1024) comment '关键字',
+	issue_value text        comment '值',
 	created_at datetime,
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
