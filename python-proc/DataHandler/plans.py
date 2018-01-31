@@ -174,7 +174,7 @@ def getQ(cur):
     :param cur: 数据源
     :return: 指标
     """
-    _sql = 'select count(*) from jira_task_t'
+    _sql = 'select count(*) from jira_task_t where issue_type="story"'
     _m = doSQLcount(cur, _sql)
 
     """计划的任务"""
@@ -193,7 +193,7 @@ def getQ(cur):
             #print _like_str
             """在Jira中查找满足任务名称的项目"""
             _sql = u'select issue_id,summary,users,issue_status from jira_task_t where ' \
-                   u'summary like "%%%s%%"' % _like_str
+                   u'summary like "%%%s%%" and  issue_type="story"' % _like_str
             _tasks = doSQL(cur, _sql)
             for _task in _tasks:
                 if not _kv.has_key(_task[0]):
@@ -360,7 +360,8 @@ def main(project="PRD-2017-PROJ-00003"):
     while True:
         _date = _start_date.strftime(u"%Y-%m-%d")
         _sql = 'select count(*) from jira_task_t ' \
-               'where project_alias="%s" and endDate like "%%%s%%" and issue_status="完成" order by id' %\
+               'where project_alias="%s" and endDate like "%%%s%%"' \
+               ' and issue_status="完成" and issue_type="story" order by id' %\
                (ProjectAlias[project],_date)
         _n = int(doSQLcount(cur,_sql))
         _active_quta.append(_n)
@@ -461,15 +462,18 @@ def main(project="PRD-2017-PROJ-00003"):
 
     #_date = _today.strftime(u"%Y-%m-%d")
     #_sql = 'select count(*) from jira_task_t where endDate>"%s" order by id' % _date
-    _sql = 'select count(*) from jira_task_t where issue_status="处理中" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="处理中" and issue_type="story" order by issue_id'
     _n = int(doSQLcount(cur, _sql))
-    _sql = 'select count(*) from jira_task_t where issue_status="待办" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="待办" and issue_type="story" order by issue_id'
     _m = int(doSQLcount(cur, _sql))
-    _sql = 'select count(*) from jira_task_t where issue_status="处理中" and summary like "%入侵%" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="处理中" and summary like "%入侵%"' \
+           ' and issue_type="story" order by issue_id'
     _r = int(doSQLcount(cur, _sql))
-    _sql = 'select count(*) from jira_task_t where issue_status="完成" and summary like "%入侵%" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="完成" and summary like "%入侵%"' \
+           ' and issue_type="story" order by issue_id'
     _r_completed = int(doSQLcount(cur, _sql))
-    _sql = 'select count(*) from jira_task_t where issue_status="待办" and summary like "%入侵%" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="待办" and summary like "%入侵%"' \
+           ' and issue_type="story" order by issue_id'
     _r_waitting = int(doSQLcount(cur, _sql))
 
     _print(u"● 截至本迭代周期已完成任务有【%d】个。" % _sum)

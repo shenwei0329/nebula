@@ -8,7 +8,8 @@
 from jira import JIRA
 from jira.client import GreenHopper
 
-import types,json
+import types
+import MySQLdb
 
 
 class jira_handler:
@@ -28,6 +29,8 @@ class jira_handler:
             if not self.version.has_key(u"%s" % _v):
                 self.version[u"%s" % _v] = {}
             self.version[u"%s" % _v][u"id"] = _v.id
+            self.version[u"%s" % _v]['startDate'] = ""
+            self.version[u"%s" % _v]['releaseDate'] = ""
             if 'startDate' in dir(_v):
                 self.version[u"%s" % _v]['startDate'] = _v.startDate
             if 'releaseDate' in dir(_v):
@@ -60,12 +63,13 @@ class jira_handler:
 
     def get_task_time(self):
         return {"agg_time": self.issue.fields.aggregatetimeestimate,
-                "org_time": self.issue.fields.timeoriginalestimate}
+                "org_time": self.issue.fields.timeoriginalestimate,
+                "spent_time": self.issue.fields.timespent}
 
     def get_landmark(self):
         if len(self.issue.fields.fixVersions) > 0:
             return u"%s" % self.issue.fields.fixVersions[0]
-        return None
+        return ""
 
     def get_desc(self):
         return u"%s" % self.issue.fields.summary
@@ -123,6 +127,20 @@ class jira_handler:
         print u"Story Points = %0.2f" % self.get_story_point(),
         _time = self.get_task_time()
         print u"估计工时：%s，剩余工时：%s" % (_time['agg_time'], _time['org_time'])
+
+        if type(_time['agg_time']) is types.NoneType:
+            _time['agg_time'] = ""
+        if type(_time['org_time']) is types.NoneType:
+            _time['org_time'] = ""
+        if type(_time["spent_time"]) is types.NoneType:
+            _time["spent_time"] = ""
+        return {u"%s" % self.show_name(): {
+            "landmark": self.get_landmark(),
+            "point": self.get_story_point(),
+            "agg_time": _time['agg_time'],
+            "org_time": _time['org_time'],
+            "spent_time": _time['spent_time']
+        }}
 
     def get_users(self):
         """
@@ -185,7 +203,84 @@ class jira_handler:
         return kv_sum, kv_link, task_link
 
 
+class SqlService:
+
+    def __init__(self, db):
+        self.db = db
+        self.cur = db.cursor()
+
+    def insert(self, _sql):
+        if self.cur is None:
+            return
+        try:
+            self.cur.execute(_sql)
+            self.db.commit()
+        except:
+            self.db.rollback()
+
+    def count(self, _sql):
+        if self.cur is None:
+            return 0
+        _n = 0
+        try:
+            self.cur.execute(_sql)
+            _result = self.cur.fetchone()
+            _n = _result[0]
+            if _n is None:
+                _n = 0
+        except:
+            _n = 0
+        finally:
+            return _n
+
+    def do(self, _sql):
+        if self.cur is None:
+            return
+        self.cur.execute(_sql)
+        return self.cur.fetchall()
+
+
+def into_db(sql_service, kv):
+    """
+    同步Issue数据
+    :param sql_service: 数据库处理器
+    :param kv: Issue键值
+    :return:
+    """
+    _key = kv.keys()[0]
+    _sql = u'select issue_key,issue_value from jira_issue_t where issue_id="%s"' % _key
+    _res = sql_service.do(_sql)
+    _kv = {}
+    if len(_res) > 0:
+        for _r in _res:
+            _kv[_r[0]] = _r[1]
+
+        for _kk in kv[_key]:
+            if _kk in _kv:
+                if _kv[_kk] != u"%s" % kv[_key][_kk]:
+                    _sql = u'update jira_issue_t set issue_value="%s",updated_at=now() ' \
+                           u'where issue_id="%s" and issue_key="%s"' %\
+                           (kv[_key][_kk], _key, _kk, )
+                    print _sql
+                    sql_service.insert(_sql)
+            else:
+                _sql = u'insert into jira_issue_t(issue_id,issue_key,issue_value,created_at,updated_at) ' \
+                       u'values("%s","%s","%s",now(),now())' %\
+                       (_key, _kk, kv[_key][_kk])
+                sql_service.insert(_sql)
+    else:
+        for _k in kv[_key]:
+            _sql = u'insert into jira_issue_t(issue_id,issue_key,issue_value,created_at,updated_at) ' \
+                   u'values("%s","%s","%s",now(),now())' % \
+                   (_key, _k, kv[_key][_k])
+            sql_service.insert(_sql)
+
+
 def main():
+
+    """连接数据库"""
+    db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
+    my_sql = SqlService(db)
 
     my_jira = jira_handler('FAST')
     _info = my_jira.get_pj_info()
@@ -193,7 +288,8 @@ def main():
 
     """获取项目版本信息
     """
-    _versions = sorted(my_jira.get_versions())
+    versions = my_jira.get_versions()
+    _versions = sorted(versions)
     task_link = {}
     _version = {}
     for _v in _versions:
@@ -205,30 +301,39 @@ def main():
         task_link.update(_task_link)
         if not _version[u"%s" % _v].has_key(u"issues"):
             _version[u"%s" % _v][u"issues"] = {}
+        _version[u"%s" % _v][u"startDate"] = versions[_v][u"startDate"]
+        _version[u"%s" % _v][u"releaseDate"] = versions[_v][u"releaseDate"]
         _version[u"%s" % _v][u"issues"][u"key"] = kv
         _version[u"%s" % _v][u"issues"][u"link"] = kv_link
 
-    for _v in _version:
-        print u"里程碑：%s" % _v
+    for _v in sorted(_version, key=lambda a: a.split(u'（')[1]):
+        print u"里程碑：%s" % _v, \
+            u"\t startDate: %s" % versions[_v][u"startDate"],\
+            u"\t releaseDate: %s" % versions[_v][u"releaseDate"]
         for _key in _version[_v][u"issues"][u"key"]:
             print(u"[类型：%s]: %d（个）" % (_key, _version[_v][u"issues"][u"key"][_key]))
             for __v in _version[_v][u"issues"][u"link"][_key]:
                 print u'\t状态：%s' % __v
                 for __story in _version[_v][u"issues"][u"link"][_key][__v]:
+                    """里程碑里所有story
+                    """
                     print u"\t\t- story：",
                     my_jira.set_issue_by_name(__story)
-                    my_jira.show_issue()
+                    _kv = my_jira.show_issue()
+                    into_db(my_sql, _kv)
                     if task_link.has_key(__story):
                         for _task in task_link[__story]:
                             print u"\t\t\t 任务: ",
                             my_jira.set_issue_by_name(_task)
-                            my_jira.show_issue()
+                            _kv = my_jira.show_issue()
+                            into_db(my_sql, _kv)
                             _link = my_jira.get_link()
                             for _l in _link:
                                 for __l in _link[_l]:
                                     print "\t\t\t\t",
                                     my_jira.set_issue_by_name(__l)
-                                    my_jira.show_issue()
+                                    _kv = my_jira.show_issue()
+                                    into_db(my_sql, _kv)
 
 
 if __name__ == '__main__':
