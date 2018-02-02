@@ -9,12 +9,18 @@ from jira import JIRA
 from jira.client import GreenHopper
 
 import types
+import json
 import MySQLdb
+from pymongo import MongoClient
+
+import mysql_hdr
 
 
 class jira_handler:
 
     def __init__(self, project_name):
+        self.mongo_client = MongoClient()
+        self.mongo_db = self.mongo_client.FAST
         self.jira = JIRA('http://172.16.60.13:8080', basic_auth=('shenwei','sw64419'))
         self.gh = GreenHopper({'server': 'http://172.16.60.13:8080'}, basic_auth=('shenwei', 'sw64419'))
         self.name = project_name
@@ -26,19 +32,31 @@ class jira_handler:
         _versions = self.jira.project_versions(self.name)
         self.version = {}
         for _v in _versions:
-            if not self.version.has_key(u"%s" % _v):
-                self.version[u"%s" % _v] = {}
-            self.version[u"%s" % _v][u"id"] = _v.id
-            self.version[u"%s" % _v]['startDate'] = ""
-            self.version[u"%s" % _v]['releaseDate'] = ""
+            _key = (u"%s" % _v).replace('.', '^')
+            if not self.version.has_key(_key):
+                self.version[_key] = {}
+            self.version[_key][u"id"] = _v.id
+            self.version[_key]['startDate'] = ""
+            self.version[_key]['releaseDate'] = ""
             if 'startDate' in dir(_v):
-                self.version[u"%s" % _v]['startDate'] = _v.startDate
+                self.version[_key]['startDate'] = _v.startDate
             if 'releaseDate' in dir(_v):
-                self.version[u"%s" % _v]['releaseDate'] = _v.releaseDate
+                self.version[_key]['releaseDate'] = _v.releaseDate
+            if self.mongo_db.project.find({"version": _key}).count() > 0:
+                self.mongo_db.project.update({"version": _key},
+                                             dict({"version": _key}, **self.version[_key]))
+            else:
+                _val = dict({"version": _key}, **self.version[_key])
+                print _val
+                self.mongo_db.project.insert(_val)
         self.issue = None
 
     def get_versions(self):
-        return self.version
+        _v = {}
+        for _k in self.version:
+            _key = (u"%s" % _k).replace('^', '.')
+            _v[_key] = self.version[_k]
+        return _v
 
     def get_pj_info(self):
         return {'pj_name': self.pj_name, 'pj_manager': self.pj_manager}
@@ -134,13 +152,28 @@ class jira_handler:
             _time['org_time'] = ""
         if type(_time["spent_time"]) is types.NoneType:
             _time["spent_time"] = ""
-        return {u"%s" % self.show_name(): {
+        _issue = {u"%s" % self.show_name(): {
+            "issue_type": self.get_type(),
+            "users": self.get_users(),
+            "status": self.get_status(),
             "landmark": self.get_landmark(),
             "point": self.get_story_point(),
             "agg_time": _time['agg_time'],
             "org_time": _time['org_time'],
             "spent_time": _time['spent_time']
         }}
+        _key = u"%s" % self.show_name()
+        if self.mongo_db.issue.find({"issue": _key}).count() > 0:
+            self.mongo_db.issue.update({"issue": _key}, dict({"issue": _key}, **_issue[_key]))
+        else:
+            self.mongo_db.issue.insert(dict({"issue": _key}, **_issue[_key]))
+        if self.mongo_db.issue_link.find({"issue": _key}).count() > 0:
+            self.mongo_db.issue_link.update({"issue": _key},
+                                            dict({"issue": _key}, **self.get_link()))
+        else:
+            self.mongo_db.issue_link.insert(dict({"issue": _key}, **self.get_link()))
+
+        return _issue
 
     def get_users(self):
         """
@@ -150,12 +183,16 @@ class jira_handler:
         watcher = self.jira.watchers(self.issue)
         _user = {}
         for watcher in watcher.watchers:
+            _key = ('%s' % watcher.name)
             if watcher.active:
-                if not _user.has_key(watcher.emailAddress):
-                    _user[watcher.emailAddress] = {}
-                _user[watcher.emailAddress]['alias'] = watcher.name
-                _user[watcher.emailAddress]['name'] = watcher.displayName
+                if not _user.has_key(_key):
+                    _user[_key] = {}
+                _user[_key]['email'] = watcher.emailAddress
+                # _user[_key]['name'] = watcher.displayName
         return _user
+
+    def write_log(self, info):
+        self.mongo_db.log.insert(info)
 
     def scan_issue(self, bg_date, keys, version):
         """
@@ -203,44 +240,7 @@ class jira_handler:
         return kv_sum, kv_link, task_link
 
 
-class SqlService:
-
-    def __init__(self, db):
-        self.db = db
-        self.cur = db.cursor()
-
-    def insert(self, _sql):
-        if self.cur is None:
-            return
-        try:
-            self.cur.execute(_sql)
-            self.db.commit()
-        except:
-            self.db.rollback()
-
-    def count(self, _sql):
-        if self.cur is None:
-            return 0
-        _n = 0
-        try:
-            self.cur.execute(_sql)
-            _result = self.cur.fetchone()
-            _n = _result[0]
-            if _n is None:
-                _n = 0
-        except:
-            _n = 0
-        finally:
-            return _n
-
-    def do(self, _sql):
-        if self.cur is None:
-            return
-        self.cur.execute(_sql)
-        return self.cur.fetchall()
-
-
-def into_db(sql_service, kv):
+def into_db(sql_service, my_jira, kv):
     """
     同步Issue数据
     :param sql_service: 数据库处理器
@@ -256,17 +256,33 @@ def into_db(sql_service, kv):
             _kv[_r[0]] = _r[1]
 
         for _kk in kv[_key]:
+            _value = (u"%s" % kv[_key][_kk])
             if _kk in _kv:
-                if _kv[_kk] != u"%s" % kv[_key][_kk]:
+                if _kv[_kk] != _value:
+                    """记录更改情况"""
                     _sql = u'update jira_issue_t set issue_value="%s",updated_at=now() ' \
                            u'where issue_id="%s" and issue_key="%s"' %\
-                           (kv[_key][_kk], _key, _kk, )
+                           (_value, _key, _kk, )
                     print _sql
                     sql_service.insert(_sql)
+                    if _kk != "users":
+                        _sql = u'insert into jira_log_t(' \
+                               u'issue_id,rec_key,old_value,new_value,created_at,updated_at) ' \
+                               u'values("%s","%s","%s","%s",now(),now())' %\
+                               (_key, _kk, _kv[_kk], _value)
+                        print _sql
+                        sql_service.insert(_sql)
+                    if _kk == "users":
+                        print _kv[_kk]
+                        _old = json.loads(_kv[_kk].replace("u'", '"').replace("'", '"'))
+                        _log = {"issue_id": _key, "key": _kk, "old": _old, "new": kv[_key][_kk]}
+                    else:
+                        _log = {"issue_id": _key, "key": _kk, "old": _kv[_kk], "new": _value}
+                    my_jira.write_log(_log)
             else:
                 _sql = u'insert into jira_issue_t(issue_id,issue_key,issue_value,created_at,updated_at) ' \
                        u'values("%s","%s","%s",now(),now())' %\
-                       (_key, _kk, kv[_key][_kk])
+                       (_key, _kk, _value)
                 sql_service.insert(_sql)
     else:
         for _k in kv[_key]:
@@ -280,11 +296,13 @@ def main():
 
     """连接数据库"""
     db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
-    my_sql = SqlService(db)
+    my_sql = mysql_hdr.SqlService(db)
 
     my_jira = jira_handler('FAST')
+    """
     _info = my_jira.get_pj_info()
     print(u"项目名称：%s，负责人：%s" % (_info['pj_name'], _info['pj_manager']))
+    """
 
     """获取项目版本信息
     """
@@ -306,10 +324,39 @@ def main():
         _version[u"%s" % _v][u"issues"][u"key"] = kv
         _version[u"%s" % _v][u"issues"][u"link"] = kv_link
 
+    """获取DB的里程碑信息
+    """
+    _sql = u'select name,start_date,release_date from jira_landmark_t where pj_id="FAST"'
+    _res = my_sql.do(_sql)
+    _db_rec = {}
+    for _r in _res:
+        _db_rec[_r[0]] = {'start_date': _r[1],
+                          'release_date': _r[2]}
+
     for _v in sorted(_version, key=lambda a: a.split(u'（')[1]):
         print u"里程碑：%s" % _v, \
             u"\t startDate: %s" % versions[_v][u"startDate"],\
             u"\t releaseDate: %s" % versions[_v][u"releaseDate"]
+        """同步里程碑信息
+        """
+        if _v in _db_rec:
+            if versions[_v][u"startDate"] != _db_rec[_v]['start_date']:
+                _sql = u'update jira_landmark_t set start_date="%s",updated_at=now() ' \
+                       u'where pj_id="FAST" and name="%s"' % (_v, versions[_v][u"startDate"])
+                print _sql
+                my_sql.insert(_sql)
+            if versions[_v][u"releaseDate"] != _db_rec[_v]['release_date']:
+                _sql = u'update jira_landmark_t set release_date="%s",updated_at=now() ' \
+                       u'where pj_id="FAST" and name="%s"' % (_v, versions[_v][u"releaseDate"])
+                print _sql
+                my_sql.insert(_sql)
+        else:
+            _sql = u'insert into jira_landmark_t(pj_id,name,start_date,release_date,created_at,updated_at) ' \
+                   u'values("FAST","%s","%s","%s",now(),now())' % \
+                   (_v, versions[_v][u"startDate"], versions[_v][u"releaseDate"])
+            print _sql
+            my_sql.insert(_sql)
+
         for _key in _version[_v][u"issues"][u"key"]:
             print(u"[类型：%s]: %d（个）" % (_key, _version[_v][u"issues"][u"key"][_key]))
             for __v in _version[_v][u"issues"][u"link"][_key]:
@@ -320,20 +367,22 @@ def main():
                     print u"\t\t- story：",
                     my_jira.set_issue_by_name(__story)
                     _kv = my_jira.show_issue()
-                    into_db(my_sql, _kv)
+                    into_db(my_sql, my_jira, _kv)
                     if task_link.has_key(__story):
                         for _task in task_link[__story]:
                             print u"\t\t\t 任务: ",
                             my_jira.set_issue_by_name(_task)
                             _kv = my_jira.show_issue()
-                            into_db(my_sql, _kv)
+                            into_db(my_sql, my_jira, _kv)
                             _link = my_jira.get_link()
                             for _l in _link:
                                 for __l in _link[_l]:
+                                    if __l == __story:
+                                        continue
                                     print "\t\t\t\t",
                                     my_jira.set_issue_by_name(__l)
                                     _kv = my_jira.show_issue()
-                                    into_db(my_sql, _kv)
+                                    into_db(my_sql, my_jira, _kv)
 
 
 if __name__ == '__main__':

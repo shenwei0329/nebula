@@ -4,11 +4,16 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 from pylab import plot, show, savefig, xlim, figure, \
                 hold, ylim, legend, boxplot, setp, axes
 import time,random
 import MySQLdb, math
+import mysql_hdr
+import datetime
+import pandas as pd
 from numpy import mean, median, std
+from matplotlib.dates import AutoDateLocator, DateFormatter
 
 from pylab import mpl
 mpl.rcParams['font.sans-serif'] = ['SimHei']
@@ -31,6 +36,7 @@ label_pos:
 'center'       : 10,
 """
 __test = False
+
 
 def doBox(label,datas,y_line=None,y_limit=None,y_label=None,x_label=None):
     fig = figure()
@@ -62,6 +68,7 @@ def doBox(label,datas,y_line=None,y_limit=None,y_label=None,x_label=None):
         show()
     return _fn, _bx
 
+
 def doBar(title, y_label, x_label, datas, label=None, y_limit=None):
 
     plt.figure()
@@ -90,9 +97,44 @@ def doBar(title, y_label, x_label, datas, label=None, y_limit=None):
         show()
     return _fn
 
+
 def doDotBase(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, ylines=None, dots=None):
 
-    plt.figure()
+    rcParams.update({
+    'font.family':'sans-serif',
+    'font.sans-serif':[u'SimHei'],
+    'axes.unicode_minus':False,
+    'font.size':8,
+    })
+
+    _show_date = False
+
+    if _show_date:
+        autodates = AutoDateLocator()
+        yearsFmt = DateFormatter('%Y-%m-%d %H:%M:%S')
+        fig = plt.figure(figsize=[10, 12], dpi=120)
+        fig.autofmt_xdate()
+        plt.xticks(rotation=45)
+        ax = fig.add_subplot(111)
+        ax_twiny = ax.twiny()
+        ax_twiny.grid(False)
+        ax_twiny.set_xticks([])
+        ax.xaxis.set_major_locator(autodates)       # 设置时间间隔  
+        ax.xaxis.set_major_formatter(yearsFmt)      # 设置时间显示格式  
+        ax.set_xticks(pd.date_range(start='2017-9-27 00:00:00', end='2018-03-31 23:59:59', freq='3D'))
+        """设定显示的时间段"""
+        _day = datetime.date.today().day
+        _month = datetime.date.today().month
+        if _day < 27:
+            _day += 3
+        else:
+            _month += 1
+            _day = 1
+        _end_date = datetime.date.today().replace(day=_day, month=_month)
+        ax.set_xlim("2017-9-1 00:00:00", "%s 00:00:00" % _end_date)
+    else:
+        plt.figure()
+
     for _data in datas:
         _color = _data[1]
         _dot = _data[2]
@@ -128,6 +170,7 @@ def doDotBase(title, y_label, x_label, datas, limit=None, label_pos=None, lines=
     else:
         plt.show()
     return _fn
+
 
 def doStem(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, ylines=None, dots=None):
 
@@ -170,6 +213,7 @@ def doStem(title, y_label, x_label, datas, limit=None, label_pos=None, lines=Non
     else:
         plt.show()
     return _fn
+
 
 def doLine(title, y_label, x_label, datas, limit=None, label_pos=None, lines=None, ylines=None, dots=None):
 
@@ -214,6 +258,7 @@ def doLine(title, y_label, x_label, datas, limit=None, label_pos=None, lines=Non
         plt.show()
     return _fn
 
+
 def doBarH(title, y_label, x_label, datas):
 
     plt.figure()
@@ -229,11 +274,13 @@ def doBarH(title, y_label, x_label, datas):
         show()
     return _fn
 
+
 def doSQL(cur,_sql):
 
     #print(">>>doSQL[%s]" % _sql)
     cur.execute(_sql)
     return cur.fetchall()
+
 
 def calLvl(lvl, val, max_v):
     """
@@ -268,6 +315,7 @@ def calLvl(lvl, val, max_v):
             return 50. + ((val - lvl[3])/(max_v - lvl[3]))*10.
         else:
             return 58.
+
 
 def getPersonalPlanQ(cur):
     """
@@ -329,15 +377,52 @@ def getPersonalPlanQ(cur):
 
     return _fn1, _fn2, _lvl, _kv
 
+
 if __name__ == '__main__':
 
     global __test
 
     __test = True
+    _test_case = 2
 
     db = MySQLdb.connect(host="47.93.192.232", user="root", passwd="sw64419", db="nebula", charset='utf8')
     cur = db.cursor()
+    my_sql = mysql_hdr.SqlService(db)
 
-    fn1, fn2, lvl, kv = getPersonalPlanQ(cur)
-    for _k in kv:
-        print(u'%s: %s => %s' % (_k, kv[_k][0], kv[_k][1]))
+    if _test_case == 1:
+        fn1, fn2, lvl, kv = getPersonalPlanQ(cur)
+        for _k in kv:
+            print(u'%s: %s => %s' % (_k, kv[_k][0], kv[_k][1]))
+    elif _test_case == 2:
+        _data = []
+        _data.append([[10, 6, 4, 2, 1, 0, 0, 0, 0], "#8f8f8f", "^", u'等待'])
+        _data.append([[0,  4, 6, 5, 3, 2, 1, 0, 0], "#f8f8f8", "o", u"执行中"])
+        _data.append([[0,  0, 0, 3, 4, 4, 3, 1, 0], "#f8f8f8", "v", u"测试中"])
+        _data.append([[0,  0, 0, 0, 2, 3, 6, 9, 10], "#f8f8f8", "*", u"完成"])
+
+        _color = ['g','y','r','k']
+        _sql = u'select name from jira_landmark_t where pj_id="FAST"'
+        _res = my_sql.do(_sql)
+        _ylines = []
+        _dots = []
+        _i = 0
+        _sum = 0
+        for _r in _res:
+            _sql = u'select count(*) from jira_issue_t where issue_key="landmark" and issue_value="%s"' % _r[0]
+            _cnt = my_sql.count(_sql)
+            _sum += _cnt
+            _ylines.append([_sum, '--', _color[_i], u'%d:%s' % (_cnt,_r[0])])
+            _j = 0
+            for _st in [u"待办", u"执行中", u"待测试", u"完成"]:
+                """
+                _sql = u'select count(*) from jira_issue_t where issue_id in ' \
+                       u'(select issue_id from jira_issue_t where issue_key="landmark" and ' \
+                       u'issue_value="%s") and issue_value="%s"' % (_r[0], _st)
+                _cnt = my_sql.count(_sql)
+                """
+                _cnt = 23
+                _dots.append([1, _cnt, ">", _color[_j], None])
+                _j += 1
+            _i += 1
+
+        doDotBase("Test Case 0002", u"story数", u"时间", _data, label_pos='upper left', ylines=_ylines, dots=_dots)
