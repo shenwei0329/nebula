@@ -12,6 +12,7 @@ import types
 import json
 import MySQLdb
 from pymongo import MongoClient
+import mongodb_class
 
 import mysql_hdr
 
@@ -19,8 +20,7 @@ import mysql_hdr
 class jira_handler:
 
     def __init__(self, project_name):
-        self.mongo_client = MongoClient()
-        self.mongo_db = self.mongo_client.FAST
+        self.mongo_db = mongodb_class.mongoDB()
         self.jira = JIRA('http://172.16.60.13:8080', basic_auth=('shenwei','sw64419'))
         self.gh = GreenHopper({'server': 'http://172.16.60.13:8080'}, basic_auth=('shenwei', 'sw64419'))
         self.name = project_name
@@ -42,13 +42,13 @@ class jira_handler:
                 self.version[_key]['startDate'] = _v.startDate
             if 'releaseDate' in dir(_v):
                 self.version[_key]['releaseDate'] = _v.releaseDate
-            if self.mongo_db.project.find({"version": _key}).count() > 0:
-                self.mongo_db.project.update({"version": _key},
-                                             dict({"version": _key}, **self.version[_key]))
+            if self.mongo_db.get_count("project", {"version": _key}) > 0:
+                self.mongo_db.handler("project", "update",
+                                      {"version": _key}, dict({"version": _key}, **self.version[_key]))
             else:
                 _val = dict({"version": _key}, **self.version[_key])
                 print _val
-                self.mongo_db.project.insert(_val)
+                self.mongo_db.handler("project", "insert", _val)
         self.issue = None
 
     def get_versions(self):
@@ -154,6 +154,9 @@ class jira_handler:
             _time["spent_time"] = ""
         _issue = {u"%s" % self.show_name(): {
             "issue_type": self.get_type(),
+            "created": self.issue.fields.created,
+            "updated": self.issue.fields.updated,
+            "lastViewed": self.issue.fields.lastViewed,
             "users": self.get_users(),
             "status": self.get_status(),
             "landmark": self.get_landmark(),
@@ -163,15 +166,16 @@ class jira_handler:
             "spent_time": _time['spent_time']
         }}
         _key = u"%s" % self.show_name()
-        if self.mongo_db.issue.find({"issue": _key}).count() > 0:
-            self.mongo_db.issue.update({"issue": _key}, dict({"issue": _key}, **_issue[_key]))
+        if self.mongo_db.get_count("issue", {"issue": _key}) > 0:
+            self.mongo_db.handler("issue", "update",
+                                  {"issue": _key}, dict({"issue": _key}, **_issue[_key]))
         else:
-            self.mongo_db.issue.insert(dict({"issue": _key}, **_issue[_key]))
-        if self.mongo_db.issue_link.find({"issue": _key}).count() > 0:
-            self.mongo_db.issue_link.update({"issue": _key},
-                                            dict({"issue": _key}, **self.get_link()))
+            self.mongo_db.handler("issue", "insert", dict({"issue": _key}, **_issue[_key]))
+        if self.mongo_db.get_count("issue_link", {"issue": _key}) > 0:
+            self.mongo_db.handler("issue_link", "update",
+                                  {"issue": _key}, dict({"issue": _key}, **self.get_link()))
         else:
-            self.mongo_db.issue_link.insert(dict({"issue": _key}, **self.get_link()))
+            self.mongo_db.handler("issue_link", "insert", dict({"issue": _key}, **self.get_link()))
 
         return _issue
 
@@ -192,7 +196,7 @@ class jira_handler:
         return _user
 
     def write_log(self, info):
-        self.mongo_db.log.insert(info)
+        self.mongo_db.handler("log", "insert", info)
 
     def scan_issue(self, bg_date, keys, version):
         """

@@ -413,5 +413,37 @@ CREATE TABLE if not exists jira_issue_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+# Jira系统的里程碑（landmark）记录
+#   1）里程碑定义
+#   2）里程碑：起止时间定义
+#
+CREATE TABLE if not exists jira_landmark_t
+(
+	id integer primary key not null auto_increment,
+	pj_id varchar(24)           comment '项目标识，如FAST',
+	name varchar(80)            comment '里程碑名称',
+	start_date varchar(48)      comment '启动日期',
+	release_date varchar(48)    comment '结束日期',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# Jira系统的里程碑（landmark）要素变更记录
+#   1）point变更
+#   2）org_time、agg_time和spent_time变更
+#   3）状态
+#   4）里程碑
+#
+CREATE TABLE if not exists jira_log_t
+(
+	id integer primary key not null auto_increment,
+	issue_id varchar(24)    comment 'issue标识',
+	rec_key varchar(32)     comment '关键字',
+	old_value varchar(32)   comment '原值',
+	new_value varchar(32)   comment '新值',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 #
 #
