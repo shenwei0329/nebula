@@ -10,6 +10,7 @@
 #
 
 from pymongo import MongoClient
+import time
 
 
 class mongoDB:
@@ -48,6 +49,16 @@ class mongoDB:
     @staticmethod
     def _remove(obj, *data):
         return None
+
+    @staticmethod
+    def get_time(ts):
+        """
+        从_id获取时标信息
+        :param ts: _id
+        :return: structure time
+        """
+        _time_t = int(str(ts)[0:8], base=16)
+        return time.localtime(_time_t)
 
     def handler(self, obj, operation, *data):
         """

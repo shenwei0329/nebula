@@ -7,7 +7,7 @@
 #
 #
 import sys
-from DataHandler import plans
+from DataHandler import plans2018
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -16,9 +16,9 @@ if __name__ == '__main__':
 
     if len(sys.argv) <= 2:
         if len(sys.argv) == 2:
-            plans.main(project=sys.argv[1])
+            plans2018.main(project=sys.argv[1])
         else:
-            plans.main()
+            plans2018.main()
     else:
         print("\n\tUsage: python %s project_name\n" % sys.argv[0])
 

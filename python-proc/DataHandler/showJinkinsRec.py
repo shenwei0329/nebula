@@ -141,7 +141,7 @@ def doJinkinsRec(cur):
 
     _fn = 'pic/%s-compscore.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     if not _test_mod:
-        plt.savefig(_fn, dpi=1200)
+        plt.savefig(_fn, dpi=120)
     else:
         plt.show()
     return _fn
