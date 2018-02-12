@@ -88,7 +88,7 @@ def doBarOnTable( rows, columns, datas, figsize=(7,5), left=0.3, right=0.97, bot
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top)
 
     plt.ylabel(u"工时",fontsize=fontsize)
-    #plt.yticks(values * value_increment, ['%d' % val for val in values])
+    # plt.yticks(values * value_increment, ['%d' % val for val in values])
     plt.xticks([])
     plt.title(u'资源投入',fontsize=fontsize)
 

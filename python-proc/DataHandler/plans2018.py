@@ -46,7 +46,8 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 import crWord
 import showJinkinsRec
 import showJinkinsCoverage
-import  mongodb_class
+import mongodb_class
+import re
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -266,10 +267,9 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
 
     # 获取Issue的summary
     _issue_ext_list = []
-    _sql = 'select issue_id from jira_task_t where summary like "%入侵%"'
-    _res = doSQL(cur, _sql)
+    _res = mongo_db.handler("issue", "find", {"summary": re.compile("入侵")})
     for _r in _res:
-        _issue_ext_list.append(_r[0])
+        _issue_ext_list.append(_r["issue"])
 
     # 获取里程碑信息
     _landmark = mongo_db.handler("project", "find", {'id': landmark_id})[0]['version'].replace('^', '.')
@@ -331,7 +331,9 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _dots = []
     _status = {u"待办": 1, u"处理中": 2, u"待测试": 3, u"测试中": 4, u"完成": 5}
     _x = 1
+    _dots_s = {}
     for _t in _task_list:
+        _dots_s[_t] = mongo_db.handler("log", "find", {"issue_id": _t, "key": "status", "new": u"处理中"}).count()
         _is = mongo_db.handler("issue", "find", {"issue": _t})
         for _i in _is:
             if _i['status'] in _status:
@@ -340,13 +342,14 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
                 else:
                     _dots.append([_x, _status[_i['status']], 'v', 'r'])
         _x += 1
-    _fn_issue_status = doBox.doIssueStatus(u"任务执行状态分布图", u"任务", _issues, _dots)
+    _fn_issue_status = doBox.doIssueStatus(u"任务执行状态分布图", u"任务", _issues, _dots, _dots_s)
 
     # 获取目标状态
     _dots = []
     _x = 1
     _issues = []
     _story = mongo_db.handler("issue", "find", {'issue_type': "story", "landmark": u"%s" % _landmark})
+    _dots_s = {}
     for _st in _story:
         _id = _st['issue']
         _is = mongo_db.handler("issue", "find", {"issue": _id})
@@ -354,11 +357,13 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
             if _i['status'] in _status:
                 if _id not in _issue_ext_list:
                     _dots.append([_x, _status[_i['status']], 'o', 'k'])
+                    _dots_s[_id] = 1
                 else:
                     _dots.append([_x, _status[_i['status']], 'v', 'r'])
+                    _dots_s[_id] = 3
         _issues.append(_id)
         _x += 1
-    _fn_story_status = doBox.doIssueStatus(u"里程碑的目标状态分布图", u"目标（story）", _issues, _dots)
+    _fn_story_status = doBox.doIssueStatus(u"里程碑的目标状态分布图", u"目标（story）", _issues, _dots, _dots_s)
 
     # 生成预算执行信息
     _dots = []
@@ -380,7 +385,7 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
             if len(_str) == 0:
                 _str = u"● 目标【%s】包含未定义工作量的任务。" % _st['issue']
             else:
-                _str += u"并且包含未定义工作量的任务。"
+                _str += u"它包含未定义工作量的任务。"
         _tot_agg_times += _story_task_list[_st['issue']]['agg_time']
         _dots.append([_x, _story_task_list[_st['issue']]['spent_time'], '^', 'k'])
         _tot_spent_times += _story_task_list[_st['issue']]['spent_time']
@@ -406,8 +411,21 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _print(u'项目预算（工时成本）：%s 万元' % _res[0][5])
     _print(u'项目功能简介：%s' % _res[0][4])
     _print(u'里程碑：%s，期间从 %s 到 %s' % (_landmark, _startDate, _endDate))
+
     """需要在此插入语句"""
-    _paragrap = _print(u"过程情况", title=True, title_lvl=1)
+    _paragrap = _print(u"非计划类事务情况", title=True, title_lvl=1)
+    _print(u"在计划执行过程中插入了以下“外来”的事务：")
+    _i = 1
+    _res = mongo_db.handler("issue", "find", {"issue_type": u"任务", "summary": re.compile("入侵")})
+    for _issue in _res:
+        _print(u"%d）%s：%s，预估投入成本%d（工时）" % (
+                _i,
+                _issue['issue'],
+                _issue['summary'].replace(u"【项目入侵】",""),
+                int(_issue['org_time'])/3600))
+        _i += 1
+
+    _print(u"过程情况", title=True, title_lvl=1)
     _print(u'1）单元测试情况：')
     _fn = showJinkinsRec.doJinkinsRec(cur)
     doc.addPic(_fn, sizeof=6.2)

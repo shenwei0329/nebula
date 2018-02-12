@@ -11,12 +11,16 @@ import time,random
 import MySQLdb, math
 import mysql_hdr
 import datetime
+import sys
 import pandas as pd
 from numpy import mean, median, std
 from matplotlib.dates import AutoDateLocator, DateFormatter
 
 from pylab import mpl
 mpl.rcParams['font.sans-serif'] = ['SimHei']
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 """
 设置图例显示的位置
@@ -139,14 +143,14 @@ def doDotBase(title, y_label, x_label, datas, limit=None, label_pos=None, lines=
         _color = _data[1]
         _dot = _data[2]
         _label = _data[3]
-        plt.plot(range(len(_data[0])),_data[0],_dot,label=_label, color=_color)
+        plt.plot(range(len(_data[0])), _data[0], _dot, label=_label, color=_color)
 
     if limit is not None:
         ylim(limit[0],limit[1])
 
     if dots is not None:
         for _dot in dots:
-            plt.scatter(_dot[0], _dot[1], marker=_dot[2], color=_dot[3], label=_dot[4])
+            plt.scatter(_dot[0], _dot[1], marker=_dot[2], color=_dot[3], label=_dot[4], alpha=0.5)
 
     if lines is not None:
         for _line in lines:
@@ -272,6 +276,196 @@ def doBarH(title, y_label, x_label, datas):
         savefig(_fn, dpi=120)
     else:
         show()
+    return _fn
+
+
+def doIssueAction(issues, dots):
+    """
+    制作“活动分布”图
+    :param issues: 任务
+    :param dots: 活动
+    :return:
+    """
+
+    global __test
+
+    _issue_point_marker = {"agg_time": 'v', "org_time": 'o', "spent_time": '^', "status": 's', "updated": '+'}
+    _issue_point_index = {"agg_time": 1, "org_time": 0, "spent_time": 2, "status": 4, "updated": 3}
+    _colors = plt.cm.BuPu(np.linspace(0, 0.7, 6))
+    _ss = [2, 17, 23, 38, 50, 60]
+
+    """作图"""
+    rcParams.update({
+    'font.family':'sans-serif',
+    'font.sans-serif':[u'SimHei'],
+    'axes.unicode_minus':False,
+    'font.size':6,
+    })
+
+    autodates = AutoDateLocator()
+    yearsFmt = DateFormatter('%Y-%m-%d %H:%M:%S')
+    fig = figure(figsize=[10, 12], dpi=120)
+
+    ax = fig.add_subplot(111)
+    fig.autofmt_xdate()                         # 设置x轴时间外观
+    ax.xaxis.set_major_locator(autodates)       # 设置时间间隔
+    ax.xaxis.set_major_formatter(yearsFmt)      # 设置时间显示格式
+    ax.set_xticks(pd.date_range(start='2018-02-01 00:00:00', end='2018-03-31 23:59:59', freq='3D'))
+    """设定显示的时间段"""
+    _day = datetime.date.today().day
+    _month = datetime.date.today().month
+    if _day < 27:
+        _day += 3
+    else:
+        _month += 1
+        _day = 1
+    _end_date = datetime.date.today().replace(day=_day, month=_month)
+    ax.set_xlim("2018-02-01 00:00:00", "%s 00:00:00" % _end_date)
+    ax.set_yticks(range(1, len(issues)+1))
+    ax.set_yticklabels(issues,)
+    ax.set_ylim(0, len(issues)+1)
+    _leg = [None, None, None, None, None]
+    for _dot in dots:
+        if _dot[2] in _issue_point_marker:
+            _index = _issue_point_index[_dot[2]]
+            # _marker = _issue_point_marker[_dot[2]]
+            _c = _colors[_index+1]
+            _s = _ss[_index]
+        else:
+            # _marker = '*'
+            _c = 'k'
+            _s = _ss[0]
+        _leg[_index] = ax.scatter(_dot[0], _dot[1], color=_c, s=_s, alpha=0.7)
+
+    ax.set_xlabel(u'日期', fontsize=11)
+    ax.set_ylabel(u'任务', fontsize=11)
+    ax.grid(True)
+    ax.legend(_leg,
+              [u"计划估计", u"剩余时间修改", u"实际时间修改", u"日期修改", u"状态修改"],
+              loc=2,
+              fontsize=12)
+
+    plt.title(u'任务活动分布图', fontsize=12)
+    plt.subplots_adjust(left=0.10, right=0.98, bottom=0.06, top=0.96)
+
+    _fn = 'pic/%s-issue-action.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+    if not __test:
+        plt.savefig(_fn, dpi=120)
+    else:
+        plt.show()
+    return _fn
+
+
+def doIssueStatus(title, xlabel, issues, dots, dots_s):
+    """
+    制作“任务状态”图
+    :param issues: 状态
+    :param dots: 任务
+    :param dots_s: 点状态，反应状态变更大小
+    :return:
+    """
+
+    global __test
+
+    """作图"""
+    rcParams.update({
+    'font.family': 'sans-serif',
+    'font.sans-serif': [u'SimHei'],
+    'axes.unicode_minus': False,
+    'font.size': 6,
+    })
+
+    fig = plt.figure(figsize=[14, 6], dpi=600)
+    ax = fig.add_subplot(111)
+    plt.xticks(rotation=45)
+
+    ax.set_xlim(0, len(issues)+1)
+    ax.set_yticks(range(6))
+    ax.set_xticks(range(len(issues)+2))
+    ax.set_ylim(0, 6)
+    _count = [0, 0, 0, 0, 0]
+    _p_dot = None
+    _np_dot = None
+    _idx = 0
+
+    for _dot in dots:
+        _s = (dots_s[issues[_idx]]+1) * 20
+        if _dot[2] == 'v':
+            # _np_dot = ax.scatter(_dot[0], _dot[1], marker=_dot[2], c=_dot[3], s=_s)
+            _np_dot = ax.scatter(_dot[0], _dot[1], c=_dot[3], s=_s, alpha=0.7)
+        else:
+            # _p_dot = ax.scatter(_dot[0], _dot[1], marker=_dot[2], c=_dot[3], s=_s)
+            _p_dot = ax.scatter(_dot[0], _dot[1], c=_dot[3], s=_s, alpha=0.7)
+        _count[_dot[1]-1] += 1
+        _idx += 1
+
+    ax.set_yticklabels(["",
+                        "Wt %03d" % _count[0],
+                        "Do %03d" % _count[1],
+                        "wT %03d" % _count[2],
+                        "Tt %03d" % _count[3],
+                        "Cp %03d" % _count[4]], fontsize=12)
+
+    ax.set_ylabel(u"状态：待办Wt，处理中Do，待测试wT，测试中Tt，完成Cp", fontsize=12)
+    ax.set_xlabel(xlabel, fontsize=12)
+    ax.legend([_p_dot, _np_dot], [u"计划的", u"非计划的"], fontsize=12)
+    plt.title(title, fontsize=14)
+    ax.set_xticklabels(issues,)
+    ax.grid(True)
+    plt.subplots_adjust(left=0.10, right=0.98, bottom=0.12, top=0.96)
+
+    _fn = 'pic/%s-issue-status.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+    if not __test:
+        plt.savefig(_fn, dpi=600)
+    else:
+        plt.show()
+    return _fn
+
+
+def doIssueCost(title, xlabel, issues, dots, max_cost):
+    """
+    制作“目标预算执行”图
+    :param issues: 目标
+    :param dots: 预算执行
+    :param max_cost: 最大值
+    :return:
+    """
+
+    global __test
+
+    """作图"""
+    rcParams.update({
+    'font.family': 'sans-serif',
+    'font.sans-serif': [u'SimHei'],
+    'axes.unicode_minus': False,
+    'font.size': 6,
+    })
+
+    fig = plt.figure(figsize=[14, 6], dpi=600)
+    ax = fig.add_subplot(111)
+    plt.xticks(rotation=45)
+
+    ax.set_xlim(0, len(issues)+1)
+    ax.set_xticks(range(len(issues)+2))
+
+    ax.set_yscale('logit')
+    for _dot in dots:
+        _v = float(_dot[1])/float(max_cost)
+        ax.scatter(_dot[0], _v, marker=_dot[2], c=_dot[3], s=40, alpha=0.7)
+
+    ax.legend([u"计划的预算", u"估计的", u"已完成的"], fontsize=12)
+    ax.set_ylabel(u"成本", fontsize=12)
+    ax.set_xlabel(xlabel, fontsize=12)
+    plt.title(title, fontsize=14)
+    ax.set_xticklabels(issues,)
+    ax.grid(True)
+    plt.subplots_adjust(left=0.10, right=0.98, bottom=0.12, top=0.96)
+
+    _fn = 'pic/%s-issue-status.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+    if not __test:
+        plt.savefig(_fn, dpi=600)
+    else:
+        plt.show()
     return _fn
 
 

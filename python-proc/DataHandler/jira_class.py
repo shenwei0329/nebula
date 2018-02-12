@@ -163,6 +163,7 @@ class jira_handler:
             "point": self.get_story_point(),
             "agg_time": _time['agg_time'],
             "org_time": _time['org_time'],
+            "summary": self.issue.fields.summary,
             "spent_time": _time['spent_time']
         }}
         _key = u"%s" % self.show_name()
@@ -248,6 +249,7 @@ def into_db(sql_service, my_jira, kv):
     """
     同步Issue数据
     :param sql_service: 数据库处理器
+    :param my_jira: mongoDB库
     :param kv: Issue键值
     :return:
     """
