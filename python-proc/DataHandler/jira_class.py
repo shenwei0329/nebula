@@ -261,7 +261,8 @@ class jira_handler:
 
                 if ((u"%s" % issue.fields.issuetype) == 'story' and
                         (self.get_landmark() == version or u'入侵' in self.issue.fields.summary)) or \
-                        (u"%s" % issue.fields.issuetype) == 'epic':
+                        (u"%s" % issue.fields.issuetype) in [u'epic', u'improvement',
+                                                             u'New Feature', u'改进', u'新功能']:
 
                     """收集story相关的任务"""
                     task_link.update(self.get_link())
@@ -360,7 +361,10 @@ def main():
             continue
         if not _version.has_key(u"%s" % _v):
             _version[u"%s" % _v] = {}
-        kv, kv_link, _task_link = my_jira.scan_issue('2017-12-1', [u'story', u'epic'], version=u"%s" % _v)
+        kv, kv_link, _task_link = my_jira.scan_issue('2017-12-1',
+                                                     [u'story', u'epic', u'improvement',
+                                                      u'New Feature', u'改进', u'新功能'],
+                                                     version=u"%s" % _v)
         task_link.update(_task_link)
         if not _version[u"%s" % _v].has_key(u"issues"):
             _version[u"%s" % _v][u"issues"] = {}
