@@ -267,7 +267,7 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
 
     # 获取Issue的summary
     _issue_ext_list = []
-    _res = mongo_db.handler("issue", "find", {"summary": re.compile("入侵")})
+    _res = mongo_db.handler("issue", "find", {"issue_type":"story", "summary": re.compile(r'.入侵.*?')})
     for _r in _res:
         _issue_ext_list.append(_r["issue"])
 
@@ -416,14 +416,19 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _paragrap = _print(u"非计划类事务情况", title=True, title_lvl=1)
     _print(u"在计划执行过程中插入了以下“外来”的事务：")
     _i = 1
-    _res = mongo_db.handler("issue", "find", {"issue_type": u"任务", "summary": re.compile("入侵")})
+    _tot_cost = 0
+    _res = mongo_db.handler("issue", "find", {"issue_type": u"story", "summary": re.compile(r'.入侵.*?')})
     for _issue in _res:
+        if _issue['point'] <= 0:
+            continue
         _print(u"%d）%s：%s，预估投入成本%d（工时）" % (
                 _i,
                 _issue['issue'],
                 _issue['summary'].replace(u"【项目入侵】",""),
-                int(_issue['org_time'])/3600))
+                int(_issue['point'])*4))
         _i += 1
+        _tot_cost += int(_issue['point'])*4
+    _print(u"计划外事务的总投入（估算） %d 个工时。" % _tot_cost)
 
     _print(u"过程情况", title=True, title_lvl=1)
     _print(u'1）单元测试情况：')

@@ -51,6 +51,11 @@ class jira_handler:
                 self.mongo_db.handler("project", "insert", _val)
         self.issue = None
 
+    def get_sprint(self):
+        if "customfield_10501" in self.issue.raw['fields'] and \
+                type(self.issue.fields.customfield_10501) is not types.NoneType:
+            return u'%s' % self.issue.fields.customfield_10501[0].split('name=')[1].split(',')[0]
+
     def get_versions(self):
         _v = {}
         for _k in self.version:
@@ -75,7 +80,12 @@ class jira_handler:
             print "name: ", u"%s" % __f['name']
 
     def get_story_point(self):
-        if type(self.issue.fields.customfield_10304) is not types.NoneType:
+        """
+        获取Issue(story)的预置成本, 1 point = 4 hours
+        :return: 预置成本
+        """
+        if "customfield_10304" in self.issue.raw['fields'] and \
+                type(self.issue.fields.customfield_10304) is not types.NoneType:
             return self.issue.fields.customfield_10304
         return -1.
 
@@ -87,6 +97,9 @@ class jira_handler:
     def get_landmark(self):
         if len(self.issue.fields.fixVersions) > 0:
             return u"%s" % self.issue.fields.fixVersions[0]
+        if len(self.issue.fields.versions) > 0:
+            print self.show_name(), " version: %s" % self.issue.fields.versions[0]
+            return u"%s" % self.issue.fields.versions[0]
         return ""
 
     def get_desc(self):
@@ -114,14 +127,32 @@ class jira_handler:
             link[self.show_name()].append(u"%s" % _t)
         return link
 
+    def get_child_requirement(self):
+
+        link = []
+        jql = "issue in  childrenOfParentRequirement('%s')" % self.show_name()
+        # print jql
+        tot = 0
+        while True:
+            issues = self.jira.search_issues(jql, maxResults=100, startAt=tot)
+            for issue in issues:
+                link.append(issue.key)
+            if len(issues) == 100:
+                tot += 100
+            else:
+                break
+        return link
+
     def get_link(self):
         """
         收集issue的相关issue
         :return: 相关issue字典
         """
         link = {}
-        if not link.has_key(self.show_name()):
+        if self.show_name() not in link:
             link[self.show_name()] = []
+
+        """兼容以前: 与story相关的task是通过issulelinks关联的"""
         _task_issues = self.issue.fields.issuelinks
         for _t in _task_issues:
             if "outwardIssue" in dir(_t):
@@ -130,6 +161,12 @@ class jira_handler:
             if "inwardIssue" in dir(_t):
                 """该story相关的任务"""
                 link[self.show_name()].append(u"%s" % _t.inwardIssue)
+
+        """采用synapseRT插件后对需求的管理"""
+        _task_issues = self.get_child_requirement()
+        for _t in _task_issues:
+            link[self.show_name()].append(_t)
+
         return link
 
     def show_issue(self):
@@ -152,6 +189,11 @@ class jira_handler:
             _time['org_time'] = ""
         if type(_time["spent_time"]) is types.NoneType:
             _time["spent_time"] = ""
+        if "customfield_11300" in self.issue.raw['fields'] and \
+                type(self.issue.fields.customfield_11300) is not types.NoneType:
+            _epic_link = self.issue.raw['fields']["customfield_11300"]
+        else:
+            _epic_link = ""
         _issue = {u"%s" % self.show_name(): {
             "issue_type": self.get_type(),
             "created": self.issue.fields.created,
@@ -164,7 +206,9 @@ class jira_handler:
             "agg_time": _time['agg_time'],
             "org_time": _time['org_time'],
             "summary": self.issue.fields.summary,
-            "spent_time": _time['spent_time']
+            "spent_time": _time['spent_time'],
+            "sprint": self.get_sprint(),
+            "epic_link": _epic_link
         }}
         _key = u"%s" % self.show_name()
         if self.mongo_db.get_count("issue", {"issue": _key}) > 0:
@@ -186,14 +230,7 @@ class jira_handler:
         :return:
         """
         watcher = self.jira.watchers(self.issue)
-        _user = {}
-        for watcher in watcher.watchers:
-            _key = ('%s' % watcher.name)
-            if watcher.active:
-                if not _user.has_key(_key):
-                    _user[_key] = {}
-                _user[_key]['email'] = watcher.emailAddress
-                # _user[_key]['name'] = watcher.displayName
+        _user = u"%s" % (', '.join(watcher.displayName for watcher in watcher.watchers))
         return _user
 
     def write_log(self, info):
@@ -222,7 +259,9 @@ class jira_handler:
 
                 self.issue = issue
 
-                if self.get_landmark() == version:
+                if ((u"%s" % issue.fields.issuetype) == 'story' and
+                        (self.get_landmark() == version or u'入侵' in self.issue.fields.summary)) or \
+                        (u"%s" % issue.fields.issuetype) == 'epic':
 
                     """收集story相关的任务"""
                     task_link.update(self.get_link())
@@ -321,7 +360,7 @@ def main():
             continue
         if not _version.has_key(u"%s" % _v):
             _version[u"%s" % _v] = {}
-        kv, kv_link, _task_link = my_jira.scan_issue('2018-1-1', [u'story'], version=u"%s" % _v)
+        kv, kv_link, _task_link = my_jira.scan_issue('2017-12-1', [u'story', u'epic'], version=u"%s" % _v)
         task_link.update(_task_link)
         if not _version[u"%s" % _v].has_key(u"issues"):
             _version[u"%s" % _v][u"issues"] = {}
