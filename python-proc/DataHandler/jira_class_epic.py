@@ -205,6 +205,11 @@ class jira_handler:
         return link
 
     def sync_issue(self):
+        """
+        同步issue数据，同时完成重要参量的变更日志。
+        :return:
+        """
+        _key = u"%s" % self.show_name()
         _time = self.get_task_time()
         _epic_link = None
         if "customfield_11300" in self.issue.raw['fields'] and \
@@ -226,9 +231,23 @@ class jira_handler:
                 "sprint": self.get_sprint(),
                 "epic_link": _epic_link
             }}
-        _key = u"%s" % self.show_name()
-        self.mongo_db.handler("issue", "update",
-                              {"issue": _key}, dict({"issue": _key}, **_issue[_key]))
+        _old_issue = self.mongo_db.handler("issue", "find_one", {"issue": _key})
+        if _old_issue is None:
+            self.mongo_db.handler("issue", "update",
+                                  {"issue": _key}, dict({"issue": _key}, **_issue[_key]))
+        else:
+            _change = False
+            for _item in ['issue_type','created','updated','users','status',
+                          'landmark','point','agg_time','org_time',
+                          'summary','spent_time','sprint','epic_link']:
+                if _old_issue[_item] != _issue[_key][_item]:
+                    _log = {"issue_id": _key, "key": _item,
+                            "old": _old_issue[_item], "new": _issue[_key][_item]}
+                    self.write_log(_log)
+                    _change = True
+            if _change:
+                self.mongo_db.handler("issue", "update",
+                                      {"issue": _key}, dict({"issue": _key}, **_issue[_key]))
 
     def get_issue_link(self):
         _link = self.get_link()
@@ -268,6 +287,7 @@ class jira_handler:
         return (u"%s" % self.issue.raw['fields']["assignee"]['displayName']).replace(' ', '')
 
     def write_log(self, info):
+        print "---<write_log>---: ",info
         self.mongo_db.handler("log", "insert", info)
 
     def write_worklog(self, info):

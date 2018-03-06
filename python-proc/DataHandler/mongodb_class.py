@@ -21,7 +21,9 @@ class mongoDB:
         self.obj = {"project": self.mongo_db.project,
                     "issue": self.mongo_db.issue,
                     "issue_link": self.mongo_db.issue_link,
-                    "log": self.mongo_db.log}
+                    "log": self.mongo_db.log,
+                    "worklog": self.mongo_db.worklog,
+                    "current_sprint": self.mongo_db.current_sprint}
         self.pj_hdr = {"insert": self._insert,
                        "update": self._update,
                        "find": self._find,
@@ -36,7 +38,7 @@ class mongoDB:
     def _update(obj, *data):
         if obj == "log":
             return None
-        return obj.update(*data)
+        return obj.update(*data, upsert=True)
 
     @staticmethod
     def _find(obj, *data):

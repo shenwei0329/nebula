@@ -289,10 +289,31 @@ def doIssueAction(issues, dots):
 
     global __test
 
-    _issue_point_marker = {"agg_time": 'v', "org_time": 'o', "spent_time": '^', "status": 's', "updated": '+'}
-    _issue_point_index = {"agg_time": 1, "org_time": 0, "spent_time": 2, "status": 4, "updated": 3}
-    _colors = plt.cm.BuPu(np.linspace(0, 0.7, 6))
-    _ss = [2, 17, 23, 38, 50, 60]
+    _issue_point_marker = {"agg_time": 'v',
+                           "org_time": 'o',
+                           "spent_time": '^',
+                           "status": 's',
+                           "updated": '+',
+                           "landmark": '>',
+                           "sprint": '<',
+                           "users": 'x',
+                           "epic_link": 'D',
+                           "lastViewed": 'p',
+                           }
+
+    _issue_point_color = {"agg_time": 1,
+                           "org_time": 2,
+                           "spent_time": 3,
+                           "status": 4,
+                           "updated": 5,
+                           "landmark": 6,
+                           "sprint": 7,
+                           "users": 8,
+                           "epic_link": 9,
+                           "lastViewed": 10,
+                           }
+
+    # _colors = plt.cm.BuPu(np.linspace(0, 0.7, len(_issue_point_marker)+1))
 
     """作图"""
     rcParams.update({
@@ -310,7 +331,7 @@ def doIssueAction(issues, dots):
     fig.autofmt_xdate()                         # 设置x轴时间外观
     ax.xaxis.set_major_locator(autodates)       # 设置时间间隔
     ax.xaxis.set_major_formatter(yearsFmt)      # 设置时间显示格式
-    ax.set_xticks(pd.date_range(start='2018-02-01 00:00:00', end='2018-03-31 23:59:59', freq='3D'))
+
     """设定显示的时间段"""
     _day = datetime.date.today().day
     _month = datetime.date.today().month
@@ -320,28 +341,38 @@ def doIssueAction(issues, dots):
         _month += 1
         _day = 1
     _end_date = datetime.date.today().replace(day=_day, month=_month)
+
+    ax.set_xticks(pd.date_range(start='2018-02-01 00:00:00', end='%s 23:59:59' % _end_date, freq='3D'))
     ax.set_xlim("2018-02-01 00:00:00", "%s 00:00:00" % _end_date)
     ax.set_yticks(range(1, len(issues)+1))
     ax.set_yticklabels(issues,)
     ax.set_ylim(0, len(issues)+1)
-    _leg = [None, None, None, None, None]
+
+    _leg = []
+    for __i in range(len(_issue_point_marker)+1):
+        _leg.append(None)
+
     for _dot in dots:
         if _dot[2] in _issue_point_marker:
-            _index = _issue_point_index[_dot[2]]
-            # _marker = _issue_point_marker[_dot[2]]
-            _c = _colors[_index+1]
-            _s = _ss[_index]
-        else:
-            # _marker = '*'
+            _marker = _issue_point_marker[_dot[2]]
+            _index = _issue_point_color[_dot[2]]
+            # _c = _colors[_index]
             _c = 'k'
-            _s = _ss[0]
-        _leg[_index] = ax.scatter(_dot[0], _dot[1], color=_c, s=_s, alpha=0.7)
+            _leg[_index] = ax.scatter(_dot[0], _dot[1], color=_c, marker=_marker, s=20, alpha=0.5)
 
     ax.set_xlabel(u'日期', fontsize=11)
     ax.set_ylabel(u'任务', fontsize=11)
     ax.grid(True)
     ax.legend(_leg,
-              [u"计划估计", u"剩余时间修改", u"实际时间修改", u"日期修改", u"状态修改"],
+              [u"计划估计",
+               u"剩余时间",
+               u"实际时间",
+               u"日期修改",
+               u"状态修改",
+               u"里程碑",
+               u"用户",
+               u"epic链",
+               u"访问时间"],
               loc=2,
               fontsize=12)
 
@@ -450,10 +481,10 @@ def doIssueCost(title, xlabel, issues, dots, max_cost):
 
     ax.set_yscale('logit')
     for _dot in dots:
-        _v = float(_dot[1])/float(max_cost)
-        ax.scatter(_dot[0], _v, marker=_dot[2], c=_dot[3], s=40, alpha=0.7)
+        _v = (float(_dot[1])/float(max_cost))*0.98
+        ax.scatter(_dot[0], _v, marker=_dot[2], c=_dot[3], s=30, alpha=0.5)
 
-    ax.legend([u"计划的预算", u"估计的", u"已完成的"], fontsize=12)
+    ax.legend([u"计划的预算", u"估计的", u"执行的"], fontsize=12)
     ax.set_ylabel(u"成本", fontsize=12)
     ax.set_xlabel(xlabel, fontsize=12)
     plt.title(title, fontsize=14)

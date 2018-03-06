@@ -107,7 +107,7 @@ def doJinkinsRec(cur):
     fig.autofmt_xdate()                         # 设置x轴时间外观  
     ax.xaxis.set_major_locator(autodates)       # 设置时间间隔  
     ax.xaxis.set_major_formatter(yearsFmt)      # 设置时间显示格式  
-    ax.set_xticks(pd.date_range(start='2017-12-01 00:00:00', end='2018-03-31 23:59:59', freq='3D'))
+
     """设定显示的时间段"""
     _day = datetime.date.today().day
     _month = datetime.date.today().month
@@ -117,6 +117,8 @@ def doJinkinsRec(cur):
         _month += 1
         _day = 1
     _end_date = datetime.date.today().replace(day=_day, month=_month)
+
+    ax.set_xticks(pd.date_range(start='2017-12-01 00:00:00', end='%s 23:59:59' % _end_date, freq='3D'))
     ax.set_xlim("2017-12-20 00:00:00", "%s 00:00:00" % _end_date)
     ax.set_yticks(range(1,len(_lables)+1))
     ax.set_yticklabels(_lables,)

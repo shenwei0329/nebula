@@ -30,7 +30,13 @@
 #   3）目标执行：基于“时标”展示目标迁移“趋势”
 #   3）成本执行：基于“时标”展示预算成本的实际执行情况（挣值分析）
 #
+#   2018年3月2日@成都
+#   -----------------
+#   应考虑：
+#   1）项目执行的总体情况
+#   2）项目挣值情况
 #
+
 
 import MySQLdb
 import sys
@@ -47,6 +53,7 @@ import crWord
 import showJinkinsRec
 import showJinkinsCoverage
 import mongodb_class
+import jira_class
 import re
 
 reload(sys)
@@ -58,6 +65,8 @@ mpl.rcParams['font.sans-serif'] = ['SimHei']
 """人天成本"""
 CostDay = 1000.
 CostHour = CostDay/8.
+# 一个point等于4个工时
+COST_ONE_POINT = 4
 
 ProjectAlias = {
     "PRD-2017-PROJ-00003": "FAST",
@@ -79,6 +88,7 @@ Topic = [u'一、',
          u'十二、',
          ]
 
+
 def Load_json(fn):
 
     try:
@@ -89,6 +99,7 @@ def Load_json(fn):
         return _json
     except:
         return None
+
 
 def calHour(_str):
     """
@@ -103,6 +114,7 @@ def calHour(_str):
         return _h + _m
     else:
         return None
+
 
 def _print(_str, title=False, title_lvl=0, color=None, align=None, paragrap=None ):
 
@@ -135,6 +147,7 @@ def _print(_str, title=False, title_lvl=0, color=None, align=None, paragrap=None
 
     return _paragrap
 
+
 def doSQLinsert(db,cur,_sql):
 
     #print(">>>doSQL[%s]" % _sql)
@@ -143,6 +156,7 @@ def doSQLinsert(db,cur,_sql):
         db.commit()
     except:
         db.rollback()
+
 
 def doSQLcount(cur,_sql):
 
@@ -161,11 +175,13 @@ def doSQLcount(cur,_sql):
     #print(">>>doSQLcount[%d]" % int(_n))
     return _n
 
+
 def doSQL(cur,_sql):
 
     #print(">>>doSQL[%s]" % _sql)
     cur.execute(_sql)
     return cur.fetchall()
+
 
 def doCount(db,cur):
     """
@@ -204,6 +220,7 @@ def doCount(db,cur):
     _print("数据库表总数： %d" % _total_table)
     _print("数据记录总条数： %d" % _total_record)
 
+
 def getQ(cur):
     """
     获取 数据质量 指标
@@ -241,6 +258,12 @@ def getQ(cur):
 
 
 def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
+    """
+    项目跟踪报告生成器
+    :param project: 项目编号
+    :param landmark_id: 在Jira中的里程碑id
+    :return: 报告（word、pdf）
+    """
 
     global doc, ProjectAlias
 
@@ -259,6 +282,10 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     """mongoDB数据库
     """
     mongo_db = mongodb_class.mongoDB()
+
+    """Jira类
+    """
+    jira = jira_class.jira_handler('FAST')
 
     _print('>>> 报告生成日期【%s】 <<<' % time.ctime(), align=WD_ALIGN_PARAGRAPH.CENTER)
 
@@ -287,25 +314,31 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
         _link = mongo_db.handler("issue_link", "find", {"issue": _id})
         if _id not in _story_task_list:
             _story_task_list[_id] = {'org_time': 0, 'agg_time': 0, 'spent_time': 0}
-            _story_points[_id] = int(_st['point'])*4*3600
+            _story_points[_id] = int(_st['point']) * COST_ONE_POINT * 3600
             if _max_cost < _story_points[_id]:
                 _max_cost = _story_points[_id]
         for _l in _link:
             for _t in _l[_id]:
                 if _t not in _task_list:
                     _task_list.append(_t)
-                    _logs = mongo_db.handler("log", "find", {"issue_id": _t, "key": 'org_time'})
+                    _logs = mongo_db.handler("issue", "find", {"issue": _t})
                     for _log in _logs:
-                        _v = int(_log['new'])
+                        if type(_log['org_time']) is types.IntType:
+                            _v = _log['org_time']
+                        else:
+                            _v = 0
                         _story_task_list[_id]['org_time'] += _v
-                    _logs = mongo_db.handler("log", "find", {"issue_id": _t, "key": 'spent_time'})
-                    for _log in _logs:
-                        _v = int(_log['new'])
+                        if type(_log['spent_time']) is types.IntType:
+                            _v = _log['spent_time']
+                        else:
+                            _v = 0
                         _story_task_list[_id]['spent_time'] += _v
-                    _logs = mongo_db.handler("log", "find", {"issue_id": _t, "key": 'agg_time'})
-                    for _log in _logs:
-                        _v = int(_log['new'])
+                        if type(_log['agg_time']) is types.IntType:
+                            _v = _log['agg_time']
+                        else:
+                            _v = 0
                         _story_task_list[_id]['agg_time'] += _v
+
                     if _max_cost < _v:
                         _max_cost = _v
 
@@ -373,28 +406,41 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _tot_points = 0
     _tot_agg_times = 0
     _tot_spent_times = 0
+    _sn = 1
     for _st in _story:
-        _dots.append([_x, _story_points[_st['issue']], 'o', 'r'])
+        _dots.append([_x, _story_points[_st['issue']], 'H', 'g'])
         _tot_points += _story_points[_st['issue']]
         _str = ""
+
         if _story_points[_st['issue']] == 0:
-            _str = u"● 目标【%s】未分配预算。" % _st['issue']
+            _str = u"%d） %s：%s，未分配预算。" % (_sn, _st['issue'], _st['summary'])
+            _sn += 1
+
         # _dots.append([_x, _story_task_list[_st['issue']]['org_time'], 'x', 'g'])
-        _dots.append([_x, _story_task_list[_st['issue']]['agg_time'], '+', 'b'])
-        if _story_task_list[_st['issue']]['agg_time'] == 0:
+        _dots.append([_x, _story_task_list[_st['issue']]['org_time'], 's', 'b'])
+        """
+        if _story_task_list[_st['issue']]['org_time'] == 0:
             if len(_str) == 0:
                 _str = u"● 目标【%s】包含未定义工作量的任务。" % _st['issue']
             else:
                 _str += u"它包含未定义工作量的任务。"
-        _tot_agg_times += _story_task_list[_st['issue']]['agg_time']
-        _dots.append([_x, _story_task_list[_st['issue']]['spent_time'], '^', 'k'])
+        """
+        _tot_agg_times += _story_task_list[_st['issue']]['org_time']
+        _dots.append([_x, _story_task_list[_st['issue']]['spent_time'], '^', 'r'])
         _tot_spent_times += _story_task_list[_st['issue']]['spent_time']
         _issues.append(_st['issue'])
 
         if len(_str) > 0:
-            _results.append([_str,(255, 0, 0)])
+            _results.append([_str, (255, 0, 0)])
 
         _x += 1
+
+    """ 挣值分析：
+        1）预算指标：基于story定义的point值
+        2）执行情况：基于spent_time确定的已花费情况
+        3）偏差：执行与预算的+/-偏差
+        4）任务的状态
+    """
     _fn_cost = doBox.doIssueCost(u"里程碑的目标成本分布图", u"目标（story）", _issues, _dots, _max_cost)
 
     _sql = 'select PJ_XMMC,PJ_XMFZR,PJ_KSSJ,PJ_JSSJ,PJ_XMJJ,PJ_XMYS from project_t where PJ_XMBH="%s"' % project
@@ -411,23 +457,27 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _print(u'项目预算（工时成本）：%s 万元' % _res[0][5])
     _print(u'项目功能简介：%s' % _res[0][4])
     _print(u'里程碑：%s，期间从 %s 到 %s' % (_landmark, _startDate, _endDate))
+    current_sprint = jira.get_current_sprint()
+    _print(u'当前阶段：%s' % current_sprint)
 
     """需要在此插入语句"""
     _paragrap = _print(u"非计划类事务情况", title=True, title_lvl=1)
-    _print(u"在计划执行过程中插入了以下“外来”的事务：")
+    _print(u"本阶段（%s）执行过程中插入了以下“外来”的事务：" % current_sprint)
     _i = 1
     _tot_cost = 0
-    _res = mongo_db.handler("issue", "find", {"issue_type": u"story", "summary": re.compile(r'.入侵.*?')})
+    _res = mongo_db.handler("issue", "find", {"issue_type": u"story",
+                                              "sprint": current_sprint,
+                                              "summary": re.compile(r'.入侵.*?')})
     for _issue in _res:
-        if _issue['point'] <= 0:
+        if type(_issue['point']) is types.NoneType or _issue['point'] <= 0:
             continue
         _print(u"%d）%s：%s，预估投入成本%d（工时）" % (
                 _i,
                 _issue['issue'],
                 _issue['summary'].replace(u"【项目入侵】",""),
-                int(_issue['point'])*4))
+                int(_issue['point']) * COST_ONE_POINT))
         _i += 1
-        _tot_cost += int(_issue['point'])*4
+        _tot_cost += int(_issue['point']) * COST_ONE_POINT
     _print(u"计划外事务的总投入（估算） %d 个工时。" % _tot_cost)
 
     _print(u"过程情况", title=True, title_lvl=1)
@@ -469,6 +519,9 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _print(u'【图例说明】：展示里程碑目标的预算执行情况。')
 
     """ 形成总结
+        ========
+        1）总体情况：任务完成率；预算执行情况；
+        2）风险情况。
     """
     if len(_results) > 0:
         _print(u'项目状态：', paragrap=_paragrap)

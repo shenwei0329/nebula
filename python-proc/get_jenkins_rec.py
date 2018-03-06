@@ -130,6 +130,7 @@ def doIT(db, cur, url):
     if _update > 0:
         print(": Updated number: %d" % _update)
 
+
 if __name__ == '__main__':
 
     db = MySQLdb.connect(host="47.93.192.232", user="root", passwd="sw64419", db="nebula", charset='utf8')

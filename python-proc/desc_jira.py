@@ -128,7 +128,7 @@ def main():
     # print dir(gh.sprints({}))
     # dispGreenHopper(gh)
     issue = 'FAST-' + sys.argv[1]
-    # showField('project=FAST', issue)
+    showField('project=FAST', issue)
     jql = "issue in  childrenOfParentRequirement('%s')" % issue
     # jql = "issue in hasRequirements() and type='task'"
     # print jql
