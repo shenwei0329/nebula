@@ -51,10 +51,31 @@ class jira_handler:
                 self.mongo_db.handler("project", "insert", _val)
         self.issue = None
 
+    def _get_board(self):
+        _boards = self.jira.boards()
+        for _b in _boards:
+            if self.name in _b.name:
+                return _b.id
+        return None
+
+    def get_current_sprint(self):
+        """
+        获取本阶段sprint名称
+        :return: 返回状态为ACTIVE的sprint的名称
+        """
+        _b_id = self._get_board()
+        if type(_b_id) is not types.NoneType:
+            _sprints = self.jira.sprints(_b_id)
+            for _s in _sprints:
+                if _s.state == 'ACTIVE':
+                    return _s.name
+        return None
+
     def get_sprint(self):
         if "customfield_10501" in self.issue.raw['fields'] and \
                 type(self.issue.fields.customfield_10501) is not types.NoneType:
             return u'%s' % self.issue.fields.customfield_10501[0].split('name=')[1].split(',')[0]
+        return None
 
     def get_versions(self):
         _v = {}
@@ -87,7 +108,7 @@ class jira_handler:
         if "customfield_10304" in self.issue.raw['fields'] and \
                 type(self.issue.fields.customfield_10304) is not types.NoneType:
             return self.issue.fields.customfield_10304
-        return -1.
+        return None
 
     def get_task_time(self):
         return {"agg_time": self.issue.fields.aggregatetimeestimate,
@@ -179,21 +200,21 @@ class jira_handler:
         print(u'状态：%s' % self.get_status()),
 
         print u"里程碑：%s" % self.get_landmark(),
-        print u"Story Points = %0.2f" % self.get_story_point(),
         _time = self.get_task_time()
-        print u"估计工时：%s，剩余工时：%s" % (_time['agg_time'], _time['org_time'])
 
+        """
         if type(_time['agg_time']) is types.NoneType:
             _time['agg_time'] = ""
         if type(_time['org_time']) is types.NoneType:
             _time['org_time'] = ""
         if type(_time["spent_time"]) is types.NoneType:
             _time["spent_time"] = ""
+        """
         if "customfield_11300" in self.issue.raw['fields'] and \
                 type(self.issue.fields.customfield_11300) is not types.NoneType:
             _epic_link = self.issue.raw['fields']["customfield_11300"]
         else:
-            _epic_link = ""
+            _epic_link = None
         _issue = {u"%s" % self.show_name(): {
             "issue_type": self.get_type(),
             "created": self.issue.fields.created,
@@ -227,14 +248,33 @@ class jira_handler:
     def get_users(self):
         """
         获取访问issue的用户
+        2018.3.1：改为 经办人 assignee
         :return:
-        """
         watcher = self.jira.watchers(self.issue)
         _user = u"%s" % (', '.join(watcher.displayName for watcher in watcher.watchers))
-        return _user
+        """
+        if type(self.issue.raw['fields']["assignee"]) is types.NoneType:
+            return None
+        return (u"%s" % self.issue.raw['fields']["assignee"]['displayName']).replace(' ', '')
 
     def write_log(self, info):
         self.mongo_db.handler("log", "insert", info)
+
+    def write_worklog(self, info):
+        _search = {'issue': info['issue'], 'author': info['author'], 'updated': info['updated']}
+        self.mongo_db.handler('worklog', 'update', _searchinfo)
+
+    def sync_worklog(self):
+        worklogs = self.jira.worklogs(self.show_name())
+        wl = {}
+        for worklog in worklogs:
+            wl['issue'] = self.show_name()
+            wl['author'] = u'%s' % worklog.author
+            wl['comment'] = u'%s' % worklog.comment
+            wl['timeSpent'] = worklog.timeSpent
+            wl['timeSpentSeconds'] = worklog.timeSpentSeconds
+            wl['updated'] = worklog.updated
+            self.write_worklog(wl)
 
     def scan_issue(self, bg_date, keys, version):
         """
@@ -318,12 +358,16 @@ def into_db(sql_service, my_jira, kv):
                                (_key, _kk, _kv[_kk], _value)
                         print _sql
                         sql_service.insert(_sql)
+                    """
                     if _kk == "users":
                         print _kv[_kk]
-                        _old = json.loads(_kv[_kk].replace("u'", '"').replace("'", '"'))
+                        # _old = json.loads(_kv[_kk].replace("u'", '"').replace("'", '"'))
+                        _old = _kv[_kk]
                         _log = {"issue_id": _key, "key": _kk, "old": _old, "new": kv[_key][_kk]}
                     else:
                         _log = {"issue_id": _key, "key": _kk, "old": _kv[_kk], "new": _value}
+                    """
+                    _log = {"issue_id": _key, "key": _kk, "old": _kv[_kk], "new": _value}
                     my_jira.write_log(_log)
             else:
                 _sql = u'insert into jira_issue_t(issue_id,issue_key,issue_value,created_at,updated_at) ' \
@@ -345,6 +389,7 @@ def main():
     my_sql = mysql_hdr.SqlService(db)
 
     my_jira = jira_handler('FAST')
+
     """
     _info = my_jira.get_pj_info()
     print(u"项目名称：%s，负责人：%s" % (_info['pj_name'], _info['pj_manager']))
@@ -422,6 +467,7 @@ def main():
                             print u"\t\t\t 任务: ",
                             my_jira.set_issue_by_name(_task)
                             _kv = my_jira.show_issue()
+                            my_jira.sync_worklog()
                             into_db(my_sql, my_jira, _kv)
                             _link = my_jira.get_link()
                             for _l in _link:
@@ -431,6 +477,7 @@ def main():
                                     print "\t\t\t\t",
                                     my_jira.set_issue_by_name(__l)
                                     _kv = my_jira.show_issue()
+                                    my_jira.sync_worklog()
                                     into_db(my_sql, my_jira, _kv)
 
 

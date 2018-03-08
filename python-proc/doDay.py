@@ -5,6 +5,10 @@
 # ===============
 # 2017年10月10日@成都
 #
+#   Usage: python doDay.py 开始日期 结束日期 工作日天数
+#   【注意】：结束日期必须包含本周数据导入时间，例如今天（3月6日导入的周报数据，
+#             则，结束日期为 xxxx-03-07
+#
 # 功能：通过解析xlsx文件，把记录数据导入数据库(MySQL)中，导入方式包括：更新/创建、追加。
 #
 # 2017.10.29：提供APPEND、UPDATE和ADD等三种操作方式，分别用于追加、更改和添加新纪录。
@@ -12,7 +16,9 @@
 #
 #
 
-import os,MySQLdb,sys
+import os
+import MySQLdb
+import sys
 from DataHandler import main
 
 reload(sys)

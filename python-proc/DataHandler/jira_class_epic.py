@@ -4,6 +4,13 @@
 #   Jira处理类
 #   ==========
 #
+#   2018.3.6@chengdu
+#   ----------------
+#   1）针对产品研发过程以epic关联story；
+#   2）以story关联task。
+#   对程序进行“规范化”处理
+#
+
 
 from jira import JIRA
 from jira.client import GreenHopper
@@ -18,6 +25,11 @@ import mysql_hdr
 
 
 class jira_handler:
+    """
+    Jira处理类。
+    【备注】：目前存在Jira方法与Issue对象混合在一起的不足。
+    【改进】：将Jira方法与Issue对象实体分离，各自进行类定义。
+    """
 
     def __init__(self, project_name):
         self.mongo_db = mongodb_class.mongoDB()
