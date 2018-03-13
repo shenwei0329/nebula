@@ -16,13 +16,13 @@ from jira import JIRA
 from jira.client import GreenHopper
 
 import types
+import time
 import json
 import MySQLdb
 from pymongo import MongoClient
 import mongodb_class
 
 import mysql_hdr
-
 
 class jira_handler:
     """
@@ -32,7 +32,7 @@ class jira_handler:
     """
 
     def __init__(self, project_name):
-        self.mongo_db = mongodb_class.mongoDB()
+        self.mongo_db = mongodb_class.mongoDB(project_name)
         self.jira = JIRA('http://172.16.60.13:8080', basic_auth=('shenwei','sw64419'))
         self.gh = GreenHopper({'server': 'http://172.16.60.13:8080'}, basic_auth=('shenwei', 'sw64419'))
         self.name = project_name
@@ -43,6 +43,7 @@ class jira_handler:
         """
         _versions = self.jira.project_versions(self.name)
         self.version = {}
+        self.sprints = self._get_sprints()
         for _v in _versions:
             _key = (u"%s" % _v).replace('.', '^')
             if not self.version.has_key(_key):
@@ -65,20 +66,65 @@ class jira_handler:
                 return _b.id
         return None
 
+    def transDate(self, str):
+        if str != None:
+            _s = str.\
+                replace(u'十一月', '11').\
+                replace(u'十二月', '12').\
+                replace(u'一月', '1').\
+                replace(u'二月', '2').\
+                replace(u'三月', '3').\
+                replace(u'四月', '4').\
+                replace(u'五月', '5').\
+                replace(u'六月', '6').\
+                replace(u'七月', '7').\
+                replace(u'八月', '8').\
+                replace(u'九月', '9').\
+                replace(u'十月', '10')
+            _time = time.strptime(_s, '%d/%m/%y')
+            return time.strftime('%Y-%m-%d', _time)
+        else:
+            return ""
+
+    def _get_sprints(self):
+        """
+        获取看板内sprint列表
+        :return: sprint列表 [ name, startDate, endDate, state ]
+        """
+        _list = []
+        _b_id = self._get_board()
+        if type(_b_id) is not types.NoneType:
+            _sprints = self.jira.sprints(_b_id)
+            for _s in _sprints:
+                _sprint = self.jira.sprint(_s.id)
+                _data = {'name': _s.name,
+                         'startDate': self.transDate(_sprint.startDate.split(' ')[0]),
+                         'endDate': self.transDate(_sprint.endDate.split(' ')[0]),
+                         'state': _s.state
+                         }
+                _list.append(_data)
+            return _list
+        return None
+
+    def get_sprints(self):
+        return self.sprints
+
     def get_current_sprint(self):
         """
         获取本阶段sprint名称
         :return: 返回状态为ACTIVE的sprint的名称
         """
-        _b_id = self._get_board()
-        if type(_b_id) is not types.NoneType:
-            _sprints = self.jira.sprints(_b_id)
-            for _s in _sprints:
-                if _s.state == 'ACTIVE':
-                    return _s.name
+        if type(self.sprints) is not types.NoneType:
+            for _s in self.sprints:
+                if _s['state'] == 'ACTIVE':
+                    return _s['name'], _s['startDate'], _s['endDate']
         return None
 
     def get_sprint(self):
+        """
+        获取当前Issue的sprint定义
+        :return: sprint定义
+        """
         if "customfield_10501" in self.issue.raw['fields'] and \
                 type(self.issue.fields.customfield_10501) is not types.NoneType:
             return u'%s' % self.issue.fields.customfield_10501[0].split('name=')[1].split(',')[0]
@@ -140,6 +186,10 @@ class jira_handler:
         return u"%s" % self.issue.fields.issuetype
 
     def get_status(self):
+        """
+        获取Issue的状态，待办、处理中、待测试、测试中、完成
+        :return:
+        """
         return u"%s" % self.issue.fields.status
 
     def get_subtasks(self):
@@ -176,9 +226,9 @@ class jira_handler:
         print(">>> get_epic_link<%s>" % jql)
         total = 0
         _issue_name = self.show_name()
+        task_link = {_issue_name: []}
         while True:
             issues = self.jira.search_issues(jql, maxResults=100, startAt=total)
-            task_link = {_issue_name: []}
             for issue in issues:
                 self.issue = issue
                 self.sync_issue()
@@ -221,6 +271,7 @@ class jira_handler:
         同步issue数据，同时完成重要参量的变更日志。
         :return:
         """
+        _components = u"%s" % (', '.join(comp.name for comp in self.issue.fields.components))
         _key = u"%s" % self.show_name()
         _time = self.get_task_time()
         _epic_link = None
@@ -241,7 +292,8 @@ class jira_handler:
                 "summary": self.issue.fields.summary,
                 "spent_time": _time['spent_time'],
                 "sprint": self.get_sprint(),
-                "epic_link": _epic_link
+                "epic_link": _epic_link,
+                "components": _components
             }}
         _old_issue = self.mongo_db.handler("issue", "find_one", {"issue": _key})
         if _old_issue is None:
@@ -257,6 +309,7 @@ class jira_handler:
                             "old": _old_issue[_item], "new": _issue[_key][_item]}
                     self.write_log(_log)
                     _change = True
+            _change = True
             if _change:
                 self.mongo_db.handler("issue", "update",
                                       {"issue": _key}, dict({"issue": _key}, **_issue[_key]))
@@ -320,6 +373,31 @@ class jira_handler:
             wl['started'] = worklog.started
             self.write_worklog(wl)
 
+    def scan_task_by_sprint(self, sprint):
+        """
+        通过sprint获取Issue，以便获取它们的 工作日志
+        :param sprint: 当前的sprint名称
+        :return: Issue列表
+        """
+        jql_sql = u'project=%s AND Sprint = "%s" ORDER BY created DESC' %\
+                  (self.name, sprint)
+        total = 0
+        tasks = []
+        while True:
+            issues = self.jira.search_issues(jql_sql, maxResults=100, startAt=total)
+            for issue in issues:
+                self.issue = issue
+                """同步issue"""
+                self.sync_issue()
+                self.sync_worklog()
+                self.sync_issue_link()
+                tasks.append(self.show_name())
+            if len(issues) == 100:
+                total += 100
+            else:
+                break
+        return tasks
+
     def scan_epic(self, bg_date):
         """
         扫描project收集epic信息
@@ -338,7 +416,7 @@ class jira_handler:
                 # self.show_issue()
                 self.sync_issue()
                 """收集epic相关的story和任务"""
-                _jql = u'project=%s AND "Epic Link" =%s AND created >= %s ORDER BY created DESC' % \
+                _jql = u'project=%s AND "Epic Link"=%s AND created >= %s ORDER BY created DESC' % \
                        (self.name, self.show_name(), bg_date)
                 _link = self.get_epic_link(_jql)
                 """同步epic的link"""
@@ -419,6 +497,7 @@ def main():
     my_sql = mysql_hdr.SqlService(db)
 
     my_jira = jira_handler('FAST')
+    _sprints = my_jira.get_sprints()
 
     """
     _info = my_jira.get_pj_info()
@@ -452,6 +531,16 @@ def main():
                     my_jira.sync_issue()
                     my_jira.sync_worklog()
                     my_jira.show_issue()
+
+    """基于sprint收集Issue信息"""
+    if type(_sprints) != types.NoneType:
+        for _sprint in _sprints:
+            tasks = my_jira.scan_task_by_sprint(_sprint['name'])
+            for _task in tasks:
+                my_jira.set_issue_by_name(_task)
+                my_jira.sync_issue()
+                my_jira.sync_worklog()
+                my_jira.show_issue()
 
 
 if __name__ == '__main__':

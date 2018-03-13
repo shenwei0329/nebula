@@ -15,6 +15,7 @@ import sys
 import pandas as pd
 from numpy import mean, median, std
 from matplotlib.dates import AutoDateLocator, DateFormatter
+from matplotlib import transforms
 
 from pylab import mpl
 mpl.rcParams['font.sans-serif'] = ['SimHei']
@@ -276,6 +277,121 @@ def doBarH(title, y_label, x_label, datas):
         savefig(_fn, dpi=120)
     else:
         show()
+    return _fn
+
+
+def BurnDownChart(dots):
+    """
+    制作“燃尽”图
+    :param dots: [['日期'，Y-值，类型],...]
+    :return: 图文件存放路径
+    """
+
+    global __test
+
+    """作图"""
+    rcParams.update({
+        'font.family': 'sans-serif',
+        'font.sans-serif': [u'SimHei'],
+        'axes.unicode_minus': False,
+        'font.size': 6,
+    })
+
+    autodates = AutoDateLocator()
+    yearsFmt = DateFormatter('%Y-%m-%d')
+    fig = figure(figsize=[10, 6], dpi=120)
+
+    ax = fig.add_subplot(111)
+    fig.autofmt_xdate()                         # 设置x轴时间外观
+    ax.xaxis.set_major_locator(autodates)       # 设置时间间隔
+    ax.xaxis.set_major_formatter(yearsFmt)      # 设置时间显示格式
+
+    """设定显示的时间段"""
+    _end_date = datetime.date.today() + datetime.timedelta(days=10)
+    ax.set_xticks(pd.date_range(start='2017-12-10', end='%s' % _end_date, freq='3D'))
+    # ax.set_xlim("2017-12-10", "%s" % _end_date)
+    # ax.set_ylim(0, total+1)
+
+    _leg = []
+    for __i in range(5):
+        _leg.append(None)
+
+    for __dot in dots:
+        _done_lines_dots = {'date':[], 'dot':[]}
+        _testing_lines_dots = {'date':[], 'dot':[]}
+        _wait_testing_lines_dots = {'date':[], 'dot':[]}
+        _doing_lines_dots = {'date':[], 'dot':[]}
+        _waiting_lines_dots = {'date':[], 'dot':[]}
+        for _dot in __dot['dots']:
+            if _dot[2] == 'done':
+                _done_lines_dots['date'].append(_dot[0])
+                _done_lines_dots['dot'].append(_dot[1])
+            elif _dot[2] == 'doing':
+                _doing_lines_dots['date'].append(_dot[0])
+                _doing_lines_dots['dot'].append(_dot[1])
+            elif _dot[2] == 'waiting':
+                _waiting_lines_dots['date'].append(_dot[0])
+                _waiting_lines_dots['dot'].append(_dot[1])
+            elif _dot[2] == 'wait_testing':
+                _wait_testing_lines_dots['date'].append(_dot[0])
+                _wait_testing_lines_dots['dot'].append(_dot[1])
+            else:
+                _testing_lines_dots['date'].append(_dot[0])
+                _testing_lines_dots['dot'].append(_dot[1])
+            # _leg[0] = ax.scatter(_dot[0], _dot[1], color=_issue_point_color[_dot[2]], marker=_issue_point_marker[_dot[2]])
+
+        _leg[0] = ax.fill_between(_done_lines_dots['date'],
+                                  __dot['count'],
+                                  _done_lines_dots['dot'],
+                                  facecolor='lightcyan')
+        _leg[1] = ax.fill_between(_done_lines_dots['date'],
+                        _done_lines_dots['dot'],
+                        _testing_lines_dots['dot'],
+                        facecolor='lightpink')
+        _leg[2] = ax.fill_between(_done_lines_dots['date'],
+                        _testing_lines_dots['dot'],
+                        _wait_testing_lines_dots['dot'],
+                        facecolor='lightgoldenrodyellow')
+        _leg[3] = ax.fill_between(_done_lines_dots['date'],
+                        _wait_testing_lines_dots['dot'],
+                        _doing_lines_dots['dot'],
+                        facecolor='lightgreen')
+        _leg[4] = ax.fill_between(_done_lines_dots['date'],
+                        _doing_lines_dots['dot'],
+                        0,
+                        facecolor='cyan')
+        # plt.setp(_lines, color='r')
+
+    ax.set_xlabel(u'日期', fontsize=11)
+    ax.set_ylabel(u'任务量', fontsize=11)
+    ax.grid(True)
+    ax.legend(_leg,
+              [u"已完成",
+               u"测试中",
+               u"等测中",
+               u"处理中",
+               u"等待中"],
+              loc=1,
+              fontsize=12)
+
+    """图示各sprint的区域"""
+    trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
+    for _p in dots:
+        if _p['sprint'][-1] != 'Active':
+            _c = 'lightblue'
+        else:
+            _c = 'lightgreen'
+        ax.fill_between(_p['sprint'][:-1], 0, 1, transform=trans, alpha=0.3, color=_c)
+        ax.plot(_p['sprint'][:-1], [_p['count'],0], color='r', linewidth=1, alpha=0.3)
+
+    plt.title(u'任务燃尽图', fontsize=12)
+    plt.subplots_adjust(left=0.08, right=0.98, bottom=0.06, top=0.96)
+
+    _fn = 'pic/%s-issue-action.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+    if not __test:
+        plt.savefig(_fn, dpi=120)
+    else:
+        plt.show()
     return _fn
 
 
@@ -608,7 +724,7 @@ if __name__ == '__main__':
     global __test
 
     __test = True
-    _test_case = 2
+    _test_case = 3
 
     db = MySQLdb.connect(host="47.93.192.232", user="root", passwd="sw64419", db="nebula", charset='utf8')
     cur = db.cursor()
@@ -651,3 +767,20 @@ if __name__ == '__main__':
             _i += 1
 
         doDotBase("Test Case 0002", u"story数", u"时间", _data, label_pos='upper left', ylines=_ylines, dots=_dots)
+    elif _test_case == 3:
+        _dots = []
+        _start_date = pd.date_range(start='2018-02-01', end='2018-03-9', freq='1D')
+
+        for _date in _start_date:
+            for _i in range(3):
+                _r = random.random() + _i
+                if _r > 2:
+                    _type = 'done'
+                elif _r > 1:
+                    _type = 'doing'
+                else:
+                    _type = 'waiting'
+                _dots.append([_date, _r*10, _type])
+
+        BurnDownChart([30, 30], _dots, [['2018-02-03', '2018-02-12', 'b'], ['2018-02-12', '2018-02-28', 'r']])
+

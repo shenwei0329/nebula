@@ -128,7 +128,7 @@ class xlsx_handler:
                 __row = __row.split('/')
                 __row = u"%d年%d月%d日" % (int(__row[0]), int(__row[1]), int(__row[2]))
             elif __ctype == 2:
-                __row = str(__row)
+                __row = str(__row).replace('.0','')
             elif __ctype == 5:
                 __row = ''
             _row.append(__row)

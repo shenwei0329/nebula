@@ -11,13 +11,15 @@
 
 from pymongo import MongoClient
 import time
-
+from bson.objectid import ObjectId
+import datetime
 
 class mongoDB:
 
-    def __init__(self):
+    def __init__(self, project):
         self.mongo_client = MongoClient()
-        self.mongo_db = self.mongo_client.FAST
+        # self.mongo_db = self.mongo_client.FAST
+        self.mongo_db = self.mongo_client.get_database(project)
         self.obj = {"project": self.mongo_db.project,
                     "issue": self.mongo_db.issue,
                     "issue_link": self.mongo_db.issue_link,
@@ -26,6 +28,7 @@ class mongoDB:
                     "current_sprint": self.mongo_db.current_sprint}
         self.pj_hdr = {"insert": self._insert,
                        "update": self._update,
+                       "count": self._count,
                        "find": self._find,
                        "find_one": self._find_one,
                        "remove": self._remove}
@@ -39,6 +42,10 @@ class mongoDB:
         if obj == "log":
             return None
         return obj.update(*data, upsert=True)
+
+    @staticmethod
+    def _count(obj, *data):
+        return obj.count(*data)
 
     @staticmethod
     def _find(obj, *data):
@@ -66,7 +73,7 @@ class mongoDB:
         """
         项目类操作
         :param obj: 目标定义
-        :param operation: 操作定义，[insert, update, find, fine_one, remove]
+        :param operation: 操作定义，[insert, update, find, fine_one, remove, count]
         :param data: 参数
         :return:
         """
@@ -82,3 +89,11 @@ class mongoDB:
         _unit = self.handler(obj, "find", *data)
         return _unit.count()
 
+    def objectIdWithTimestamp(self, str_date):
+        """
+        将“日期”字符串转换成ObjectId，用于_id查询
+        :param str_date: 日期字符串
+        :return: ObjectId
+        """
+        from_datetime = datetime.datetime.strptime(str_date,'%Y-%m-%d')
+        return ObjectId.from_datetime(generation_time=from_datetime)
