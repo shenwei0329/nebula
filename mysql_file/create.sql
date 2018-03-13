@@ -25,6 +25,20 @@ CREATE TABLE if not exists requirment_t
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 #
+#
+CREATE TABLE if not exists telcomm_t
+(
+	id integer primary key not null auto_increment,
+	T_NAME varchar(24),
+	T_POST varchar(80),
+	T_BASEON varchar(80),
+	T_NUMBER varchar(24),
+	T_SUB_NUMBER varchar(8),
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#
 # 测试记录数据
 # 2017年10月28日
 #
@@ -50,6 +64,22 @@ CREATE TABLE if not exists testrecord_t
 	err_mod_1 varchar(40),
 	err_mod_2 varchar(40),
 	err_desc varchar(1024),
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#
+# 人员表
+# 2017年10月28日
+#
+CREATE TABLE if not exists member_t
+(
+	id integer primary key not null auto_increment,
+	MM_XM varchar(80)   comment '名称',
+	MM_GH varchar(26)   comment '工号',
+	MM_ZT varchar(20)   comment '状态',
+	MM_LEVEL varchar(20)    comment '职级',
+	MM_POST varchar(80) comment '岗位',
 	created_at datetime,
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -274,11 +274,16 @@ def collectBurnDownData(mongo_db, sprints, current_sprint):
                 continue
 
             _data = {"sprint":[_sprint['startDate'], _sprint['endDate'], _sprint['state']]}
+            """
             _search = {"sprint": _sprint["name"],
                        "issue_type": u'任务',
                        "$and": [{"updated": {"$gte": _sprint['startDate']}},
                                 {"updated": {"$lte": _sprint['endDate']}}]}
+            """
+            _search = {"sprint": _sprint["name"],
+                       "issue_type": u'任务'}
             _tot_count = mongo_db.handler('issue', 'count', _search)
+            print '---> get_count: ', mongo_db.get_count('issue', _search)
 
             """获取本sprint内所有issue列表"""
             _cur = mongo_db.handler('issue', 'find', _search)
@@ -287,54 +292,30 @@ def collectBurnDownData(mongo_db, sprints, current_sprint):
                 tot_issue[_i['issue']] = u'待办'
 
             print "_tot_issue.len = ", len(tot_issue)
+
             # print "Total: %d" % _tot_count
             _data['count'] = _tot_count
             _data['dots'] = []
             _date_index = pd.date_range(start=_sprint['startDate'], end=_sprint['endDate'], freq='1D').date
             for _date in _date_index:
                 _task_count = _tot_count
-                _tot_issue = tot_issue
                 if _date > datetime.datetime.now().date():
                     break
                 # print _date,"--->",
+                """ 重置满足时间窗口的 issue 集的状态 """
+                _search = {
+                    "key": "status",
+                    "_id": {"$lte": mongo_db.objectIdWithTimestamp(
+                        "%s" % (_date + datetime.timedelta(days=1)))}
+                }
+                _tot_issue = tot_issue
+                _cur = mongo_db.handler('log', 'find', _search)
+                for _i in _cur:
+                    if _i['issue_id'] in _tot_issue:
+                        _tot_issue[_i['issue_id']] = _i['new']
+                    # print len(_tot_issue)
+
                 for _status in [u'完成', u'测试中', u'待测试', u'处理中', u'待办']:
-                    """
-                    ===========================================================================
-                    样板1：
-                    _search = {"sprint": _sprint["name"],
-                               "issue_type": u'任务',
-                               "status": _status,
-                               "$and": [{"updated": {"$gte": "%s" % _date}},
-                                        {"updated": {"$lte": "%s" % (_date++ datetime.timedelta(days=1))}}]}
-                    _count = mongo_db.handler('issue', 'count', _search)
-                    ===========================================================================
-                    样板2：
-                    从log库中找满足条件的记录个数。
-                    _sql = {"_id": {"$lt": mongo_db.objectIdWithTimestamp("%s" % (_date + datetime.timedelta(days=1)))}}
-                    count = mongo_db.handler('log','count',_sql)
-                    print count
-                    ============================================================================
-                    样板3：
-                    从issue库中找满足条件的issue个数。
-                    _search = {"sprint": _sprint["name"],
-                               "issue_type": u'任务',
-                               "status": _status,
-                                "updated": {"$lte": "%s" % (_date + datetime.timedelta(days=1))}}
-                    _count = mongo_db.handler('issue', 'count', _search)
-                    ============================================================================
-                    """
-                    """ 重置满足时间窗口的 issue 集的状态 """
-                    _search = {
-                        "key": "status",
-                        "new": _status,
-                        "_id": {"$lt": mongo_db.objectIdWithTimestamp(
-                            "%s" % (_date + datetime.timedelta(days=1)))}
-                    }
-                    _cur = mongo_db.handler('log', 'find', _search)
-                    for _i in _cur:
-                        if _i['issue_id'] in _tot_issue:
-                            _tot_issue[_i['issue_id']] = _status
-                    print len(_tot_issue)
                     """ 统计此窗口内 各个状态 issue 的总数 """
                     _count = 0
                     for _i in _tot_issue:
@@ -342,7 +323,7 @@ def collectBurnDownData(mongo_db, sprints, current_sprint):
                             _count += 1
                     _data[_status_trans[_status]] = _count
                     _task_count -= _count
-                    print _status, '_count:', _count, '_task_count:', _task_count,
+                    print _status, '_tot_issue.len: ', len(_tot_issue), '_count:', _count, '_task_count:', _task_count
                     _data['dots'].append(["%s" % _date, _task_count, _status_trans[_status]])
                 print "---"
             Dots.append(_data)
@@ -382,7 +363,7 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     sprints = jira.get_sprints()
 
     current_sprint, sprint_start_date, sprint_end_date = jira.get_current_sprint()
-    _burndown_dots = collectBurnDownData(mongo_db, sprints, "%s" % current_sprint)
+    _burndown_dots = collectBurnDownData(mongo_db, sprints, current_sprint)
     _burndown_fn = doBox.BurnDownChart(_burndown_dots)
 
     _print('>>> 报告生成日期【%s】 <<<' % time.ctime(), align=WD_ALIGN_PARAGRAPH.CENTER)
@@ -401,7 +382,8 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _startDate = mongo_db.handler("project", "find", {'id': landmark_id})[0]['startDate']
     _endDate = mongo_db.handler("project", "find", {'id': landmark_id})[0]['releaseDate']
     # 获取本里程碑内story
-    _story = mongo_db.handler("issue", "find", {'issue_type': "story", "landmark": u"%s" % _landmark})
+    # _story = mongo_db.handler("issue", "find", {'issue_type': "story", "landmark": u"%s" % _landmark})
+    _story = mongo_db.handler("issue", "find", {'issue_type': "story", "sprint": current_sprint})
     # 获取本里程碑内所有任务
     _task_list = []
     _story_task_list = {}
@@ -412,7 +394,11 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
         _link = mongo_db.handler("issue_link", "find", {"issue": _id})
         if _id not in _story_task_list:
             _story_task_list[_id] = {'org_time': 0, 'agg_time': 0, 'spent_time': 0}
-            _story_points[_id] = int(_st['point']) * COST_ONE_POINT * 3600
+            if type(_st['point']) is not types.NoneType:
+                _story_points[_id] = int(_st['point']) * COST_ONE_POINT * 3600
+            else:
+                print "!!! ",_id, " no points be defined"
+                _story_points[_id] = 0
             if _max_cost < _story_points[_id]:
                 _max_cost = _story_points[_id]
         for _l in _link:
@@ -479,7 +465,7 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _dots = []
     _x = 1
     _issues = []
-    _story = mongo_db.handler("issue", "find", {'issue_type': "story", "landmark": u"%s" % _landmark})
+    _story = mongo_db.handler("issue", "find", {'issue_type': "story", "sprint": current_sprint})
     _dots_s = {}
     for _st in _story:
         _id = _st['issue']
@@ -500,7 +486,8 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _dots = []
     _x = 1
     _issues = []
-    _story = mongo_db.handler("issue", "find", {'issue_type': "story", "landmark": u"%s" % _landmark})
+    # _story = mongo_db.handler("issue", "find", {'issue_type': "story", "landmark": u"%s" % _landmark})
+    _story = mongo_db.handler("issue", "find", {'issue_type': "story", "sprint": current_sprint})
     _tot_points = 0
     _tot_agg_times = 0
     _tot_spent_times = 0
@@ -598,7 +585,8 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _print(u"任务执行状态", title=True, title_lvl=2)
     _print(u"通过下图可直观了解在本里程碑内所有任务的当前执行情况。")
     doc.addPic(_fn_issue_status, sizeof=6.8)
-    _print(u'【图例说明】：展示任务执行的状态分布情况。')
+    _print(u'【图例说明】：展示任务执行的状态分布情况。图中，圆点大小与任务被测试次数关联，'
+           u'圆点越小则间接表示bug数也越少。')
 
     #   3）目标执行：基于“时标”展示目标迁移“趋势”
     _print(u"目标执行情况", title=True, title_lvl=2)

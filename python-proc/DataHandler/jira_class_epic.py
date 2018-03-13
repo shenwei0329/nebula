@@ -372,6 +372,8 @@ class jira_handler:
             wl['created'] = worklog.created
             wl['started'] = worklog.started
             self.write_worklog(wl)
+        """同时同步Issue的变动日志"""
+        self.sync_changelog()
 
     def scan_task_by_sprint(self, sprint):
         """
@@ -431,6 +433,21 @@ class jira_handler:
             else:
                 break
         return story_link
+
+    def sync_changelog(self):
+        issue = self.jira.issue(self.show_name(), expand='changelog')
+        changelog = issue.changelog
+        for history in changelog.histories:
+            for item in history.items:
+                _data = {'issue': self.show_name(),
+                         'field': item.field,
+                         'author': u"%s" % history.author,
+                         'date': history.created,
+                         'old': getattr(item, 'fromString'),
+                         'new': getattr(item, 'toString')
+                         }
+                if self.mongo_db.handler('changelog', 'find_one', _data) != 1:
+                    self.mongo_db.handler('changelog', 'insert', _data)
 
 
 def into_db(sql_service, my_jira, kv):
