@@ -387,7 +387,86 @@ def BurnDownChart(dots):
     plt.title(u'任务燃尽图', fontsize=12)
     plt.subplots_adjust(left=0.08, right=0.98, bottom=0.06, top=0.96)
 
-    _fn = 'pic/%s-issue-action.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+    _fn = 'pic/%s-issue-burndown.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+    if not __test:
+        plt.savefig(_fn, dpi=120)
+    else:
+        plt.show()
+    return _fn
+
+
+def TimeBurnDownChart(dots):
+    """
+    制作工时“燃尽”图
+    :param dots: [['日期'，Y-值],...]
+    :return: 图文件存放路径
+    """
+
+    global __test
+
+    """作图"""
+    rcParams.update({
+        'font.family': 'sans-serif',
+        'font.sans-serif': [u'SimHei'],
+        'axes.unicode_minus': False,
+        'font.size': 6,
+    })
+
+    autodates = AutoDateLocator()
+    yearsFmt = DateFormatter('%Y-%m-%d')
+    fig = figure(figsize=[10, 6], dpi=120)
+
+    ax = fig.add_subplot(111)
+    fig.autofmt_xdate()                         # 设置x轴时间外观
+    ax.xaxis.set_major_locator(autodates)       # 设置时间间隔
+    ax.xaxis.set_major_formatter(yearsFmt)      # 设置时间显示格式
+
+    """设定显示的时间段"""
+    _end_date = datetime.date.today() + datetime.timedelta(days=10)
+    ax.set_xticks(pd.date_range(start='2017-12-10', end='%s' % _end_date, freq='3D'))
+    # ax.set_xlim("2017-12-10", "%s" % _end_date)
+    # ax.set_ylim(0, total+1)
+
+    _leg = [None, None]
+    for __dot in dots:
+        _done_lines_dots = {'date':[], 'dot':[]}
+        for _dot in __dot['dots']:
+            _done_lines_dots['date'].append(_dot[0])
+            _done_lines_dots['dot'].append(_dot[1])
+
+        _leg[0] = ax.fill_between(_done_lines_dots['date'],
+                                  __dot['count'],
+                                  _done_lines_dots['dot'],
+                                  facecolor='lightcyan')
+
+        _leg[1] = ax.fill_between(_done_lines_dots['date'],
+                                  _done_lines_dots['dot'],
+                                  0,
+                                  facecolor='lightpink')
+        # plt.setp(_lines, color='r')
+
+    ax.set_xlabel(u'日期', fontsize=11)
+    ax.set_ylabel(u'工时', fontsize=11)
+    ax.grid(True)
+    ax.legend(_leg,
+              [u"计划", u"执行"],
+              loc=1,
+              fontsize=12)
+
+    """图示各sprint的区域"""
+    trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
+    for _p in dots:
+        if _p['sprint'][-1] != 'Active':
+            _c = 'lightblue'
+        else:
+            _c = 'lightgreen'
+        ax.fill_between(_p['sprint'][:-1], 0, 1, transform=trans, alpha=0.3, color=_c)
+        ax.plot(_p['sprint'][:-1], [0, _p['count']], color='r', linewidth=1, alpha=0.3)
+
+    plt.title(u'工时燃尽图', fontsize=12)
+    plt.subplots_adjust(left=0.08, right=0.98, bottom=0.06, top=0.96)
+
+    _fn = 'pic/%s-time-issue-burndown.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     if not __test:
         plt.savefig(_fn, dpi=120)
     else:
@@ -536,7 +615,7 @@ def doIssueStatus(title, xlabel, issues, dots, dots_s):
     _idx = 0
 
     for _dot in dots:
-        _s = (dots_s[issues[_idx]]+1) * 20
+        _s = (dots_s[issues[_idx]]*2+1) * 20
         if _dot[2] == 'v':
             # _np_dot = ax.scatter(_dot[0], _dot[1], marker=_dot[2], c=_dot[3], s=_s)
             _np_dot = ax.scatter(_dot[0], _dot[1], c=_dot[3], s=_s, alpha=0.7)

@@ -268,12 +268,14 @@ def collectBurnDownData(mongo_db, sprints, current_sprint, issue_filter=None):
                          u"DONE": 'done'}
 
         Dots = []
+        SpentTimes = []
         for _sprint in sprints:
 
             if current_sprint not in _sprint['name']:
                 continue
 
             _data = {"sprint":[_sprint['startDate'], _sprint['endDate'], _sprint['state']]}
+            _spent_time_dot = {"sprint":[_sprint['startDate'], _sprint['endDate'], _sprint['state']]}
             """
             _search = {"sprint": _sprint["name"],
                        "issue_type": u'任务',
@@ -291,19 +293,25 @@ def collectBurnDownData(mongo_db, sprints, current_sprint, issue_filter=None):
             """获取本sprint内所有issue列表"""
             _cur = mongo_db.handler('issue', 'find', _search)
             tot_issue = {}
+            tot_issue_spent_time = {}
             _tot_count = 0
+            _tot_org_time = 0
             for _i in _cur:
                 if issue_filter is not None:
                     if issue_filter in _i['summary']:
                         continue
                 tot_issue[_i['issue']] = u'待办'
+                tot_issue_spent_time[_i['issue']] = 0
                 _tot_count += 1
+                _tot_org_time += int(_i['org_time'])/1800
 
             print "_tot_issue.len = ", len(tot_issue)
 
             # print "Total: %d" % _tot_count
             _data['count'] = _tot_count
+            _spent_time_dot['count'] = _tot_org_time
             _data['dots'] = []
+            _spent_time_dot['dots'] = []
             _date_index = pd.date_range(start=_sprint['startDate'], end=_sprint['endDate'], freq='1D').date
             for _date in _date_index:
                 _task_count = _tot_count
@@ -326,7 +334,7 @@ def collectBurnDownData(mongo_db, sprints, current_sprint, issue_filter=None):
 
                 """用changelog做历史回顾"""
                 _search = {
-                    "field": "status",
+                    "field": {"$in": ["status", "timespent"]},
                     "date": {"$lte": "%s" % (_date + datetime.timedelta(days=1))}
                 }
                 _tot_issue = tot_issue
@@ -334,8 +342,15 @@ def collectBurnDownData(mongo_db, sprints, current_sprint, issue_filter=None):
                 _cur = mongo_db.handler('changelog', 'find', _search)
                 for _i in _cur:
                     if _i['issue'] in _tot_issue:
-                        _tot_issue[_i['issue']] = _i['new']
-                    # print len(_tot_issue)
+                        if _i['field'] == 'status':
+                            _tot_issue[_i['issue']] = _i['new']
+                        else:
+                            tot_issue_spent_time[_i['issue']] = _i['new']
+
+                _time = 0
+                for _i in tot_issue_spent_time:
+                    _time += int(tot_issue_spent_time[_i])/1800
+                _spent_time_dot['dots'].append(["%s" % _date, _time])
 
                 for _status in [u'DONE', u'测试中', u'待测试', u'IN PROGRESS']:
                     """ 统计此窗口内 各个状态 issue 的总数 """
@@ -350,8 +365,9 @@ def collectBurnDownData(mongo_db, sprints, current_sprint, issue_filter=None):
                 _data[_status_trans[u"TO DO"]] = _task_count
                 print "---"
             Dots.append(_data)
-        return Dots
-    return None
+            SpentTimes.append(_spent_time_dot)
+        return Dots, SpentTimes
+    return None, None
 
 
 def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
@@ -386,8 +402,9 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     sprints = jira.get_sprints()
 
     current_sprint, sprint_start_date, sprint_end_date = jira.get_current_sprint()
-    _burndown_dots = collectBurnDownData(mongo_db, sprints, current_sprint)
+    _burndown_dots, _timeburndown_dots = collectBurnDownData(mongo_db, sprints, current_sprint)
     _burndown_fn = doBox.BurnDownChart(_burndown_dots)
+    _timeburndown_fn = doBox.TimeBurnDownChart(_timeburndown_dots)
     """
     _burndown_pd_dots = collectBurnDownData(mongo_db, sprints, current_sprint, issue_filter=u'项目入侵')
     _burndown_pd_fn = doBox.BurnDownChart(_burndown_pd_dots)
@@ -687,6 +704,10 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _print(u"● 待办的任务总数：%d" % _dot['waiting'])
     doc.addPic(_burndown_fn, sizeof=6.8)
     _print(u'【图例说明】：图中的红线为“理想”的任务燃尽趋势。')
+
+    _print("本阶段计划工时的燃尽情况：")
+    doc.addPic(_timeburndown_fn, sizeof=6.8)
+    _print(u'【图例说明】：图中的红线为“理想”的计划工时燃尽趋势。')
 
     """
     _print(u'过滤掉“项目入侵”的任务燃尽情况如下：')
