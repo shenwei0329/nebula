@@ -279,8 +279,9 @@ def collectBurnDownData(mongo_db, sprints, current_sprint, issue_filter=None):
                        "issue_type": u'任务',
                        "$and": [{"updated": {"$gte": _sprint['startDate']}},
                                 {"updated": {"$lte": _sprint['endDate']}}]}
+            '$regex' : ".*atmosphere.*"
             """
-            _search = {"sprint": _sprint["name"],
+            _search = {"sprint": {'$regex': ".*%s.*" % _sprint["name"]},
                        "issue_type": u'任务'}
             """
             _tot_count = mongo_db.handler('issue', 'count', _search)
@@ -329,6 +330,7 @@ def collectBurnDownData(mongo_db, sprints, current_sprint, issue_filter=None):
                     "date": {"$lte": "%s" % (_date + datetime.timedelta(days=1))}
                 }
                 _tot_issue = tot_issue
+                """按升序查找"""
                 _cur = mongo_db.handler('changelog', 'find', _search)
                 for _i in _cur:
                     if _i['issue'] in _tot_issue:
@@ -458,6 +460,9 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
             _max_cost = _story_task_list[_id]['agg_time']
 
     # 获取任务的变化情况
+    """
+    "{$in": ['timeoriginalestimate', 'timeestimate', 'timespent', 'WorklogTimeSpent', 'status', 'resolution']}
+    """
     _dots = []
     _issues = []
     _y = 1
@@ -475,7 +480,16 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _x = 1
     _dots_s = {}
     for _t in _task_list:
-        _dots_s[_t] = mongo_db.handler("log", "find", {"issue_id": _t, "key": "status", "new": u"处理中"}).count()
+        """
+        获取未通过测试的Issue：
+                {field:'status', new:"In Progress", old:{$ne: 'To Do'}} （排除第一次）
+                 或者
+                {field:'status', new:"In Progress"}（包含第一次）
+        """
+        # _dots_s[_t] = mongo_db.handler("log", "find", {"issue_id": _t, "key": "status", "new": u"处理中"}).count()
+        _dots_s[_t] = mongo_db.handler("changelog", "find", {"issue": _t,
+                                                             "field": 'status',
+                                                             "new": "In Progress"}).count()
         _is = mongo_db.handler("issue", "find", {"issue": _t})
         for _i in _is:
             if _i['status'] in _status:
@@ -490,7 +504,7 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _dots = []
     _x = 1
     _issues = []
-    _story = mongo_db.handler("issue", "find", {'issue_type': "story", "sprint": current_sprint})
+    _story = mongo_db.handler("issue", "find", {'issue_type': "story", "sprint": {'$regex': ".*%s.*" % current_sprint}})
     _dots_s = {}
     for _st in _story:
         _id = _st['issue']
@@ -505,7 +519,7 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
                     _dots_s[_id] = 3
         _issues.append(_id)
         _x += 1
-    _fn_story_status = doBox.doIssueStatus(u"里程碑的目标状态分布图", u"目标（story）", _issues, _dots, _dots_s)
+    _fn_story_status = doBox.doIssueStatus(u"本期sprint的目标状态分布图", u"目标（story）", _issues, _dots, _dots_s)
 
     # 生成预算执行信息
     _dots = []
@@ -551,7 +565,7 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
         3）偏差：执行与预算的+/-偏差
         4）任务的状态
     """
-    _fn_cost = doBox.doIssueCost(u"里程碑的目标成本分布图", u"目标（story）", _issues, _dots, _max_cost)
+    _fn_cost = doBox.doIssueCost(u"本期sprint的目标成本分布图", u"目标（story）", _issues, _dots, _max_cost)
 
     _sql = 'select PJ_XMMC,PJ_XMFZR,PJ_KSSJ,PJ_JSSJ,PJ_XMJJ,PJ_XMYS from project_t where PJ_XMBH="%s"' % project
     _res = doSQL(cur, _sql)
@@ -570,12 +584,44 @@ def main(project="PRD-2017-PROJ-00003", landmark_id="18811"):
     _print(u'当前阶段：%s，从 %s 至 %s' % (current_sprint, sprint_start_date, sprint_end_date))
 
     """需要在此插入语句"""
-    _paragrap = _print(u"非计划类事务情况", title=True, title_lvl=1)
+    _paragrap = _print(u"情况总览", title=True, title_lvl=1)
+    _search = {"issue_type": 'story',
+               "summary": {"$regex": ".*UC.*"},
+               "sprint": {"$regex": ".*Sprint 5.*"}}
+    _tot_count = mongo_db.handler('issue', 'count', _search)
+    __search = {"issue_type": 'story',
+                "summary": {"$regex": ".*UC.*"},
+                "status": "完成",
+                "sprint": {"$regex": ".*Sprint 5.*"}}
+    _done_count = mongo_db.handler('issue', 'count', __search)
+    _print(u"本阶段共有 %d 个用例，已完成 %d 个，完成率 %0.2f%%，明细如下：" % (
+        _tot_count, _done_count, float((_done_count*100)/_tot_count)
+    ))
+    doc.addTable(1, 4, col_width=(7, 1, 7, 1))
+    _title = (('text', u'功能名称'), ('text', u'状态'),
+              ('text', u'功能名称'), ('text', u'状态'))
+    doc.addRow(_title)
+    _cur = mongo_db.handler('issue', 'find', _search)
+    _idx = 0
+    _text = ()
+    for _issue in _cur:
+        _text += (('text', u"%s" % _issue['summary'].replace('【UC】','')),
+                  ('text', u"%s" % _issue['status']))
+        if _idx > 0:
+            doc.addRow(_text)
+            _text = ()
+            _idx = 0
+        else:
+            _idx += 1
+    doc.setTableFont(8)
+    _print("")
+
+    _print(u"非计划类事务情况", title=True, title_lvl=1)
     _print(u"本阶段（%s）执行过程中插入了以下“外来”的事务：" % current_sprint)
     _i = 1
     _tot_cost = 0
     _res = mongo_db.handler("issue", "find", {"issue_type": u"story",
-                                              "sprint": current_sprint,
+                                              "sprint": {'$regex': ".*%s.*" % current_sprint},
                                               "summary": re.compile(r'.入侵.*?')})
     for _issue in _res:
         if type(_issue['point']) is types.NoneType or _issue['point'] <= 0:

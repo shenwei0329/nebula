@@ -67,7 +67,8 @@ class jira_handler:
         return None
 
     def transDate(self, str):
-        if str != None:
+        print("---> transDate [%s] <---" % str)
+        if str != None and str != u'无':
             _s = str.\
                 replace(u'十一月', '11').\
                 replace(u'十二月', '12').\
@@ -127,7 +128,9 @@ class jira_handler:
         """
         if "customfield_10501" in self.issue.raw['fields'] and \
                 type(self.issue.fields.customfield_10501) is not types.NoneType:
-            return u'%s' % self.issue.fields.customfield_10501[0].split('name=')[1].split(',')[0]
+            return u'%s' % (",".join(item.split('name=')[1].split(',')[0]
+                                      for item in self.issue.fields.customfield_10501))
+            # return u'%s' % self.issue.fields.customfield_10501[0].split('name=')[1].split(',')[0]
         return None
 
     def get_versions(self):
@@ -446,7 +449,7 @@ class jira_handler:
                          'old': getattr(item, 'fromString'),
                          'new': getattr(item, 'toString')
                          }
-                if self.mongo_db.handler('changelog', 'find_one', _data) != 1:
+                if self.mongo_db.handler('changelog', 'find_one', _data) is None:
                     self.mongo_db.handler('changelog', 'insert', _data)
 
 
