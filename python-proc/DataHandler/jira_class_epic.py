@@ -11,7 +11,7 @@
 #   对程序进行“规范化”处理
 #
 
-
+import sys
 from jira import JIRA
 from jira.client import GreenHopper
 
@@ -180,10 +180,10 @@ class jira_handler:
         return ""
 
     def get_desc(self):
-        return u"%s" % self.issue.fields.summary
+        return self.issue.fields.summary
 
     def show_name(self):
-        return u"%s" % str(self.issue)
+        return str(self.issue)
 
     def get_type(self):
         return u"%s" % self.issue.fields.issuetype
@@ -337,7 +337,7 @@ class jira_handler:
         显示issue信息
         :return:
         """
-        print("[%s]-%s" % (self.show_name(), self.get_desc())),
+        print(u"[%s]" % self.show_name()),
         print u"类型：%s" % self.get_type(),
         print(u'状态：%s' % self.get_status()),
         print u"里程碑：%s" % self.get_landmark()
@@ -407,9 +407,11 @@ class jira_handler:
         """
         扫描project收集epic信息
         :param bg_date: 起始日期，如 2018-1-31
+        :param issue_type：指定issue类型
         :return: 按issue类型进行统计值kv_sum，issue链kv_link，相关任务链task_link
         """
-        jql_sql = u'project=%s AND issuetype=epic AND created >= %s ORDER BY created DESC' % (self.name, bg_date)
+        jql_sql = u'project=%s AND issuetype=epic AND created >= %s ORDER BY created DESC' % (
+            self.name, bg_date)
         total = 0
         story_link = []
 
@@ -436,6 +438,55 @@ class jira_handler:
             else:
                 break
         return story_link
+
+    def scan_story(self, bg_date):
+        jql_sql = u'project=%s AND issuetype=story AND created >= %s ORDER BY created DESC' % (
+            self.name, bg_date)
+        total = 0
+        task_link = []
+
+        while True:
+            issues = self.jira.search_issues(jql_sql, maxResults=100, startAt=total)
+            for issue in issues:
+                self.issue = issue
+                """同步issue"""
+                # self.show_issue()
+                self.sync_issue()
+                """收集story相关的任务"""
+                _link = self.sync_issue_link()
+                """同步epic的link"""
+                self.mongo_db.handler("issue_link", "update",
+                                      {"issue": self.show_name()},
+                                      dict({"issue": self.show_name()}, **_link))
+                task_link += _link[self.show_name()]
+
+            if len(issues) == 100:
+                total += 100
+            else:
+                break
+        return task_link
+
+    def scan_task(self, bg_date):
+        jql_sql = u'project=%s AND issuetype=task OR issuetype=任务 AND created >= %s ORDER BY created DESC' % (
+            self.name, bg_date)
+        total = 0
+        task_link = []
+
+        while True:
+            issues = self.jira.search_issues(jql_sql, maxResults=100, startAt=total)
+            for issue in issues:
+                self.issue = issue
+                """同步issue"""
+                self.show_issue()
+                self.sync_issue()
+                self.sync_changelog()
+                self.sync_worklog()
+                task_link.append(self.show_name())
+            if len(issues) == 100:
+                total += 100
+            else:
+                break
+        return task_link
 
     def sync_changelog(self):
         issue = self.jira.issue(self.show_name(), expand='changelog')
@@ -510,58 +561,75 @@ def into_db(sql_service, my_jira, kv):
             sql_service.insert(_sql)
 
 
-def main():
+def do_with_epic(myjira, sprints):
 
-    """连接数据库"""
-    db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
-    my_sql = mysql_hdr.SqlService(db)
-
-    my_jira = jira_handler('FAST')
-    _sprints = my_jira.get_sprints()
-
-    """
-    _info = my_jira.get_pj_info()
-    print(u"项目名称：%s，负责人：%s" % (_info['pj_name'], _info['pj_manager']))
-    """
-
-    issue_link = my_jira.scan_epic('2017-12-1')
+    issue_link = myjira.scan_epic('2017-12-1')
 
     for issue in issue_link:
 
-        my_jira.set_issue_by_name(issue)
-        my_jira.sync_issue()
-        my_jira.show_issue()
+        myjira.set_issue_by_name(issue)
+        myjira.sync_issue()
+        myjira.show_issue()
 
-        if my_jira.get_type() in [u'任务', 'task']:
-            my_jira.sync_worklog()
+        if myjira.get_type().lower() in [u'任务', 'task']:
+            myjira.sync_worklog()
 
-        if my_jira.get_type() in [u'story', u'improvement', u'New Feature', u'改进', u'新功能']:
-            _my_name = my_jira.show_name()
+        if myjira.get_type() in [u'story', u'improvement', u'New Feature', u'改进', u'新功能']:
+            _my_name = myjira.show_name()
             """获取story等下属的task"""
-            _link = my_jira.sync_issue_link()
+            _link = myjira.sync_issue_link()
             for _issue in _link[_my_name]:
                 __my_name = _issue
-                my_jira.set_issue_by_name(__my_name)
-                my_jira.sync_issue()
-                my_jira.show_issue()
+                myjira.set_issue_by_name(__my_name)
+                myjira.sync_issue()
+                myjira.show_issue()
                 """获取task下属的subtask？"""
-                _task_link = my_jira.sync_issue_link()
+                _task_link = myjira.sync_issue_link()
                 for _task in _task_link[__my_name]:
-                    my_jira.set_issue_by_name(_task)
-                    my_jira.sync_issue()
-                    my_jira.sync_worklog()
-                    my_jira.show_issue()
+                    myjira.set_issue_by_name(_task)
+                    myjira.sync_issue()
+                    myjira.sync_worklog()
+                    myjira.show_issue()
 
     """基于sprint收集Issue信息"""
-    if type(_sprints) != types.NoneType:
-        for _sprint in _sprints:
-            tasks = my_jira.scan_task_by_sprint(_sprint['name'])
+    if type(sprints) != types.NoneType:
+        for _sprint in sprints:
+            tasks = myjira.scan_task_by_sprint(_sprint['name'])
             for _task in tasks:
-                my_jira.set_issue_by_name(_task)
-                my_jira.sync_issue()
-                my_jira.sync_worklog()
-                my_jira.show_issue()
+                myjira.set_issue_by_name(_task)
+                myjira.sync_issue()
+                myjira.sync_worklog()
+                myjira.show_issue()
+
+
+def do_with_story(myjira, sprints):
+
+    issue_link = myjira.scan_story('2017-12-1')
+    for issue in issue_link:
+        myjira.set_issue_by_name(issue)
+        myjira.sync_issue()
+        myjira.show_issue()
+        myjira.sync_worklog()
+    myjira.scan_task('2017-12-1')
+
+
+def main(project_alias="FAST", issue_type='epic'):
+
+    """连接数据库"""
+    # db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
+    # my_sql = mysql_hdr.SqlService(db)
+
+    my_jira = jira_handler(project_alias)
+    _sprints = my_jira.get_sprints()
+
+    if issue_type == 'epic':
+        do_with_epic(my_jira, _sprints)
+    elif issue_type == 'story':
+        do_with_story(my_jira, _sprints)
 
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) == 3:
+        main(sys.argv[1], issue_type=sys.argv[2])
+    else:
+        main()

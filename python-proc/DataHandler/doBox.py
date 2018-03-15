@@ -427,29 +427,42 @@ def TimeBurnDownChart(dots):
     # ax.set_xlim("2017-12-10", "%s" % _end_date)
     # ax.set_ylim(0, total+1)
 
-    _leg = [None, None]
+    _leg = [None, None, None]
     for __dot in dots:
-        _done_lines_dots = {'date':[], 'dot':[]}
+        _spent_lines_dots = {'date':[], 'dot':[]}
+        _org_lines_dots = {'date':[], 'dot':[]}
         for _dot in __dot['dots']:
-            _done_lines_dots['date'].append(_dot[0])
-            _done_lines_dots['dot'].append(_dot[1])
+            if _dot[2] == 'spent':
+                _spent_lines_dots['date'].append(_dot[0])
+                _spent_lines_dots['dot'].append(_dot[1])
+            else:
+                _org_lines_dots['date'].append(_dot[0])
+                _org_lines_dots['dot'].append(_dot[1])
 
-        _leg[0] = ax.fill_between(_done_lines_dots['date'],
+        _leg[0] = ax.fill_between(_spent_lines_dots['date'],
                                   __dot['count'],
-                                  _done_lines_dots['dot'],
-                                  facecolor='lightcyan')
+                                  _spent_lines_dots['dot'],
+                                  facecolor='lightcyan',
+                                  alpha=0.6)
 
-        _leg[1] = ax.fill_between(_done_lines_dots['date'],
-                                  _done_lines_dots['dot'],
+        _leg[1] = ax.fill_between(_spent_lines_dots['date'],
+                                  _spent_lines_dots['dot'],
                                   0,
-                                  facecolor='lightpink')
+                                  facecolor='lightpink',
+                                  alpha=0.7)
+
+        _leg[2] = ax.fill_between(_spent_lines_dots['date'],
+                                  _org_lines_dots['dot'],
+                                  0, # _spent_lines_dots['dot'],
+                                  facecolor='lightyellow',
+                                  alpha=0.3)
         # plt.setp(_lines, color='r')
 
     ax.set_xlabel(u'日期', fontsize=11)
     ax.set_ylabel(u'工时', fontsize=11)
     ax.grid(True)
     ax.legend(_leg,
-              [u"计划", u"执行"],
+              [u"规划", u"执行", u"估计"],
               loc=1,
               fontsize=12)
 
@@ -460,7 +473,7 @@ def TimeBurnDownChart(dots):
             _c = 'lightblue'
         else:
             _c = 'lightgreen'
-        ax.fill_between(_p['sprint'][:-1], 0, 1, transform=trans, alpha=0.3, color=_c)
+        ax.fill_between(_p['sprint'][:-1], 0, 1, transform=trans, alpha=0.1, color=_c)
         ax.plot(_p['sprint'][:-1], [0, _p['count']], color='r', linewidth=1, alpha=0.3)
 
     plt.title(u'工时燃尽图', fontsize=12)
