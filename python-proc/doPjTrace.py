@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     if len(sys.argv) <= 2:
         if len(sys.argv) == 2:
-            plans2018.main(project=sys.argv[1])
+            plans2018.main(project_alias=sys.argv[1])
         else:
             plans2018.main()
     else:

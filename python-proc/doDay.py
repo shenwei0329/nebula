@@ -19,14 +19,14 @@
 import os
 import MySQLdb
 import sys
-from DataHandler import main
+from DataHandler import main2018
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 if __name__ == '__main__':
 
-    main.main()
+    main2018.main()
 
 #
 # Eof

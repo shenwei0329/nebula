@@ -33,7 +33,7 @@ class SqlService:
         except:
             _n = 0
         finally:
-            return _n
+            return int(_n)
 
     def do(self, _sql):
         if self.cur is None:

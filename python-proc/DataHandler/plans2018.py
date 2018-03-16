@@ -405,6 +405,7 @@ def Performance(mongodb, current_sprint):
                }
     _users = {}
     _cur = mongodb.handler('issue', 'find', _search)
+    _tot_task_count = 0
     for _issue in _cur:
         if _issue['users'] not in _users:
             _users[_issue['users']] = {"done": 0,
@@ -416,12 +417,14 @@ def Performance(mongodb, current_sprint):
             _users[_issue['users']]['done'] += 1
         else:
             _users[_issue['users']]['doing'] += 1
-        _users[_issue['users']]['org_time'] += _issue['org_time']/1800
+        if type(_issue['org_time']) is not types.NoneType:
+            _users[_issue['users']]['org_time'] += _issue['org_time']/1800
         if type(_issue['spent_time']) is not types.NoneType:
             _users[_issue['users']]['spent_time'] += _issue['spent_time']/1800
         _users[_issue['users']]['pass'] += calIssuePassCount(mongodb, _issue['issue'])
+        _tot_task_count += 1
 
-    return _users
+    return _users, _tot_task_count
 
 
 def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
@@ -659,9 +662,13 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
 
     """需要在此插入语句"""
     _paragrap = _print(u"情况总览", title=True, title_lvl=1)
-    _search = {"issue_type": 'story',
-               "summary": {"$regex": ".*UC.*"},
-               "sprint": {"$regex": ".*Sprint 5.*"}}
+    if project_alias == 'FAST':
+        _search = {"issue_type": 'story',
+                   "summary": {"$regex": ".*UC.*"},
+                   "sprint": {"$regex": ".*%s.*" % current_sprint}}
+    else:
+        _search = {"issue_type": 'story',
+                   "sprint": {"$regex": ".*%s.*" % current_sprint}}
     _tot_count = mongo_db.handler('issue', 'count', _search)
     __search = {"issue_type": 'story',
                 "summary": {"$regex": ".*UC.*"},
@@ -690,35 +697,32 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     doc.setTableFont(8)
     _print("")
 
-    _print(u"个人绩效", title=True, title_lvl=1)
-    _users = Performance(mongo_db, current_sprint)
+    _print(u"个人绩效指标", title=True, title_lvl=1)
+    _users, _tot_task_count = Performance(mongo_db, current_sprint)
     _print(u"本阶段（%s）执行过程中研发团队个人（共%d人）综合情况如下：" % (current_sprint, len(_users)))
-    doc.addTable(1, 4, col_width=(3, 4, 2, 4))
+    doc.addTable(1, 5, col_width=(3, 2, 2, 2, 2))
     _title = (('text', u'人员'),
-              ('text', u'效率'),
-              ('text', u'质量'),
-              ('text', u'工时偏差'))
+              ('text', u'完成率'),
+              ('text', u'消耗率'),
+              ('text', u'贡献率'),
+              ('text', u'质量系数'))
     doc.addRow(_title)
     for _user in _users:
-        _u = float(_users[_user]['done'])/float(_users[_user]['done'] + _users[_user]['doing'])
+        _u = float(_users[_user]['done'])*100./float(_users[_user]['done'] + _users[_user]['doing'])
+        _miu = float(_users[_user]['org_time'] -
+                     _users[_user]['spent_time'])*100./float(_users[_user]['org_time'])
+        _cr = float(_users[_user]['done'] + _users[_user]['doing'])*100./_tot_task_count
         _q = float(_users[_user]['pass'])/(float(_users[_user]['done'])+float(_users[_user]['doing']))
-        _miu = float(_users[_user]['org_time'] - _users[_user]['spent_time'])/float(_users[_user]['org_time'])
         _text = (('text', _user),
-                 ('text', "%0.2f (%d:%d:%d)" % (
-                     _u,
-                     _users[_user]['done'] + _users[_user]['doing'],
-                     _users[_user]['done'],
-                     _users[_user]['doing'])),
-                 ('text', "%0.2f (%d)" % (_q, _users[_user]['pass'])),
-                 ('text', "%02f (%d,%d:%d)" % (
-                         _miu,
-                         _users[_user]['org_time'] - _users[_user]['spent_time'],
-                         _users[_user]['org_time'],
-                         _users[_user]['spent_time']
-                 )))
+                 ('text', "%0.2f" % _u),
+                 ('text', "%0.2f" % _miu),
+                 ('text', "%0.2f" % _cr),
+                 ('text', "%0.2f" % _q)
+                 )
         doc.addRow(_text)
     doc.setTableFont(8)
-    _print("【说明】：1）效率指标用以定义个人工作效率；2）质量指标用以定义本阶段工作中的研发质量，值越小表示质量越高。")
+    _print("【说明】：1）任务完成率：完成任务的占比；2）消耗率：已消耗工时的占比，负数表示超预估；"
+           "3）贡献率：承接任务的占比；4）质量系数：返工数/承接的任务数。")
 
     _print(u"非计划类事务情况", title=True, title_lvl=1)
     _print(u"本阶段（%s）执行过程中插入了以下“外来”的事务：" % current_sprint)
