@@ -687,9 +687,10 @@ def doIssueCost(title, xlabel, issues, dots, max_cost):
     ax.set_xlim(0, len(issues)+1)
     ax.set_xticks(range(len(issues)+2))
 
-    ax.set_yscale('logit')
+    # ax.set_yscale('logit')
     for _dot in dots:
-        _v = (float(_dot[1])/float(max_cost))*0.98
+        _v = float(_dot[1])/float(max_cost)
+        print _dot[0], _v, _dot[2], _dot[3]
         ax.scatter(_dot[0], _v, marker=_dot[2], c=_dot[3], s=30, alpha=0.5)
 
     ax.legend([u"计划的预算", u"估计的", u"执行的"], fontsize=12)

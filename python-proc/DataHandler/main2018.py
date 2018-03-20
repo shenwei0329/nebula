@@ -30,12 +30,17 @@ import doHour
 import doBarOnTable
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import crWord
+import types
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 from pylab import mpl
 mpl.rcParams['font.sans-serif'] = ['SimHei']
+
+sp_name = [u'杨飞', u'吴昱珉', u'王学凯', u'许文宝',
+           u'饶定远', u'金日海', u'沈伟', u'谭颖卿',
+           u'吴丹阳', u'查明', u'柏银', u'崔昊之']
 
 """定义时间区间
 """
@@ -275,91 +280,6 @@ def getPdDeliverList(cur):
             for _row in _res:
                 _print(u'\t·项目：%s（%s），状态：%s' % (str(_row[0]), str(_row[1]), str(_row[2])))
 
-def getTstRcdList(cur):
-    _sql = 'select err_summary,err_type,err_state,err_pj_name,err_level,err_rpr,err_mod_1 from testrecord_t' + " where created_at between '%s' and '%s'" % (st_date, ed_date)
-    _res = doSQL(cur,_sql)
-    for _row in _res:
-        _pd_v = _row[3].split('^')
-        _pd = _pd_v[0]
-        _version = _pd_v[1]
-
-        _print(">>>[%s].[%s]" % (_pd,_version))
-
-def getTstLevel(cur,pj_name, flg):
-    """
-    获取项目测试的 各等级的 统计数
-    :param cur:
-    :param pd_name:
-    :return:
-    """
-
-    _l = []
-    for _lvl in ['致命', '严重', '一般', '轻微']:
-        _sql = 'select count(*) from testrecord_t where err_pj_name="%s" and err_level="%s"' % (pj_name, _lvl)
-        if flg==0:
-            _sql = _sql + ' and err_state<>"已解决" and err_state<>"已关闭"'
-        elif flg==1:
-            _sql = _sql + ' and err_state="已解决"'
-        else:
-            _sql = _sql + ' and err_state="已关闭"'
-        _sql = _sql + " and created_at between '%s' and '%s'" % (st_date, ed_date)
-        _n = doSQLcount(cur,_sql)
-        if _n>0:
-            _l.append((_lvl, _n))
-    return _l
-
-def getTstRcdSts(cur):
-    '''
-    计算 每个产品 的测试工作量
-    :param cur:
-    :return:
-    '''
-    global ProductList
-
-    _r_err = []
-    """测试项目数统计【未解决的】
-    """
-    for _pd in ProductList:
-        _str = "%s^%s" % (_pd[0],_pd[1])
-        _sql = 'select count(*) from testrecord_t where err_pj_name="%s"' % _str
-        _sql = _sql + " and err_state<>'已解决' and err_state<>'已关闭' and created_at between '%s' and '%s'" % (st_date, ed_date)
-        _n = doSQLcount(cur,_sql)
-        if _n>0:
-            """级别统计
-            """
-            _level = getTstLevel(cur, pj_name=_str, flg=0)
-            _r_err.append((_pd[0], _pd[1], _n, _level))
-
-    _r_oking = []
-    """测试项目数统计【已解决的】
-    """
-    for _pd in ProductList:
-        _str = "%s^%s" % (_pd[0],_pd[1])
-        _sql = 'select count(*) from testrecord_t where err_pj_name="%s"' % _str
-        _sql = _sql + " and err_state='已解决' and created_at between '%s' and '%s'" % (st_date, ed_date)
-        _n = doSQLcount(cur,_sql)
-        if _n>0:
-            """级别统计
-            """
-            _level = getTstLevel(cur, pj_name=_str, flg=1)
-            _r_oking.append((_pd[0], _pd[1], _n, _level))
-
-    _r_ok = []
-    """测试项目数统计【已关闭的】
-    """
-    for _pd in ProductList:
-        _str = "%s^%s" % (_pd[0],_pd[1])
-        _sql = 'select count(*) from testrecord_t where err_pj_name="%s"' % _str
-        _sql = _sql + " and err_state='已关闭' and created_at between '%s' and '%s'" % (st_date, ed_date)
-        _n = doSQLcount(cur,_sql)
-        if _n>0:
-            """级别统计
-            """
-            _level = getTstLevel(cur, pj_name=_str, flg=2)
-            _r_ok.append((_pd[0], _pd[1], _n, _level))
-
-    return _r_ok, _r_oking, _r_err
-
 def getSumToday(cur):
     _sql = 'select sum(rec_count) from count_record_t where date(created_at)=curdate()'
     _n = doSQLcount(cur,_sql)
@@ -367,48 +287,24 @@ def getSumToday(cur):
         _n = 0
     return _n
 
-def getOprWorkTime(cur):
+
+def getOprWorkTime(cur, mongodb):
+    """
+    生成个人工时执行情况
+    :param cur: 数据源
+    :param mongodb：issue数据源
+    :return: 内容
+    """
 
     global TotalMember, orgWT, doc
 
-    _sql = 'select MM_XM from member_t'
-    _res = doSQL(cur,_sql)
-
-    TotalMember = 0
-    orgWT = ()
-
-    for _row in _res:
-        _sql = 'select sum(TK_GZSJ) from task_t where TK_ZXR="' + str(_row[0]) + '"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
-        _n = doSQLcount(cur,_sql)
-        if _n is None:
-            continue
-        if _n>0:
-            TotalMember = TotalMember + 1
-
-    _print("在岗总人数：%d" % TotalMember)
-
-    _sql = 'select sum(TK_GZSJ) from task_t' + " where created_at between '%s' and '%s'" % (st_date, ed_date)
-    _total_workdays = doSQLcount(cur, _sql)
-    if _total_workdays is not None:
-        _print("总工作量：%d （工时）" % _total_workdays)
-        if _total_workdays > 0:
-            _a = TotalMember * 80 * float(numb_days)
-            _b = _total_workdays*1000
-            _c = int(_b/_a)
-            _s = "工作效率：%d %%" % _c
-            if _c > 100:
-                _s = _s + "，超标 %0.2f%%" % (_c - 100.)
-            if _c < 100:
-                _s = _s + "，剩余 %0.2f%%" % (100.- _c)
-    else:
-        _s = "工作效率：0%"
-    _print(_s)
-
-    _print("1、考勤分布：", title=True, title_lvl=2)
+    """考勤情况"""
+    _print("1、考勤情况：", title=True, title_lvl=2)
+    _print(u'数据来源于“钉钉”考勤系统。')
     data1 = getChkOnAm(cur)
     data2 = getChkOnPm(cur)
     if len(data1)>0 and len(data2)>0:
-        _f1,_f2,_f3 = doHour.doChkOnHour(data1,data2)
+        _f1, _f2, _f3 = doHour.doChkOnHour(data1, data2)
         doc.addPic(_f3)
         doc.addText(u"图1 考勤分布总体情况", align=WD_ALIGN_PARAGRAPH.CENTER)
         doc.addPic(_f1)
@@ -418,36 +314,55 @@ def getOprWorkTime(cur):
     else:
         _print("【无“考勤”数据】")
 
-    _print("2、最耗时的工作（前15名）：", title=True, title_lvl=2)
-    _sql = 'select TK_RW,TK_ZXR,TK_GZSJ,TK_XMBH from task_t' + " where created_at between '%s' and '%s' order by TK_GZSJ+0 desc" % (st_date, ed_date)
-    _res = doSQL(cur,_sql)
-    if len(_res)>0:
-        for _i in range(15):
-            if str(_res[_i][3]) != "#":
-                _print( '%d）'% (_i+1) + str(_res[_i][1]) + ' 执行【' +str(_res[_i][3]) + '，' + str(_res[_i][0]) + '】任务时，耗时 ' + str(_res[_i][2]) + ' 工时')
-            elif str(_res[_i][0] != "#"):
-                _print( '%d）'% (_i+1) + str(_res[_i][1]) + ' 执行【 非项目类：' + str(_res[_i][0]) + '】任务时，耗时 ' + str(_res[_i][2]) + ' 工时')
-            else:
-                _print( '%d）'% (_i+1) + str(_res[_i][1]) + ' 执行【 非项目类】任务时，耗时 ' + str(_res[_i][2]) + ' 工时')
+    _print("2、请假情况：", title=True, title_lvl=2)
+    _print(u'数据来源于“钉钉”考勤系统。')
+    doc.addTable(1, 2, col_width=(2, 4))
+    _title = (('text', u'名称'), ('text', u'关联的审批单'))
+    doc.addRow(_title)
+    _sql = 'select KQ_NAME,KQ_REF from checkon_t ' \
+           'where KQ_REF != "#" and created_at > "2018-03-19 12:00:00" and' \
+           ' str_to_date(KQ_DATE,"%%y-%%m-%%d") between "%s" and "%s"' % (st_date, ed_date)
+    _res = doSQL(cur, _sql)
+    _old_row = ()
+    for _row in _res:
+        _text = (('text', u"%s" % _row[0]),
+                 ('text', (u"%s" % _row[1]).replace('^',' '))
+                 )
+        if _old_row != _text:
+            doc.addRow(_text)
+            _old_row = _text
+    doc.setTableFont(8)
+    _print("")
 
-    _print("3、明细：", title=True, title_lvl=2)
+    _print("3、工作日志工时统计：", title=True, title_lvl=2)
+    _print(u'数据来源于任务管理系统。')
+    orgWT = ()
     _sql = 'select MM_XM from member_t'
     _res = doSQL(cur,_sql)
     for _row in _res:
-        _sql = 'select sum(TK_GZSJ) from task_t where TK_ZXR="' + str(_row[0]) + '"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
-        _n = doSQLcount(cur,_sql)
-        if _n is None:
+
+        if u"%s" % _row[0] in sp_name:
             continue
-        if _n==0:
+
+        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_ZXR="' +\
+               str(_row[0]) + '"' +\
+               ' and created_at > "2018-03-11"' +\
+               ' and str_to_date(TK_KSSJ,"%%Y-%%m-%%d") between "%s" and "%s"' % (st_date, ed_date)
+        _res = doSQL(cur, _sql)
+        if (type(_res) is types.NoneType) or (type(_res[0][0]) is types.NoneType):
+            continue
+        print _res[0][0]
+        _n = float(_res[0][0])
+        if _n == 0.:
             continue
 
         _color = None
-        _s = "[员工：" + str(_row[0])+ "，工作 %d 工时" % _n
-        if _n>workhours:
-            _s = _s + "，加班 %d 工时" % (_n - workhours) + "，占比 %d %%" % ((_n-workhours)*100/workhours)
-            _color = (255,0,0)
+        _s = "[员工：" + str(_row[0]) + "，工作 %0.2f 工时" % _n
+        if _n > float(workhours):
+            _s = _s + "，加班 %0.2f 工时" % (_n - workhours) + "，占比 %0.2f %%" % ((_n-workhours)*100./workhours)
+            _color = (255, 0, 0)
         if _n<workhours:
-            _s = _s + "，剩余 %d 工时" % (workhours - _n) + "，占比 %d %%" % ((workhours-_n)*100/workhours)
+            _s = _s + "，剩余 %0.2f 工时" % (workhours - _n) + "，占比 %0.2f %%" % ((workhours-_n)*100/workhours)
             _color = (50, 100, 50)
         _s = _s + ']'
         _print(_s, color=_color)
@@ -457,6 +372,49 @@ def getOprWorkTime(cur):
         _fn = doHour.doOprHour(orgWT, workhours)
         doc.addPic(_fn)
         doc.addText(u"图4 本周“人-工时”分布情况", align=WD_ALIGN_PARAGRAPH.CENTER)
+
+    _print("4、工作日志明细：", title=True, title_lvl=2)
+    _print(u'数据来源于任务管理系统。')
+    doc.addTable(1, 4, col_width=(2, 3, 2, 1))
+    _title = (('text', u'名称'), ('text', u'任务'), ('text', u'开始时间'), ('text', u'耗时'))
+    doc.addRow(_title)
+
+    _sql = 'select MM_XM from member_t where MM_ZT=1'
+    _res = doSQL(cur, _sql)
+    for _row in _res:
+
+        if u"%s" % _row[0] in sp_name:
+            continue
+
+        _text = (('text', u"%s" % str(_row[0])),
+                 ('text', ""),
+                 ('text', ""),
+                 ('text', "")
+                 )
+        doc.addRow(_text)
+        _sql = 'select TK_XMBH,TK_RWNR,TK_KSSJ,TK_GZSJ from task_t where TK_ZXR="' + \
+               str(_row[0]) + '"' + \
+               ' and created_at > "2018-03-11"' +\
+               ' and str_to_date(TK_KSSJ,"%%Y-%%m-%%d") between "%s" and "%s"' % (st_date, ed_date)
+        __res = doSQL(cur, _sql)
+        _tot = 0
+        for _item in __res:
+            _text = (('text', ""),
+                     ('text', (u"%s:%s" % (_item[0], _item[1])).replace('|',"")),
+                     ('text', _item[2].split(' ')[0]),
+                     ('text', _item[3])
+                     )
+            doc.addRow(_text)
+            _tot += float(_item[3])
+        _text = (('text', "-"),
+                 ('text', u"小计"),
+                 ('text', ""),
+                 ('text', "%0.2f" % _tot)
+                 )
+        doc.addRow(_text)
+    doc.setTableFont(8)
+    _print("")
+
 
 def getGrpWorkTime(cur):
 
@@ -490,6 +448,7 @@ def getGrpWorkTime(cur):
             _color = (50, 100, 50)
         _s = _s + ']'
         _print(_s, color=_color)
+
 
 def getProjectWorkTime(cur):
     '''
@@ -547,14 +506,19 @@ def getProjectWorkTime(cur):
     else:
         costProject = ()
 
+
 def getChkOnAm(cur):
     """
     获取员工上午到岗时间序列
     :param cur:
     :return: 到岗记录时间序列
     """
+    """
     _sql = 'select KQ_AM from checkon_t' + " where created_at between '%s' and '%s'" % (st_date, ed_date)
-    _res = doSQL(cur,_sql)
+    """
+    _sql = 'select KQ_AM from checkon_t' \
+           ' where str_to_date(KQ_DATE,"%%y-%%m-%%d") between "%s" and "%s"' % (st_date, ed_date)
+    _res = doSQL(cur, _sql)
 
     _seq = ()
     for _row in _res:
@@ -567,14 +531,19 @@ def getChkOnAm(cur):
             _seq = _seq + (_h,)
     return _seq
 
+
 def getChkOnPm(cur):
     """
     获取员工下班时间序列
     :param cur:
     :return: 下班记录时间序列
     """
+    """
     _sql = 'select KQ_PM from checkon_t' + " where created_at between '%s' and '%s'" % (st_date, ed_date)
-    _res = doSQL(cur,_sql)
+    """
+    _sql = 'select KQ_PM from checkon_t ' \
+           ' where str_to_date(KQ_DATE,"%%y-%%m-%%d") between "%s" and "%s"' % (st_date, ed_date)
+    _res = doSQL(cur, _sql)
 
     _seq = ()
     for _row in _res:
@@ -622,63 +591,7 @@ def main():
     getPdingList(cur)
 
     _print("人力资源投入", title=True, title_lvl=1)
-    getOprWorkTime(cur)
-
-    _print("小组资源投入情况", title=True, title_lvl=1)
-    getGrpWorkTime(cur)
-
-    _pd_fn, _pj_fn = doBarOnTable.doWorkHourbyGroup(cur, begin_date=st_date, end_date=ed_date)
-    doc.addPic(_pd_fn, sizeof=5.2)
-    doc.addText(u"图5-1 各组在产品研发上的投入", align=WD_ALIGN_PARAGRAPH.CENTER)
-    doc.addPic(_pj_fn, sizeof=4.6)
-    doc.addText(u"图5-2 各组在工程项目和非项目上的投入", align=WD_ALIGN_PARAGRAPH.CENTER)
-
-    _print("各项目投入情况", title=True, title_lvl=1)
-    getProjectWorkTime(cur)
-
-    _print("各项目投入统计", title=True, title_lvl=1)
-    if len(costProject)>0:
-        _fn = doPie.doProjectPie(costProject)
-        _print(u"产品项目投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[0], costProject[0]*125.0/10000.0))
-        _print(u"工程项目投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[1], costProject[1]*125.0/10000.0))
-        _print(u"非项目类事务投入：%d【人时】，工时成本 %0.2f【万元】" % (costProject[2], costProject[2]*125.0/10000.0))
-        _print("")
-        _print(u"总投入：%d【人时】，工时成本 %0.2f【万元】" % (sum(costProject), sum(costProject)*125.0/10000.0))
-        doc.addPic(_fn, sizeof=4)
-        doc.addText(u"图6 项目投入比例", align=WD_ALIGN_PARAGRAPH.CENTER)
-
-    _print("测试内容统计", title=True, title_lvl=1)
-    _pd_ok, _pd_oking, _pd_err = getTstRcdSts(cur)
-
-    _print("1、已关闭的：", title=True, title_lvl=2)
-    for _r in _pd_ok:
-        _str = ("产品 %s %s 关闭的问题 %d 个，" % (_r[0], _r[1], _r[2]))
-        if len(_r[3])>0:
-            _str = _str + "分类统计【 "
-            for _v in _r[3]:
-                _str = _str + str(_v[0]) + "：" + str(_v[1]) + "个，"
-            _str = _str + '】'
-            _print(_str)
-
-    _print("2、已解决的：", title=True, title_lvl=2)
-    for _r in _pd_oking:
-        _str = ("产品 %s %s 已解决但未回归测试的问题 %d 个，" % (_r[0], _r[1], _r[2]))
-        if len(_r[3])>0:
-            _str = _str + "分类统计【 "
-            for _v in _r[3]:
-                _str = _str + str(_v[0]) + "：" + str(_v[1]) + "个，"
-            _str = _str + '】'
-            _print(_str)
-
-    _print("3、待解决的：", title=True, title_lvl=2)
-    for _r in _pd_err:
-        _str = ("产品 %s %s 仍存在问题 %d 个，" % (_r[0], _r[1], _r[2]))
-        if len(_r[3])>0:
-            _str = _str + "分类统计【 "
-            for _v in _r[3]:
-                _str = _str + str(_v[0]) + "：" + str(_v[1]) + "个，"
-            _str = _str + '】'
-            _print(_str, color=(255, 0, 0))
+    getOprWorkTime(cur, None)
 
     db.close()
     doc.saveFile('week.docx')

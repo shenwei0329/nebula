@@ -118,7 +118,8 @@ class jira_handler:
         if type(self.sprints) is not types.NoneType:
             for _s in self.sprints:
                 if _s['state'] == 'ACTIVE':
-                    return _s['name'], _s['startDate'], _s['endDate']
+                    return (_s['name'], _s['startDate'], _s['endDate']), _next
+                _next = (_s['name'], _s['startDate'], _s['endDate'])
         return None
 
     def get_sprint(self):
@@ -359,10 +360,22 @@ class jira_handler:
         self.mongo_db.handler("log", "insert", info)
 
     def write_worklog(self, info):
-        _search = {'issue': info['issue'], 'author': info['author'], 'updated': info['updated']}
+        """
+        写入或更新 工作日志记录。
+        :param info: 新的日志数据
+        :return:
+        """
+        _search = {'issue': info['issue'],
+                   'author': info['author'],
+                   'comment': info['comment'],
+                   'started': info['started']}
         self.mongo_db.handler('worklog', 'update', _search, info)
 
     def sync_worklog(self):
+        """
+        获取指定 issue 的工作日志记录。
+        :return:
+        """
         worklogs = self.jira.worklogs(self.show_name())
         wl = {}
         for worklog in worklogs:
@@ -440,6 +453,11 @@ class jira_handler:
         return story_link
 
     def scan_story(self, bg_date):
+        """
+        按 project 获取其下所有 story 数据。
+        :param bg_date: 开始搜索的日期
+        :return:
+        """
         jql_sql = u'project=%s AND issuetype=story AND created >= %s ORDER BY created DESC' % (
             self.name, bg_date)
         total = 0
@@ -467,8 +485,19 @@ class jira_handler:
         return task_link
 
     def scan_task(self, bg_date):
-        jql_sql = u'project=%s AND issuetype=task OR issuetype=任务 AND created >= %s ORDER BY created DESC' % (
-            self.name, bg_date)
+        """
+        按 project 获取其下所有与执行相关的 issue 数据。
+        :param bg_date: 开始搜索的日期
+        :return:
+        """
+        jql_sql = u'project=%s AND ( issuetype=task OR' \
+                  u' issuetype=任务 OR' \
+                  u' issuetype=故障 OR' \
+                  u' issuetype=Bug OR' \
+                  u' issuetype=Sub-task OR' \
+                  u' issuetype=子任务 ) AND' \
+                  u' created >= %s ORDER BY created DESC' % (self.name, bg_date)
+        print jql_sql
         total = 0
         task_link = []
 
@@ -489,6 +518,10 @@ class jira_handler:
         return task_link
 
     def sync_changelog(self):
+        """
+        获取指定 issue 的 变更日志记录
+        :return:
+        """
         issue = self.jira.issue(self.show_name(), expand='changelog')
         changelog = issue.changelog
         for history in changelog.histories:
@@ -574,7 +607,7 @@ def do_with_epic(myjira, sprints):
         if myjira.get_type().lower() in [u'任务', 'task']:
             myjira.sync_worklog()
 
-        if myjira.get_type() in [u'story', u'improvement', u'New Feature', u'改进', u'新功能']:
+        if myjira.get_type() in [u'story', u'improvement', u'New Feature', u'改进', u'新功能', u'故障']:
             _my_name = myjira.show_name()
             """获取story等下属的task"""
             _link = myjira.sync_issue_link()
@@ -613,6 +646,11 @@ def do_with_story(myjira, sprints):
     myjira.scan_task('2017-12-1')
 
 
+def do_with_task(myjira):
+
+    myjira.scan_task('2017-12-1')
+
+
 def main(project_alias="FAST", issue_type='epic'):
 
     """连接数据库"""
@@ -626,6 +664,8 @@ def main(project_alias="FAST", issue_type='epic'):
         do_with_epic(my_jira, _sprints)
     elif issue_type == 'story':
         do_with_story(my_jira, _sprints)
+    elif issue_type == 'task':
+        do_with_task(my_jira)
 
 
 if __name__ == '__main__':

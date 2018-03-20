@@ -387,7 +387,7 @@ def calIssuePassCount(mongodb, issue_name):
                                                  "new": "In Progress"}).count()
 
 
-def Performance(mongodb, current_sprint):
+def Performance(mongodb, landmark):
     """
     计算本阶段所投入资源的工作绩效。
     1）计算“个人”绩效指标
@@ -396,17 +396,20 @@ def Performance(mongodb, current_sprint):
     2）评定“个人”分值，并排序
     3）对“个人”职级水平进行评估
     :param mongodb：数据源
-    :param current_sprint：当前 sprint
+    :param landmark：当前 里程碑
     :return: 总体绩效情况
     """
     _search = {"issue_type": u"任务",
-               "sprint": {'$regex': ".*%s.*" % current_sprint},
+               # "sprint": {'$regex': ".*%s.*" % current_sprint.split(' ')[0]},
+               "landmark": landmark,
                "status": {'$in': [u'完成', u'处理中', u'待测试', u'测试中']},
                }
     _users = {}
     _cur = mongodb.handler('issue', 'find', _search)
     _tot_task_count = 0
     for _issue in _cur:
+        if _issue['users'] is None:
+            continue
         if _issue['users'] not in _users:
             _users[_issue['users']] = {"done": 0,
                                        "doing": 0,
@@ -425,6 +428,85 @@ def Performance(mongodb, current_sprint):
         _tot_task_count += 1
 
     return _users, _tot_task_count
+
+
+def get_issue_by_sprint(mongodb, sprint):
+    """
+    获取指定 sprint 的Issue数据
+    :param mongodb: 数据源
+    :param sprint: 指定的 sprint
+    :return:
+    """
+    print "--> get_issue_by_sprint: ",sprint[0]
+    _story = mongodb.handler("issue", "find", {'issue_type': "story",
+                                               "sprint": {'$regex': ".*%s.*" % sprint[0]}})
+    return get_issue_public(mongodb, _story)
+
+
+def get_issue_by_landmark(mongodb, landmark):
+    """
+    获取指定里程碑的Issue数据
+    :param mongodb: 数据源
+    :param landmark: 指定的里程碑
+    :return:
+    """
+    print "--> get_issue_by_landmark: ", landmark
+    _story = mongodb.handler("issue", "find", {'issue_type': "story",
+                                               "landmark": landmark})
+    return get_issue_public(mongodb, _story)
+
+
+def get_issue_public(mongodb, _story):
+
+    # 获取本里程碑内所有任务
+    _task_list = []
+    _story_task_list = {}
+    _story_points = {}
+    _max_cost = 0
+    for _st in _story:
+        _id = _st['issue']
+        _link = mongodb.handler("issue_link", "find", {"issue": _id})
+        if _id not in _story_task_list:
+            _story_task_list[_id] = {'org_time': 0, 'agg_time': 0, 'spent_time': 0}
+            if type(_st['point']) is not types.NoneType:
+                _story_points[_id] = int(_st['point']) * COST_ONE_POINT * 3600
+            else:
+                print "!!! ", _id, " no points be defined"
+                _story_points[_id] = 0
+            if _max_cost < _story_points[_id]:
+                _max_cost = _story_points[_id]
+        for _l in _link:
+            for _t in _l[_id]:
+                if _t not in _task_list:
+                    _task_list.append(_t)
+                    _logs = mongodb.handler("issue", "find", {"issue": _t})
+                    for _log in _logs:
+                        if type(_log['org_time']) is types.IntType:
+                            _v = _log['org_time']
+                        else:
+                            _v = 0
+                        _story_task_list[_id]['org_time'] += _v
+                        if type(_log['spent_time']) is types.IntType:
+                            _v = _log['spent_time']
+                        else:
+                            _v = 0
+                        _story_task_list[_id]['spent_time'] += _v
+                        if type(_log['agg_time']) is types.IntType:
+                            _v = _log['agg_time']
+                        else:
+                            _v = 0
+                        _story_task_list[_id]['agg_time'] += _v
+
+                    if _max_cost < _v:
+                        _max_cost = _v
+
+        if _max_cost < _story_task_list[_id]['org_time']:
+            _max_cost = _story_task_list[_id]['org_time']
+        _story_task_list[_id]['agg_time'] += _story_task_list[_id]['spent_time']
+        if _max_cost < _story_task_list[_id]['agg_time']:
+            _max_cost = _story_task_list[_id]['agg_time']
+
+    return _task_list, _story_task_list, _story_points, _max_cost
 
 
 def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
@@ -458,7 +540,10 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     jira = jira_class_epic.jira_handler(project_alias)
     sprints = jira.get_sprints()
 
-    current_sprint, sprint_start_date, sprint_end_date = jira.get_current_sprint()
+    cur_sprint, next_sprint = jira.get_current_sprint()
+    current_sprint = cur_sprint[0]
+    sprint_start_date = cur_sprint[1]
+    sprint_end_date = cur_sprint[2]
     print u"%s 从 %s 至 %s" % (current_sprint, sprint_start_date, sprint_end_date)
     _burndown_dots, _timeburndown_dots = collectBurnDownData(mongo_db, sprints, current_sprint)
     _burndown_fn = doBox.BurnDownChart(_burndown_dots)
@@ -480,61 +565,15 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
         _issue_ext_list.append(_r["issue"])
 
     # 获取里程碑信息
-    """
+    landmark_id = "18812"
     _landmark = mongo_db.handler("project", "find", {'id': landmark_id})[0]['version'].replace('^', '.')
     _startDate = mongo_db.handler("project", "find", {'id': landmark_id})[0]['startDate']
     _endDate = mongo_db.handler("project", "find", {'id': landmark_id})[0]['releaseDate']
-    """
+
     # 获取本里程碑内story
     # _story = mongo_db.handler("issue", "find", {'issue_type': "story", "landmark": u"%s" % _landmark})
-    _story = mongo_db.handler("issue", "find", {'issue_type': "story", "sprint": current_sprint})
-    # 获取本里程碑内所有任务
-    _task_list = []
-    _story_task_list = {}
-    _story_points = {}
-    _max_cost = 0
-    for _st in _story:
-        _id = _st['issue']
-        _link = mongo_db.handler("issue_link", "find", {"issue": _id})
-        if _id not in _story_task_list:
-            _story_task_list[_id] = {'org_time': 0, 'agg_time': 0, 'spent_time': 0}
-            if type(_st['point']) is not types.NoneType:
-                _story_points[_id] = int(_st['point']) * COST_ONE_POINT * 3600
-            else:
-                print "!!! ",_id, " no points be defined"
-                _story_points[_id] = 0
-            if _max_cost < _story_points[_id]:
-                _max_cost = _story_points[_id]
-        for _l in _link:
-            for _t in _l[_id]:
-                if _t not in _task_list:
-                    _task_list.append(_t)
-                    _logs = mongo_db.handler("issue", "find", {"issue": _t})
-                    for _log in _logs:
-                        if type(_log['org_time']) is types.IntType:
-                            _v = _log['org_time']
-                        else:
-                            _v = 0
-                        _story_task_list[_id]['org_time'] += _v
-                        if type(_log['spent_time']) is types.IntType:
-                            _v = _log['spent_time']
-                        else:
-                            _v = 0
-                        _story_task_list[_id]['spent_time'] += _v
-                        if type(_log['agg_time']) is types.IntType:
-                            _v = _log['agg_time']
-                        else:
-                            _v = 0
-                        _story_task_list[_id]['agg_time'] += _v
-
-                    if _max_cost < _v:
-                        _max_cost = _v
-
-        if _max_cost < _story_task_list[_id]['org_time']:
-            _max_cost = _story_task_list[_id]['org_time']
-        _story_task_list[_id]['agg_time'] += _story_task_list[_id]['spent_time']
-        if _max_cost < _story_task_list[_id]['agg_time']:
-            _max_cost = _story_task_list[_id]['agg_time']
+    # _task_list, _story_task_list, _story_points, _max_cost = get_issue_by_sprint(mongo_db, cur_sprint)
+    _task_list, _story_task_list, _story_points, _max_cost = get_issue_by_landmark(mongo_db, _landmark)
 
     # 获取任务的变化情况
     """
@@ -581,7 +620,8 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     _dots = []
     _x = 1
     _issues = []
-    _story = mongo_db.handler("issue", "find", {'issue_type': "story", "sprint": {'$regex': ".*%s.*" % current_sprint}})
+    _story = mongo_db.handler("issue", "find",
+                              {'issue_type': "story", "sprint": {'$regex': ".*%s.*" % current_sprint}})
     _dots_s = {}
     for _st in _story:
         _id = _st['issue']
@@ -603,7 +643,9 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     _x = 1
     _issues = []
     # _story = mongo_db.handler("issue", "find", {'issue_type': "story", "landmark": u"%s" % _landmark})
-    _story = mongo_db.handler("issue", "find", {'issue_type': "story", "sprint": current_sprint})
+    _story = mongo_db.handler("issue", "find", {'issue_type': "story",
+                                                # "sprint": {'$regex': ".*%s.*" % current_sprint}})
+                                                "landmark": _landmark})
     _tot_points = 0
     _tot_agg_times = 0
     _tot_spent_times = 0
@@ -657,7 +699,8 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     _print(u'项目起止日期：%s 至 %s' % (_res[0][2], _res[0][3]))
     _print(u'项目预算（工时成本）：%s 万元' % _res[0][5])
     _print(u'项目功能简介：%s' % _res[0][4])
-    # _print(u'里程碑：%s，从 %s 到 %s' % (_landmark, _startDate, _endDate))
+    _print(u'里程碑：%s，从 %s 到 %s' % (_landmark, _startDate, _endDate))
+    # _print(u'上一个阶段：%s，从 %s 至 %s' % (next_sprint[0], next_sprint[1], next_sprint[2]))
     _print(u'当前阶段：%s，从 %s 至 %s' % (current_sprint, sprint_start_date, sprint_end_date))
 
     """需要在此插入语句"""
@@ -665,7 +708,8 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     if project_alias == 'FAST':
         _search = {"issue_type": 'story',
                    "summary": {"$regex": ".*UC.*"},
-                   "sprint": {"$regex": ".*%s.*" % current_sprint}}
+                   # "sprint": {"$regex": ".*%s.*" % current_sprint}}
+                   "landmark": _landmark}
     else:
         _search = {"issue_type": 'story',
                    "sprint": {"$regex": ".*%s.*" % current_sprint}}
@@ -698,8 +742,8 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     _print("")
 
     _print(u"个人绩效指标", title=True, title_lvl=1)
-    _users, _tot_task_count = Performance(mongo_db, current_sprint)
-    _print(u"本阶段（%s）执行过程中研发团队个人（共%d人）综合情况如下：" % (current_sprint, len(_users)))
+    _users, _tot_task_count = Performance(mongo_db, _landmark)
+    _print(u"本阶段（%s）执行过程中研发团队个人（共%d人）综合情况如下：" % (_landmark, len(_users)))
     doc.addTable(1, 5, col_width=(3, 2, 2, 2, 2))
     _title = (('text', u'人员'),
               ('text', u'完成率'),
@@ -719,18 +763,22 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
                  ('text', "%0.2f" % _cr),
                  ('text', "%0.2f" % _q)
                  )
+        print "---> ", _text
         doc.addRow(_text)
     doc.setTableFont(8)
     _print("【说明】：1）任务完成率：完成任务的占比；2）消耗率：已消耗工时的占比，负数表示超预估；"
            "3）贡献率：承接任务的占比；4）质量系数：返工数/承接的任务数。")
 
     _print(u"非计划类事务情况", title=True, title_lvl=1)
-    _print(u"本阶段（%s）执行过程中插入了以下“外来”的事务：" % current_sprint)
+    _print(u"本阶段（%s）执行过程中插入了以下“外来”的事务：" % _landmark)
     _i = 1
     _tot_cost = 0
     _res = mongo_db.handler("issue", "find", {"issue_type": u"story",
-                                              "sprint": {'$regex': ".*%s.*" % current_sprint},
-                                              "summary": re.compile(r'.入侵.*?')})
+                                              # "sprint": {'$regex': ".*%s.*" % current_sprint},
+                                              "landmark": _landmark,
+                                              # "summary": re.compile(r'.入侵.*?')
+                                              "summary": {'$regex': ".*入侵.*"}
+                                              })
     for _issue in _res:
         if type(_issue['point']) is types.NoneType or _issue['point'] <= 0:
             continue
@@ -763,14 +811,14 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     #   2）目标状态：基于“任务”展示其所处状态
     _print(u"任务执行状态", title=True, title_lvl=2)
     _print(u"通过下图可直观了解在本Sprint内所有任务的当前执行情况。")
-    doc.addPic(_fn_issue_status, sizeof=6.8)
+    doc.addPic(_fn_issue_status, sizeof=6)
     _print(u'【图例说明】：展示任务执行的状态分布情况。图中，圆点大小与任务被测试次数关联，'
            u'圆点越小则间接表示bug数也越少。')
 
     #   3）目标执行：基于“时标”展示目标迁移“趋势”
     _print(u"目标执行情况", title=True, title_lvl=2)
     _print(u"通过下图可直观了解在本Sprint内所有目标（用例UC）的当前执行情况。")
-    doc.addPic(_fn_story_status, sizeof=6.8)
+    doc.addPic(_fn_story_status, sizeof=6)
     _print(u'【图例说明】：展示Sprint目标的状态分布情况。')
 
     #   4）成本执行：基于“时标”展示预算成本的实际执行情况（挣值分析）
@@ -779,7 +827,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     _print(u"● 估计执行成本总数：%d 【工时】" % (_tot_agg_times/3600))
     _print(u"● 已执行成本总数：%d 【工时】" % (_tot_spent_times/3600))
     _print(u"通过下图可直观了解在本Sprint内所有目标（用例UC）的预算执行情况。")
-    doc.addPic(_fn_cost, sizeof=6.8)
+    doc.addPic(_fn_cost, sizeof=6)
     _print(u'【图例说明】：展示Sprint目标的预算执行情况。')
 
     #   5）燃尽图：基于“时标”展示每个sprint任务的完成情况
@@ -793,11 +841,11 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     _print(u"● 待测的任务总数：%d" % _dot['wait_testing'])
     _print(u"● 处理中的任务总数：%d" % _dot['doing'])
     _print(u"● 待办的任务总数：%d" % _dot['waiting'])
-    doc.addPic(_burndown_fn, sizeof=6.8)
+    doc.addPic(_burndown_fn, sizeof=5)
     _print(u'【图例说明】：图中的红线为“理想”的任务燃尽趋势。')
 
     _print("本阶段计划工时的燃尽情况：")
-    doc.addPic(_timeburndown_fn, sizeof=6.8)
+    doc.addPic(_timeburndown_fn, sizeof=5)
     _print(u'【图例说明】：图中的红线为“理想”的计划工时燃尽趋势。')
 
     """
