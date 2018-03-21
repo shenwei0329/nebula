@@ -18,6 +18,7 @@ import datetime
 class mongoDB:
 
     def __init__(self, project):
+        self.sort = None
         self.mongo_client = MongoClient()
         # self.mongo_db = self.mongo_client.FAST
         self.mongo_db = self.mongo_client.get_database(project)
@@ -32,6 +33,7 @@ class mongoDB:
                        "update": self._update,
                        "count": self._count,
                        "find": self._find,
+                       "find_with_sort": self._find_with_sort,
                        "find_one": self._find_one,
                        "remove": self._remove}
 
@@ -52,6 +54,11 @@ class mongoDB:
     @staticmethod
     def _find(obj, *data):
         return obj.find(*data)
+
+    @staticmethod
+    def _find_with_sort(obj, *data):
+        print "--> _find_with_sort: ", data[0][0], data[0][1]
+        return obj.find(data[0][0]).sort(data[0][1])
 
     @staticmethod
     def _find_one(obj, *data):

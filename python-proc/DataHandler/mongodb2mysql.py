@@ -48,17 +48,20 @@ def load_worklog(mysql_db, mongo_db, group_name, source):
         _sql = 'select count(*) from task_t where TK_RW="%s:%s"' % (source,"%s" % _event['_id'])
         避免工作内容重复的日志
         """
+        _str = u"%s" % _event['comment'].replace('\n', '|').replace('\r', '|')
+        if len(_str) > 84:
+            _str = _str[4:84]
         _sql = 'select id, TK_GZSJ from task_t where TK_XMBH="%s" and' \
                ' TK_ZXR="%s" AND' \
-               ' TK_RWNR="%s" AND' \
+               ' TK_RWNR like "%%%s%%" AND' \
                ' TK_KSSJ="%s"' \
                % (_event['issue'],
                   u"%s" % _event['author'].strip(' '),
-                  u"%s" % _event['comment'].replace('\n', '|').replace('\r', '|'),
+                  _str,
                   ("%s" % _event['started']).replace('T', ' '))
-        print _sql
+        # print _sql
         _cur = mysql_db.do(_sql)
-        if (type(_cur) is types.NoneType) or (type(_cur[0]) is types.NoneType):
+        if (type(_cur) is types.NoneType) or (len(_cur) == 0) or (type(_cur[0]) is types.NoneType):
             """添加记录"""
             _sql = u'insert into task_t(TK_RW,TK_XMBH,TK_RWNR,TK_KSSJ,TK_GZSJ,TK_ZXR,TK_SQR,created_at) ' \
                    u'values("%s","%s","%s","%s","%s","%s","%s","%s")' %\
@@ -70,14 +73,15 @@ def load_worklog(mysql_db, mongo_db, group_name, source):
                     (u"%s" % _event['author']).strip(' '),
                     group_name,
                     ("%s" % _event['updated']).replace('T', ' '))
-            print _sql
+            print "--> insert: ", ("%s:%s" % (source, _event['_id']))
             mysql_db.insert(_sql)
         else:
             if _cur[0][1] != "%0.2f" % (float(_event['timeSpentSeconds'])/3600.):
                 print "--> update: ", str(_cur[0][0]), ' fr ', _cur[0][1], ' to ', "%0.2f" % (
                             float(_event['timeSpentSeconds']) / 3600.)
-                _sql = u'update task_t set TK_GZSJ="%s" where id="%s"' % \
+                _sql = u'update task_t set TK_GZSJ="%s",TK_RWNR="%s" where id="%s"' % \
                        ("%0.2f" % (float(_event['timeSpentSeconds'])/3600.),
+                        _event['comment'].replace('\n', '|').replace('\r', '|'),
                         str(_cur[0][0]))
                 mysql_db.insert(_sql)
 

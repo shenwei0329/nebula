@@ -375,6 +375,95 @@ def collectBurnDownData(mongo_db, sprints, current_sprint, issue_filter=None):
     return None, None
 
 
+def collectBurnDownDataByLandmark(mongo_db, landmark):
+
+    _status_trans = {u"TO DO": 'waiting',
+                     u"IN PROGRESS": 'doing',
+                     u"待测试": 'wait_testing',
+                     u"测试中": 'testing',
+                     u"DONE": 'done'}
+
+    Dots = []
+    SpentTimes = []
+
+    _data = {"sprint": [landmark['startDate'], landmark['endDate'], 'ACTIVE']}
+    _spent_time_dot = {"sprint": [landmark['startDate'], landmark['endDate'], 'ACTIVE']}
+
+    _search = {"landmark": landmark["name"], "issue_type": u'任务'}
+    """获取本里程碑内所有issue列表"""
+    _cur = mongo_db.handler('issue', 'find', _search)
+    tot_issue = {}
+    tot_issue_spent_time = {}
+    tot_issue_org_time = {}
+    _tot_count = 0
+    _tot_org_time = 0
+    for _i in _cur:
+
+        tot_issue[_i['issue']] = u'待办'
+        tot_issue_spent_time[_i['issue']] = 0
+        tot_issue_org_time[_i['issue']] = 0
+        _tot_count += 1
+        if type(_i['org_time']) is not types.NoneType:
+            _tot_org_time += int(_i['org_time']) / 1800
+
+    print "_tot_issue.len = ", len(tot_issue)
+
+    # print "Total: %d" % _tot_count
+    _data['count'] = _tot_count
+    _spent_time_dot['count'] = _tot_org_time
+    _data['dots'] = []
+    _spent_time_dot['dots'] = []
+    _date_index = pd.date_range(start=landmark['startDate'], end=landmark['endDate'], freq='1D').date
+    for _date in _date_index:
+        _task_count = _tot_count
+        if _date > datetime.datetime.now().date():
+            break
+        # print _date,"--->",
+        """ 重置满足时间窗口的 issue 集的状态 """
+
+        """用changelog做历史回顾"""
+        _search = {
+            "field": {"$in": ["status", "timespent", "timeoriginalestimate"]},
+            "date": {"$lte": "%s" % (_date + datetime.timedelta(days=1))}
+        }
+        _tot_issue = tot_issue
+        """按升序查找"""
+        _cur = mongo_db.handler('changelog', 'find', _search)
+        for _i in _cur:
+            if _i['issue'] in _tot_issue:
+                if _i['field'] == 'status':
+                    _tot_issue[_i['issue']] = _i['new']
+                elif _i['field'] == 'timespent':
+                    tot_issue_spent_time[_i['issue']] = _i['new']
+                else:
+                    tot_issue_org_time[_i['issue']] = _i['new']
+
+        _time = 0
+        for _i in tot_issue_spent_time:
+            _time += int(tot_issue_spent_time[_i]) / 1800
+        _spent_time_dot['dots'].append(["%s" % _date, _time, 'spent'])
+        _time = 0
+        for _i in tot_issue_org_time:
+            _time += int(tot_issue_org_time[_i]) / 1800
+        _spent_time_dot['dots'].append(["%s" % _date, _time, 'org'])
+
+        for _status in [u'DONE', u'测试中', u'待测试', u'IN PROGRESS']:
+            """ 统计此窗口内 各个状态 issue 的总数 """
+            _count = 0
+            for _i in _tot_issue:
+                if _tot_issue[_i].upper() == _status:
+                    _count += 1
+            _data[_status_trans[_status]] = _count
+            _task_count -= _count
+            print _status, '_tot_issue.len: ', len(_tot_issue), '_count:', _count, '_task_count:', _task_count
+            _data['dots'].append(["%s" % _date, _task_count, _status_trans[_status]])
+        _data[_status_trans[u"TO DO"]] = _task_count
+        print "---"
+    Dots.append(_data)
+    SpentTimes.append(_spent_time_dot)
+    return Dots, SpentTimes
+
+
 def calIssuePassCount(mongodb, issue_name):
     """
     计算指定issue的测试次数
@@ -412,12 +501,15 @@ def Performance(mongodb, landmark):
             continue
         if _issue['users'] not in _users:
             _users[_issue['users']] = {"done": 0,
+                                       "done_org_time": 0,
                                        "doing": 0,
                                        "org_time": 0,
                                        "spent_time": 0,
                                        "pass": 0}
         if _issue['status'] == u'完成':
             _users[_issue['users']]['done'] += 1
+            if type(_issue['org_time']) is not types.NoneType:
+                _users[_issue['users']]['done_org_time'] += _issue['org_time'] / 1800
         else:
             _users[_issue['users']]['doing'] += 1
         if type(_issue['org_time']) is not types.NoneType:
@@ -535,6 +627,12 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     """
     mongo_db = mongodb_class.mongoDB(project_alias)
 
+    # 获取里程碑信息
+    landmark_id = "18812"
+    _landmark = mongo_db.handler("project", "find", {'id': landmark_id})[0]['version'].replace('^', '.')
+    _startDate = mongo_db.handler("project", "find", {'id': landmark_id})[0]['startDate']
+    _endDate = mongo_db.handler("project", "find", {'id': landmark_id})[0]['releaseDate']
+
     """Jira类
     """
     jira = jira_class_epic.jira_handler(project_alias)
@@ -545,7 +643,11 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     sprint_start_date = cur_sprint[1]
     sprint_end_date = cur_sprint[2]
     print u"%s 从 %s 至 %s" % (current_sprint, sprint_start_date, sprint_end_date)
-    _burndown_dots, _timeburndown_dots = collectBurnDownData(mongo_db, sprints, current_sprint)
+    # _burndown_dots, _timeburndown_dots = collectBurnDownData(mongo_db, sprints, current_sprint)
+    _burndown_dots, _timeburndown_dots = collectBurnDownDataByLandmark(mongo_db,
+                                                                       {'name': _landmark,
+                                                                        'startDate': _startDate,
+                                                                        'endDate': _endDate})
     _burndown_fn = doBox.BurnDownChart(_burndown_dots)
     _timeburndown_fn = doBox.TimeBurnDownChart(_timeburndown_dots)
     """
@@ -563,12 +665,6 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     _res = mongo_db.handler("issue", "find", {"issue_type":"story", "summary": re.compile(r'.入侵.*?')})
     for _r in _res:
         _issue_ext_list.append(_r["issue"])
-
-    # 获取里程碑信息
-    landmark_id = "18812"
-    _landmark = mongo_db.handler("project", "find", {'id': landmark_id})[0]['version'].replace('^', '.')
-    _startDate = mongo_db.handler("project", "find", {'id': landmark_id})[0]['startDate']
-    _endDate = mongo_db.handler("project", "find", {'id': landmark_id})[0]['releaseDate']
 
     # 获取本里程碑内story
     # _story = mongo_db.handler("issue", "find", {'issue_type': "story", "landmark": u"%s" % _landmark})
@@ -684,7 +780,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
         3）偏差：执行与预算的+/-偏差
         4）任务的状态
     """
-    _fn_cost = doBox.doIssueCost(u"本期sprint的目标成本分布图", u"目标（story）", _issues, _dots, _max_cost)
+    _fn_cost = doBox.doIssueCost(u"本期目标成本分布图", u"目标（story）", _issues, _dots, _max_cost)
 
     _sql = 'select PJ_XMMC,PJ_XMFZR,PJ_KSSJ,PJ_JSSJ,PJ_XMJJ,PJ_XMYS from project_t where PJ_XMBH="%s"' % project
     _res = doSQL(cur, _sql)
@@ -704,7 +800,10 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     _print(u'当前阶段：%s，从 %s 至 %s' % (current_sprint, sprint_start_date, sprint_end_date))
 
     """需要在此插入语句"""
-    _paragrap = _print(u"情况总览", title=True, title_lvl=1)
+    _print(u"情况总览", title=True, title_lvl=1)
+
+    _my_paragrap = _print(u"本里程碑的基本情况", title=True, title_lvl=1)
+    """本里程碑的情况"""
     if project_alias == 'FAST':
         _search = {"issue_type": 'story',
                    "summary": {"$regex": ".*UC.*"},
@@ -743,7 +842,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
 
     _print(u"个人绩效指标", title=True, title_lvl=1)
     _users, _tot_task_count = Performance(mongo_db, _landmark)
-    _print(u"本阶段（%s）执行过程中研发团队个人（共%d人）综合情况如下：" % (_landmark, len(_users)))
+    _print(u"本阶段执行过程中研发团队个人（共%d人）综合情况如下：" % len(_users))
     doc.addTable(1, 5, col_width=(3, 2, 2, 2, 2))
     _title = (('text', u'人员'),
               ('text', u'完成率'),
@@ -752,9 +851,8 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
               ('text', u'质量系数'))
     doc.addRow(_title)
     for _user in _users:
-        _u = float(_users[_user]['done'])*100./float(_users[_user]['done'] + _users[_user]['doing'])
-        _miu = float(_users[_user]['org_time'] -
-                     _users[_user]['spent_time'])*100./float(_users[_user]['org_time'])
+        _u = float(_users[_user]['done_org_time'])*100./float(_users[_user]['org_time'])
+        _miu = float(_users[_user]['spent_time'])*100./float(_users[_user]['org_time'])
         _cr = float(_users[_user]['done'] + _users[_user]['doing'])*100./_tot_task_count
         _q = float(_users[_user]['pass'])/(float(_users[_user]['done'])+float(_users[_user]['doing']))
         _text = (('text', _user),
@@ -770,7 +868,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
            "3）贡献率：承接任务的占比；4）质量系数：返工数/承接的任务数。")
 
     _print(u"非计划类事务情况", title=True, title_lvl=1)
-    _print(u"本阶段（%s）执行过程中插入了以下“外来”的事务：" % _landmark)
+    _print(u"本阶段执行过程中插入了以下“外来”的事务：")
     _i = 1
     _tot_cost = 0
     _res = mongo_db.handler("issue", "find", {"issue_type": u"story",
@@ -810,30 +908,30 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
 
     #   2）目标状态：基于“任务”展示其所处状态
     _print(u"任务执行状态", title=True, title_lvl=2)
-    _print(u"通过下图可直观了解在本Sprint内所有任务的当前执行情况。")
+    _print(u"通过下图可直观了解在本里程碑内所有任务的当前执行情况。")
     doc.addPic(_fn_issue_status, sizeof=6)
     _print(u'【图例说明】：展示任务执行的状态分布情况。图中，圆点大小与任务被测试次数关联，'
            u'圆点越小则间接表示bug数也越少。')
 
     #   3）目标执行：基于“时标”展示目标迁移“趋势”
     _print(u"目标执行情况", title=True, title_lvl=2)
-    _print(u"通过下图可直观了解在本Sprint内所有目标（用例UC）的当前执行情况。")
+    _print(u"通过下图可直观了解在本里程碑内所有目标（用例UC）的当前执行情况。")
     doc.addPic(_fn_story_status, sizeof=6)
-    _print(u'【图例说明】：展示Sprint目标的状态分布情况。')
+    _print(u'【图例说明】：展示里程碑目标的状态分布情况。')
 
     #   4）成本执行：基于“时标”展示预算成本的实际执行情况（挣值分析）
     _print(u"成本执行", title=True, title_lvl=2)
     _print(u"● 计划预算总数：%d 【工时】" % (_tot_points/3600))
     _print(u"● 估计执行成本总数：%d 【工时】" % (_tot_agg_times/3600))
     _print(u"● 已执行成本总数：%d 【工时】" % (_tot_spent_times/3600))
-    _print(u"通过下图可直观了解在本Sprint内所有目标（用例UC）的预算执行情况。")
+    _print(u"通过下图可直观了解在本里程碑内所有目标（用例UC）的预算执行情况。")
     doc.addPic(_fn_cost, sizeof=6)
-    _print(u'【图例说明】：展示Sprint目标的预算执行情况。')
+    _print(u'【图例说明】：展示里程碑目标的预算执行情况。')
 
-    #   5）燃尽图：基于“时标”展示每个sprint任务的完成情况
+    #   5）燃尽图：基于“时标”展示每个里程碑任务的完成情况
     _print(u"任务执行情况", title=True, title_lvl=2)
-    _print(u"当前 %s （从%s到%s）的任务燃尽情况如下：" % (current_sprint, sprint_start_date, sprint_end_date))
-    """当前的 sprint 情况"""
+    _print(u"本里程碑的任务燃尽情况如下：")
+    """当前里程碑的情况"""
     _dot = _burndown_dots[-1]
     _print(u"● 任务总数：%d" % _dot["count"])
     _print(u"● 已完成的任务总数：%d" % _dot['done'])
@@ -848,28 +946,98 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     doc.addPic(_timeburndown_fn, sizeof=5)
     _print(u'【图例说明】：图中的红线为“理想”的计划工时燃尽趋势。')
 
+    doc.addPageBreak()
+    _print(u"【项目总体一览表】", title=True, title_lvl=1)
+    """一览表：
+        从 EPIC 开始向下列出其相关的 story 及其相关任务，项目包括：里程碑、状态、估计工时、实际工时、相关人
     """
-    _print(u'过滤掉“项目入侵”的任务燃尽情况如下：')
-    _dot = _burndown_pd_dots[-1]
-    _print(u"● 任务总数：%d" % _dot["count"])
-    _print(u"● 已完成的任务总数：%d" % _dot['done'])
-    _print(u"● 在测的任务总数：%d" % _dot['testing'])
-    _print(u"● 待测的任务总数：%d" % _dot['wait_testing'])
-    _print(u"● 处理中的任务总数：%d" % _dot['doing'])
-    _print(u"● 待办的任务总数：%d" % _dot['waiting'])
-    doc.addPic(_burndown_pd_fn, sizeof=6.8)
-    _print(u'【图例说明】：图中的红线为“理想”的任务燃尽趋势。')
-    """
+    _tot_epic = 0
+    _tot_story = 0
+    _tot_done_story = 0
+    _tot_task = 0
+    _tot_done_task = 0
+    doc.addTable(1, 8, col_width=(6, 6, 6, 3, 2, 1, 1, 2))
+    _title = (('text', u'EPIC'), ('text', u'story'), ('text', u'任务'),
+              ('text', u'里程碑'), ('text', u'状态'),
+              ('text', u'估计工时'), ('text', u'执行工时'),
+              ('text', u'执行人'))
+    doc.addRow(_title)
+    _search = {"issue_type": 'epic'}
+    _cur = mongo_db.handler('issue', 'find', _search)
+    for _issue in _cur:
 
-    """ 形成总结
-        ========
-        1）总体情况：任务完成率；预算执行情况；
-        2）风险情况。
-    if len(_results) > 0:
-        _print(u'项目状态：', paragrap=_paragrap)
-        for _r in _results:
-            _print(_r[0], paragrap=_paragrap, color=_r[1])
-    """
+        _tot_epic += 1
+        _text = (('text', u'%s' % _issue['summary']),
+                 ('text', ""),
+                 ('text', ""),
+                 ('text', ""),
+                 ('text', ""),
+                 ('text', ""),
+                 ('text', ""),
+                 ('text', "")
+                 )
+        doc.addRow(_text)
+        _search = {"issue_type": 'story', "epic_link": _issue['issue']}
+        _story_cur = mongo_db.handler('issue', 'find', _search)
+        for _story in _story_cur:
+
+            _tot_story += 1
+
+            if _story['point'] is None:
+                _point = 'null'
+            else:
+                _point = "%0.2f" % float(_story['point'])
+            _text = (('text', ""),
+                     ('text', u'%s' % _story['summary']),
+                     ('text', ""),
+                     ('text', u"%s" % _story['landmark']),
+                     ('text', u"%s" % _story['status']),
+                     ('text', _point),
+                     ('text', ""),
+                     ('text', u"%s" % _story['users'])
+                     )
+            doc.addRow(_text)
+            if _story['status'] == u'完成':
+                _tot_done_story += 1
+            _search = {'issue': _story['issue']}
+            _task_link = mongo_db.handler('issue_link', 'find_one', _search)
+            if _task_link is None:
+                continue
+            for _task_id in _task_link[_story['issue']]:
+                _search = {'issue': _task_id}
+                _task = mongo_db.handler('issue', 'find_one', _search)
+                _tot_task += 1
+                if _task['status'] == u'完成':
+                    _tot_done_task += 1
+                if _task['org_time'] is None:
+                    _org_time = "null"
+                else:
+                    _org_time = "%0.2f" % (float(_task['org_time'])/3600.)
+                if _task['spent_time'] is None:
+                    _spent_time = "null"
+                else:
+                    _spent_time = "%0.2f" % (float(_task['spent_time'])/3600.)
+                _text = (('text', ""),
+                         ('text', ""),
+                         ('text', u'%s' % _task['summary']),
+                         ('text', ""),
+                         ('text', u"%s" % _task['status']),
+                         ('text', _org_time),
+                         ('text', _spent_time),
+                         ('text', u"%s" % _task['users'])
+                         )
+                doc.addRow(_text)
+    doc.setTableFont(6)
+
+    _print(u'项目共有 %d 个EPIC被分解到 %d 个功能点的 %d 个任务上。' %
+           (_tot_epic, _tot_story, _tot_task), paragrap=_my_paragrap)
+
+    _print(u'目前已完成 %d 个功能（完成率%0.2f%%）和 %d 个任务（完成率%0.2f%%），明细详见本文后续的【项目总体一览表】。' %
+           (_tot_done_story,
+            float(_tot_done_story)*100./float(_tot_story),
+            _tot_done_task,
+            float(_tot_done_task)*100./float(_tot_task)), paragrap=_my_paragrap)
+    _print("")
 
     """ 结束前的清理工作
     """

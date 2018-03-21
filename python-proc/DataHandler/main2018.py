@@ -395,7 +395,8 @@ def getOprWorkTime(cur, mongodb):
         _sql = 'select TK_XMBH,TK_RWNR,TK_KSSJ,TK_GZSJ from task_t where TK_ZXR="' + \
                str(_row[0]) + '"' + \
                ' and created_at > "2018-03-11"' +\
-               ' and str_to_date(TK_KSSJ,"%%Y-%%m-%%d") between "%s" and "%s"' % (st_date, ed_date)
+               ' and str_to_date(TK_KSSJ,"%%Y-%%m-%%d") between "%s" and "%s" order by TK_KSSJ' %\
+               (st_date, ed_date)
         __res = doSQL(cur, _sql)
         _tot = 0
         for _item in __res:
