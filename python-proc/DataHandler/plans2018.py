@@ -121,6 +121,8 @@ def _print(_str, title=False, title_lvl=0, color=None, align=None, paragrap=None
 
     _paragrap = None
 
+    if title_lvl == 1:
+        Topic_lvl_number = 0
     if title:
         if title_lvl==2:
             _str = Topic[Topic_lvl_number] + _str
@@ -514,10 +516,10 @@ def Performance(mongodb, landmark):
             _users[_issue['users']]['doing'] += 1
         if type(_issue['org_time']) is not types.NoneType:
             _users[_issue['users']]['org_time'] += _issue['org_time']/1800
+            _tot_task_count += (_issue['org_time'] / 1800)
         if type(_issue['spent_time']) is not types.NoneType:
             _users[_issue['users']]['spent_time'] += _issue['spent_time']/1800
         _users[_issue['users']]['pass'] += calIssuePassCount(mongodb, _issue['issue'])
-        _tot_task_count += 1
 
     return _users, _tot_task_count
 
@@ -601,7 +603,7 @@ def get_issue_public(mongodb, _story):
     return _task_list, _story_task_list, _story_points, _max_cost
 
 
-def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
+def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False):
     """
     项目跟踪报告生成器
     :param project: 项目编号
@@ -818,7 +820,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
                 "status": "完成",
                 "sprint": {"$regex": ".*Sprint 5.*"}}
     _done_count = mongo_db.handler('issue', 'count', __search)
-    _print(u"本阶段共有 %d 个用例，已完成 %d 个，完成率 %0.2f%%，明细如下：" % (
+    _print(u"本阶段共有 %d 个功能点，已完成 %d 个，完成率 %0.2f%%，明细如下：" % (
         _tot_count, _done_count, float((_done_count*100)/_tot_count)
     ))
     doc.addTable(1, 4, col_width=(7, 1, 7, 1))
@@ -853,8 +855,8 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     for _user in _users:
         _u = float(_users[_user]['done_org_time'])*100./float(_users[_user]['org_time'])
         _miu = float(_users[_user]['spent_time'])*100./float(_users[_user]['org_time'])
-        _cr = float(_users[_user]['done'] + _users[_user]['doing'])*100./_tot_task_count
-        _q = float(_users[_user]['pass'])/(float(_users[_user]['done'])+float(_users[_user]['doing']))
+        _cr = float(_users[_user]['org_time'])*100./float(_tot_task_count)
+        _q = float(_users[_user]['pass'])/_cr
         _text = (('text', _user),
                  ('text', "%0.2f" % _u),
                  ('text', "%0.2f" % _miu),
@@ -864,8 +866,8 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
         print "---> ", _text
         doc.addRow(_text)
     doc.setTableFont(8)
-    _print("【说明】：1）任务完成率：完成任务的占比；2）消耗率：已消耗工时的占比，负数表示超预估；"
-           "3）贡献率：承接任务的占比；4）质量系数：返工数/承接的任务数。")
+    _print("【说明】：1）任务完成率：完成任务量的占比；2）消耗率：已消耗工时的占比；"
+           "3）贡献率：承接任务量的占比；4）质量系数：返工数/贡献率。")
 
     _print(u"非计划类事务情况", title=True, title_lvl=1)
     _print(u"本阶段执行过程中插入了以下“外来”的事务：")
@@ -888,6 +890,8 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
         _i += 1
         _tot_cost += int(_issue['point']) * COST_ONE_POINT
     _print(u"计划外事务的总投入（估算） %d 个工时。" % _tot_cost)
+
+    doc.addPageBreak()
 
     _print(u"过程情况", title=True, title_lvl=1)
     _print(u'1）单元测试情况：')
@@ -915,7 +919,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
 
     #   3）目标执行：基于“时标”展示目标迁移“趋势”
     _print(u"目标执行情况", title=True, title_lvl=2)
-    _print(u"通过下图可直观了解在本里程碑内所有目标（用例UC）的当前执行情况。")
+    _print(u"通过下图可直观了解在本里程碑内所有目标（功能点）的当前执行情况。")
     doc.addPic(_fn_story_status, sizeof=6)
     _print(u'【图例说明】：展示里程碑目标的状态分布情况。')
 
@@ -924,7 +928,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     _print(u"● 计划预算总数：%d 【工时】" % (_tot_points/3600))
     _print(u"● 估计执行成本总数：%d 【工时】" % (_tot_agg_times/3600))
     _print(u"● 已执行成本总数：%d 【工时】" % (_tot_spent_times/3600))
-    _print(u"通过下图可直观了解在本里程碑内所有目标（用例UC）的预算执行情况。")
+    _print(u"通过下图可直观了解在本里程碑内所有目标（功能点）的预算执行情况。")
     doc.addPic(_fn_cost, sizeof=6)
     _print(u'【图例说明】：展示里程碑目标的预算执行情况。')
 
@@ -946,8 +950,11 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     doc.addPic(_timeburndown_fn, sizeof=5)
     _print(u'【图例说明】：图中的红线为“理想”的计划工时燃尽趋势。')
 
-    doc.addPageBreak()
-    _print(u"【项目总体一览表】", title=True, title_lvl=1)
+    doc_appendix = crWord.createWord()
+    """写入"主题"
+    """
+    doc_appendix.addHead(u'【项目%s总体一览表】' % project_alias, 0, align=WD_ALIGN_PARAGRAPH.CENTER)
+
     """一览表：
         从 EPIC 开始向下列出其相关的 story 及其相关任务，项目包括：里程碑、状态、估计工时、实际工时、相关人
     """
@@ -956,12 +963,12 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     _tot_done_story = 0
     _tot_task = 0
     _tot_done_task = 0
-    doc.addTable(1, 8, col_width=(6, 6, 6, 3, 2, 1, 1, 2))
+    doc_appendix.addTable(1, 8, col_width=(6, 6, 6, 3, 2, 2, 2, 2))
     _title = (('text', u'EPIC'), ('text', u'story'), ('text', u'任务'),
               ('text', u'里程碑'), ('text', u'状态'),
               ('text', u'估计工时'), ('text', u'执行工时'),
               ('text', u'执行人'))
-    doc.addRow(_title)
+    doc_appendix.addRow(_title)
     _search = {"issue_type": 'epic'}
     _cur = mongo_db.handler('issue', 'find', _search)
     for _issue in _cur:
@@ -976,7 +983,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
                  ('text', ""),
                  ('text', "")
                  )
-        doc.addRow(_text)
+        doc_appendix.addRow(_text)
         _search = {"issue_type": 'story', "epic_link": _issue['issue']}
         _story_cur = mongo_db.handler('issue', 'find', _search)
         for _story in _story_cur:
@@ -996,13 +1003,15 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
                      ('text', ""),
                      ('text', u"%s" % _story['users'])
                      )
-            doc.addRow(_text)
+            doc_appendix.addRow(_text)
             if _story['status'] == u'完成':
                 _tot_done_story += 1
             _search = {'issue': _story['issue']}
             _task_link = mongo_db.handler('issue_link', 'find_one', _search)
+
             if _task_link is None:
                 continue
+
             for _task_id in _task_link[_story['issue']]:
                 _search = {'issue': _task_id}
                 _task = mongo_db.handler('issue', 'find_one', _search)
@@ -1017,32 +1026,41 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
                     _spent_time = "null"
                 else:
                     _spent_time = "%0.2f" % (float(_task['spent_time'])/3600.)
-                _text = (('text', ""),
-                         ('text', ""),
-                         ('text', u'%s' % _task['summary']),
-                         ('text', ""),
-                         ('text', u"%s" % _task['status']),
-                         ('text', _org_time),
-                         ('text', _spent_time),
-                         ('text', u"%s" % _task['users'])
-                         )
-                doc.addRow(_text)
-    doc.setTableFont(6)
+
+                if week_end:
+                    _text = (('text', ""),
+                             ('text', ""),
+                             ('text', u'%s' % _task['summary']),
+                             ('text', ""),
+                             ('text', u"%s" % _task['status']),
+                             ('text', _org_time),
+                             ('text', _spent_time),
+                             ('text', u"%s" % _task['users'])
+                             )
+                    doc_appendix.addRow(_text)
+
+    if week_end:
+        doc_appendix.setTableFont(6)
+        doc_appendix.addPageBreak()
 
     _print(u'项目共有 %d 个EPIC被分解到 %d 个功能点的 %d 个任务上。' %
            (_tot_epic, _tot_story, _tot_task), paragrap=_my_paragrap)
 
-    _print(u'目前已完成 %d 个功能（完成率%0.2f%%）和 %d 个任务（完成率%0.2f%%），明细详见本文后续的【项目总体一览表】。' %
+    _print(u'目前已完成 %d 个功能点（完成率%0.2f%%）和 %d 个任务（完成率%0.2f%%）。' %
            (_tot_done_story,
             float(_tot_done_story)*100./float(_tot_story),
             _tot_done_task,
             float(_tot_done_task)*100./float(_tot_task)), paragrap=_my_paragrap)
-    _print("")
+
+    if week_end:
+        _print(u'项目明细情况参见附件【项目总体一览表】文件。' )
 
     """ 结束前的清理工作
     """
     db.close()
     doc.saveFile('%s-proj.docx' % project)
+    if week_end:
+        doc_appendix.saveFile('%s-proj-appendix.docx' % project)
 
     """删除过程文件"""
     _cmd = 'del /Q pic\\*'
@@ -1051,7 +1069,12 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST'):
     _cmd = 'python doc2pdf.py %s-proj.docx %s-proj-%s.pdf' % \
            (project, project, time.strftime('%Y%m%d', time.localtime(time.time())))
     os.system(_cmd)
+    if week_end:
+        _cmd = 'python doc2pdf.py %s-proj-appendix.docx %s-proj-appendix-%s.pdf' % \
+               (project, project, time.strftime('%Y%m%d', time.localtime(time.time())))
+        os.system(_cmd)
 
 
 if __name__ == '__main__':
+
     main(project_alias='HUBBLE')
