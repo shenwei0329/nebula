@@ -651,7 +651,7 @@ def do_with_task(myjira):
     myjira.scan_task('2017-12-1')
 
 
-def main(project_alias="FAST", issue_type='epic'):
+def main(project_alias=None, issue_type=None):
 
     """连接数据库"""
     # db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
@@ -672,4 +672,4 @@ if __name__ == '__main__':
     if len(sys.argv) == 3:
         main(sys.argv[1], issue_type=sys.argv[2])
     else:
-        main()
+        print(u"\tUsage: %s project_alias issue_type" % sys.argv[0])

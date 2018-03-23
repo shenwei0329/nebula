@@ -430,7 +430,7 @@ def collectBurnDownDataByLandmark(mongo_db, landmark):
         }
         _tot_issue = tot_issue
         """按升序查找"""
-        _cur = mongo_db.handler('changelog', 'find', _search)
+        _cur = mongo_db.handler('changelog', 'find', _search).sort([('date', 1)])
         for _i in _cur:
             if _i['issue'] in _tot_issue:
                 if _i['field'] == 'status':
@@ -603,11 +603,13 @@ def get_issue_public(mongodb, _story):
     return _task_list, _story_task_list, _story_points, _max_cost
 
 
-def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False):
+def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, landmark_id=None):
     """
     项目跟踪报告生成器
     :param project: 项目编号
     :param project_alias: 项目别名，如FAST、HUBBLE...
+    :param week_end：周末？
+    :param landmark_id：里程碑ID
     :return: 报告（word、pdf）
     """
 
@@ -623,6 +625,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False):
     """MySQL数据库
     """
     db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
+    # db = MySQLdb.connect(host="172.16.101.117",user="root",passwd="123456",db="nebula",charset='utf8')
     cur = db.cursor()
 
     """mongoDB数据库
@@ -630,7 +633,6 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False):
     mongo_db = mongodb_class.mongoDB(project_alias)
 
     # 获取里程碑信息
-    landmark_id = "18812"
     _landmark = mongo_db.handler("project", "find", {'id': landmark_id})[0]['version'].replace('^', '.')
     _startDate = mongo_db.handler("project", "find", {'id': landmark_id})[0]['startDate']
     _endDate = mongo_db.handler("project", "find", {'id': landmark_id})[0]['releaseDate']
@@ -719,7 +721,11 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False):
     _x = 1
     _issues = []
     _story = mongo_db.handler("issue", "find",
-                              {'issue_type': "story", "sprint": {'$regex': ".*%s.*" % current_sprint}})
+                              {'issue_type': "story",
+                               # "summary": {"$regex": ".*UC.*"},
+                               # "sprint": {'$regex': ".*%s.*" % current_sprint}
+                               'landmark': _landmark
+                               })
     _dots_s = {}
     for _st in _story:
         _id = _st['issue']
@@ -734,7 +740,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False):
                     _dots_s[_id] = 3
         _issues.append(_id)
         _x += 1
-    _fn_story_status = doBox.doIssueStatus(u"本期sprint的目标状态分布图", u"目标（story）", _issues, _dots, _dots_s)
+    _fn_story_status = doBox.doIssueStatus(u"本期目标状态分布图", u"目标（story）", _issues, _dots, _dots_s)
 
     # 生成预算执行信息
     _dots = []
@@ -742,6 +748,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False):
     _issues = []
     # _story = mongo_db.handler("issue", "find", {'issue_type': "story", "landmark": u"%s" % _landmark})
     _story = mongo_db.handler("issue", "find", {'issue_type': "story",
+                                                # "summary": {"$regex": ".*UC.*"},
                                                 # "sprint": {'$regex': ".*%s.*" % current_sprint}})
                                                 "landmark": _landmark})
     _tot_points = 0
@@ -806,19 +813,16 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False):
 
     _my_paragrap = _print(u"本里程碑的基本情况", title=True, title_lvl=1)
     """本里程碑的情况"""
-    if project_alias == 'FAST':
-        _search = {"issue_type": 'story',
-                   "summary": {"$regex": ".*UC.*"},
-                   # "sprint": {"$regex": ".*%s.*" % current_sprint}}
-                   "landmark": _landmark}
-    else:
-        _search = {"issue_type": 'story',
-                   "sprint": {"$regex": ".*%s.*" % current_sprint}}
+    _search = {"issue_type": 'story',
+               # "summary": {"$regex": ".*UC.*"},
+               # "sprint": {"$regex": ".*%s.*" % current_sprint}}
+               "landmark": _landmark}
     _tot_count = mongo_db.handler('issue', 'count', _search)
     __search = {"issue_type": 'story',
-                "summary": {"$regex": ".*UC.*"},
+                # "summary": {"$regex": ".*UC.*"},
                 "status": "完成",
-                "sprint": {"$regex": ".*Sprint 5.*"}}
+                # "sprint": {"$regex": ".*Sprint 5.*"}
+                "landmark": _landmark}
     _done_count = mongo_db.handler('issue', 'count', __search)
     _print(u"本阶段共有 %d 个功能点，已完成 %d 个，完成率 %0.2f%%，明细如下：" % (
         _tot_count, _done_count, float((_done_count*100)/_tot_count)
@@ -898,6 +902,9 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False):
     _fn = showJinkinsRec.doJinkinsRec(cur)
     doc.addPic(_fn, sizeof=6.2)
     _print(u'【图例说明】：数据采自Jenkins系统，以展示项目中每个模块的单元测试情况。')
+
+    doc.addPageBreak()
+
     _print(u'2）单元测试覆盖率：')
     _fn = showJinkinsCoverage.doJinkinsCoverage(cur)
     doc.addPic(_fn, sizeof=5.8)

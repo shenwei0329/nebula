@@ -382,7 +382,7 @@ def BurnDownChart(dots):
         else:
             _c = 'lightgreen'
         ax.fill_between(_p['sprint'][:-1], 0, 1, transform=trans, alpha=0.3, color=_c)
-        ax.plot(_p['sprint'][:-1], [_p['count'],0], color='r', linewidth=1, alpha=0.3)
+        ax.plot(_p['sprint'][:-1], [_p['count'], 0], color='r', linewidth=1, alpha=0.3)
 
     plt.title(u'任务燃尽图', fontsize=12)
     plt.subplots_adjust(left=0.08, right=0.98, bottom=0.06, top=0.96)
@@ -820,6 +820,7 @@ if __name__ == '__main__':
     _test_case = 3
 
     db = MySQLdb.connect(host="47.93.192.232", user="root", passwd="sw64419", db="nebula", charset='utf8')
+    # db = MySQLdb.connect(host="172.16.101.117", user="root", passwd="123456", db="nebula", charset='utf8')
     cur = db.cursor()
     my_sql = mysql_hdr.SqlService(db)
 

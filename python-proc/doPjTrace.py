@@ -14,18 +14,16 @@ sys.setdefaultencoding('utf-8')
 
 if __name__ == '__main__':
 
-    if len(sys.argv) <= 3:
-        if len(sys.argv) == 2:
-            plans2018.main(project_alias=sys.argv[1])
-        elif len(sys.argv) == 3:
+    if len(sys.argv) in [4, 5]:
+        if len(sys.argv) == 5:
+            _week_end = False
             if sys.argv[2] == 'eow':
-                plans2018.main(project_alias=sys.argv[1], week_end=True)
-            else:
-                plans2018.main(project_alias=sys.argv[1])
+                _week_end = True
+            plans2018.main(project=sys.argv[1], project_alias=sys.argv[2], landmark_id=sys.argv[3], week_end=_week_end)
         else:
-            plans2018.main()
+            plans2018.main(project=sys.argv[1], project_alias=sys.argv[2], landmark_id=sys.argv[3], week_end=False)
     else:
-        print("\n\tUsage: python %s project_name [eow]\n" % sys.argv[0])
+        print("\n\tUsage: python %s project project_alias landmark_id [eow]\n" % sys.argv[0])
 
 #
 # Eof

@@ -19,7 +19,8 @@ class mongoDB:
 
     def __init__(self, project):
         self.sort = None
-        self.mongo_client = MongoClient()
+        # self.mongo_client = MongoClient(host=['172.16.101.117:27017'])
+        self.mongo_client = MongoClient(host=['localhost:27017'])
         # self.mongo_db = self.mongo_client.FAST
         self.mongo_db = self.mongo_client.get_database(project)
         self.obj = {"project": self.mongo_db.project,

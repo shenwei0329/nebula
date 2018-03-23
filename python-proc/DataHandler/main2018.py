@@ -584,6 +584,7 @@ def main():
     doc.addHead(u'产品研发中心周报', 0, align=WD_ALIGN_PARAGRAPH.CENTER)
 
     db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
+    # db = MySQLdb.connect(host="172.16.101.117", user="root",passwd="123456", db="nebula", charset='utf8')
     cur = db.cursor()
 
     _print('>>> 报告生成日期【%s】 <<<' % time.ctime(), align=WD_ALIGN_PARAGRAPH.CENTER)

@@ -113,6 +113,7 @@ def doHandler(befDay, edDay):
 
     """连接数据库"""
     db = MySQLdb.connect(host="47.93.192.232", user="root", passwd="sw64419", db="nebula", charset='utf8')
+    # db = MySQLdb.connect(host="172.16.101.117", user="root", passwd="123456", db="nebula", charset='utf8')
     cur = db.cursor()
 
     """JIRA系统入口"""
