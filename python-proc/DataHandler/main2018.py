@@ -41,6 +41,7 @@ mpl.rcParams['font.sans-serif'] = ['SimHei']
 sp_name = [u'杨飞', u'吴昱珉', u'王学凯', u'许文宝',
            u'饶定远', u'金日海', u'沈伟', u'谭颖卿',
            u'吴丹阳', u'查明', u'柏银', u'崔昊之']
+GroupName = [u'产品设计组', u'云平台研发组', u'大数据研发组', u'系统组', u'测试组']
 
 """定义时间区间
 """
@@ -337,36 +338,38 @@ def getOprWorkTime(cur, mongodb):
     _print("3、工作日志工时统计：", title=True, title_lvl=2)
     _print(u'数据来源于任务管理系统。')
     orgWT = ()
-    _sql = 'select MM_XM from member_t'
-    _res = doSQL(cur,_sql)
-    for _row in _res:
+    for _grp in GroupName:
+        _print(_grp, title=True, title_lvl=3)
+        _sql = 'select MM_XM from member_t where MM_POST="%s"' % _grp
+        _res = doSQL(cur,_sql)
+        for _row in _res:
 
-        if u"%s" % _row[0] in sp_name:
-            continue
+            if u"%s" % _row[0] in sp_name:
+                continue
 
-        _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_ZXR="' +\
-               str(_row[0]) + '"' +\
-               ' and created_at > "2018-03-11"' +\
-               ' and str_to_date(TK_KSSJ,"%%Y-%%m-%%d") between "%s" and "%s"' % (st_date, ed_date)
-        _res = doSQL(cur, _sql)
-        if (type(_res) is types.NoneType) or (type(_res[0][0]) is types.NoneType):
-            continue
-        print _res[0][0]
-        _n = float(_res[0][0])
-        if _n == 0.:
-            continue
+            _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_ZXR="' +\
+                   str(_row[0]) + '"' +\
+                   ' and created_at > "2018-03-11"' +\
+                   ' and str_to_date(TK_KSSJ,"%%Y-%%m-%%d") between "%s" and "%s"' % (st_date, ed_date)
+            _res = doSQL(cur, _sql)
+            if (type(_res) is types.NoneType) or (type(_res[0][0]) is types.NoneType):
+                continue
+            print _res[0][0]
+            _n = float(_res[0][0])
+            if _n == 0.:
+                continue
 
-        _color = None
-        _s = "[员工：" + str(_row[0]) + "，工作 %0.2f 工时" % _n
-        if _n > float(workhours):
-            _s = _s + "，加班 %0.2f 工时" % (_n - workhours) + "，占比 %0.2f %%" % ((_n-workhours)*100./workhours)
-            _color = (255, 0, 0)
-        if _n<workhours:
-            _s = _s + "，剩余 %0.2f 工时" % (workhours - _n) + "，占比 %0.2f %%" % ((workhours-_n)*100/workhours)
-            _color = (50, 100, 50)
-        _s = _s + ']'
-        _print(_s, color=_color)
-        orgWT = orgWT + (_n,)
+            _color = None
+            _s = "[员工：" + str(_row[0]) + "，工作 %0.2f 工时" % _n
+            if _n > float(workhours):
+                _s = _s + "，加班 %0.2f 工时" % (_n - workhours) + "，占比 %0.2f %%" % ((_n-workhours)*100./workhours)
+                _color = (255, 0, 0)
+            if _n<workhours:
+                _s = _s + "，剩余 %0.2f 工时" % (workhours - _n) + "，占比 %0.2f %%" % ((workhours-_n)*100/workhours)
+                _color = (50, 100, 50)
+            _s = _s + ']'
+            _print(_s, color=_color)
+            orgWT = orgWT + (_n,)
 
     if len(orgWT)>0:
         _fn = doHour.doOprHour(orgWT, workhours)
@@ -375,46 +378,50 @@ def getOprWorkTime(cur, mongodb):
 
     _print("4、工作日志明细：", title=True, title_lvl=2)
     _print(u'数据来源于任务管理系统。')
-    doc.addTable(1, 4, col_width=(2, 3, 2, 1))
-    _title = (('text', u'名称'), ('text', u'任务'), ('text', u'开始时间'), ('text', u'耗时'))
-    doc.addRow(_title)
+    for _grp in GroupName:
 
-    _sql = 'select MM_XM from member_t where MM_ZT=1'
-    _res = doSQL(cur, _sql)
-    for _row in _res:
+        _print(_grp, title=True, title_lvl=3)
 
-        if u"%s" % _row[0] in sp_name:
-            continue
+        doc.addTable(1, 4, col_width=(2, 3, 2, 1))
+        _title = (('text', u'名称'), ('text', u'任务'), ('text', u'开始时间'), ('text', u'耗时'))
+        doc.addRow(_title)
 
-        _text = (('text', u"%s" % str(_row[0])),
-                 ('text', ""),
-                 ('text', ""),
-                 ('text', "")
-                 )
-        doc.addRow(_text)
-        _sql = 'select TK_XMBH,TK_RWNR,TK_KSSJ,TK_GZSJ from task_t where TK_ZXR="' + \
-               str(_row[0]) + '"' + \
-               ' and created_at > "2018-03-11"' +\
-               ' and str_to_date(TK_KSSJ,"%%Y-%%m-%%d") between "%s" and "%s" order by TK_KSSJ' %\
-               (st_date, ed_date)
-        __res = doSQL(cur, _sql)
-        _tot = 0
-        for _item in __res:
-            _text = (('text', ""),
-                     ('text', (u"%s:%s" % (_item[0], _item[1])).replace('|',"")),
-                     ('text', _item[2].split(' ')[0]),
-                     ('text', _item[3])
+        _sql = 'select MM_XM from member_t where MM_ZT=1 and MM_POST="%s"' % _grp
+        _res = doSQL(cur, _sql)
+        for _row in _res:
+
+            if u"%s" % _row[0] in sp_name:
+                continue
+
+            _text = (('text', u"%s" % str(_row[0])),
+                     ('text', ""),
+                     ('text', ""),
+                     ('text', "")
                      )
             doc.addRow(_text)
-            _tot += float(_item[3])
-        _text = (('text', "-"),
-                 ('text', u"小计"),
-                 ('text', ""),
-                 ('text', "%0.2f" % _tot)
-                 )
-        doc.addRow(_text)
-    doc.setTableFont(8)
-    _print("")
+            _sql = 'select TK_XMBH,TK_RWNR,TK_KSSJ,TK_GZSJ from task_t where TK_ZXR="' + \
+                   str(_row[0]) + '"' + \
+                   ' and created_at > "2018-03-11"' +\
+                   ' and str_to_date(TK_KSSJ,"%%Y-%%m-%%d") between "%s" and "%s" order by TK_KSSJ' %\
+                   (st_date, ed_date)
+            __res = doSQL(cur, _sql)
+            _tot = 0
+            for _item in __res:
+                _text = (('text', ""),
+                         ('text', (u"%s:%s" % (_item[0], _item[1])).replace('|',"")),
+                         ('text', _item[2].split(' ')[0]),
+                         ('text', _item[3])
+                         )
+                doc.addRow(_text)
+                _tot += float(_item[3])
+            _text = (('text', "-"),
+                     ('text', u"小计"),
+                     ('text', ""),
+                     ('text', "%0.2f" % _tot)
+                     )
+            doc.addRow(_text)
+        doc.setTableFont(8)
+        _print("")
 
 
 def getGrpWorkTime(cur):

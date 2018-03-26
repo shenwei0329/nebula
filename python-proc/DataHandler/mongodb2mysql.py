@@ -42,13 +42,14 @@ def load_worklog(mysql_db, mongo_db, group_name, source):
     :param source：项目标识
     :return:
     """
-    _cur = mongo_db.handler('worklog', 'find', {"issue": {'$regex': ".*%s.*" % source}})
+    """ 按 修改日期 升序查询，以确保记录是最新的 """
+    _cur = mongo_db.handler('worklog', 'find', {"issue": {'$regex': ".*%s.*" % source}}).sort([('updated', 1)])
     for _event in _cur:
         """
         _sql = 'select count(*) from task_t where TK_RW="%s:%s"' % (source,"%s" % _event['_id'])
         避免工作内容重复的日志
         """
-        _str = u"%s" % _event['comment'].replace('\n', '|').replace('\r', '|')
+        _str = u"%s" % _event['comment'].replace('\n', '|').replace('\r', '|').replace('"', '^').replace("'", '^')
         if len(_str) > 84:
             _str = _str[4:84]
         _sql = 'select id, TK_GZSJ from task_t where TK_XMBH="%s" and' \
@@ -67,7 +68,7 @@ def load_worklog(mysql_db, mongo_db, group_name, source):
                    u'values("%s","%s","%s","%s","%s","%s","%s","%s")' %\
                    (("%s:%s" % (source, _event['_id'])),
                     _event['issue'],
-                    _event['comment'].replace('\n', '|').replace('\r', '|'),
+                    _event['comment'].replace('\n', '|').replace('\r', '|').replace('"', '^').replace("'", '^'),
                     ("%s" % _event['started']).replace('T', ' '),
                     "%0.2f" % (float(_event['timeSpentSeconds'])/3600.),
                     (u"%s" % _event['author']).strip(' '),
@@ -81,7 +82,7 @@ def load_worklog(mysql_db, mongo_db, group_name, source):
                             float(_event['timeSpentSeconds']) / 3600.)
                 _sql = u'update task_t set TK_GZSJ="%s",TK_RWNR="%s" where id="%s"' % \
                        ("%0.2f" % (float(_event['timeSpentSeconds'])/3600.),
-                        _event['comment'].replace('\n', '|').replace('\r', '|'),
+                        _event['comment'].replace('\n', '|').replace('\r', '|').replace('"', '^').replace("'", '^'),
                         str(_cur[0][0]))
                 mysql_db.insert(_sql)
 

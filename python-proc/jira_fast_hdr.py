@@ -53,7 +53,7 @@ def inputFASTtask(db, cur, jira, project_alias='FAST'):
     Task = {}
     total = 0
     while True:
-        issues = jira.search_issues('project=%s ORDER BY created DESC' %
+        issues = jira.search_issues('project=%s and created > 2018-01-01 ORDER BY created DESC' %
                                     project_alias, maxResults=100, startAt=total)
         for issue in issues:
 
