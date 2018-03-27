@@ -677,15 +677,27 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
 
     # 获取任务的变化情况
     """
-    "{$in": ['timeoriginalestimate', 'timeestimate', 'timespent', 'WorklogTimeSpent', 'status', 'resolution']}
+    {"$in": ['timeoriginalestimate', 'timeestimate', 'timespent', 'WorklogTimeSpent', 'status', 'resolution']}
     """
     _dots = []
     _issues = []
     _y = 1
     for _t in _task_list:
+        """方式一：
         _log = mongo_db.handler("log", "find", {"issue_id": _t})
         for _l in _log:
             _dots.append([time.strftime("%Y-%m-%d %H:%M:%S", mongo_db.get_time(_l["_id"])), _y, _l["key"]])
+        """
+        """方式二："""
+        _log = mongo_db.handler("changelog", "find", {"issue": _t,
+                                                      "field": {"$in": ['timeoriginalestimate',
+                                                                        'timeestimate',
+                                                                        'timespent',
+                                                                        'WorklogTimeSpent',
+                                                                        'status',
+                                                                        'resolution']}})
+        for _l in _log:
+            _dots.append([_l["date"], _y, _l["field"]])
         _issues.append(_t)
         _y += 1
     _fn_issue_action = doBox.doIssueAction(_issues, _dots)

@@ -497,6 +497,21 @@ def doIssueAction(issues, dots):
 
     global __test
 
+    _issue_point_marker = {'timeoriginalestimate': 'v',
+                           'timeestimate': 'o',
+                           'timespent': '^',
+                           'WorklogTimeSpent': 's',
+                           'status': '+',
+                           'resolution': '>'}
+
+    _issue_point_color = {'timeoriginalestimate': 0,
+                          'timeestimate': 1,
+                          'timespent': 2,
+                          'WorklogTimeSpent': 3,
+                          'status': 4,
+                          'resolution': 5}
+
+    """
     _issue_point_marker = {"agg_time": 'v',
                            "org_time": 'o',
                            "spent_time": '^',
@@ -520,16 +535,16 @@ def doIssueAction(issues, dots):
                            "epic_link": 9,
                            "lastViewed": 10,
                            }
+    """
 
-    # _colors = plt.cm.BuPu(np.linspace(0, 0.7, len(_issue_point_marker)+1))
-
+    # _colors = plt.cm.BuPu(np.linspace(1, 255, len(_issue_point_marker)+1)); hsv; jet
+    _colors = plt.cm.hsv(np.linspace(0.5, 1., len(_issue_point_marker)))
     """作图"""
-    rcParams.update({
-    'font.family':'sans-serif',
-    'font.sans-serif':[u'SimHei'],
-    'axes.unicode_minus':False,
-    'font.size':6,
-    })
+    rcParams.update({'font.family': 'sans-serif',
+                     'font.sans-serif': [u'SimHei'],
+                     'axes.unicode_minus': False,
+                     'font.size': 6,
+                     })
 
     autodates = AutoDateLocator()
     yearsFmt = DateFormatter('%Y-%m-%d %H:%M:%S')
@@ -564,23 +579,21 @@ def doIssueAction(issues, dots):
         if _dot[2] in _issue_point_marker:
             _marker = _issue_point_marker[_dot[2]]
             _index = _issue_point_color[_dot[2]]
-            # _c = _colors[_index]
-            _c = 'k'
-            _leg[_index] = ax.scatter(_dot[0], _dot[1], color=_c, marker=_marker, s=20, alpha=0.5)
+            _c = _colors[_index]
+            # _c = 'k'
+            _leg[_index] = ax.scatter(_dot[0], _dot[1], color=_c, marker=_marker, s=30, alpha=0.7)
 
     ax.set_xlabel(u'日期', fontsize=11)
     ax.set_ylabel(u'任务', fontsize=11)
     ax.grid(True)
+
     ax.legend(_leg,
-              [u"计划估计",
-               u"剩余时间",
-               u"实际时间",
-               u"日期修改",
+              [u"预估工时",
+               u"设置工时",
+               u"花费工时",
+               u"记工时日志",
                u"状态修改",
-               u"里程碑",
-               u"用户",
-               u"epic链",
-               u"访问时间"],
+               u"解决问题"],
               loc=2,
               fontsize=12)
 
