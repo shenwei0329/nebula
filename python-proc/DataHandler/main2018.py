@@ -19,10 +19,13 @@
 #   3）任务执行情况
 #   4）个人业绩指标
 #
+# 2018.8.27
+#   1）周报的任务数据直接从mongodb上获取
+#   2）考虑 产品与工程项目 工作量划分及其占比
+#
 
 import MySQLdb
 import sys
-import json
 import time
 import os
 import doPie
@@ -31,6 +34,8 @@ import doBarOnTable
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import crWord
 import types
+import mongodb_class
+
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -42,6 +47,8 @@ sp_name = [u'杨飞', u'吴昱珉', u'王学凯', u'许文宝',
            u'饶定远', u'金日海', u'沈伟', u'谭颖卿',
            u'吴丹阳', u'查明', u'柏银', u'崔昊之']
 GroupName = [u'产品设计组', u'云平台研发组', u'大数据研发组', u'系统组', u'测试组']
+ProjectAlias = {u'产品设计组': 'CPSJ', u'云平台研发组': 'FAST',
+                u'大数据研发组': 'HUBBLE', u'系统组': 'ROOOT', u'测试组': 'TESTCENTER'}
 
 """定义时间区间
 """
@@ -55,7 +62,6 @@ workhours = 40
 CostDay = 128
 Tables = ['count_record_t',]
 TotalMember = 0
-GroupName = [u'产品设计组',u'云平台研发组',u'大数据研发组',u'系统组',u'测试组']
 costProject = ()
 ProductList = []
 doc = None
@@ -74,16 +80,6 @@ Topic = [u'一、',
          u'十二、',
          ]
 
-def Load_json(fn):
-
-    try:
-        f = open(fn, 'r')
-        s = f.read()
-        _json = json.loads(s)
-        f.close()
-        return _json
-    except:
-        return None
 
 def calHour(_str):
     """
@@ -98,6 +94,7 @@ def calHour(_str):
         return _h + _m
     else:
         return None
+
 
 def _print(_str, title=False, title_lvl=0, color=None, align=None ):
 
@@ -120,6 +117,7 @@ def _print(_str, title=False, title_lvl=0, color=None, align=None ):
             doc.addText(_str, color=color)
     print(_str)
 
+
 def doSQLinsert(db,cur,_sql):
 
     #print(">>>doSQL[%s]" % _sql)
@@ -128,6 +126,7 @@ def doSQLinsert(db,cur,_sql):
         db.commit()
     except:
         db.rollback()
+
 
 def doSQLcount(cur,_sql):
 
@@ -148,70 +147,6 @@ def doSQL(cur,_sql):
     cur.execute(_sql)
     return cur.fetchall()
 
-def doCount(db,cur):
-    """
-    数据总量统计
-    :param db:
-    :param cur:
-    :return:
-    """
-
-    global Tables
-
-    _sql = 'show tables'
-    _res = doSQL(cur,_sql)
-
-    _total_table = 0
-    if _res is not None:
-        _total_table = len(_res)
-
-    _total_record = 0
-    for _row in _res:
-        #print(">>>[%s]",_row[0])
-        if _row[0] in Tables:
-            continue
-        _sql = 'select count(*) from ' + str(_row[0])
-        _n = doSQLcount(cur,_sql)
-        if _n is None:
-            _n = 0
-        #print(">>> count=%d" % _n)
-
-        '''
-        _sql = 'insert into count_record_t(table_name,rec_count,created_at) values("' + str(_row[0]) +'",'+ str(_n) + ',now())'
-        doSQLinsert(db,cur,_sql)
-        '''
-        _total_record = _total_record + _n
-
-    _print("数据库表总数： %d" % _total_table)
-    _print("数据记录总条数： %d" % _total_record)
-
-def getSum(cur):
-    """
-    计算时间段内新增记录总条数
-    :param cur:
-    :return:
-    """
-
-    global Tables, st_date, ed_date
-
-    _sql = 'show tables'
-    _res = doSQL(cur,_sql)
-
-    _total_table = 0
-    if _res is not None:
-        _total_table = len(_res)
-
-    _total_record = 0
-    for _row in _res:
-        #print(">>>[%s]",_row[0])
-        if _row[0] in Tables:
-            continue
-        _sql = 'select count(*) from ' + str(_row[0]) + " where created_at between '%s' and '%s'" % (st_date, ed_date)
-        _n = doSQLcount(cur,_sql)
-        if _n is None:
-            _n = 0
-        _total_record = _total_record + _n
-    return _total_record
 
 def getRisk(cur):
     """
@@ -228,6 +163,7 @@ def getRisk(cur):
     if _i == 1:
         _print(u'无。')
 
+
 def getEvent(cur):
     """
     获取 当前存在的 事件 情况
@@ -243,6 +179,7 @@ def getEvent(cur):
     if _i == 1:
         _print(u'无。')
 
+
 def getPdList(cur):
 
     global ProductList
@@ -251,6 +188,7 @@ def getPdList(cur):
     _res = doSQL(cur,_sql)
     for _row in _res:
         ProductList.append(_row)
+
 
 def getPdingList(cur):
     """
@@ -262,6 +200,7 @@ def getPdingList(cur):
     _res = doSQL(cur,_sql)
     for _row in _res:
         _print("产品 %s %s 本周处于【%s】状态" % (_row[0], _row[1], _row[2]))
+
 
 def getPdDeliverList(cur):
     """
@@ -281,15 +220,8 @@ def getPdDeliverList(cur):
             for _row in _res:
                 _print(u'\t·项目：%s（%s），状态：%s' % (str(_row[0]), str(_row[1]), str(_row[2])))
 
-def getSumToday(cur):
-    _sql = 'select sum(rec_count) from count_record_t where date(created_at)=curdate()'
-    _n = doSQLcount(cur,_sql)
-    if _n is None:
-        _n = 0
-    return _n
 
-
-def getOprWorkTime(cur, mongodb):
+def getOprWorkTime(cur):
     """
     生成个人工时执行情况
     :param cur: 数据源
@@ -339,23 +271,27 @@ def getOprWorkTime(cur, mongodb):
     _print(u'数据来源于任务管理系统。')
     orgWT = ()
     for _grp in GroupName:
+
+        """mongoDB数据库
+        """
+        mongodb = mongodb_class.mongoDB(ProjectAlias[_grp])
+
         _print(_grp, title=True, title_lvl=3)
-        _sql = 'select MM_XM from member_t where MM_POST="%s"' % _grp
-        _res = doSQL(cur,_sql)
+        _sql = 'select MM_XM from member_t where MM_POST="%s" and MM_ZT=1' % _grp
+        _res = doSQL(cur, _sql)
         for _row in _res:
 
             if u"%s" % _row[0] in sp_name:
                 continue
 
-            _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_ZXR="' +\
-                   str(_row[0]) + '"' +\
-                   ' and created_at > "2018-03-11"' +\
-                   ' and str_to_date(TK_KSSJ,"%%Y-%%m-%%d") between "%s" and "%s"' % (st_date, ed_date)
-            _res = doSQL(cur, _sql)
-            if (type(_res) is types.NoneType) or (type(_res[0][0]) is types.NoneType):
-                continue
-            print _res[0][0]
-            _n = float(_res[0][0])
+            _search = {"author": {'$regex': ".*%s.*" % _row[0]},
+                       "$and": [{"started": {"$gte": "%s" % st_date}},
+                                {"started": {"$lt": "%s" % ed_date}}]}
+            _cur = mongodb.handler('worklog', 'find', _search)
+            _n = 0.
+            for _rec in _cur:
+                _n += float(_rec['timeSpentSeconds'])/3600.
+            # print "---> " + _grp + " " + _row[0] + " : %0.2f" % _n
             if _n == 0.:
                 continue
 
@@ -376,9 +312,16 @@ def getOprWorkTime(cur, mongodb):
         doc.addPic(_fn)
         doc.addText(u"图4 本周“人-工时”分布情况", align=WD_ALIGN_PARAGRAPH.CENTER)
 
+    """插入分页"""
+    doc.addPageBreak()
+
     _print("4、工作日志明细：", title=True, title_lvl=2)
     _print(u'数据来源于任务管理系统。')
     for _grp in GroupName:
+
+        """mongoDB数据库
+        """
+        mongodb = mongodb_class.mongoDB(ProjectAlias[_grp])
 
         _print(_grp, title=True, title_lvl=3)
 
@@ -399,21 +342,19 @@ def getOprWorkTime(cur, mongodb):
                      ('text', "")
                      )
             doc.addRow(_text)
-            _sql = 'select TK_XMBH,TK_RWNR,TK_KSSJ,TK_GZSJ from task_t where TK_ZXR="' + \
-                   str(_row[0]) + '"' + \
-                   ' and created_at > "2018-03-11"' +\
-                   ' and str_to_date(TK_KSSJ,"%%Y-%%m-%%d") between "%s" and "%s" order by TK_KSSJ' %\
-                   (st_date, ed_date)
-            __res = doSQL(cur, _sql)
-            _tot = 0
-            for _item in __res:
+
+            _search = {"author": {'$regex': ".*%s.*" % _row[0]},
+                       "$and": [{"started": {"$gte": "%s" % st_date}}, {"started": {"$lt": "%s" % ed_date}}]}
+            _cur = mongodb.handler('worklog', 'find', _search).sort([('started', 1)])
+            _tot = 0.
+            for _rec in _cur:
                 _text = (('text', ""),
-                         ('text', (u"%s:%s" % (_item[0], _item[1])).replace('|',"")),
-                         ('text', _item[2].split(' ')[0]),
-                         ('text', _item[3])
+                         ('text', (u"%s:\n%s" % (_rec['issue'], _rec['comment']))),
+                         ('text', _rec['started'].split('T')[0]),
+                         ('text', _rec['timeSpent'])
                          )
                 doc.addRow(_text)
-                _tot += float(_item[3])
+                _tot += float(_rec['timeSpentSeconds'])/3600.
             _text = (('text', "-"),
                      ('text', u"小计"),
                      ('text', ""),
@@ -422,6 +363,9 @@ def getOprWorkTime(cur, mongodb):
             doc.addRow(_text)
         doc.setTableFont(8)
         _print("")
+
+        """插入分页"""
+        doc.addPageBreak()
 
 
 def getGrpWorkTime(cur):
@@ -600,7 +544,7 @@ def main():
     getPdingList(cur)
 
     _print("人力资源投入", title=True, title_lvl=1)
-    getOprWorkTime(cur, None)
+    getOprWorkTime(cur)
 
     db.close()
     doc.saveFile('week.docx')

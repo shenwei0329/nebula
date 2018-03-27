@@ -377,8 +377,11 @@ class jira_handler:
         :param worklog_id: 存在的worklog_id
         :return:
         """
+        _set = {'timeSpentSeconds': 0}
         _search = {"issue": self.show_name(), "id": {"$not": {"$in": worklog_id}}}
-        self.mongo_db.handler('worklog', 'remove', _search)
+        # self.mongo_db.handler('worklog', 'remove', _search)
+        """保留原记录，将其用时值设置为0，以便事后跟踪"""
+        self.mongo_db.handler('worklog', 'update', _search, _set)
 
     def sync_worklog(self):
         """
