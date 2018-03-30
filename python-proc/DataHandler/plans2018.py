@@ -63,6 +63,10 @@ sys.setdefaultencoding('utf-8')
 from pylab import mpl
 mpl.rcParams['font.sans-serif'] = ['SimHei']
 
+sp_name = [u'杨飞', u'吴昱珉', u'王学凯', u'许文宝',
+           u'饶定远', u'金日海', u'沈伟', u'谭颖卿',
+           u'吴丹阳', u'查明', u'柏银', u'崔昊之']
+
 """人天成本"""
 CostDay = 1000.
 CostHour = CostDay/8.
@@ -603,6 +607,53 @@ def get_issue_public(mongodb, _story):
     return _task_list, _story_task_list, _story_points, _max_cost
 
 
+def getWorkActionChart(mongodb, TaskList, who=None):
+    """
+    获取 指定个人或集体的 工作行为的图示
+    :param mongodb: 数据源mongodb
+    :param TaskList: 完成的任务issue列表
+    :param who: 个人
+    :return: 图示的文件路径
+    """
+
+    _dots = []
+    _issues = []
+    _y = 1
+    for _t in TaskList:
+        if who is None:
+            _log = mongodb.handler("changelog", "find", {"issue": _t,
+                                                          "field": {"$in": ['timeoriginalestimate',
+                                                                            'timeestimate',
+                                                                            'timespent',
+                                                                            'WorklogTimeSpent',
+                                                                            'status',
+                                                                            'resolution']}})
+        else:
+            _log = mongodb.handler("changelog", "find", {"issue": _t,
+                                                         "author": who,
+                                                         "field": {"$in": ['timeoriginalestimate',
+                                                                           'timeestimate',
+                                                                           'timespent',
+                                                                           'WorklogTimeSpent',
+                                                                           'status',
+                                                                           'resolution']}})
+
+        _count = 0
+        for _l in _log:
+            _dots.append([_l["date"], _y, _l["field"]])
+            _count += 1
+        if _count > 0:
+            _issues.append(_t)
+            _y += 1
+    if who is None:
+        _figsize = [10, 12]
+    else:
+        _figsize = [10, 6]
+    if len(_dots) > 0:
+        return doBox.doIssueAction(_issues, _dots, figsize=_figsize)
+    return None
+
+
 def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, landmark_id=None):
     """
     项目跟踪报告生成器
@@ -676,31 +727,17 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
     _task_list, _story_task_list, _story_points, _max_cost = get_issue_by_landmark(mongo_db, _landmark)
 
     # 获取任务的变化情况
+    _fn_issue_action = getWorkActionChart(mongo_db, _task_list)
+
+    """2018.3.28：按个人显示工作行为
     """
-    {"$in": ['timeoriginalestimate', 'timeestimate', 'timespent', 'WorklogTimeSpent', 'status', 'resolution']}
-    """
-    _dots = []
-    _issues = []
-    _y = 1
-    for _t in _task_list:
-        """方式一：
-        _log = mongo_db.handler("log", "find", {"issue_id": _t})
-        for _l in _log:
-            _dots.append([time.strftime("%Y-%m-%d %H:%M:%S", mongo_db.get_time(_l["_id"])), _y, _l["key"]])
-        """
-        """方式二："""
-        _log = mongo_db.handler("changelog", "find", {"issue": _t,
-                                                      "field": {"$in": ['timeoriginalestimate',
-                                                                        'timeestimate',
-                                                                        'timespent',
-                                                                        'WorklogTimeSpent',
-                                                                        'status',
-                                                                        'resolution']}})
-        for _l in _log:
-            _dots.append([_l["date"], _y, _l["field"]])
-        _issues.append(_t)
-        _y += 1
-    _fn_issue_action = doBox.doIssueAction(_issues, _dots)
+    _fn_issue_action_personal = {}
+    _sql = 'select MM_XM from member_t where MM_ZT=1'
+    _res = doSQL(cur, _sql)
+    for _row in _res:
+        if u"%s" % _row[0] in sp_name:
+            continue
+        _fn_issue_action_personal[_row[0]] = getWorkActionChart(mongo_db, _task_list, _row[0])
 
     # 获取任务状态
     _dots = []
@@ -726,7 +763,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
                 else:
                     _dots.append([_x, _status[_i['status']], 'v', 'r'])
         _x += 1
-    _fn_issue_status = doBox.doIssueStatus(u"任务执行状态分布图", u"任务", _issues, _dots, _dots_s)
+    _fn_issue_status = doBox.doIssueStatus(u"任务执行状态分布图", u"任务", _task_list, _dots, _dots_s)
 
     # 获取目标状态
     _dots = []
@@ -928,6 +965,17 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
     _print(u"活动分布", title=True, title_lvl=2)
     doc.addPic(_fn_issue_action, sizeof=6.2)
     _print(u'【图例说明】：基于“时标”展示工作“活动”分布情况，如某任务状态迁移、时间更新等等。')
+    _print("")
+
+    _print(u"活动分布分解", title=True, title_lvl=3)
+    for _personal in _fn_issue_action_personal:
+        if _fn_issue_action_personal[_personal] is None:
+            continue
+        _print(u"%s的活动分布" % _personal, title=True, title_lvl=4)
+        doc.addPic(_fn_issue_action_personal[_personal], sizeof=5)
+        _print("")
+
+    doc.addPageBreak()
 
     #   2）目标状态：基于“任务”展示其所处状态
     _print(u"任务执行状态", title=True, title_lvl=2)

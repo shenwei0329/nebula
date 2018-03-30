@@ -526,7 +526,7 @@ class jira_handler:
                 """同步issue"""
                 self.show_issue()
                 self.sync_issue()
-                self.sync_changelog()
+                # self.sync_changelog()
                 self.sync_worklog()
                 task_link.append(self.show_name())
             if len(issues) == 100:

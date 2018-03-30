@@ -487,11 +487,12 @@ def TimeBurnDownChart(dots):
     return _fn
 
 
-def doIssueAction(issues, dots):
+def doIssueAction(issues, dots, figsize=[10, 12]):
     """
     制作“活动分布”图
     :param issues: 任务
     :param dots: 活动
+    :param figsize: 图大小
     :return:
     """
 
@@ -547,8 +548,8 @@ def doIssueAction(issues, dots):
                      })
 
     autodates = AutoDateLocator()
-    yearsFmt = DateFormatter('%Y-%m-%d %H:%M:%S')
-    fig = figure(figsize=[10, 12], dpi=120)
+    yearsFmt = DateFormatter('%Y-%m-%d')
+    fig = figure(figsize=figsize, dpi=120)
 
     ax = fig.add_subplot(111)
     fig.autofmt_xdate()                         # 设置x轴时间外观
@@ -565,8 +566,8 @@ def doIssueAction(issues, dots):
         _day = 1
     _end_date = datetime.date.today().replace(day=_day, month=_month)
 
-    ax.set_xticks(pd.date_range(start='2018-02-01 00:00:00', end='%s 23:59:59' % _end_date, freq='3D'))
-    ax.set_xlim("2018-02-01 00:00:00", "%s 00:00:00" % _end_date)
+    ax.set_xticks(pd.date_range(start='2018-02-01', end='%s' % _end_date, freq='3D'))
+    ax.set_xlim("2018-02-01", "%s" % _end_date)
     ax.set_yticks(range(1, len(issues)+1))
     ax.set_yticklabels(issues,)
     ax.set_ylim(0, len(issues)+1)
@@ -600,7 +601,8 @@ def doIssueAction(issues, dots):
     plt.title(u'任务活动分布图', fontsize=12)
     plt.subplots_adjust(left=0.10, right=0.98, bottom=0.06, top=0.96)
 
-    _fn = 'pic/%s-issue-action.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+    dt = datetime.datetime.now()
+    _fn = 'pic/%s-issue-action.png' % dt.strftime('%Y%m%d%H%M%S%f')
     if not __test:
         plt.savefig(_fn, dpi=120)
     else:
@@ -627,7 +629,9 @@ def doIssueStatus(title, xlabel, issues, dots, dots_s):
     'font.size': 6,
     })
 
-    fig = plt.figure(figsize=[14, 6], dpi=600)
+    _colors = plt.cm.nipy_spectral(np.linspace(0.5, 1., 5))
+
+    fig = plt.figure(figsize=[14, 6], dpi=120)
     ax = fig.add_subplot(111)
     plt.xticks(rotation=45)
 
@@ -641,13 +645,16 @@ def doIssueStatus(title, xlabel, issues, dots, dots_s):
     _idx = 0
 
     for _dot in dots:
-        _s = (dots_s[issues[_idx]]*2+1) * 20
+        __idx = dots_s[issues[_idx]]
+        if __idx > 4:
+            __idx = 4
+        _s = (__idx*2+1) * 20
         if _dot[2] == 'v':
             # _np_dot = ax.scatter(_dot[0], _dot[1], marker=_dot[2], c=_dot[3], s=_s)
-            _np_dot = ax.scatter(_dot[0], _dot[1], c=_dot[3], s=_s, alpha=0.7)
+            _np_dot = ax.scatter(_dot[0], _dot[1], c=_colors[__idx], s=_s, alpha=0.7)
         else:
             # _p_dot = ax.scatter(_dot[0], _dot[1], marker=_dot[2], c=_dot[3], s=_s)
-            _p_dot = ax.scatter(_dot[0], _dot[1], c=_dot[3], s=_s, alpha=0.7)
+            _p_dot = ax.scatter(_dot[0], _dot[1], c=_colors[__idx], s=_s, alpha=0.7)
         _count[_dot[1]-1] += 1
         _idx += 1
 
@@ -660,7 +667,7 @@ def doIssueStatus(title, xlabel, issues, dots, dots_s):
 
     ax.set_ylabel(u"状态：待办Wt，处理中Do，待测试wT，测试中Tt，完成Cp", fontsize=12)
     ax.set_xlabel(xlabel, fontsize=12)
-    ax.legend([_p_dot, _np_dot], [u"计划的", u"非计划的"], fontsize=12)
+    # ax.legend([_p_dot, _np_dot], [u"计划的", u"非计划的"], fontsize=12)
     plt.title(title, fontsize=14)
     ax.set_xticklabels(issues,)
     ax.grid(True)
@@ -668,7 +675,7 @@ def doIssueStatus(title, xlabel, issues, dots, dots_s):
 
     _fn = 'pic/%s-issue-status.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     if not __test:
-        plt.savefig(_fn, dpi=600)
+        plt.savefig(_fn, dpi=120)
     else:
         plt.show()
     return _fn
@@ -693,7 +700,7 @@ def doIssueCost(title, xlabel, issues, dots, max_cost):
     'font.size': 6,
     })
 
-    fig = plt.figure(figsize=[14, 6], dpi=600)
+    fig = plt.figure(figsize=[14, 6], dpi=120)
     ax = fig.add_subplot(111)
     plt.xticks(rotation=45)
 
@@ -716,7 +723,7 @@ def doIssueCost(title, xlabel, issues, dots, max_cost):
 
     _fn = 'pic/%s-issue-status.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     if not __test:
-        plt.savefig(_fn, dpi=600)
+        plt.savefig(_fn, dpi=120)
     else:
         plt.show()
     return _fn
