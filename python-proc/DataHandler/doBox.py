@@ -503,14 +503,16 @@ def doIssueAction(issues, dots, figsize=[10, 12]):
                            'timespent': '^',
                            'WorklogTimeSpent': 's',
                            'status': '+',
-                           'resolution': '>'}
+                           u"bug产生人": '*',
+                          'resolution': '>'}
 
     _issue_point_color = {'timeoriginalestimate': 0,
                           'timeestimate': 1,
                           'timespent': 2,
                           'WorklogTimeSpent': 3,
                           'status': 4,
-                          'resolution': 5}
+                          u"bug产生人": 5,
+                          'resolution': 6}
 
     """
     _issue_point_marker = {"agg_time": 'v',
@@ -594,6 +596,7 @@ def doIssueAction(issues, dots, figsize=[10, 12]):
                u"花费工时",
                u"记工时日志",
                u"状态修改",
+               u"bug报告",
                u"解决问题"],
               loc=2,
               fontsize=12)

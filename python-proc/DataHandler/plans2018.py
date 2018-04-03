@@ -627,6 +627,7 @@ def getWorkActionChart(mongodb, TaskList, who=None):
                                                                             'timespent',
                                                                             'WorklogTimeSpent',
                                                                             'status',
+                                                                            u"bug产生人",
                                                                             'resolution']}})
         else:
             _log = mongodb.handler("changelog", "find", {"issue": _t,
@@ -636,6 +637,7 @@ def getWorkActionChart(mongodb, TaskList, who=None):
                                                                            'timespent',
                                                                            'WorklogTimeSpent',
                                                                            'status',
+                                                                           u"bug产生人",
                                                                            'resolution']}})
 
         _count = 0

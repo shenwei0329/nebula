@@ -96,26 +96,38 @@ def calHour(_str):
         return None
 
 
-def _print(_str, title=False, title_lvl=0, color=None, align=None ):
+def _print(_str, title=False, title_lvl=0, color=None, align=None, paragrap=None ):
 
     global doc, Topic_lvl_number, Topic
 
     _str = u"%s" % _str.replace('\r', '').replace('\n','')
 
+    _paragrap = None
+
+    if title_lvl == 1:
+        Topic_lvl_number = 0
     if title:
-        if title_lvl==1:
+        if title_lvl==2:
             _str = Topic[Topic_lvl_number] + _str
             Topic_lvl_number += 1
         if align is not None:
-            doc.addHead(_str, title_lvl, align=align)
+            _paragrap = doc.addHead(_str, title_lvl, align=align)
         else:
-            doc.addHead(_str, title_lvl)
+            _paragrap = doc.addHead(_str, title_lvl)
     else:
         if align is not None:
-            doc.addText(_str, color=color, align=align)
+            if paragrap is None:
+                _paragrap = doc.addText(_str, color=color, align=align)
+            else:
+                doc.appendText(paragrap, _str, color=color, align=align)
         else:
-            doc.addText(_str, color=color)
+            if paragrap is None:
+                _paragrap = doc.addText(_str, color=color)
+            else:
+                doc.appendText(paragrap, _str, color=color)
     print(_str)
+
+    return _paragrap
 
 
 def doSQLinsert(db,cur,_sql):
@@ -178,16 +190,6 @@ def getEvent(cur):
         _i += 1
     if _i == 1:
         _print(u'无。')
-
-
-def getPdList(cur):
-
-    global ProductList
-
-    _sql = 'select PD_DH,PD_BBH from product_t'
-    _res = doSQL(cur,_sql)
-    for _row in _res:
-        ProductList.append(_row)
 
 
 def getPdingList(cur):
@@ -368,97 +370,6 @@ def getOprWorkTime(cur):
         doc.addPageBreak()
 
 
-def getGrpWorkTime(cur):
-
-    global GroupName
-
-    for _grp in GroupName:
-
-        _g_org = []
-        _sql = 'select TK_ZXR from task_t where TK_SQR="' + str(_grp) + '"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
-        _res = doSQL(cur,_sql)
-        for _row in _res:
-            if _row[0] in _g_org:
-                continue
-            _g_org.append(_row[0])
-
-        _org_n = len(_g_org)
-        if _org_n == 0:
-            continue
-        _sql = 'select sum(TK_GZSJ) from task_t where TK_SQR="' + str(_grp) + '"' + " and created_at between '%s' and '%s'" % (st_date, ed_date)
-        _n = doSQLcount(cur,_sql)
-        if _n is None:
-            continue
-        _color = None
-        _s = "● [%s：在岗人数 %d 人" % (str(_grp),_org_n) + "，总工作量 %d 工时" % _n
-        _v = workhours * _org_n
-        if _n>_v:
-            _s = _s + "，加班 %d 工时" % (_n - _v) + "，占比 %d %%" % ((_n-_v)*100/_v)
-            _color = (255,0,0)
-        elif _n<_v:
-            _s = _s + "，剩余 %d 工时" % (_v - _n) + "，占比 %d %%" % ((_v-_n)*100/_v)
-            _color = (50, 100, 50)
-        _s = _s + ']'
-        _print(_s, color=_color)
-
-
-def getProjectWorkTime(cur):
-    '''
-    获取项目数据统计信息
-    :param cur:
-    :return:
-    '''
-
-    global TotalMember, costProject
-
-    _pd = 0
-    _pj = 0
-    _other = 0
-
-    _sql = 'select PJ_XMBH,PJ_XMMC from project_t'
-    _res = doSQL(cur,_sql)
-
-    _print(u"1、项目投入情况（含产品研发和工程项目）", title=True, title_lvl=2)
-
-    _m = 0
-    for _row in _res:
-        _sql = 'select sum(TK_GZSJ) from task_t where TK_XMBH="' + str(_row[0]) + '"' + \
-               " and created_at between '%s' and '%s'" % (st_date, ed_date)
-        _n = doSQLcount(cur,_sql)
-        if _n is None:
-            continue
-        _m = _m + _n
-        if 'PRD-' in str(_row[0]):
-            _pd = _pd + _n
-            _print("● [在研产品：" + str(_row[1]) + '(' + str(_row[0]) + ")，耗时 %d 工时]" % _n)
-        else:
-            _pj = _pj + _n
-            _print("● [项目：" + str(_row[1]) + '('+str(_row[0])+ ")，耗时 %d 工时]" % _n)
-
-    _print(u"2、非项目投入情况", title=True, title_lvl=2)
-
-    _sql = 'select sum(TK_GZSJ) from task_t' + " where created_at between '%s' and '%s'" % (st_date, ed_date)
-    _total_workdays = doSQLcount(cur,_sql)
-    if _total_workdays > _m:
-        _print("[其他（非立项事务）：总耗时 %d 工时]" % (_total_workdays-_m))
-        _sql = "select TK_RWNR,TK_GZSJ from task_t where TK_XMBH='#' and created_at " \
-               "between '%s' and '%s' order by TK_GZSJ+0 desc" % (st_date, ed_date)
-        _res = doSQL(cur,_sql)
-        _i = 0
-        _print(u"非立项事务明细（前20个）：")
-        for _row in _res:
-            if (_row[1] == "#"):
-                continue
-            if (_i < 20) and (u'假' not in _row[0]):
-                _i += 1
-                _print("● " + str(_row[0]) + " 耗时 " + str(_row[1]) + " 工时")
-        _other = _total_workdays-_m
-    if (_pd+_pj+_other)>0:
-        costProject = (_pd,_pj,_other,)
-    else:
-        costProject = ()
-
-
 def getChkOnAm(cur):
     """
     获取员工上午到岗时间序列
@@ -509,6 +420,74 @@ def getChkOnPm(cur):
     return _seq
 
 
+def getPjTaskListByGroup():
+    """
+    按组列出 项目入侵 任务。
+    :return:
+    """
+
+    pg = _print(u'任务明细如下：')
+    doc.addTable(1, 5, col_width=(2, 4, 2, 2, 2))
+    _title = (('text', u'任务工单号'),
+              ('text', u'任务'),
+              ('text', u'耗时'),
+              ('text', u'状态'),
+              ('text', u'执行人'))
+    doc.addRow(_title)
+
+    _spent_time = 0
+    _count = 0
+    for _grp in GroupName:
+
+        """mongoDB数据库
+        """
+        mongodb = mongodb_class.mongoDB(ProjectAlias[_grp])
+
+        _search = {'issue_type': 'epic', 'summary': u'项目入侵'}
+        _epic = mongodb.handler('issue', 'find_one', _search)
+
+        if _epic is None:
+            continue
+
+        _search = {'epic_link': _epic['issue']}
+        _cur = mongodb.handler('issue', 'find', _search)
+
+        if _cur.count() == 0:
+            continue
+
+        _text = (('text', u'%s' % _grp),
+                 ('text', ""),
+                 ('text', ""),
+                 ('text', ""),
+                 ('text', "")
+                 )
+        doc.addRow(_text)
+
+        for _issue in _cur:
+            _text = ()
+            for _it in ['components', 'summary', 'spent_time', 'status', 'users']:
+                if type(_issue[_it]) is not types.NoneType:
+                    if type(_issue[_it]) is not types.IntType:
+                        _text += (('text', _issue[_it]),)
+                    else:
+                        _text += (('text', "%0.2f" % (float(_issue[_it])/3600.)),)
+                        _spent_time += _issue[_it]
+                else:
+                    _text += (('text', '-'),)
+            doc.addRow(_text)
+            _count += 1
+
+    doc.setTableFont(8)
+    _print("")
+
+    _print(u"目前，产品研发资源共执行%d个工程项目任务，投入%0.2f工时。" %
+           (_count, float(_spent_time)/3600.),
+           paragrap=pg)
+
+    """插入分页"""
+    # doc.addPageBreak()
+
+
 def main():
     """
     周报2018版本主体
@@ -542,6 +521,9 @@ def main():
 
     _print("在研产品情况", title=True, title_lvl=1)
     getPdingList(cur)
+
+    _print("工程项目的支撑情况", title=True, title_lvl=1)
+    getPjTaskListByGroup()
 
     _print("人力资源投入", title=True, title_lvl=1)
     getOprWorkTime(cur)

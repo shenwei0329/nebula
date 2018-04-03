@@ -29,6 +29,7 @@ class mongoDB:
                     "log": self.mongo_db.log,
                     "worklog": self.mongo_db.worklog,
                     "changelog": self.mongo_db.changelog,
+                    "task_req": self.mongo_db.task_req,
                     "current_sprint": self.mongo_db.current_sprint}
         self.pj_hdr = {"insert": self._insert,
                        "update": self._update,

@@ -366,9 +366,7 @@ class jira_handler:
         :return:
         """
         _search = {'issue': info['issue'],
-                   'author': info['author'],
-                   'comment': info['comment'],
-                   'started': info['started']}
+                   'id': info['id']}
         self.mongo_db.handler('worklog', 'update', _search, info)
 
     def clear_worklog(self, worklog_id):
@@ -378,7 +376,10 @@ class jira_handler:
         :return:
         """
         _set = {'timeSpentSeconds': 0}
-        _search = {"issue": self.show_name(), "id": {"$not": {"$in": worklog_id}}}
+        if len(worklog_id) > 0:
+            _search = {"issue": self.show_name(), "id": {"$not": {"$in": worklog_id}}}
+        else:
+            _search = {"issue": self.show_name()}
         # self.mongo_db.handler('worklog', 'remove', _search)
         """保留原记录，将其用时值设置为0，以便事后跟踪"""
         self.mongo_db.handler('worklog', 'update', _search, _set)
@@ -386,6 +387,7 @@ class jira_handler:
     def sync_worklog(self):
         """
         获取指定 issue 的工作日志记录。
+        - 2018.4.2：针对以前有的，但现在没有的 日志记录 的处理？！清除其spent时间
         :return:
         """
         worklogs = self.jira.worklogs(self.show_name())
@@ -404,9 +406,9 @@ class jira_handler:
             _id.append(worklog.id)
             self.write_worklog(wl)
         """同时同步Issue的变动日志"""
-        if len(_id) > 0:
-            """ 因worklog可随意更改或删除, 有必要实时清除多余的记录!"""
-            self.clear_worklog(_id)
+        """ 因worklog可随意更改或删除, 有必要实时清除多余的记录!"""
+        self.clear_worklog(_id)
+
         self.sync_changelog()
 
     def scan_task_by_sprint(self, sprint):

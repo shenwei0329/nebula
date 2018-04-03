@@ -55,7 +55,7 @@ class xlsx_handler:
             _type = None
 
         '''获取操作类型'''
-        _op = self.getData(0, 1)
+        _op = self.getData(0, 1).upper()
         _ctype = self.table.cell(0, 1).ctype
         if _ctype != 1:
             _op = 'UPDATE'
