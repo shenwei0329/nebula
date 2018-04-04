@@ -10,6 +10,7 @@ import logging
 import urllib
 import urllib2
 import json
+import types
 
 """设置字符集
 """
@@ -193,7 +194,13 @@ def getAll(model):
             _post['TK_SQR'] = _rec.TK_SQR
             _post['TK_RWZT'] = _rec.TK_RWZT
             _post['TK_GZSJ'] = _rec.TK_GZSJ
-            _post['BgEdDate'] = _rec.TK_KSSJ+u'至'+_rec.TK_JSSJ
+            _kssj = _rec.TK_KSSJ
+            if type(_rec.TK_KSSJ) is types.NoneType:
+                _kssj = '-'
+            _jssj = _rec.TK_JSSJ
+            if type(_rec.TK_JSSJ) is types.NoneType:
+                _jssj = '-'
+            _post['BgEdDate'] = _kssj + u'至' + _jssj
         elif model == EnginerringMod:
             _post['EG_NAME'] = _rec.EG_NAME
             _post['EG_BH'] = _rec.EG_BH

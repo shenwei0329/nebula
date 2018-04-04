@@ -82,7 +82,7 @@ class xlsx_handler:
         elif _ctype == 0:
             _key = ['0', '']
         elif _ctype == 2:
-            print(">>>_key=[%d]" % _key)
+            # print(">>>_key=[%d]" % _key)
             _key = [str(int(_key)), '']
         else:
             _key = None
@@ -90,15 +90,15 @@ class xlsx_handler:
         if _key is not None:
             _err = False
             for _v in _key:
-                print(">>>_v=[%s]" % _v)
+                # print(">>>_v=[%s]" % _v)
                 if len(_v) > 0:
                     if _nrec is not None and int(_v) >= _nrec:
                         print(">>>Invalid key[%d of %d]" % (int(_v), _nrec))
                         _err = True
-                print(">>>_v=[%s].ed" % _v)
+                # print(">>>_v=[%s].ed" % _v)
             if _err:
                 _key = None
-        print _key
+        # print _key
         # print _type,_op,_nrec,_rec,_key
         return _type, _op, _nrec, _rec, _key
 
@@ -113,7 +113,7 @@ class xlsx_handler:
 
     def getXlsxRow(self, i, nCol, lastRow):
 
-        print("%s- getXlsxRow[%d,%d]" % (time.ctime(), i, nCol))
+        # print("%s- getXlsxRow[%d,%d]" % (time.ctime(), i, nCol))
 
         """ctype : 0 empty,1 string, 2 number, 3 date, 4 boolean, 5 error
         """
