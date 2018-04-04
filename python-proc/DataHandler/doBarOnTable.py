@@ -10,43 +10,12 @@ Demo of table function to display a table within a plot.
 """
 import numpy as np
 import matplotlib.pyplot as plt
-import MySQLdb, time, sys, types
+import time
 from matplotlib import rcParams
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
-from pylab import mpl
-mpl.rcParams['font.sans-serif'] = ['SimHei']
 
 __test = False
 
-sp_group = [u'研发管理组']
-
-def doSQL(cur,_sql):
-
-    #print(">>>doSQL[%s]" % _sql)
-    cur.execute(_sql)
-    return cur.fetchall()
-
-def doSQLcount(cur,_sql):
-
-    #print(">>>doSQLcount[%s]" % _sql)
-    try:
-        cur.execute(_sql)
-        _result = cur.fetchone()
-        _n = _result[0]
-        if _n is None:
-            _n = 0
-        if type(_n) is types.NoneType:
-            _n = 0
-    except:
-        _n = 0
-
-    #print(">>>doSQLcount[%d]" % int(_n))
-    return _n
-
-def doBarOnTable( rows, columns, datas, figsize=(7,5), left=0.3, right=0.97, bottom=0.28, top=0.96, fontsize=8 ):
+def doBarOnTable( rows, columns, datas ):
     """
     组合 柱状图 和 表格 显示图示
     :param rows: 列 标签（如 产品、任务）
@@ -55,12 +24,12 @@ def doBarOnTable( rows, columns, datas, figsize=(7,5), left=0.3, right=0.97, bot
     :return:
     """
     index = np.arange(len(columns)) + 0.3
-    plt.figure(figsize=figsize, dpi=120)
+    plt.figure()
     rcParams.update({
     'font.family':'sans-serif',
     'font.sans-serif':[u'SimHei'],
     'axes.unicode_minus':False,
-    'font.size':fontsize,
+    'font.size':8,
     })
     # Get some pastel shades for the colors
     colors = plt.cm.BuPu(np.linspace(0, 0.7, len(rows)))
@@ -85,7 +54,7 @@ def doBarOnTable( rows, columns, datas, figsize=(7,5), left=0.3, right=0.97, bot
     plt.table(cellText=cell_text,rowLabels=rows,rowColours=colors,colLabels=columns,loc='bottom')
 
     # Adjust layout to make room for the table:
-    plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top)
+    plt.subplots_adjust(left=0.2, bottom=0.3, top=0.96)
 
     plt.ylabel(u"工时",fontsize=fontsize)
     # plt.yticks(values * value_increment, ['%d' % val for val in values])
@@ -99,6 +68,7 @@ def doBarOnTable( rows, columns, datas, figsize=(7,5), left=0.3, right=0.97, bot
         plt.show()
     return _fn
 
+<<<<<<< HEAD
 def getMemberbyGroup(cur):
     """
     获取 {组：组员} 字典
@@ -211,28 +181,19 @@ def doWorkHourbyGroup(cur, begin_date=None, end_date=None):
 
     return _pd_fn, _pj_fn
 
+=======
+>>>>>>> refs/remotes/origin/master
 if __name__ == '__main__':
 
     __test = True
-
-    db = MySQLdb.connect(host="47.93.192.232",user="root",passwd="sw64419",db="nebula",charset='utf8')
-    cur = db.cursor()
-
-    doWorkHourbyGroup(cur)
-
     data = [[ 66386, 174296,  75131, 577908,  32015],
             [ 58230, 381139,  78045,  99308, 160454],
-            [ 58230, 381139,  78045,  99308, 160454],
-            [ 89135,  80552, 152558, 497981, 603535],
-            [ 78415,  81858, 150656, 193263,  69638],
-            [ 89135,  80552, 152558, 497981, 603535],
-            [ 78415,  81858, 150656, 193263,  69638],
             [ 89135,  80552, 152558, 497981, 603535],
             [ 78415,  81858, 150656, 193263,  69638],
             [139361, 331509, 343164, 781380,  52269]]
 
     columns = (u'设计组', u'系统组', u'云平台研发组', u'大数据研发组', u'测试组')
-    rows = ['Hubble 1.8','Apollo 1.0','Fast 3.0','WhiteHole 1r1m1',u'混合云',u'a-1',u'a-2',u'a-3',u'a-4',u'a-5']
+    rows = ['Hubble 1.8','Apollo 1.0','Fast 3.0','WhiteHole 1r1m1',u'混合云']
 
     values = np.arange(0, 2500, 500)
     value_increment = 1000
