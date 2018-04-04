@@ -24,7 +24,7 @@ from DataHandler import xlsx_class
 
 def doList(xlsx_handler, mongodb, _type, _op, _ncol, _key):
 
-    print("%s- doList ing" % time.ctime())
+    # print("%s- doList ing" % time.ctime())
     _rows = []
     for i in range(2, xlsx_handler.getNrows()):
         _row = xlsx_handler.getXlsxRow(i, _ncol, None)
@@ -32,8 +32,8 @@ def doList(xlsx_handler, mongodb, _type, _op, _ncol, _key):
 
     _col = xlsx_handler.getXlsxColName(_ncol)
 
-    print("...5")
-    print _col
+    # print("...5")
+    # print _col
 
     if len(_rows) > 0:
 
@@ -46,18 +46,24 @@ def doList(xlsx_handler, mongodb, _type, _op, _ncol, _key):
                 _i = 0
 
                 _search = {_col[0]: _row[0]}
-                print _search
+
+                # print _search
+
+                # _v = mongodb.handler(_type, 'find_one', _search)
+                # print _v
+
                 for _c in _col:
                     _value[_c] = _row[_i]
                     _i += 1
 
-                print _type, _value
+                # print _type, _value
                 try:
                     mongodb.handler(_type, 'update', _search, _value)
                 except Exception, e:
                     print "error: ", e
                 finally:
-                    print 'Go'
+                    print '.',
+        print "o"
 
 
 def main():
@@ -66,7 +72,7 @@ def main():
     print filename
     xlsx_handler = xlsx_class.xlsx_handler(filename)
     try:
-        print("...2")
+
         _table, _op, _ncol, _rectype, _key = xlsx_handler.getXlsxHead()
         if _ncol is None or _ncol == 0:
             return True
@@ -76,14 +82,14 @@ def main():
             return True
 
         _table = str(_table).lower()
-        print("...3")
+        # print("...3")
 
         """mongoDB数据库
         """
         mongo_db = mongodb_class.mongoDB('ext_system')
         doList(xlsx_handler, mongo_db, _table, _op, _ncol, _key)
 
-        print("%s- Done" % time.ctime())
+        # print("%s- Done" % time.ctime())
         return True
 
     except:
