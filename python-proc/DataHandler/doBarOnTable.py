@@ -56,10 +56,10 @@ def doBarOnTable( rows, columns, datas ):
     # Adjust layout to make room for the table:
     plt.subplots_adjust(left=0.2, bottom=0.3, top=0.96)
 
-    plt.ylabel(u"工时",fontsize=10)
-    #plt.yticks(values * value_increment, ['%d' % val for val in values])
+    plt.ylabel(u"工时",fontsize=fontsize)
+    # plt.yticks(values * value_increment, ['%d' % val for val in values])
     plt.xticks([])
-    plt.title(u'资源投入',fontsize=10)
+    plt.title(u'资源投入',fontsize=fontsize)
 
     _fn = 'pic/%s-barontable.png' % time.time()
     if not __test:
@@ -68,6 +68,121 @@ def doBarOnTable( rows, columns, datas ):
         plt.show()
     return _fn
 
+<<<<<<< HEAD
+def getMemberbyGroup(cur):
+    """
+    获取 {组：组员} 字典
+    :param cur: 数据源
+    :return: 字典
+    """
+
+    _sql = 'select GRP_NAME from pd_group_t where GRP_STATE=1'
+    _groups = doSQL(cur, _sql)
+
+    _members = {}
+    for _g in _groups:
+
+        if _g[0] in sp_group:
+            continue
+
+        _member = []
+        _sql = 'select MEMBER_NAME from pd_group_member_t where FLG=1'
+        _res = doSQL(cur, _sql)
+        for _m in _res:
+            _member.append(_m[0])
+        _members[_g[0]] = _member
+    return _members
+
+def getPdProject(cur):
+    """
+    获取 在研 产品项目信息
+    :param cur: 数据源
+    :return: 在研产品项目列表
+    """
+
+    _products = {}
+    _sql = 'select PJ_XMBH,PJ_XMMC from project_t where PJ_XMXZ="产品研发"'
+    _res = doSQL(cur, _sql)
+    for _pd in _res:
+        _products[_pd[0]] = _pd[1]
+    return _products
+
+def getProject(cur):
+    """
+    获取 工程交付 项目信息
+    :param cur: 数据源
+    :return: 工程交付项目列表
+    """
+    _projects = {}
+    _sql = 'select PJ_XMBH,PJ_XMMC from project_t where PJ_XMXZ="工程交付"'
+    _res = doSQL(cur, _sql)
+    for _pd in _res:
+        _projects[_pd[0]] = _pd[1]
+    return _projects
+
+def doWorkHourbyGroup(cur, begin_date=None, end_date=None):
+
+    _member_group = getMemberbyGroup(cur)
+    _products = getPdProject(cur)
+    _projects = getProject(cur)
+
+    """生成 各组 投入 在研产品 的工时"""
+    _pd_col = ()
+    _pd_row = []
+    _pd_data = []
+    for _g in _member_group:
+        _pd_col += (_g,)
+    for _pd in _products:
+        _pd_row.append(_products[_pd])
+        _data = []
+        for _g in _pd_col:
+            if (begin_date is None) or (end_date is None):
+                _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="%s" and TK_SQR="%s"' % (_pd, _g)
+            else:
+                _sql = 'select sum(TK_GZSJ+0.) from task_t where ' \
+                       'TK_XMBH="%s" and TK_SQR="%s" and created_at between "%s" and "%s"' % (
+                            _pd, _g, begin_date, end_date)
+            _cnt = doSQLcount(cur, _sql)
+            _data.append(_cnt)
+        _pd_data.append(_data)
+
+    _pd_fn = doBarOnTable(_pd_row, _pd_col, _pd_data, figsize=(9,5), left=0.34, right=0.99,
+                          bottom=0.16, top=0.94, fontsize=11)
+
+    """生成 各组 投入 在项目与非项目 的工时"""
+    _pd_row = [u'工程项目', u'非项目']
+    _pd_data = []
+    _data = []
+    for _g in _pd_col:
+        if (begin_date is None) or (end_date is None):
+            _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH<>"#" and ' \
+                   'TK_XMBH not like "%%PRD-%%" and TK_SQR="%s"' % _g
+        else:
+            _sql = 'select sum(TK_GZSJ+0.) from task_t where ' \
+                   'TK_XMBH<>"#" and TK_XMBH not like "%%PRD-%%" and ' \
+                   'TK_SQR="%s" and created_at between "%s" and "%s"' % (
+                        _g, begin_date, end_date)
+        _cnt = doSQLcount(cur, _sql)
+        _data.append(_cnt)
+    _pd_data.append(_data)
+    _data = []
+    for _g in _pd_col:
+        if (begin_date is None) or (end_date is None):
+            _sql = 'select sum(TK_GZSJ+0.) from task_t where TK_XMBH="#" and TK_SQR="%s"' % _g
+        else:
+            _sql = 'select sum(TK_GZSJ+0.) from task_t where ' \
+                   'TK_XMBH="#" and TK_SQR="%s" and created_at between "%s" and "%s"' % (
+                        _g, begin_date, end_date)
+        _cnt = doSQLcount(cur, _sql)
+        _data.append(_cnt)
+    _pd_data.append(_data)
+
+    _pj_fn = doBarOnTable(_pd_row, _pd_col, _pd_data, figsize=(7,5), left=0.12, bottom=0.12, top=0.92, fontsize=11)
+
+    return _pd_fn, _pj_fn
+
+=======
+>>>>>>> refs/remotes/origin/master
 if __name__ == '__main__':
 
     __test = True

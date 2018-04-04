@@ -174,7 +174,7 @@ def getQ(cur):
     :param cur: 数据源
     :return: 指标
     """
-    _sql = 'select count(*) from jira_task_t'
+    _sql = 'select count(*) from jira_task_t where issue_type="story"'
     _m = doSQLcount(cur, _sql)
 
     """计划的任务"""
@@ -193,7 +193,7 @@ def getQ(cur):
             #print _like_str
             """在Jira中查找满足任务名称的项目"""
             _sql = u'select issue_id,summary,users,issue_status from jira_task_t where ' \
-                   u'summary like "%%%s%%"' % _like_str
+                   u'summary like "%%%s%%" and  issue_type="story"' % _like_str
             _tasks = doSQL(cur, _sql)
             for _task in _tasks:
                 if not _kv.has_key(_task[0]):
@@ -360,7 +360,8 @@ def main(project="PRD-2017-PROJ-00003"):
     while True:
         _date = _start_date.strftime(u"%Y-%m-%d")
         _sql = 'select count(*) from jira_task_t ' \
-               'where project_alias="%s" and endDate like "%%%s%%" and issue_status="完成" order by id' %\
+               'where project_alias="%s" and endDate like "%%%s%%"' \
+               ' and issue_status="完成" and issue_type="story" order by id' %\
                (ProjectAlias[project],_date)
         _n = int(doSQLcount(cur,_sql))
         _active_quta.append(_n)
@@ -450,7 +451,7 @@ def main(project="PRD-2017-PROJ-00003"):
     _print(u"过程情况", title=True, title_lvl=1)
     _print(u'1）单元测试情况：')
     _fn = showJinkinsRec.doJinkinsRec(cur)
-    doc.addPic(_fn, sizeof=5.2)
+    doc.addPic(_fn, sizeof=6.2)
     _print(u'【图例说明】：数据采自Jenkins系统，以展示项目中每个模块的单元测试情况。')
     _print(u'2）单元测试覆盖率：')
     _fn = showJinkinsCoverage.doJinkinsCoverage(cur)
@@ -461,15 +462,18 @@ def main(project="PRD-2017-PROJ-00003"):
 
     #_date = _today.strftime(u"%Y-%m-%d")
     #_sql = 'select count(*) from jira_task_t where endDate>"%s" order by id' % _date
-    _sql = 'select count(*) from jira_task_t where issue_status="处理中" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="处理中" and issue_type="story" order by issue_id'
     _n = int(doSQLcount(cur, _sql))
-    _sql = 'select count(*) from jira_task_t where issue_status="待办" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="待办" and issue_type="story" order by issue_id'
     _m = int(doSQLcount(cur, _sql))
-    _sql = 'select count(*) from jira_task_t where issue_status="处理中" and summary like "%入侵%" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="处理中" and summary like "%入侵%"' \
+           ' and issue_type="story" order by issue_id'
     _r = int(doSQLcount(cur, _sql))
-    _sql = 'select count(*) from jira_task_t where issue_status="完成" and summary like "%入侵%" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="完成" and summary like "%入侵%"' \
+           ' and issue_type="story" order by issue_id'
     _r_completed = int(doSQLcount(cur, _sql))
-    _sql = 'select count(*) from jira_task_t where issue_status="待办" and summary like "%入侵%" order by issue_id'
+    _sql = 'select count(*) from jira_task_t where issue_status="待办" and summary like "%入侵%"' \
+           ' and issue_type="story" order by issue_id'
     _r_waitting = int(doSQLcount(cur, _sql))
 
     _print(u"● 截至本迭代周期已完成任务有【%d】个。" % _sum)
@@ -478,13 +482,20 @@ def main(project="PRD-2017-PROJ-00003"):
     if _m > 0:
         _print(u"● 本迭代周期内等待执行的任务有【%d】个。" % _m)
     if _r+_r_completed+_r_waitting > 0:
-        _print(u"● “入侵”的非计划任务有【%d】个，其中已完成%d个、正在执行%d个和待执行%d个。" %
+        _print(u"● “入侵”的任务有【%d】个，其中已完成%d个、正在执行%d个和待执行%d个。" %
                (_r+_r_completed+_r_waitting, _r_completed, _r, _r_waitting), color=(150, 0, 0))
 
     _ylines = []
     _ylines.append([_total[_line_n+1], '--', 'k', u'计划完成%d个' % _total[_line_n+1]])
     _ylines.append([_sum+_n, '--', 'r', u'即将完成%d个' % (_sum+_n)])
     _ylines.append([_sum+_n+_m, '--', 'g', u'等待完成%d个' % _m])
+
+    _dlt = (float(_sum + _n + _m - _total[-1])*100.)/float(_total[-1])
+    print ">>>", _dlt
+    if _dlt > 5. :
+        _print(u'【风险提示】：实际制定的任务量已超出计划量%0.2f%%，须调整计划。' % _dlt, color=(250, 0, 0))
+        _results.append([u'● 【风险提示】实际制定的任务量已超出计划量%0.2f%%，须调整计划。' % _dlt, (250, 0, 0)])
+
     _dlt = float((_total[_line_n + 1] - (_sum + _n)) * 100) / float(_total[_line_n + 1])
     if _dlt > 5:
         _print(u'【风险提示】：本期实际完成的任务总量已“负偏离”计划量（偏离%0.2f%%），估计延期%d个工作日。' %

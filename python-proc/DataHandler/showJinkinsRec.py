@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from matplotlib.dates import AutoDateLocator, DateFormatter
 from pylab import figure, axes
-import MySQLdb, sys, time
+import MySQLdb, sys, time, datetime
 import pandas as pd
 
 _test_mod = False
@@ -54,7 +54,9 @@ def doJinkinsRec(cur):
     _lines = []
     _line_durations = []
     _line_errors = []
-    for _key in _jobs:
+
+    """按测试次数排序构建数据"""
+    for _key in sorted(_jobs, key=lambda x: -len(_jobs[x])):
         _duration = 0
         _error = 0
         for _task in _jobs[_key]:
@@ -88,7 +90,7 @@ def doJinkinsRec(cur):
     })
     autodates = AutoDateLocator()
     yearsFmt = DateFormatter('%Y-%m-%d %H:%M:%S')
-    fig = figure(figsize=[8, 12])
+    fig = figure(figsize=[10, 12], dpi=120)
 
     ax = fig.add_subplot(111)
     ax_twiny = ax.twiny()
@@ -105,8 +107,19 @@ def doJinkinsRec(cur):
     fig.autofmt_xdate()                         # 设置x轴时间外观  
     ax.xaxis.set_major_locator(autodates)       # 设置时间间隔  
     ax.xaxis.set_major_formatter(yearsFmt)      # 设置时间显示格式  
-    ax.set_xticks(pd.date_range(start='2017-12-01 00:00:00', end='2018-01-31 23:59:59', freq='3D'))
-    ax.set_xlim("2017-12-20 00:00:00", "2018-01-20 00:00:00")
+
+    """设定显示的时间段"""
+    _day = datetime.date.today().day
+    _month = datetime.date.today().month
+    if _day < 27:
+        _day += 3
+    else:
+        _month += 1
+        _day = 1
+    _end_date = datetime.date.today().replace(day=_day, month=_month)
+
+    ax.set_xticks(pd.date_range(start='2017-12-01 00:00:00', end='%s 23:59:59' % _end_date, freq='3D'))
+    ax.set_xlim("2017-12-20 00:00:00", "%s 00:00:00" % _end_date)
     ax.set_yticks(range(1,len(_lables)+1))
     ax.set_yticklabels(_lables,)
     ax.set_ylim(0,len(_lables)+4)
@@ -126,7 +139,7 @@ def doJinkinsRec(cur):
     ax.grid(True)
 
     plt.title(u'单元测试情况', fontsize=12)
-    plt.subplots_adjust(left=0.35, right=0.98, bottom=0.09, top=0.96)
+    plt.subplots_adjust(left=0.24, right=0.98, bottom=0.11, top=0.96)
 
     _fn = 'pic/%s-compscore.png' % time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     if not _test_mod:
@@ -134,6 +147,7 @@ def doJinkinsRec(cur):
     else:
         plt.show()
     return _fn
+
 
 if __name__ == '__main__':
 

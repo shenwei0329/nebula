@@ -25,6 +25,20 @@ CREATE TABLE if not exists requirment_t
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 #
+#
+CREATE TABLE if not exists telcomm_t
+(
+	id integer primary key not null auto_increment,
+	T_NAME varchar(24),
+	T_POST varchar(80),
+	T_BASEON varchar(80),
+	T_NUMBER varchar(24),
+	T_SUB_NUMBER varchar(8),
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#
 # 测试记录数据
 # 2017年10月28日
 #
@@ -50,6 +64,22 @@ CREATE TABLE if not exists testrecord_t
 	err_mod_1 varchar(40),
 	err_mod_2 varchar(40),
 	err_desc varchar(1024),
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#
+# 人员表
+# 2017年10月28日
+#
+CREATE TABLE if not exists member_t
+(
+	id integer primary key not null auto_increment,
+	MM_XM varchar(80)   comment '名称',
+	MM_GH varchar(26)   comment '工号',
+	MM_ZT varchar(20)   comment '状态',
+	MM_LEVEL varchar(20)    comment '职级',
+	MM_POST varchar(80) comment '岗位',
 	created_at datetime,
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -208,26 +238,6 @@ CREATE TABLE if not exists project_key_t
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-# Jira 任务执行跟踪表
-#
-#
-CREATE TABLE if not exists jira_task_t
-(
-	id integer primary key not null auto_increment,
-	project_alias varchar(80) comment '项目号',
-	issue_id varchar(24) comment '任务标识',
-	issue_status varchar(24) comment '状态（中文）',
-	summary varchar(160) comment '任务简述',
-    description varchar(1024) comment '任务描述',
-    users varchar(80) comment '任务执行人数组',
-    users_alias varchar(80) comment '任务执行人别名数组',
-    user_emails varchar(1024) comment '任务执行人电邮数组',
-	startDate varchar(48) comment '计划：启动日期',
-	endDate varchar(48) comment '计划：完成日期',
-	created_at datetime,
-	updated_at datetime
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 # Project 任务计划表
 #
 #
@@ -362,6 +372,105 @@ CREATE TABLE if not exists jenkins_coverage_t
 	line_rate varchar(24) comment '代码行覆盖率',
 	branch_rate varchar(24) comment '代码分支覆盖率',
 	complexity varchar(24) comment '代码复杂度',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# 专利管理
+#
+#
+CREATE TABLE if not exists patent_management_t
+(
+	id integer primary key not null auto_increment,
+	PT_NAME varchar(120)        comment '专利名称',
+	PT_DESC varchar(1024)       comment '描述',
+	PT_PERSONS varchar(32)      comment '发明人',
+	PT_DATE varchar(32)         comment '受理日期',
+	PT_ACCEPT_DATE varchar(32)  comment '确认日期',
+	PT_NUMBER varchar(32)       comment '专利号',
+	PT_TYPE_NUMBER varchar(32)  comment '国际专利主分类号',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# 著作权登记管理
+#
+#
+CREATE TABLE if not exists copyright_management_t
+(
+	id integer primary key not null auto_increment,
+	CR_TITLE varchar(120)               comment '标题',
+	CR_PRODUCT varchar(64)              comment '产品',
+	CR_VERSION varchar(32)              comment '版本',
+	CR_DATE varchar(32)                 comment '授权日期',
+	CR_REGISTRATION_NUMBER varchar(32)  comment '注册号',
+	CR_SCOPE varchar(32)                comment '范围',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# Jira 任务执行跟踪表
+#   用于存储Issue的基本信息
+#
+CREATE TABLE if not exists jira_task_t
+(
+	id integer primary key not null auto_increment,
+	project_alias varchar(80)   comment '项目号',
+	issue_id varchar(24)        comment '任务标识',
+	issue_type varchar(24)      comment '类型',
+	issue_status varchar(24)    comment '状态（中文）',
+	summary varchar(160)        comment '任务简述',
+    description varchar(1024)   comment '任务描述',
+    users varchar(80)           comment '任务执行人数组',
+    users_alias varchar(80)     comment '任务执行人别名数组',
+    user_emails varchar(1024)   comment '任务执行人电邮数组',
+	startDate varchar(48)       comment '计划：启动日期',
+	endDate varchar(48)         comment '计划：完成日期',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# Jira系统的Issue记录
+#   因系统处于调整过程（多变），所以采用key-value方式存储
+#
+CREATE TABLE if not exists jira_issue_t
+(
+	id integer primary key not null auto_increment,
+	issue_id varchar(24)    comment '标识',
+	issue_key varchar(1024) comment '关键字',
+	issue_value text        comment '值',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# Jira系统的里程碑（landmark）记录
+#   1）里程碑定义
+#   2）里程碑：起止时间定义
+#
+CREATE TABLE if not exists jira_landmark_t
+(
+	id integer primary key not null auto_increment,
+	pj_id varchar(24)           comment '项目标识，如FAST',
+	name varchar(80)            comment '里程碑名称',
+	start_date varchar(48)      comment '启动日期',
+	release_date varchar(48)    comment '结束日期',
+	created_at datetime,
+	updated_at datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# Jira系统的里程碑（landmark）要素变更记录
+#   1）point变更
+#   2）org_time、agg_time和spent_time变更
+#   3）状态
+#   4）里程碑
+#
+CREATE TABLE if not exists jira_log_t
+(
+	id integer primary key not null auto_increment,
+	issue_id varchar(24)    comment 'issue标识',
+	rec_key varchar(32)     comment '关键字',
+	old_value varchar(32)   comment '原值',
+	new_value varchar(32)   comment '新值',
 	created_at datetime,
 	updated_at datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

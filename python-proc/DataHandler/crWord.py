@@ -29,6 +29,7 @@ class createWord:
         self.document.styles['Heading1'].font.name = u'微软黑体'
         self.document.styles['Heading2'].font.name = u'微软黑体'
         self.document.styles['Heading3'].font.name = u'微软黑体'
+        self.paragrap = None
 
     """Paragraph：段落"""
     def addHead(self, info, lvl, align=WD_ALIGN_PARAGRAPH.LEFT):
@@ -107,6 +108,12 @@ class createWord:
                         font.size = Pt(ft)
 
     def addPageBreak(self):
+        """
+        加入分页符
+        :return:
+        self.paragrap = self.document.add_paragraph()
+        self.paragrap.paragraph_format.page_break_before()
+        """
         self.document.add_page_break()
 
     def saveFile(self, fname):
