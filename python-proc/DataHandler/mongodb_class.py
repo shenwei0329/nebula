@@ -23,6 +23,9 @@ class mongoDB:
         self.mongo_client = MongoClient(host=['localhost:27017'])
         # self.mongo_db = self.mongo_client.FAST
         self.mongo_db = self.mongo_client.get_database(project)
+        """
+        2018.4.8：不再采用这种方法，不灵活。
+        
         self.obj = {"project": self.mongo_db.project,
                     "issue": self.mongo_db.issue,
                     "issue_link": self.mongo_db.issue_link,
@@ -31,6 +34,7 @@ class mongoDB:
                     "changelog": self.mongo_db.changelog,
                     "task_req": self.mongo_db.task_req,
                     "current_sprint": self.mongo_db.current_sprint}
+        """
         self.pj_hdr = {"insert": self._insert,
                        "update": self._update,
                        "count": self._count,
@@ -88,7 +92,8 @@ class mongoDB:
         :param data: 参数
         :return:
         """
-        return self.pj_hdr[operation](self.obj[obj], *data)
+        # return self.pj_hdr[operation](self.obj[obj], *data)
+        return self.pj_hdr[operation](self.mongo_db[obj], *data)
 
     def get_count(self, obj, *data):
         """

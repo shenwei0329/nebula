@@ -68,7 +68,6 @@ def doBarOnTable( rows, columns, datas ):
         plt.show()
     return _fn
 
-<<<<<<< HEAD
 def getMemberbyGroup(cur):
     """
     获取 {组：组员} 字典
@@ -181,8 +180,6 @@ def doWorkHourbyGroup(cur, begin_date=None, end_date=None):
 
     return _pd_fn, _pj_fn
 
-=======
->>>>>>> refs/remotes/origin/master
 if __name__ == '__main__':
 
     __test = True
