@@ -2,47 +2,7 @@
   <div class="nav-collapse sidebar-nav">
     <ul class="nav nav-tabs nav-stacked main-menu">
       <li>
-        <a class="dropmenu" href="#"><i class="icon-folder-close-alt" style="color: #f00000"></i><span class="hidden-tablet"> 总览</span><span class="label label-important"></span></a>
-          <ul>
-            {% for item in totle_menus %}
-              <li>
-                <a class="submenu" href="{{ url_for(item.endpoint) }}"><i class="{{ item.icon }}"></i><span class="hidden-tablet">{{item.local_name }}</span></a>
-              </li>
-            {% endfor %}
-          </ul>
-      </li>
-      <li>
-        <a class="dropmenu" href="#"><i class="icon-folder-close-alt" style="color: #f00000"></i><span class="hidden-tablet"> 项目情况</span><span class="label label-important"></span></a>
-          <ul>
-            {% for item in project_menus %}
-              <li>
-                <a class="submenu" href="{{ url_for(item.endpoint) }}"><i class="{{ item.icon }}"></i><span class="hidden-tablet">{{item.local_name }}</span></a>
-              </li>
-            {% endfor %}
-          </ul>
-      </li>
-      <li>
-        <a class="dropmenu" href="#"><i class="icon-folder-close-alt" style="color: #f00000"></i><span class="hidden-tablet"> 产品情况</span><span class="label label-important"></span></a>
-          <ul>
-            {% for item in product_menus %}
-              <li>
-                <a class="submenu" href="{{ url_for(item.endpoint) }}"><i class="{{ item.icon }}"></i><span class="hidden-tablet">{{item.local_name }}</span></a>
-              </li>
-            {% endfor %}
-          </ul>
-      </li>
-      <li>
-        <a class="dropmenu" href="#"><i class="icon-folder-close-alt" style="color: #f00000"></i><span class="hidden-tablet"> 资源情况</span><span class="label label-important"></span></a>
-          <ul>
-            {% for item in resource_menus %}
-              <li>
-                <a class="submenu" href="{{ url_for(item.endpoint) }}"><i class="{{ item.icon }}"></i><span class="hidden-tablet">{{item.local_name }}</span></a>
-              </li>
-            {% endfor %}
-          </ul>
-      </li>
-      <li>
-        <a class="dropmenu" href="#"><i class="icon-folder-close-alt" style="color: #f00000"></i><span class="hidden-tablet"> 数据管理</span><span class="label label-important"></span></a>
+        <a class="dropmenu" href="#"><i class="icon-folder-close-alt" style="color: #f00000"></i><span class="hidden-tablet"> 数据管理中心</span><span class="label label-important"></span></a>
           <ul>
             {% for item in datamng_menus %}
               <li>
