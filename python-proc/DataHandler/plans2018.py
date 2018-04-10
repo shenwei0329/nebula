@@ -446,11 +446,13 @@ def collectBurnDownDataByLandmark(mongo_db, landmark):
 
         _time = 0
         for _i in tot_issue_spent_time:
-            _time += int(tot_issue_spent_time[_i]) / 1800
+            if type(tot_issue_spent_time[_i]) is not types.NoneType:
+                _time += int(tot_issue_spent_time[_i]) / 1800
         _spent_time_dot['dots'].append(["%s" % _date, _time, 'spent'])
         _time = 0
         for _i in tot_issue_org_time:
-            _time += int(tot_issue_org_time[_i]) / 1800
+            if type(tot_issue_org_time[_i]) is not types.NoneType:
+                _time += int(tot_issue_org_time[_i]) / 1800
         _spent_time_dot['dots'].append(["%s" % _date, _time, 'org'])
 
         for _status in [u'DONE', u'测试中', u'待测试', u'IN PROGRESS']:
