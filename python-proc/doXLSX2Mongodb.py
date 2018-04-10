@@ -35,6 +35,8 @@ def doList(xlsx_handler, mongodb, _type, _op, _ncol, _key):
     # print("...5")
     # print _col
 
+    _count = 0
+    _key = []
     if len(_rows) > 0:
 
         if 'APPEND' in _op:
@@ -58,12 +60,15 @@ def doList(xlsx_handler, mongodb, _type, _op, _ncol, _key):
 
                 # print _type, _value
                 try:
-                    mongodb.handler(_type, 'update', _search, _value)
+                    if _row[0] not in _key:
+                        mongodb.handler(_type, 'update', _search, _value)
+                        _key.append(_row[0])
+                        _count += 1
                 except Exception, e:
                     print "error: ", e
                 finally:
                     print '.',
-        print "o"
+        print "[", _count, "]"
 
 
 def main():
