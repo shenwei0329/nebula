@@ -405,7 +405,7 @@ def collectBurnDownDataByLandmark(mongo_db, landmark):
     _tot_org_time = 0
     for _i in _cur:
 
-        tot_issue[_i['issue']] = u'待办'
+        tot_issue[_i['issue']] = _i['status']
         tot_issue_spent_time[_i['issue']] = 0
         tot_issue_org_time[_i['issue']] = 0
         _tot_count += 1
@@ -419,6 +419,110 @@ def collectBurnDownDataByLandmark(mongo_db, landmark):
     _spent_time_dot['count'] = _tot_org_time
     _data['dots'] = []
     _spent_time_dot['dots'] = []
+
+    """ 观察的是在本里程碑内的行为（状态更改、工时等）
+        问题：在进入本里程碑前有的任务就已经完成了。
+    """
+    _date_index = pd.date_range(start=landmark['startDate'], end=landmark['endDate'], freq='1D').date
+    for _date in _date_index:
+        _task_count = _tot_count
+        if _date > datetime.datetime.now().date():
+            break
+        # print _date,"--->",
+        """ 重置满足时间窗口的 issue 集的状态 """
+
+        """用changelog做历史回顾"""
+        _search = {
+            "field": {"$in": ["status", "timespent", "timeoriginalestimate"]},
+            "date": {"$lte": "%s" % (_date + datetime.timedelta(days=1))}
+        }
+        _tot_issue = tot_issue
+        """按升序查找"""
+        _cur = mongo_db.handler('changelog', 'find', _search).sort([('date', 1)])
+        for _i in _cur:
+            if _i['issue'] in _tot_issue:
+                if _i['field'] == 'status':
+                    _tot_issue[_i['issue']] = _i['new']
+                elif _i['field'] == 'timespent':
+                    tot_issue_spent_time[_i['issue']] = _i['new']
+                else:
+                    tot_issue_org_time[_i['issue']] = _i['new']
+
+        _time = 0
+        for _i in tot_issue_spent_time:
+            if type(tot_issue_spent_time[_i]) is not types.NoneType:
+                _time += int(tot_issue_spent_time[_i]) / 1800
+        _spent_time_dot['dots'].append(["%s" % _date, _time, 'spent'])
+        _time = 0
+        for _i in tot_issue_org_time:
+            if type(tot_issue_org_time[_i]) is not types.NoneType:
+                _time += int(tot_issue_org_time[_i]) / 1800
+        _spent_time_dot['dots'].append(["%s" % _date, _time, 'org'])
+
+        for _status in [u'DONE', u'测试中', u'待测试', u'IN PROGRESS']:
+            """ 统计此窗口内 各个状态 issue 的总数 """
+            _count = 0
+            for _i in _tot_issue:
+                if _tot_issue[_i].upper() == _status:
+                    _count += 1
+            _data[_status_trans[_status]] = _count
+            _task_count -= _count
+            print _status, '_tot_issue.len: ', len(_tot_issue), '_count:', _count, '_task_count:', _task_count
+            _data['dots'].append(["%s" % _date, _task_count, _status_trans[_status]])
+        _data[_status_trans[u"TO DO"]] = _task_count
+        print "---"
+    Dots.append(_data)
+    SpentTimes.append(_spent_time_dot)
+    return Dots, SpentTimes
+
+
+def collectBurnDownDataByTask(mongo_db, landmark):
+
+    _status_trans = {u"TO DO": 'waiting',
+                     u"IN PROGRESS": 'doing',
+                     u"待测试": 'wait_testing',
+                     u"测试中": 'testing',
+                     u"DONE": 'done'}
+
+    Dots = []
+    SpentTimes = []
+
+    _data = {"sprint": [landmark['startDate'], landmark['endDate'], 'ACTIVE']}
+    _spent_time_dot = {"sprint": [landmark['startDate'], landmark['endDate'], 'ACTIVE']}
+
+    tot_issue = {}
+    tot_issue_spent_time = {}
+    tot_issue_org_time = {}
+    _tot_count = 0
+    _tot_org_time = 0
+    for _issue in landmark['task_list']:
+
+        # print _issue
+        _search = {"landmark": landmark["name"], "issue": _issue}
+        # _search = {"issue": _issue}
+        _i = mongo_db.handler('issue', 'find_one', _search)
+
+        if _i is None:
+            continue
+
+        tot_issue[_i['issue']] = _i['status']
+        tot_issue_spent_time[_i['issue']] = 0
+        tot_issue_org_time[_i['issue']] = 0
+        _tot_count += 1
+        if type(_i['org_time']) is not types.NoneType:
+            _tot_org_time += int(_i['org_time']) / 1800
+
+    print "_tot_issue.len = ", len(tot_issue)
+
+    # print "Total: %d" % _tot_count
+    _data['count'] = _tot_count
+    _spent_time_dot['count'] = _tot_org_time
+    _data['dots'] = []
+    _spent_time_dot['dots'] = []
+
+    """ 观察的是在本里程碑内的行为（状态更改、工时等）
+        问题：在进入本里程碑前有的任务就已经完成了。
+    """
     _date_index = pd.date_range(start=landmark['startDate'], end=landmark['endDate'], freq='1D').date
     for _date in _date_index:
         _task_count = _tot_count
@@ -702,11 +806,25 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
     sprint_start_date = cur_sprint[1]
     sprint_end_date = cur_sprint[2]
     print u"%s 从 %s 至 %s" % (current_sprint, sprint_start_date, sprint_end_date)
+
+    # 获取本里程碑内story
+    # _story = mongo_db.handler("issue", "find", {'issue_type': "story", "landmark": u"%s" % _landmark})
+    # _task_list, _story_task_list, _story_points, _max_cost = get_issue_by_sprint(mongo_db, cur_sprint)
+    _task_list, _story_task_list, _story_points, _max_cost = get_issue_by_landmark(mongo_db, _landmark)
+
+
     # _burndown_dots, _timeburndown_dots = collectBurnDownData(mongo_db, sprints, current_sprint)
+    """
     _burndown_dots, _timeburndown_dots = collectBurnDownDataByLandmark(mongo_db,
                                                                        {'name': _landmark,
                                                                         'startDate': _startDate,
                                                                         'endDate': _endDate})
+    """
+    _burndown_dots, _timeburndown_dots = collectBurnDownDataByTask(mongo_db,
+                                                                   {'name': _landmark,
+                                                                    'startDate': _startDate,
+                                                                    'endDate': _endDate,
+                                                                    'task_list': _task_list})
     _burndown_fn = doBox.BurnDownChart(_burndown_dots)
     _timeburndown_fn = doBox.TimeBurnDownChart(_timeburndown_dots)
     """
@@ -724,11 +842,6 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
     _res = mongo_db.handler("issue", "find", {"issue_type":"story", "summary": re.compile(r'.入侵.*?')})
     for _r in _res:
         _issue_ext_list.append(_r["issue"])
-
-    # 获取本里程碑内story
-    # _story = mongo_db.handler("issue", "find", {'issue_type': "story", "landmark": u"%s" % _landmark})
-    # _task_list, _story_task_list, _story_points, _max_cost = get_issue_by_sprint(mongo_db, cur_sprint)
-    _task_list, _story_task_list, _story_points, _max_cost = get_issue_by_landmark(mongo_db, _landmark)
 
     # 获取任务的变化情况
     _fn_issue_action = getWorkActionChart(mongo_db, _task_list)
@@ -748,6 +861,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
     _status = {u"待办": 1, u"处理中": 2, u"待测试": 3, u"测试中": 4, u"完成": 5}
     _x = 1
     _dots_s = {}
+    _issue_error_rate = {}
     for _t in _task_list:
         """
         获取未通过测试的Issue：
@@ -766,6 +880,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
                     _dots.append([_x, _status[_i['status']], 'o', 'k'])
                 else:
                     _dots.append([_x, _status[_i['status']], 'v', 'r'])
+            _issue_error_rate[_t] = [u"%s" % _i['summary'], _dots_s[_t]]
         _x += 1
     _fn_issue_status = doBox.doIssueStatus(u"任务执行状态分布图", u"任务", _task_list, _dots, _dots_s)
 
@@ -952,9 +1067,30 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
 
     _print(u"过程情况", title=True, title_lvl=1)
     _print(u'1）单元测试情况：')
-    _fn = showJinkinsRec.doJinkinsRec(cur)
+    _fn, _error_rate, _avg_cnt = showJinkinsRec.doJinkinsRec(cur)
     doc.addPic(_fn, sizeof=6.2)
     _print(u'【图例说明】：数据采自Jenkins系统，以展示项目中每个模块的单元测试情况。')
+
+    """ 增加一个列表：近期出错率高的模块
+    """
+    _print(u'单元测试出错率较高的模块有：')
+    doc.addTable(1, 3, col_width=(5, 2, 2))
+    _title = (('text', u'模块名'),
+              ('text', u'测试次数'),
+              ('text', u'出错率%'))
+    doc.addRow(_title)
+    _i = 0
+    for _err in sorted(_error_rate, key=lambda x: -int(_error_rate[x][1]*100.)):
+        if _error_rate[_err][0] > _avg_cnt:
+            _text = (('text', u'%s' % _err),
+                     ('text', '%d' % _error_rate[_err][0]),
+                     ('text', '%0.2f' % _error_rate[_err][1])
+                     )
+            doc.addRow(_text)
+            _i += 1
+            if _i > 10:
+                break
+    doc.setTableFont(8)
 
     doc.addPageBreak()
 
@@ -987,6 +1123,30 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
     doc.addPic(_fn_issue_status, sizeof=6)
     _print(u'【图例说明】：展示任务执行的状态分布情况。图中，圆点大小与任务被测试次数关联，'
            u'圆点越小则间接表示bug数也越少。')
+
+    """ 增加一个表：目前出错率较高的 issue
+    """
+    _print(u'出错率较高的任务有：')
+    doc.addTable(1, 3, col_width=(2, 5, 2))
+    _title = (('text', u'Issue'),
+              ('text', u'任务'),
+              ('text', u'返工次数'))
+    doc.addRow(_title)
+    _j = 0
+    for _i in sorted(_issue_error_rate, key=lambda x: -_issue_error_rate[x][1]):
+        if _issue_error_rate[_i][1] > 1:
+            _text = (('text', _i),
+                     ('text', _issue_error_rate[_i][0]),
+                     ('text', '%d' % _issue_error_rate[_i][1]))
+            doc.addRow(_text)
+        else:
+            break
+        _j += 1
+        if _j > 10:
+            break
+    doc.setTableFont(8)
+
+    doc.addPageBreak()
 
     #   3）目标执行：基于“时标”展示目标迁移“趋势”
     _print(u"目标执行情况", title=True, title_lvl=2)

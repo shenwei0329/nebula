@@ -55,12 +55,15 @@ def doJinkinsRec(cur):
     _line_durations = []
     _line_errors = []
 
+    _error_rate = {}
+    _total_count = 0
+    _total_value = 0
     """按测试次数排序构建数据"""
     for _key in sorted(_jobs, key=lambda x: -len(_jobs[x])):
         _duration = 0
         _error = 0
         for _task in _jobs[_key]:
-            if _task[2]=="SUCCESS":
+            if _task[2] == "SUCCESS":
                 _dots.append([_task[1], _y, '^', 'k'])
             else:
                 _dots.append([_task[1], _y, 'o', 'r'])
@@ -76,6 +79,9 @@ def doJinkinsRec(cur):
         _lines.append(_len)
         _line_errors.append(_error)
         _y += 1
+        _error_rate[_key] = [_len, (float(_error*100)/float(_len))]
+        _total_count += 1
+        _total_value += _len
 
     """调整显示比例"""
     for _i in range(len(_line_durations)):
@@ -146,7 +152,7 @@ def doJinkinsRec(cur):
         plt.savefig(_fn, dpi=120)
     else:
         plt.show()
-    return _fn
+    return _fn, _error_rate, _total_value/_total_count
 
 
 if __name__ == '__main__':
