@@ -123,9 +123,10 @@ def getJenkinsCoverage(db, cur, server):
                         _class.getAttribute('branch-rate'),
                         _class.getAttribute('complexity')))
                     if not hasPackageFile(cur, node.getAttribute('name'), _class.getAttribute('filename')):
-                        _sql = 'insert into jenkins_coverage_t(' \
+                        _sql = 'insert into jenkins_coverage_t(pj_id,' \
                                'class_name,filename,line_rate,branch_rate,complexity,created_at,updated_at) ' \
-                               'values("%s","%s","%s","%s","%s",now(),now())' % (
+                               'values("%s","%s","%s","%s","%s","%s",now(),now())' % (
+                                   "FAST",
                                    node.getAttribute('name'),
                                    _class.getAttribute('filename'),
                                    _class.getAttribute('line-rate'),
@@ -144,6 +145,7 @@ def getJenkinsCoverage(db, cur, server):
         except:
             print(">>> Error! <<<")
             continue
+
 
 if __name__ == '__main__':
 

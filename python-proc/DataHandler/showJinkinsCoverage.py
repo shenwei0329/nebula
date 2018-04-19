@@ -22,7 +22,7 @@ def doSQL(cur,_sql):
     cur.execute(_sql)
     return cur.fetchall()
 
-def doJinkinsCoverage(cur):
+def doJinkinsCoverage(cur, pj_id):
     """
     绘制 Jenkins 代码单元测试的覆盖分布图
     :param cur: 数据源
@@ -36,8 +36,11 @@ def doJinkinsCoverage(cur):
 
     """条件获取数据"""
     _sql = 'select filename,line_rate,branch_rate,complexity from jenkins_coverage_t ' \
-           'where filename<>"#" and filename like "%Controller.java%"'
+           'where pj_id="%s" and filename<>"#" and filename like "%%Controller.java%%"' % pj_id
     _res = doSQL(cur, _sql)
+
+    if len(_res) == 0:
+        return None
 
     _max = 0.
     for _r in _res:

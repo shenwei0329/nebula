@@ -22,7 +22,7 @@ def doSQL(cur,_sql):
     cur.execute(_sql)
     return cur.fetchall()
 
-def doJinkinsRec(cur):
+def doJinkinsRec(cur, pj_id):
     """
     绘制 Jenkins 作业分布图
     :param cur: 数据源
@@ -35,8 +35,11 @@ def doJinkinsRec(cur):
     #_sql = 'select job_name,date_format(job_timestamp,"%Y-%m-%d %H:%I:%S"),job_result,' \
     _sql = 'select job_name,job_timestamp,job_result,' \
            'job_duration,job_estimatedDuration from ' \
-           'jinkins_rec_t order by job_timestamp'
+           'jenkins_rec_t where pj_id="%s" order by job_timestamp' % pj_id
     _res = doSQL(cur, _sql)
+
+    if len(_res) == 0:
+        return None, 0, 0
 
     for _rec in _res:
         _key = _rec[0].split(' ')

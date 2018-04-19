@@ -350,6 +350,7 @@ CREATE TABLE if not exists pd_output_req_t
 CREATE TABLE if not exists jinkins_rec_t
 (
 	id integer primary key not null auto_increment,
+	pj_id varchar(24) comment '项目代号',
 	job_name varchar(120) comment '名称',
 	job_timestamp datetime comment '时间戳',
 	job_queueId varchar(24) comment '队列ID',
@@ -367,6 +368,7 @@ CREATE TABLE if not exists jinkins_rec_t
 CREATE TABLE if not exists jenkins_coverage_t
 (
 	id integer primary key not null auto_increment,
+	pj_id varchar(24) comment '项目代号',
 	class_name varchar(120) comment '代码类名',
 	filename varchar(120) comment '文件名',
 	line_rate varchar(24) comment '代码行覆盖率',

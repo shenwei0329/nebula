@@ -796,6 +796,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
     _startDate = mongo_db.handler("project", "find", {'id': landmark_id})[0]['startDate']
     _endDate = mongo_db.handler("project", "find", {'id': landmark_id})[0]['releaseDate']
 
+    print _landmark
     """Jira类
     """
     jira = jira_class_epic.jira_handler(project_alias)
@@ -820,6 +821,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
                                                                         'startDate': _startDate,
                                                                         'endDate': _endDate})
     """
+    print _task_list
     _burndown_dots, _timeburndown_dots = collectBurnDownDataByTask(mongo_db,
                                                                    {'name': _landmark,
                                                                     'startDate': _startDate,
@@ -882,6 +884,7 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
                     _dots.append([_x, _status[_i['status']], 'v', 'r'])
             _issue_error_rate[_t] = [u"%s" % _i['summary'], _dots_s[_t]]
         _x += 1
+    print _task_list
     _fn_issue_status = doBox.doIssueStatus(u"任务执行状态分布图", u"任务", _task_list, _dots, _dots_s)
 
     # 获取目标状态
@@ -1025,6 +1028,8 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
               ('text', u'质量系数'))
     doc.addRow(_title)
     for _user in _users:
+        if _user in sp_name:
+            continue
         _u = float(_users[_user]['done_org_time'])*100./float(_users[_user]['org_time'])
         _miu = float(_users[_user]['spent_time'])*100./float(_users[_user]['org_time'])
         _cr = float(_users[_user]['org_time'])*100./float(_tot_task_count)
@@ -1067,37 +1072,82 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
 
     _print(u"过程情况", title=True, title_lvl=1)
     _print(u'1）单元测试情况：')
-    _fn, _error_rate, _avg_cnt = showJinkinsRec.doJinkinsRec(cur)
-    doc.addPic(_fn, sizeof=6.2)
-    _print(u'【图例说明】：数据采自Jenkins系统，以展示项目中每个模块的单元测试情况。')
+    _fn, _error_rate, _avg_cnt = showJinkinsRec.doJinkinsRec(cur, project_alias)
+    if _fn is None:
+        _print(u"无。")
+    else:
+        doc.addPic(_fn, sizeof=6.2)
+        _print(u'【图例说明】：数据采自Jenkins系统，以展示项目中每个模块的单元测试情况。')
+        doc.addPageBreak()
 
-    """ 增加一个列表：近期出错率高的模块
-    """
-    _print(u'单元测试出错率较高的模块有：')
-    doc.addTable(1, 3, col_width=(5, 2, 2))
-    _title = (('text', u'模块名'),
-              ('text', u'测试次数'),
-              ('text', u'出错率%'))
-    doc.addRow(_title)
-    _i = 0
-    for _err in sorted(_error_rate, key=lambda x: -int(_error_rate[x][1]*100.)):
-        if _error_rate[_err][0] > _avg_cnt:
-            _text = (('text', u'%s' % _err),
-                     ('text', '%d' % _error_rate[_err][0]),
-                     ('text', '%0.2f' % _error_rate[_err][1])
-                     )
-            doc.addRow(_text)
-            _i += 1
-            if _i > 10:
-                break
-    doc.setTableFont(8)
+        """ 增加一个列表：近期出错率高的模块
+        """
+        _print(u'按出错率排序（前十名）：')
+        doc.addTable(1, 3, col_width=(5, 2, 2))
+        _title = (('text', u'模块名'),
+                  ('text', u'测试次数'),
+                  ('text', u'出错率%'))
+        doc.addRow(_title)
+        _i = 0
+        for _err in sorted(_error_rate, key=lambda x: -int(_error_rate[x][1]*100.)):
+            if _error_rate[_err][0] > _avg_cnt:
+                _text = (('text', u'%s' % _err),
+                         ('text', '%d' % _error_rate[_err][0]),
+                         ('text', '%0.2f' % _error_rate[_err][1])
+                         )
+                doc.addRow(_text)
+                _i += 1
+                if _i >= 10:
+                    break
+        doc.setTableFont(8)
 
-    doc.addPageBreak()
+        _print(u'按测试次数排序（前十名）：')
+        doc.addTable(1, 3, col_width=(5, 2, 2))
+        _title = (('text', u'模块名'),
+                  ('text', u'测试次数'),
+                  ('text', u'出错率%'))
+        doc.addRow(_title)
+        _i = 0
+        for _err in sorted(_error_rate, key=lambda x: -_error_rate[x][0]):
+            if _error_rate[_err][0] > _avg_cnt:
+                _text = (('text', u'%s' % _err),
+                         ('text', '%d' % _error_rate[_err][0]),
+                         ('text', '%0.2f' % _error_rate[_err][1])
+                         )
+                doc.addRow(_text)
+                _i += 1
+                if _i >= 10:
+                    break
+        doc.setTableFont(8)
+
+        _print(u'按稳定性排序（前十名）：')
+        doc.addTable(1, 3, col_width=(5, 2, 2))
+        _title = (('text', u'模块名'),
+                  ('text', u'测试次数'),
+                  ('text', u'出错率%'))
+        doc.addRow(_title)
+        _i = 0
+        for _err in sorted(_error_rate, key=lambda x: -int(float(_error_rate[x][0])*(1.-_error_rate[x][1]/100.))):
+            if _error_rate[_err][0] > _avg_cnt:
+                _text = (('text', u'%s' % _err),
+                         ('text', '%d' % _error_rate[_err][0]),
+                         ('text', '%0.2f' % _error_rate[_err][1])
+                         )
+                doc.addRow(_text)
+                _i += 1
+                if _i >= 10:
+                    break
+        doc.setTableFont(8)
+
+        doc.addPageBreak()
 
     _print(u'2）单元测试覆盖率：')
-    _fn = showJinkinsCoverage.doJinkinsCoverage(cur)
-    doc.addPic(_fn, sizeof=5.8)
-    _print(u'【图例说明】：数据采自Jenkins系统，以展示项目中每个模块的单元测试覆盖率。')
+    _fn = showJinkinsCoverage.doJinkinsCoverage(cur, project_alias)
+    if _fn is None:
+        _print(u"无。")
+    else:
+        doc.addPic(_fn, sizeof=5.8)
+        _print(u'【图例说明】：数据采自Jenkins系统，以展示项目中每个模块的单元测试覆盖率。')
 
     _print(u"计划跟踪", title=True, title_lvl=1)
 
@@ -1144,6 +1194,11 @@ def main(project="PRD-2017-PROJ-00003", project_alias='FAST', week_end=False, la
         _j += 1
         if _j > 10:
             break
+    if _j == 0:
+        _title = (('text', u'无'),
+                  ('text', ""),
+                  ('text', ""))
+        doc.addRow(_title)
     doc.setTableFont(8)
 
     doc.addPageBreak()

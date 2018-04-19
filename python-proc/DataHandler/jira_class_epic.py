@@ -63,7 +63,7 @@ class jira_handler:
     def _get_board(self):
         _boards = self.jira.boards()
         for _b in _boards:
-            if self.name in _b.name:
+            if self.name.upper() in _b.name.upper():
                 return _b.id
         return None
 
@@ -366,6 +366,9 @@ class jira_handler:
         :param info: 新的日志数据
         :return:
         """
+        if not info.has_key("comment"):
+            return
+
         _search = {'issue': info['issue'],
                    'id': info['id']}
         self.mongo_db.handler('worklog', 'update', _search, info)
@@ -381,8 +384,12 @@ class jira_handler:
             _search = {"issue": self.show_name(), "id": {"$not": {"$in": worklog_id}}}
         else:
             _search = {"issue": self.show_name()}
+        _one = self.mongo_db.handler('worklog', 'find_one', _search)
+        if _one is None:
+            return
         # self.mongo_db.handler('worklog', 'remove', _search)
-        """保留原记录，将其用时值设置为0，以便事后跟踪"""
+        """保留原记录，将其用时值设置为0，以便事后跟踪
+        """
         self.mongo_db.handler('worklog', 'update', _search, _set)
 
     def sync_worklog(self):

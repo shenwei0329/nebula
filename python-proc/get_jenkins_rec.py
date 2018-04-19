@@ -109,12 +109,13 @@ def doIT(db, cur, url):
                     continue
 
                 _insert += 1
-                _sql = 'insert into jinkins_rec_t(' \
+                _sql = 'insert into jenkins_rec_t(pj_id,' \
                        'job_name,job_timestamp,job_queueId,job_result,job_description,' \
                        'job_duration,job_estimatedDuration,created_at,updated_at' \
                        ') values(' \
-                       '"%s","%s","%s","%s","%s","%s","%s",now(),now())' % \
-                       (unit['fullDisplayName'],
+                       '"%s","%s","%s","%s","%s","%s","%s","%s",now(),now())' % \
+                       ("FAST",
+                        unit['fullDisplayName'],
                         time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(_time)),
                         unit['queueId'],
                         unit['result'],
