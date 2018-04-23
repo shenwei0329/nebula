@@ -23,6 +23,9 @@
 #   1）周报的任务数据直接从mongodb上获取
 #   2）考虑 产品与工程项目 工作量划分及其占比
 #
+# 2018.4.23
+#   1）增加从epic获取研发组处理“入侵”任务内容
+#
 
 import MySQLdb
 import sys
@@ -234,7 +237,7 @@ def getOprWorkTime(cur):
     global TotalMember, orgWT, doc
 
     """考勤情况"""
-    _print("1、考勤情况：", title=True, title_lvl=2)
+    _print("考勤情况：", title=True, title_lvl=2)
     _print(u'数据来源于“钉钉”考勤系统。')
     data1 = getChkOnAm(cur)
     data2 = getChkOnPm(cur)
@@ -249,7 +252,7 @@ def getOprWorkTime(cur):
     else:
         _print("【无“考勤”数据】")
 
-    _print("2、请假情况：", title=True, title_lvl=2)
+    _print("请假情况：", title=True, title_lvl=2)
     _print(u'数据来源于“钉钉”考勤系统。')
     doc.addTable(1, 2, col_width=(2, 4))
     _title = (('text', u'名称'), ('text', u'关联的审批单'))
@@ -269,7 +272,7 @@ def getOprWorkTime(cur):
     doc.setTableFont(8)
     _print("")
 
-    _print("3、工作日志工时统计：", title=True, title_lvl=2)
+    _print("工作日志工时统计：", title=True, title_lvl=2)
     _print(u'数据来源于任务管理系统。')
     orgWT = ()
     for _grp in GroupName:
@@ -317,7 +320,7 @@ def getOprWorkTime(cur):
     """插入分页"""
     doc.addPageBreak()
 
-    _print("4、工作日志明细：", title=True, title_lvl=2)
+    _print("工作日志明细：", title=True, title_lvl=2)
     _print(u'数据来源于任务管理系统。')
     for _grp in GroupName:
 
@@ -420,13 +423,14 @@ def getChkOnPm(cur):
     return _seq
 
 
-def getPjTaskListByGroup():
+def getPjTaskListByGroup(pg):
     """
     按组列出 项目入侵 任务。
+    :param pg: 插入点
     :return:
     """
 
-    pg = _print(u'任务明细如下：')
+    _print(u'任务明细如下：')
     doc.addTable(1, 5, col_width=(2, 4, 2, 2, 2))
     _title = (('text', u'任务工单号'),
               ('text', u'任务'),
@@ -437,6 +441,9 @@ def getPjTaskListByGroup():
 
     _spent_time = 0
     _count = 0
+
+    _total_cost = 0.
+
     for _grp in GroupName:
 
         """mongoDB数据库
@@ -472,11 +479,14 @@ def getPjTaskListByGroup():
                     else:
                         _text += (('text', "%0.2f" % (float(_issue[_it])/3600.)),)
                         _spent_time += _issue[_it]
+                        if u'电科云' in _issue['summary']:
+                            _total_cost += (float(_issue['spent_time']) / 3600.)
                 else:
                     _text += (('text', '-'),)
             doc.addRow(_text)
             _count += 1
 
+    print u"电科云：", _total_cost
     doc.setTableFont(8)
     _print("")
 
@@ -523,7 +533,8 @@ def main():
     getPdingList(cur)
 
     _print("工程项目的支撑情况", title=True, title_lvl=1)
-    getPjTaskListByGroup()
+    pg = _print("任务明细", title=True, title_lvl=2)
+    getPjTaskListByGroup(pg)
 
     _print("人力资源投入", title=True, title_lvl=1)
     getOprWorkTime(cur)

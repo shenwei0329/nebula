@@ -664,15 +664,15 @@ def main():
     _print("小组资源投入情况", title=True, title_lvl=1)
     getGrpWorkTime(cur)
 
-<<<<<<< HEAD
+    """
     _pd_fn, _pj_fn = doBarOnTable.doWorkHourbyGroup(cur, begin_date=st_date, end_date=ed_date)
     doc.addPic(_pd_fn, sizeof=5.2)
     doc.addText(u"图5-1 各组在产品研发上的投入", align=WD_ALIGN_PARAGRAPH.CENTER)
     doc.addPic(_pj_fn, sizeof=4.6)
     doc.addText(u"图5-2 各组在工程项目和非项目上的投入", align=WD_ALIGN_PARAGRAPH.CENTER)
 
-=======
->>>>>>> refs/remotes/origin/master
+    """
+
     _print("各项目投入情况", title=True, title_lvl=1)
     getProjectWorkTime(cur)
 
