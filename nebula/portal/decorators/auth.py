@@ -17,13 +17,16 @@ from nebula.core import context as nebula_context
 
 LOG = logging.getLogger(__name__)
 
+
 def require_auth(func):
 
     @wraps(func)
     def decorated_view(*args, **kwargs):
         # 从 上下文 获取用户信息
         user = session.get('user', None)
-        if not user or not user['active']:
+        if user is not None:
+            logging.warn(">>> decoreated_view: %s <<<" % user['username'])
+        if not user or user is None:
             # 若用户未激活，则需要 注册
             url = url_for('portal.login')
             if '?' not in url:
@@ -55,8 +58,9 @@ def _prefix_endpoint(end_point):
 
 def _set_request_context(user):
     kw = dict()
-    g.context = nebula_context.RequestContext(user['id'],
-                                              is_super=user['is_super'],
+    logging.warn(">>> _set_request_context: %s:%s <<<" % (type(user), user['username']))
+    g.context = nebula_context.RequestContext(user_id=None,
+                                              is_super=False,
                                               user_name=user['username'],
                                               version=version,
                                               overwrite=True, **kw)

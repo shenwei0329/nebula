@@ -573,6 +573,7 @@ _loggers = {}
 
 
 def getLogger(name='unknown', version='unknown'):
+
     if name not in _loggers:
         _loggers[name] = ContextAdapter(logging.getLogger(name),
                                         name,

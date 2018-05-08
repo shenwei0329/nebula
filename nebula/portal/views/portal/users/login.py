@@ -40,7 +40,7 @@ class LoginView(MethodView):
     def post(self):
         form = LoginForm()
         if form.validate_on_submit():
-            login_user(request, None)
+            login_user(request, {'user': form.username, 'password': form.password})
             return redirect(url_for('portal.cdh'))
             #return redirect(url_for('portal.dashboard'))
         

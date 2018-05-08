@@ -32,5 +32,6 @@ def set_defaults(args=None, prog=None, version=None, config_files=(),
          version=version,
          default_config_files=config_files)
 
+
 def setup_logging(version=None):
     pass

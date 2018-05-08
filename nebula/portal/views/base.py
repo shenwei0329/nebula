@@ -38,7 +38,7 @@ class InjectedMenu():
             'datamng_menus': self.datamng_menus,
             'main_menus_mini': self.main_menus_mini,
             'show_profile': self.show_profile,
-            'user': 'root',
+            'user': session['user'],
         })
         context.update(additional_context)
         return context
