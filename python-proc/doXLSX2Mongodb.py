@@ -22,7 +22,12 @@ from datetime import datetime
 from DataHandler import xlsx_class
 
 
-def doList(xlsx_handler, mongodb, _type, _op, _ncol, _key):
+def doList(xlsx_handler, mongodb, _type, _op, _ncol, keys):
+
+    _keys = []
+    for _i in keys:
+        if len(_i) > 0:
+            _keys.append(int(_i))
 
     # print("%s- doList ing" % time.ctime())
     _rows = []
@@ -47,7 +52,9 @@ def doList(xlsx_handler, mongodb, _type, _op, _ncol, _key):
                 _value = {}
                 _i = 0
 
-                _search = {_col[0]: _row[0]}
+                _search = {}
+                for _v in _keys:
+                    _search[_col[_v]] = _row[_v]
 
                 # print _search
 
@@ -60,9 +67,9 @@ def doList(xlsx_handler, mongodb, _type, _op, _ncol, _key):
 
                 # print _type, _value
                 try:
-                    if _row[0] not in _key:
+                    if _search not in _key:
                         mongodb.handler(_type, 'update', _search, _value)
-                        _key.append(_row[0])
+                        _key.append(_search)
                         _count += 1
                 except Exception, e:
                     print "error: ", e
@@ -97,7 +104,8 @@ def main():
         # print("%s- Done" % time.ctime())
         return True
 
-    except:
+    except Exception, e:
+        print e
         print("%s- Done[Nothing to do]" % time.ctime())
         return False
 
